@@ -1,0 +1,99 @@
+{% extends "business/base.html" %}
+{% load static %}
+
+{% block title %}My Account - U-Connect{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <!-- 1. Profile Header -->
+    <div class="profile-header">
+        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+        <div class="profile-info">
+            <h1>{{ user.first_name|default:user.username }} {{ user.last_name }}</h1>
+            <p class="text-muted">{{ user.profile.major|default:'No major specified' }}</p>
+            {% if user.profile.is_email_verified %}
+                <span class="verification-badge">✔️ Verified</span>
+            {% endif %}
+        </div>
+        <a href="{% url 'users:edit_profile' %}" class="btn-edit-profile">Edit Profile</a>
+    </div>
+
+    <!-- 2. Dashboard -->
+    <div class="dashboard">
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'Listings')">My Listings</button>
+            <button class="tab-link" onclick="openTab(event, 'History')">History</button>
+            <button class="tab-link" onclick="openTab(event, 'Watchlist')">Watchlist</button>
+            <button class="tab-link" onclick="openTab(event, 'Settings')">Settings</button>
+        </div>
+
+        <div id="Listings" class="tab-content" style="display: block;">
+            <h3>My Active Listings</h3>
+            {% if active_listings %}
+                <div class="items-grid">
+                    {% for item in active_listings %}
+                    <div class="item-card">
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                        <div class="item-details">
+                            <h4 class="item-title">{{ item.title }}</h4>
+                            <p class="item-price">{{ item.price }}</p>
+                            <div class="item-manage-buttons" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                <a href="#" class="btn-small">Edit</a>
+                                <a href="#" class="btn-small btn-danger">Mark as Sold</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have no active listings. <a href="{% url 'business:post_item' %}">Sell something!</a></p>
+            {% endif %}
+        </div>
+
+        <div id="History" class="tab-content" style="display: none;">
+            <h3>Sold History</h3>
+            {% for item in sold_history %}<p>{{item.title}}</p>{% empty %}<p>You haven't sold any items yet.</p>{% endfor %}
+            <hr>
+            <h3>My Purchases</h3>
+            {% for item in my_purchases %}<p>{{item.title}}</p>{% empty %}<p>You haven't purchased any items yet.</p>{% endfor %}
+        </div>
+
+        <div id="Watchlist" class="tab-content" style="display: none;">
+            <h3>My Watchlist</h3>
+            {% if watchlist_items %}
+                <div class="items-grid">
+                    {% for item in watchlist_items %}
+                    <div class="item-card">
+                        <a href="#">
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                            <div class="item-details">
+                                <h5 class="item-title">{{ item.title }}</h5>
+                                <p class="item-price">{{ item.price }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}<p>Your watchlist is empty.</p>{% endif %}
+        </div>
+
+        <div id="Settings" class="tab-content" style="display: none;">
+            <h4>Safe Meetup Guide</h4>
+            <p>Always meet in well-lit, public places on campus. Recommended spots include the Library Lobby, Student Union, or near campus police stations. Never share personal financial information.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+        document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+    // Ensure the first tab is active on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Optional: Trigger click on first tab if needed, but style="display:block" handles it.
+    });
+</script>
+{% endblock %}

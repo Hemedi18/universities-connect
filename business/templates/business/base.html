@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- The title block can be overridden by child templates -->
+    <title>{% block title %}U-Connect{% endblock %}</title>
+    
+    <!-- Link to your main stylesheet (You can add this file later) -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body>
+
+    <header class="main-header">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <a href="{% url 'business:home' %}">U-Connect</a>
+            </div>
+            <div class="navbar-links">
+                <ul>
+                    <li><a href="{% url 'business:post_item' %}">Sell</a></li>
+                    <li><a href="{% url 'business:home' %}">Buy</a></li>
+                    <li><a href="{% url 'business:about' %}">About</a></li>
+                    <li><a href="{% url 'business:contact' %}">Contact</a></li>
+                    <li><a href="{% url 'users:home' %}">Account</a></li>
+                    <li><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button></li>
+                </ul>
+                
+            </div>
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- This is where the content of other pages will be inserted -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; {% now "Y" %} U-Connect. All rights reserved.</p>
+    </footer>
+
+    <!-- Load JavaScript for animations -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

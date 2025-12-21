@@ -1,0 +1,25 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Login - U-Connect{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Welcome Back</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div style="color: red; font-size: 0.875rem;">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn-submit">Login</button>
+    </form>
+    <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
+        Don't have an account? <a href="{% url 'users:register' %}" style="color: var(--primary-color); font-weight: 600;">Register</a>
+    </p>
+</div>
+{% endblock %}

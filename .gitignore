@@ -1,0 +1,14 @@
+db.sqlite3
+/staticfiles/
+/media/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.vscode/
+.idea/
+*.log
+venv/
+*.egg-info/
+.coverage
+htmlcov/

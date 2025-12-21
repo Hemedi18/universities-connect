@@ -1,0 +1,65 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Sell Item - U-Connect{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Sell an Item</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+                <p class="help-text">{{ field.help_text }}</p>
+            {% endif %}
+            {% if field.errors %}
+                <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn-submit">Post Item</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const methodField = document.querySelector('#id_contact_method');
+        const emailField = document.querySelector('#id_contact_email');
+        const phoneField = document.querySelector('#id_contact_phone');
+        
+        // Function to find the container (div.form-group) of a field
+        function getContainer(field) {
+            return field.closest('.form-group');
+        }
+
+        function updateFields() {
+            const method = methodField.value;
+            const emailContainer = getContainer(emailField);
+            const phoneContainer = getContainer(phoneField);
+
+            // Reset
+            if(emailContainer) emailContainer.style.display = 'none';
+            if(phoneContainer) phoneContainer.style.display = 'none';
+
+            // Show based on selection
+            if (method === 'email' && emailContainer) {
+                emailContainer.style.display = 'block';
+            } else if (method === 'phone' && phoneContainer) {
+                phoneContainer.style.display = 'block';
+            }
+        }
+
+        if (methodField) {
+            methodField.addEventListener('change', updateFields);
+            // Run once on load to set initial state
+            updateFields();
+        }
+    });
+</script>
+{% endblock %}
