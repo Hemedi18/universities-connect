@@ -1,0 +1,59 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Chat with {{ other_user.username }} - U-Connect{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+    .main-footer {
+        margin-top: 0 !important;
+    }
+</style>
+<div class="chat-room-container">
+    <div class="chat-room-header">
+        <a href="{% url 'chat:inbox' %}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+        <div class="chat-user-info">
+            <span class="chat-username">{{ other_user.first_name|default:other_user.username }}</span>
+        </div>
+    </div>
+
+    <div class="messages-container" id="messagesContainer">
+        {% for message in messages %}
+        <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}">
+            <div class="message-content">{{ message.content }}</div>
+            <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No messages yet. Say hi!</p>
+        {% endfor %}
+    </div>
+
+    <div class="chat-input-area">
+        <form method="post" style="display: flex; gap: 0.5rem; width: 100%;">
+            {% csrf_token %}
+            {{ form.content }}
+            <button type="submit" class="btn-send"><i class="bi bi-send-fill"></i></button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Scroll to bottom of chat
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('messagesContainer');
+        if(container) {
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Ensure input is focused for mobile keyboard
+        const input = document.querySelector('.chat-input-area input');
+        if(input) {
+            input.focus();
+        }
+    });
+</script>
+{% endblock %}

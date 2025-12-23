@@ -1,0 +1,42 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Messages - U-Connect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="margin-bottom: 2rem; font-weight: 800;">Messages</h1>
+
+    {% if chats %}
+        <div class="chat-list">
+            {% for chat in chats %}
+            <a href="{% url 'chat:chat_room' chat.conversation.id %}" class="chat-item">
+                <div class="chat-avatar">
+                    {% if chat.other_user.profile.profile_picture %}
+                        <img src="{{ chat.other_user.profile.profile_picture.url }}" alt="{{ chat.other_user.username }}">
+                    {% else %}
+                        <div class="avatar-placeholder">{{ chat.other_user.username|first|upper }}</div>
+                    {% endif %}
+                </div>
+                <div class="chat-preview">
+                    <div class="chat-header">
+                        <span class="chat-name">{{ chat.other_user.first_name|default:chat.other_user.username }}</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="chat-time">{{ chat.last_message.timestamp|date:"M d" }}</span>
+                            {% if chat.unread_count > 0 %}<span class="badge rounded-pill bg-danger" style="font-size: 0.75em;">{{ chat.unread_count }}</span>{% endif %}
+                        </div>
+                    </div>
+                    <p class="chat-message-preview {% if not chat.last_message.is_read and chat.last_message.sender != user %}unread{% endif %}">
+                        {% if chat.last_message.sender == user %}You: {% endif %}{{ chat.last_message.content|truncatechars:40 }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
+            <i class="bi bi-chat-square-text" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+            <p>No messages yet. Start a conversation from a product page!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

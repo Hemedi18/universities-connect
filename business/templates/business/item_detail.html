@@ -1,0 +1,79 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}{{ item.title }} - U-Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 98%;">
+    <div class="product-detail-container">
+        <div class="product-grid">
+            <!-- Image Section -->
+            <div class="product-image-wrapper">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="product-image-large">
+                {% else %}
+                    <div style="height: 300px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; border-radius: 1rem;">
+                        <span style="color: var(--text-muted);">No Image Available</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Info Section -->
+            <div class="product-info">
+                <h1>{{ item.title }}</h1>
+                <p class="item-price" style="font-size: 1.75rem; margin-bottom: 1.5rem;">{{ item.price }}</p>
+                
+                <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <small style="color: var(--text-muted); text-transform: uppercase;">Condition</small>
+                        <div style="font-weight: 600;">{{ item.get_condition_display }}</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--text-muted); text-transform: uppercase;">Category</small>
+                        <div style="font-weight: 600;">{{ item.get_category_display }}</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--text-muted); text-transform: uppercase;">Location</small>
+                        <div style="font-weight: 600;">{{ item.campus_location }}</div>
+                    </div>
+                    <div>
+                        <small style="color: var(--text-muted); text-transform: uppercase;">Posted</small>
+                        <div style="font-weight: 600;">{{ item.created_at|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Description</h3>
+                    <p style="color: var(--text-muted); line-height: 1.6;">{{ item.description|linebreaks }}</p>
+                </div>
+
+                <div class="action-buttons" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+                    <!-- Add to Cart Button -->
+                    <a href="{% url 'business:add_to_cart' item.id %}" class="btn-cart" style="width: auto; margin-bottom: 0; padding: 0.75rem 2rem; text-align: center; text-decoration: none;" title="Add to Cart">
+                        <span class="show-on-pc">Add to Cart</span>
+                        <i class="bi bi-cart-plus show-on-mobile" style="font-size: 1.5rem;"></i>
+                    </a>
+
+                    <!-- Buy/Contact Button -->
+                    {% if item.contact_method == 'email' and item.contact_email %}
+                        <a href="mailto:{{ item.contact_email }}?subject=Interested in {{ item.title }}" class="btn-submit" style="width: auto; margin-top: 0; padding: 0.75rem 2rem; text-align: center; text-decoration: none;" title="Email Seller">
+                            <span class="show-on-pc">Email Seller</span>
+                            <i class="bi bi-envelope show-on-mobile" style="font-size: 1.5rem;"></i>
+                        </a>
+                    {% elif item.contact_method == 'phone' and item.contact_phone %}
+                        <a href="tel:{{ item.contact_phone }}" class="btn-submit" style="width: auto; margin-top: 0; padding: 0.75rem 2rem; text-align: center; text-decoration: none;" title="Call Seller">
+                            <span class="show-on-pc">Call Seller</span>
+                            <i class="bi bi-telephone show-on-mobile" style="font-size: 1.5rem;"></i>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'chat:start_chat' item.seller.id %}" class="btn-submit" style="width: auto; margin-top: 0; padding: 0.75rem 2rem; text-align: center; text-decoration: none;" title="Chat with Seller">
+                            <span class="show-on-pc">Chat with Seller</span>
+                            <i class="bi bi-chat-dots show-on-mobile" style="font-size: 1.5rem;"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

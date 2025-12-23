@@ -1,10 +1,100 @@
 {% extends 'business/base.html' %}
+{% load static %}
 
-{% block title %}About{% endblock %}
+{% block title %}About Us - U-Connect{% endblock %}
 
 {% block content %}
-    <h1>About Us </h1>
-    <p>U-Connect is a marketplace dedicated to connecting buyers and sellers in a seamless and efficient manner. Our mission is to provide a platform where users can easily find and purchase products that meet their needs.</p>
-    <p>Founded in 2024, U-Connect has quickly grown to become a trusted name in the online marketplace industry. We pride ourselves on our user-friendly interface, secure transactions, and excellent customer service.</p>
-    <p>Whether you're looking for the latest gadgets, fashion trends, or unique handmade items, U-Connect has something for everyone. Join us today and experience the future of online shopping!</p>
+<style>
+    .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+
+<div class="about-container">
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="hero-content">
+            <h1 class="animate-title">Connecting Campus Commerce</h1>
+            <p class="animate-subtitle">The safest, easiest way for students to buy and sell within their university community.</p>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="about-section mission-section">
+        <div class="section-content animate-on-scroll">
+            <h2 style="text-align: center; margin-bottom: 1rem; font-weight: 800;">Our Mission</h2>
+            <p class="mission-text">U-Connect was born from a simple idea: students shouldn't have to rely on sketchy classifieds or distant meetups to trade textbooks, electronics, and dorm essentials. We are building a trusted ecosystem exclusively for the campus community.</p>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="about-section features-section">
+        <h2 class="text-center mb-5 animate-on-scroll" style="font-weight: 800;">Why U-Connect?</h2>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll delay-1">
+                <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+                <h3>Verified Students</h3>
+                <p>Trade with confidence knowing everyone on the platform is a verified member of your campus.</p>
+            </div>
+            <div class="feature-card animate-on-scroll delay-2">
+                <div class="feature-icon"><i class="bi bi-chat-dots"></i></div>
+                <h3>Instant Chat</h3>
+                <p>Negotiate prices and arrange meetups securely through our real-time messaging system.</p>
+            </div>
+            <div class="feature-card animate-on-scroll delay-3">
+                <div class="feature-icon"><i class="bi bi-geo-alt"></i></div>
+                <h3>Campus Focused</h3>
+                <p>No shipping fees, no long drives. Everything is right here on campus.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Counter (Animated) -->
+    <section class="stats-section">
+        <div class="stat-item animate-on-scroll">
+            <span class="stat-number" data-target="5000">0</span>
+            <span class="stat-label">Active Students</span>
+        </div>
+        <div class="stat-item animate-on-scroll delay-1">
+            <span class="stat-number" data-target="1200">0</span>
+            <span class="stat-label">Items Sold</span>
+        </div>
+        <div class="stat-item animate-on-scroll delay-2">
+            <span class="stat-number" data-target="50">0</span>
+            <span class="stat-label">Campuses</span>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const statNumber = entry.target.querySelector('.stat-number');
+                    if (statNumber) {
+                        const target = parseInt(statNumber.getAttribute('data-target'));
+                        let count = 0;
+                        const duration = 2000;
+                        const increment = target / (duration / 16);
+                        const timer = setInterval(() => {
+                            count += increment;
+                            if (count >= target) {
+                                statNumber.textContent = target + "+";
+                                clearInterval(timer);
+                            } else {
+                                statNumber.textContent = Math.floor(count);
+                            }
+                        }, 16);
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    });
+</script>
 {% endblock %}

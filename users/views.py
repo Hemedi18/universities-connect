@@ -77,5 +77,7 @@ def login_user(request):
     return render(request, 'users/login.html', {'form': form})
 
 def logout_user(request):
-    logout(request)
-    return redirect('business:home')
+    if request.method == 'POST':
+        logout(request)
+        return redirect('users:login')
+    return render(request, 'users/logout_confirm.html')

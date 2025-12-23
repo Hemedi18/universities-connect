@@ -1,0 +1,23 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Logout - U-Connect{% endblock %}
+
+{% block content %}
+<div class="container logout-wrapper">
+    <div class="logout-card">
+        <div class="logout-icon-wrapper">
+            <i class="bi bi-box-arrow-right"></i>
+        </div>
+        <h1 class="logout-title">Leaving so soon?</h1>
+        <p class="logout-text">We'll miss you! Confirm below to log out securely.</p>
+        
+        <div class="logout-actions">
+            <a href="{% url 'business:home' %}" class="btn-cancel">Cancel</a>
+            <form method="post" action="{% url 'users:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm-logout">Yes, Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

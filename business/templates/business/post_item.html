@@ -3,13 +3,22 @@
 {% block title %}Sell Item - U-Connect{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Sell an Item</h2>
+<style>
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 !important;
+            max-width: 100% !important;
+        }
+    }
+</style>
+<div class="form-container sell-container">
+    <h2>{{ title|default:"Sell an Item" }}</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
+        <div class="form-grid">
         {% for field in form %}
-        <div class="form-group">
+        <div class="form-group {% if field.name == 'description' %}full-width{% endif %}">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.help_text %}
@@ -22,8 +31,9 @@
             {% endif %}
         </div>
         {% endfor %}
+        </div>
         
-        <button type="submit" class="btn-submit">Post Item</button>
+        <button type="submit" class="btn-submit">{{ button_text|default:"Post Item" }}</button>
     </form>
 </div>
 
