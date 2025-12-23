@@ -12,8 +12,8 @@
                 {% if item.image %}
                     <img src="{{ item.image.url }}" alt="{{ item.title }}" class="product-image-large">
                 {% else %}
-                    <div style="height: 300px; background: var(--bg-color); display: flex; align-items: center; justify-content: center; border-radius: 1rem;">
-                        <span style="color: var(--text-muted);">No Image Available</span>
+                    <div class="product-image-placeholder">
+                        <span class="text-muted-span">No Image Available</span>
                     </div>
                 {% endif %}
 
@@ -66,24 +66,24 @@
                     <!-- Add to Cart Button -->
                     <a href="{% url 'business:add_to_cart' item.id %}" class="btn-cart btn-action-custom" title="Add to Cart">
                         <span class="show-on-pc">Add to Cart</span>
-                        <i class="bi bi-cart-plus show-on-mobile" style="font-size: 1.5rem;"></i>
+                        <i class="bi bi-cart-plus show-on-mobile mobile-icon-lg"></i>
                     </a>
 
                     <!-- Buy/Contact Button -->
                     {% if item.contact_method == 'email' and item.contact_email %}
                         <a href="mailto:{{ item.contact_email }}?subject=Interested in {{ item.title }}" class="btn-submit btn-action-chat" title="Email Seller">
                             <span class="show-on-pc">Email Seller</span>
-                            <i class="bi bi-envelope show-on-mobile" style="font-size: 1.5rem;"></i>
+                            <i class="bi bi-envelope show-on-mobile mobile-icon-lg"></i>
                         </a>
                     {% elif item.contact_method == 'phone' and item.contact_phone %}
                         <a href="tel:{{ item.contact_phone }}" class="btn-submit btn-action-chat" title="Call Seller">
                             <span class="show-on-pc">Call Seller</span>
-                            <i class="bi bi-telephone show-on-mobile" style="font-size: 1.5rem;"></i>
+                            <i class="bi bi-telephone show-on-mobile mobile-icon-lg"></i>
                         </a>
                     {% else %}
                         <a href="{% url 'chat:start_chat' item.seller.id %}" class="btn-submit btn-action-chat" title="Chat with Seller">
                             <span class="show-on-pc">Chat with Seller</span>
-                            <i class="bi bi-chat-dots show-on-mobile" style="font-size: 1.5rem;"></i>
+                            <i class="bi bi-chat-dots show-on-mobile mobile-icon-lg"></i>
                         </a>
                     {% endif %}
                 </div>

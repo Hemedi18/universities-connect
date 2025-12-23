@@ -30,7 +30,7 @@
                 </div>
                 <div class="cart-item-actions manage-actions">
                     <a href="{% url 'business:edit_item' item.id %}" class="btn-icon edit" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{% url 'business:delete_item' item.id %}" class="btn-icon delete" onclick="return confirm('Are you sure you want to delete this item?');" title="Delete"><i class="bi bi-trash"></i></a>
+                    <a href="{% url 'business:delete_item' item.id %}" class="btn-icon delete delete-item-btn" title="Delete"><i class="bi bi-trash"></i></a>
                 </div>
             </div>
             {% endfor %}

@@ -33,7 +33,7 @@
             <p class="cart-summary-text">
                 You have {{ cart_items.count }} item(s) in your cart.
             </p>
-            <button class="btn-submit" onclick="alert('Checkout functionality coming soon!')">Proceed to Checkout</button>
+            <button class="btn-submit btn-checkout">Proceed to Checkout</button>
             <a href="{% url 'business:home' %}" class="cart-continue-link">Continue Shopping</a>
         </div>
     {% else %}

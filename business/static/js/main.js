@@ -58,6 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- About Page: Animations ---
     const animateElements = document.querySelectorAll('.animate-on-scroll');
     if (animateElements.length > 0) {
+        // Hide elements initially via JS to ensure they are visible if JS fails
+        animateElements.forEach(el => el.classList.add('js-hidden'));
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -65,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const statNumber = entry.target.querySelector('.stat-number');
                     if (statNumber) {
                         const target = parseInt(statNumber.getAttribute('data-target'));
+                        if (isNaN(target)) return; // Safety check
                         let count = 0;
                         const duration = 2000;
                         const increment = target / (duration / 16);
@@ -186,5 +190,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`${getMessagesUrl}?last_id=${lastId}`).then(res => res.json()).then(data => { if(data.messages && data.messages.length > 0) data.messages.forEach(msg => appendMessage(msg)); });
             }, 2000);
         }
+    }
+
+    // --- Global: Delete Confirmation ---
+    document.body.addEventListener('click', function(e) {
+        // Check if the clicked element or its parent has the delete-item-btn class
+        if (e.target.closest('.delete-item-btn')) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // --- Cart: Checkout Alert ---
+    const checkoutBtn = document.querySelector('.btn-checkout');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            alert('Checkout functionality coming soon!');
+        });
+    }
+
+    // --- Page Specific Body Classes (to replace internal CSS targeting parents) ---
+    if (document.querySelector('.chat-room-container')) {
+        document.body.classList.add('page-chat-room');
+    }
+    if (document.querySelector('.home-container-mobile')) {
+        document.body.classList.add('page-home-mobile');
+    }
+    if (document.querySelector('.about-container-override')) {
+        document.body.classList.add('page-about');
+    }
+    if (document.querySelector('.container-mobile-full')) {
+        document.body.classList.add('page-sell-mobile');
     }
 });
