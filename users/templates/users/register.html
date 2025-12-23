@@ -4,25 +4,41 @@
 
 {% block content %}
 <div class="form-container">
-    <h2>Create Account</h2>
+    <h2>Join U-Connect</h2>
     <form method="post">
         {% csrf_token %}
+        
         {% for field in form %}
         <div class="form-group">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
-            {% if field.help_text %}
-                <p class="help-text">{{ field.help_text }}</p>
-            {% endif %}
             {% if field.errors %}
-                <div style="color: red; font-size: 0.875rem;">{{ field.errors }}</div>
+                <div class="error-message" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;">
+                    {% for error in field.errors %}
+                        <p style="margin-bottom: 0;">{{ error }}</p>
+                    {% endfor %}
+                </div>
             {% endif %}
         </div>
         {% endfor %}
+        
         <button type="submit" class="btn-submit">Register</button>
     </form>
-    <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
-        Already have an account? <a href="{% url 'users:login' %}" style="color: var(--primary-color); font-weight: 600;">Login</a>
+    <p style="text-align: center; margin-top: 1rem;">
+        Already have an account? <a href="{% url 'users:login' %}" style="color: var(--primary-color); font-weight: 600;">Login here</a>
     </p>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const errors = document.querySelectorAll('.error-message');
+            errors.forEach(function(error) {
+                error.style.transition = 'opacity 0.5s ease';
+                error.style.opacity = '0';
+                setTimeout(() => error.remove(), 500);
+            });
+        }, 5000);
+    });
+</script>
 {% endblock %}
