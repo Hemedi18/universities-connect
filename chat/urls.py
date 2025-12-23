@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.inbox, name='inbox'),
     path('<int:conversation_id>/', views.chat_room, name='chat_room'),
     path('start/<int:user_id>/', views.start_chat, name='start_chat'),
+    path('api/messages/<int:conversation_id>/', views.get_messages, name='get_messages'),
 ]

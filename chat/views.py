@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from .models import Conversation, Message
 from .forms import MessageForm
 
@@ -45,6 +46,17 @@ def chat_room(request, conversation_id):
             message.sender = request.user
             message.save()
             conversation.save() # Update updated_at
+            
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'message': {
+                        'id': message.id,
+                        'content': message.content,
+                        'timestamp': message.timestamp.strftime("%I:%M %p"),
+                        'sender_id': request.user.id
+                    }
+                })
             return redirect('chat:chat_room', conversation_id=conversation.id)
     else:
         form = MessageForm()
@@ -64,3 +76,31 @@ def start_chat(request, user_id):
         conversation = Conversation.objects.create()
         conversation.participants.add(request.user, target_user)
     return redirect('chat:chat_room', conversation_id=conversation.id)
+
+@login_required
+def get_messages(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    if request.user not in conversation.participants.all():
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    last_id = request.GET.get('last_id')
+    messages = conversation.messages.all()
+    
+    if last_id:
+        messages = messages.filter(id__gt=last_id)
+    
+    # Mark as read
+    unread = messages.exclude(sender=request.user).filter(is_read=False)
+    unread.update(is_read=True)
+    
+    data = []
+    for msg in messages:
+        data.append({
+            'id': msg.id,
+            'sender_id': msg.sender.id,
+            'content': msg.content,
+            'timestamp': msg.timestamp.strftime("%I:%M %p"),
+            'is_sent': msg.sender == request.user
+        })
+    
+    return JsonResponse({'messages': data})
