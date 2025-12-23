@@ -21,13 +21,13 @@
     <!-- 2. Dashboard -->
     <div class="dashboard">
         <div class="tabs">
-            <button class="tab-link active" onclick="openTab(event, 'Listings')">My Listings</button>
-            <button class="tab-link" onclick="openTab(event, 'History')">History</button>
-            <button class="tab-link" onclick="openTab(event, 'Watchlist')">Watchlist</button>
-            <button class="tab-link" onclick="openTab(event, 'Settings')">Settings</button>
+            <button class="tab-link active" data-tab="Listings">My Listings</button>
+            <button class="tab-link" data-tab="History">History</button>
+            <button class="tab-link" data-tab="Watchlist">Watchlist</button>
+            <button class="tab-link" data-tab="Settings">Settings</button>
         </div>
 
-        <div id="Listings" class="tab-content" style="display: block;">
+        <div id="Listings" class="tab-content">
             <h3>My Active Listings</h3>
             {% if active_listings %}
                 <div class="items-grid">
@@ -37,7 +37,7 @@
                         <div class="item-details">
                             <h4 class="item-title">{{ item.title }}</h4>
                             <p class="item-price">{{ item.price }}</p>
-                            <div class="item-manage-buttons" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <div class="item-manage-buttons item-manage-btns">
                                 <a href="{% url 'business:edit_item' item.id %}" class="btn-icon edit" title="Edit"><i class="bi bi-pencil-square"></i></a>
                                 <a href="{% url 'business:delete_item' item.id %}" class="btn-icon delete" onclick="return confirm('Are you sure you want to delete this item?');" title="Delete"><i class="bi bi-trash"></i></a>
                             </div>
@@ -50,7 +50,7 @@
             {% endif %}
         </div>
 
-        <div id="History" class="tab-content" style="display: none;">
+        <div id="History" class="tab-content d-none-important">
             <h3>Sold History</h3>
             {% for item in sold_history %}<p>{{item.title}}</p>{% empty %}<p>You haven't sold any items yet.</p>{% endfor %}
             <hr>
@@ -58,7 +58,7 @@
             {% for item in my_purchases %}<p>{{item.title}}</p>{% empty %}<p>You haven't purchased any items yet.</p>{% endfor %}
         </div>
 
-        <div id="Watchlist" class="tab-content" style="display: none;">
+        <div id="Watchlist" class="tab-content d-none-important">
             <h3>My Watchlist</h3>
             {% if watchlist_items %}
                 <div class="items-grid">
@@ -77,23 +77,10 @@
             {% else %}<p>Your watchlist is empty.</p>{% endif %}
         </div>
 
-        <div id="Settings" class="tab-content" style="display: none;">
+        <div id="Settings" class="tab-content d-none-important">
             <h4>Safe Meetup Guide</h4>
             <p>Always meet in well-lit, public places on campus. Recommended spots include the Library Lobby, Student Union, or near campus police stations. Never share personal financial information.</p>
         </div>
     </div>
 </div>
-
-<script>
-    function openTab(evt, tabName) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-        document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
-        document.getElementById(tabName).style.display = 'block';
-        evt.currentTarget.classList.add('active');
-    }
-    // Ensure the first tab is active on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        // Optional: Trigger click on first tab if needed, but style="display:block" handles it.
-    });
-</script>
 {% endblock %}

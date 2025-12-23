@@ -3,17 +3,8 @@
 {% block title %}Buy - U-Connect{% endblock %}
 
 {% block content %}
-<style>
-    @media (max-width: 768px) {
-        .container {
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-    }
-</style>
-<div class="container">
-    <h1 style="margin-bottom: 2rem; font-weight: 800; color: var(--text-main);">Marketplace</h1>
+<div class="home-container-mobile">
+    <h1 class="home-title">Marketplace</h1>
     
     {% if items %}
         {# Sort items by category first so regroup works correctly #}
@@ -28,7 +19,7 @@
             <div class="horizontal-scroll-container">
                 {% for item in category.list %}
                 <div class="item-card">
-                    <a href="{% url 'business:item_detail' item.id %}" style="text-decoration: none; color: inherit; display: block;">
+                    <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
                         {% if item.image %}
                             <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
                         {% endif %}
@@ -46,7 +37,7 @@
         </div>
         {% endfor %}
     {% else %}
-        <p style="text-align: center; color: var(--text-muted); font-size: 1.2rem;">No items listed yet. Be the first to sell!</p>
+        <p class="home-empty-text">No items listed yet. Be the first to sell!</p>
     {% endif %}
 </div>
 {% endblock %}

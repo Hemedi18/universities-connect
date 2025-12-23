@@ -5,9 +5,17 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = [
-            'title', 'category', 'price', 'condition', 'description', 
-            'campus_location', 'preferred_meetup', 'contact_method', 
-            'contact_email', 'contact_phone', 'image'
+            'title',
+            'category',
+            'price',
+            'condition',
+            'description',
+            'contact_method',
+            'contact_email',
+            'contact_phone',
+            'image',
+            'image2',
+            'image3',
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),

@@ -3,17 +3,7 @@
 {% block title %}Chat with {{ other_user.username }} - U-Connect{% endblock %}
 
 {% block content %}
-<style>
-    .container {
-        margin: 0 !important;
-        padding: 0 !important;
-        max-width: 100% !important;
-    }
-    .main-footer {
-        margin-top: 0 !important;
-    }
-</style>
-<div class="chat-room-container">
+<div class="chat-room-container chat-room-container-override chat-room-height-mobile" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
     <div class="chat-room-header">
         <a href="{% url 'chat:inbox' %}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
         <div class="chat-user-info">
@@ -21,19 +11,19 @@
         </div>
     </div>
 
-    <div class="messages-container" id="messagesContainer">
+    <div class="messages-container" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
         {% for message in messages %}
         <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}" data-id="{{ message.id }}">
             <div class="message-content">{{ message.content }}</div>
             <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
         </div>
         {% empty %}
-        <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No messages yet. Say hi!</p>
+        <p class="chat-empty-text">No messages yet. Say hi!</p>
         {% endfor %}
     </div>
 
     <div class="chat-input-area">
-        <form method="post" style="display: flex; gap: 0.5rem; width: 100%;">
+        <form method="post" class="chat-input-form">
             {% csrf_token %}
             {{ form.content }}
             <button type="submit" class="btn-send"><i class="bi bi-send-fill"></i></button>
@@ -41,76 +31,4 @@
     </div>
 </div>
 
-<script>
-    // Scroll to bottom of chat
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('messagesContainer');
-        if(container) {
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        // Ensure input is focused for mobile keyboard
-        const input = document.querySelector('.chat-input-area input');
-        if(input) {
-            input.focus();
-        }
-
-        // --- AJAX Chat Logic ---
-        const form = document.querySelector('.chat-input-area form');
-        const currentUserId = "{{ user.id }}";
-        const conversationId = "{{ conversation.id }}";
-
-        function appendMessage(msg) {
-            // Avoid duplicates
-            if(document.querySelector(`.message-bubble[data-id="${msg.id}"]`)) return;
-
-            const div = document.createElement('div');
-            const isSent = msg.sender_id == currentUserId || msg.is_sent;
-            div.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
-            div.dataset.id = msg.id;
-            div.innerHTML = `
-                <div class="message-content">${msg.content}</div>
-                <div class="message-time">${msg.timestamp}</div>
-            `;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        // 1. Send Message via AJAX
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-            
-            fetch("", {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRFToken": formData.get('csrfmiddlewaretoken')
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    appendMessage(data.message);
-                    form.reset();
-                }
-            });
-        });
-
-        // 2. Poll for New Messages (Auto-refresh)
-        setInterval(() => {
-            const lastMsg = container.querySelector('.message-bubble:last-child');
-            const lastId = lastMsg ? lastMsg.dataset.id : 0;
-            
-            fetch(`{% url 'chat:get_messages' conversation.id %}?last_id=${lastId}`)
-            .then(res => res.json())
-            .then(data => {
-                if(data.messages && data.messages.length > 0) {
-                    data.messages.forEach(msg => appendMessage(msg));
-                }
-            });
-        }, 2000); // Check every 2 seconds
-    });
-</script>
 {% endblock %}

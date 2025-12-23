@@ -3,15 +3,7 @@
 {% block title %}Sell Item - U-Connect{% endblock %}
 
 {% block content %}
-<style>
-    @media (max-width: 768px) {
-        .container {
-            padding: 0 !important;
-            max-width: 100% !important;
-        }
-    }
-</style>
-<div class="form-container sell-container">
+<div class="form-container sell-container container-mobile-full">
     <h2>{{ title|default:"Sell an Item" }}</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -22,10 +14,10 @@
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.help_text %}
-                <p class="help-text">{{ field.help_text }}</p>
+                <p class="help-text-custom">{{ field.help_text }}</p>
             {% endif %}
             {% if field.errors %}
-                <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">
+                <div class="error-text-custom">
                     {{ field.errors }}
                 </div>
             {% endif %}
@@ -36,40 +28,4 @@
         <button type="submit" class="btn-submit">{{ button_text|default:"Post Item" }}</button>
     </form>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const methodField = document.querySelector('#id_contact_method');
-        const emailField = document.querySelector('#id_contact_email');
-        const phoneField = document.querySelector('#id_contact_phone');
-        
-        // Function to find the container (div.form-group) of a field
-        function getContainer(field) {
-            return field.closest('.form-group');
-        }
-
-        function updateFields() {
-            const method = methodField.value;
-            const emailContainer = getContainer(emailField);
-            const phoneContainer = getContainer(phoneField);
-
-            // Reset
-            if(emailContainer) emailContainer.style.display = 'none';
-            if(phoneContainer) phoneContainer.style.display = 'none';
-
-            // Show based on selection
-            if (method === 'email' && emailContainer) {
-                emailContainer.style.display = 'block';
-            } else if (method === 'phone' && phoneContainer) {
-                phoneContainer.style.display = 'block';
-            }
-        }
-
-        if (methodField) {
-            methodField.addEventListener('change', updateFields);
-            // Run once on load to set initial state
-            updateFields();
-        }
-    });
-</script>
 {% endblock %}

@@ -13,9 +13,9 @@
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}
-                <div class="error-message" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;">
+                <div class="error-message register-error-container">
                     {% for error in field.errors %}
-                        <p style="margin-bottom: 0;">{{ error }}</p>
+                        <p class="register-error-text">{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -24,21 +24,8 @@
         
         <button type="submit" class="btn-submit">Register</button>
     </form>
-    <p style="text-align: center; margin-top: 1rem;">
-        Already have an account? <a href="{% url 'users:login' %}" style="color: var(--primary-color); font-weight: 600;">Login here</a>
+    <p class="register-login-link">
+        Already have an account? <a href="{% url 'users:login' %}" class="register-login-anchor">Login here</a>
     </p>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const errors = document.querySelectorAll('.error-message');
-            errors.forEach(function(error) {
-                error.style.transition = 'opacity 0.5s ease';
-                error.style.opacity = '0';
-                setTimeout(() => error.remove(), 500);
-            });
-        }, 5000);
-    });
-</script>
 {% endblock %}

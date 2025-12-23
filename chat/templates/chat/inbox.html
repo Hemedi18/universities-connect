@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 style="margin-bottom: 2rem; font-weight: 800;">Messages</h1>
+    <h1 class="inbox-title">Messages</h1>
 
     {% if chats %}
         <div class="chat-list">
@@ -20,9 +20,9 @@
                 <div class="chat-preview">
                     <div class="chat-header">
                         <span class="chat-name">{{ chat.other_user.first_name|default:chat.other_user.username }}</span>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="inbox-time-container">
                             <span class="chat-time">{{ chat.last_message.timestamp|date:"M d" }}</span>
-                            {% if chat.unread_count > 0 %}<span class="badge rounded-pill bg-danger" style="font-size: 0.75em;">{{ chat.unread_count }}</span>{% endif %}
+                            {% if chat.unread_count > 0 %}<span class="badge rounded-pill bg-danger badge-custom">{{ chat.unread_count }}</span>{% endif %}
                         </div>
                     </div>
                     <p class="chat-message-preview {% if not chat.last_message.is_read and chat.last_message.sender != user %}unread{% endif %}">
@@ -33,8 +33,8 @@
             {% endfor %}
         </div>
     {% else %}
-        <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
-            <i class="bi bi-chat-square-text" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+        <div class="inbox-empty-container">
+            <i class="bi bi-chat-square-text inbox-empty-icon"></i>
             <p>No messages yet. Start a conversation from a product page!</p>
         </div>
     {% endif %}

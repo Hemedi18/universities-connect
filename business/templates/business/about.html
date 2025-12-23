@@ -4,15 +4,7 @@
 {% block title %}About Us - U-Connect{% endblock %}
 
 {% block content %}
-<style>
-    .container {
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-</style>
-
-<div class="about-container">
+<div class="about-container about-container-override">
     <!-- Hero Section -->
     <section class="about-hero">
         <div class="hero-content">
@@ -24,14 +16,14 @@
     <!-- Mission Section -->
     <section class="about-section mission-section">
         <div class="section-content animate-on-scroll">
-            <h2 style="text-align: center; margin-bottom: 1rem; font-weight: 800;">Our Mission</h2>
+            <h2 class="mission-title">Our Mission</h2>
             <p class="mission-text">U-Connect was born from a simple idea: students shouldn't have to rely on sketchy classifieds or distant meetups to trade textbooks, electronics, and dorm essentials. We are building a trusted ecosystem exclusively for the campus community.</p>
         </div>
     </section>
 
     <!-- Features Grid -->
     <section class="about-section features-section">
-        <h2 class="text-center mb-5 animate-on-scroll" style="font-weight: 800;">Why U-Connect?</h2>
+        <h2 class="text-center mb-5 animate-on-scroll why-title">Why U-Connect?</h2>
         <div class="features-grid">
             <div class="feature-card animate-on-scroll delay-1">
                 <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
@@ -67,34 +59,4 @@
         </div>
     </section>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    const statNumber = entry.target.querySelector('.stat-number');
-                    if (statNumber) {
-                        const target = parseInt(statNumber.getAttribute('data-target'));
-                        let count = 0;
-                        const duration = 2000;
-                        const increment = target / (duration / 16);
-                        const timer = setInterval(() => {
-                            count += increment;
-                            if (count >= target) {
-                                statNumber.textContent = target + "+";
-                                clearInterval(timer);
-                            } else {
-                                statNumber.textContent = Math.floor(count);
-                            }
-                        }, 16);
-                    }
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-    });
-</script>
 {% endblock %}
