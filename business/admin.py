@@ -30,7 +30,8 @@ class ProductAttributeValueInline(admin.TabularInline):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'category_obj', 'seller', 'status', 'created_at', 'chat_with_seller')
+    list_display = ('id', 'title', 'price', 'category_obj', 'seller', 'status', 'created_at', 'chat_with_seller')
+    list_display_links = ('id', 'title')
     list_filter = ('status', 'category_obj', 'created_at')
     search_fields = ('title', 'description', 'sku', 'seller__username', 'seller__email')
     inlines = [ProductAttributeValueInline]
