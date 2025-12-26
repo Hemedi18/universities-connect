@@ -5,8 +5,8 @@ const urlsToCache = [
     "{% static 'css/style.css' %}",
     "{% static 'js/main.js' %}",
     "{% static 'images/uconnect.ico' %}",
-    "{% static 'images/uconnect (192x192).png' %}",
-    "{% static 'images/uconnect (512x512).png' %}"
+    "{% static 'images/uconnect_192.png' %}",
+    "{% static 'images/uconnect_512.png' %}"
 ];
 
 self.addEventListener('install', event => {
