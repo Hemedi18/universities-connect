@@ -162,13 +162,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const conversationId = messagesContainer.getAttribute('data-conversation-id');
         const getMessagesUrl = messagesContainer.getAttribute('data-url');
 
+        function getTickHtml(status) {
+            let tickClass = 'tick-sent';
+            let text = '✔';
+            if (status === 'delivered') {
+                text = '✔✔';
+                tickClass = 'tick-delivered';
+            } else if (status === 'read') {
+                text = '✔✔';
+                tickClass = 'tick-read';
+            }
+            return `<span class="tick-icon ${tickClass}">${text}</span>`;
+        }
+
         function appendMessage(msg) {
             if(document.querySelector(`.message-bubble[data-id="${msg.id}"]`)) return;
             const div = document.createElement('div');
             const isSent = msg.sender_id == currentUserId || msg.is_sent;
             div.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
             div.dataset.id = msg.id;
-            div.innerHTML = `<div class="message-content">${msg.content}</div><div class="message-time">${msg.timestamp}</div>`;
+            
+            let ticks = '';
+            if (isSent) {
+                ticks = getTickHtml(msg.status || 'sent');
+            }
+            div.innerHTML = `<div class="message-content">${msg.content}</div><div class="message-time">${msg.timestamp}${ticks}</div>`;
             messagesContainer.appendChild(div);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -187,7 +205,24 @@ document.addEventListener('DOMContentLoaded', function() {
             setInterval(() => {
                 const lastMsg = messagesContainer.querySelector('.message-bubble:last-child');
                 const lastId = lastMsg ? lastMsg.dataset.id : 0;
-                fetch(`${getMessagesUrl}?last_id=${lastId}`).then(res => res.json()).then(data => { if(data.messages && data.messages.length > 0) data.messages.forEach(msg => appendMessage(msg)); });
+                fetch(`${getMessagesUrl}?last_id=${lastId}`)
+                .then(res => res.json())
+                .then(data => { 
+                    if(data.messages && data.messages.length > 0) {
+                        data.messages.forEach(msg => appendMessage(msg)); 
+                    }
+                    if(data.statuses) {
+                        data.statuses.forEach(st => {
+                            const bubble = document.querySelector(`.message-bubble[data-id="${st.id}"]`);
+                            if (bubble && bubble.classList.contains('sent')) {
+                                const timeDiv = bubble.querySelector('.message-time');
+                                const existingTick = timeDiv.querySelector('.tick-icon');
+                                if(existingTick) existingTick.remove();
+                                timeDiv.insertAdjacentHTML('beforeend', getTickHtml(st.status));
+                            }
+                        });
+                    }
+                });
             }, 2000);
         }
     }

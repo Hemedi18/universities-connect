@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.core.cache import cache
 from .models import Conversation, Message
 from .forms import MessageForm
 
@@ -83,24 +84,67 @@ def get_messages(request, conversation_id):
     if request.user not in conversation.participants.all():
         return JsonResponse({'error': 'Unauthorized'}, status=403)
     
+    # Track user online status (expires in 10 seconds)
+    cache.set(f'user_online_{request.user.id}', True, 10)
+    
     last_id = request.GET.get('last_id')
     messages = conversation.messages.all()
     
     if last_id:
         messages = messages.filter(id__gt=last_id)
     
-    # Mark as read
+    # Mark incoming messages as read
     unread = messages.exclude(sender=request.user).filter(is_read=False)
     unread.update(is_read=True)
     
+    # Check if other user is online
+    other_user = conversation.participants.exclude(id=request.user.id).first()
+    other_online = cache.get(f'user_online_{other_user.id}') if other_user else False
+
     data = []
     for msg in messages:
+        # Determine status for new messages
+        status = 'sent'
+        if msg.is_read:
+            status = 'read'
+        elif other_online:
+            status = 'delivered'
+
         data.append({
             'id': msg.id,
             'sender_id': msg.sender.id,
             'content': msg.content,
             'timestamp': msg.timestamp.strftime("%I:%M %p"),
-            'is_sent': msg.sender == request.user
+            'is_sent': msg.sender == request.user,
+            'status': status
         })
     
-    return JsonResponse({'messages': data})
+    # Get status updates for recent sent messages (to update ticks on client)
+    status_updates = []
+    recent_sent = conversation.messages.filter(sender=request.user).order_by('-id')[:30]
+    for msg in recent_sent:
+        s = 'sent'
+        if msg.is_read: s = 'read'
+        elif other_online: s = 'delivered'
+        status_updates.append({'id': msg.id, 'status': s})
+    
+    return JsonResponse({'messages': data, 'statuses': status_updates})
+
+@login_required
+def update_typing_status(request, conversation_id):
+    if request.method == "POST":
+        key = f"typing_conversation_{conversation_id}_user_{request.user.id}"
+        cache.set(key, True, 3)
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
+
+@login_required
+def check_typing_status(request, conversation_id):
+    other_user_id = request.GET.get('other_user_id')
+    
+    if other_user_id:
+        key = f"typing_conversation_{conversation_id}_user_{other_user_id}"
+        is_typing = cache.get(key)
+        return JsonResponse({"is_typing": bool(is_typing)})
+    
+    return JsonResponse({"is_typing": False})
