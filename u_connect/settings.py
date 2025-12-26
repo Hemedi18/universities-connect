@@ -26,8 +26,10 @@ SECRET_KEY = 'django-insecure-i9t--^m#x+)=w-xvm(0j5t(v5azjzozojf2vtgc-(5(8rjx!az
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','.pythonanywhere.com']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '.pythonanywhere.com', '.ngrok-free.app']
 
+# Trust the X-Forwarded-Proto header for HTTPS (useful for Ngrok/PythonAnywhere)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'users',
     'business',
     'chat',
+    'pwa',
 
     # Default Django apps
     'django.contrib.admin',
@@ -134,7 +137,40 @@ LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+# CSRF settings for Ngrok (Required for Django 4.0+ over HTTPS)
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app',
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PWA Settings
+PWA_APP_NAME = 'U-Connect'
+PWA_APP_DESCRIPTION = "The trusted marketplace for students to buy, sell, and connect on campus."
+PWA_APP_THEME_COLOR = '#4f46e5'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = '#4f46e5'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/uconnect_192.png',
+        'sizes': '192x192'
+    },
+    {
+        'src': '/static/images/uconnect_512.png',
+        'sizes': '512x512'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/images/uconnect_192.png',
+        'sizes': '192x192'
+    }
+]
+PWA_APP_LANG = 'en-us'

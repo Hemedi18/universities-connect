@@ -25,9 +25,9 @@ urlpatterns = [
     path('', include('business.urls')),
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),
-    path('manifest.json', TemplateView.as_view(template_name='manifest.json', content_type='application/json')),
-    path('service-worker.js', TemplateView.as_view(template_name='service-worker.js', content_type='application/javascript')),
+    path('', include('pwa.urls')),
 ]
 
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

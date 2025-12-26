@@ -1,4 +1,5 @@
 {% load static %}
+{% load pwa %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/uconnect.ico' %}">
-    <link rel="manifest" href="/manifest.json">
+    {% progressive_web_app_meta %}
     <!-- The title block can be overridden by child templates -->
     <title>{% block title %}U-Connect{% endblock %}</title>
     
@@ -89,14 +90,12 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if user.is_superuser %}
                     <li id="install-app-item">
                         <a href="#" id="install-app-btn" title="Install App">
                             <i class="bi bi-download"></i>
                             <span>Install</span>
                         </a>
                     </li>
-                    {% endif %}
                     <li><a><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button><span>Theme</span></a></li>
                 </ul>
                 
@@ -155,23 +154,28 @@
     <script src="{% static 'js/main.js' %}"></script>
 
     <script>
+        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful');
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
+                navigator.serviceWorker.register('/serviceworker.js')
+                    .then(reg => console.log('SW registered!', reg))
+                    .catch(err => console.log('SW failed:', err));
             });
         }
 
+        // Install App Logic
         let deferredPrompt;
         const installItem = document.getElementById('install-app-item');
         const installBtn = document.getElementById('install-app-btn');
 
+        // Hide button initially (if using CSS to show it, ensure it starts hidden)
+        if (installItem) installItem.style.display = 'none';
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            // Show the install button only when the prompt is ready
+            if (installItem) installItem.style.display = 'block';
         });
 
         if (installBtn) {
@@ -180,10 +184,12 @@
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                            if (installItem) installItem.style.display = 'none';
+                        }
                         deferredPrompt = null;
                     });
-                } else {
-                    alert('To install the app again, you must first uninstall the existing version.\n\nOn Desktop: Click the 3 dots in the browser menu (or the App icon in the address bar) -> Uninstall U-Connect.\nOn Mobile: Long press the app icon on your home screen -> Uninstall.\n\nAfter uninstalling, refresh this page to see the install prompt again.');
                 }
             });
         }

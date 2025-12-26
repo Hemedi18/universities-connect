@@ -1,19 +1,18 @@
 {% extends "admin/base.html" %}
 {% load static %}
+{% load pwa %}
 
 {% block title %}{{ title }} | U-Connect Admin{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
-<link rel="manifest" href="/manifest.json">
+{% progressive_web_app_meta %}
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                console.log('ServiceWorker registration successful');
-            }, function(err) {
-                console.log('ServiceWorker registration failed: ', err);
-            });
+            navigator.serviceWorker.register('/serviceworker.js')
+                .then(reg => console.log('Admin SW registered'))
+                .catch(err => console.log('Admin SW failed', err));
         });
     }
 </script>
@@ -24,31 +23,32 @@
 {% endblock %}
 
 {% block userlinks %}
-    <!-- Debug Indicator: If you see 'App Status', the template is loading correctly -->
-    <span style="color: #9ca3af; font-size: 0.85rem; margin-right: 10px;" title="PWA Status">App Status</span>
-    
-    <a href="#" id="admin-install-app-btn" style="margin-right: 15px; font-weight: bold; color: #4f46e5;">Install App</a>
+    <a href="#" id="admin-install-app-btn" style="display: none; margin-right: 15px; font-weight: bold; color: #4f46e5;">Install App</a>
     {{ block.super }}
     <script>
         let deferredPrompt;
         const installBtn = document.getElementById('admin-install-app-btn');
-        console.log('Admin PWA Script Loaded'); // Check your browser console for this
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('beforeinstallprompt fired - App is installable');
             e.preventDefault();
             deferredPrompt = e;
+            // Show button when ready
+            if (installBtn) installBtn.style.display = 'inline-block';
         });
-        installBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('To install the app again, you must first uninstall the existing version.\n\nOn Desktop: Click the 3 dots in the browser menu (or the App icon in the address bar) -> Uninstall U-Connect.\nOn Mobile: Long press the app icon on your home screen -> Uninstall.\n\nAfter uninstalling, refresh this page to see the install prompt again.');
-            }
-        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            installBtn.style.display = 'none';
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+        }
     </script>
 {% endblock %}
