@@ -128,7 +128,19 @@ def get_messages(request, conversation_id):
         elif other_online: s = 'delivered'
         status_updates.append({'id': msg.id, 'status': s})
     
-    return JsonResponse({'messages': data, 'statuses': status_updates})
+    # Partner info for header
+    partner_info = {}
+    if other_user:
+        partner_info['name'] = other_user.username
+        partner_info['is_online'] = other_online
+        # Try to get profile image safely
+        try:
+            if hasattr(other_user, 'profile') and other_user.profile.image:
+                partner_info['avatar'] = other_user.profile.image.url
+        except Exception:
+            pass
+            
+    return JsonResponse({'messages': data, 'statuses': status_updates, 'partner': partner_info})
 
 @login_required
 def update_typing_status(request, conversation_id):

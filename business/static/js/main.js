@@ -225,6 +225,50 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         });
                     }
+                    
+                    // Update Header Status (Online/Offline)
+                    if (data.partner) {
+                        const header = document.querySelector('.chat-room-header');
+                        if (header) {
+                            // Check if we need to restructure header for the new layout
+                            let infoContainer = header.querySelector('.header-info');
+                            if (!infoContainer) {
+                                // Get existing elements
+                                const backBtn = header.querySelector('.back-btn');
+                                const nameEl = header.querySelector('.chat-username');
+                                const nameText = nameEl ? nameEl.textContent : data.partner.name;
+                                
+                                // Create new structure
+                                if (nameEl) nameEl.remove();
+                                
+                                const avatarUrl = data.partner.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(nameText) + '&background=random';
+                                
+                                const html = `
+                                    <div class="header-user-container">
+                                        <img src="${avatarUrl}" class="header-profile-pic" alt="Profile">
+                                        <div class="header-info">
+                                            <div class="chat-username">${nameText}</div>
+                                            <div class="header-status">
+                                                <span class="status-dot ${data.partner.is_online ? 'online' : 'offline'}"></span>
+                                                <span class="status-text">${data.partner.is_online ? 'Active' : 'Inactive'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                if (backBtn) backBtn.insertAdjacentHTML('afterend', html);
+                            } else {
+                                // Just update status
+                                const dot = header.querySelector('.status-dot');
+                                const text = header.querySelector('.status-text');
+                                if (dot) {
+                                    dot.className = `status-dot ${data.partner.is_online ? 'online' : 'offline'}`;
+                                }
+                                if (text) {
+                                    text.textContent = data.partner.is_online ? 'Active' : 'Inactive';
+                                }
+                            }
+                        }
+                    }
                 });
             };
             
@@ -309,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const resizeHandler = () => {
             if (window.innerWidth <= 768) {
                 // Calculate visible height minus header (approx 70px)
-                const height = window.visualViewport.height - 70;
+                const height = window.visualViewport.height; // Full height as main header is hidden
                 chatContainer.style.height = `${height}px`;
                 if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
             }
