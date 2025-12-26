@@ -24,6 +24,7 @@
             </div>
             <div class="navbar-links">
                 <ul>
+                    {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'business:home' %}" title="Buy">
                             <i class="bi bi-shop"></i>
@@ -49,6 +50,19 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{% url 'users:home' %}" title="Account">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Account</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'users:logout' %}" title="Logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li>
                         <a href="{% url 'business:about' %}" title="About">
                             <i class="bi bi-info-circle"></i>
                             <span>About</span>
@@ -61,17 +75,18 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'users:home' %}" title="Account">
-                            <i class="bi bi-person-circle"></i>
-                            <span>Account</span>
+                        <a href="{% url 'users:login' %}" title="Login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'users:logout' %}" title="Logout">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Logout</span>
+                        <a href="{% url 'users:register' %}" title="Register">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Register</span>
                         </a>
                     </li>
+                    {% endif %}
                     <li><a><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button><span>Theme</span></a></li>
                 </ul>
                 
