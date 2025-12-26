@@ -505,4 +505,49 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // --- Load More Items (AJAX) ---
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            const btn = this;
+            const page = btn.getAttribute('data-page');
+            const container = document.getElementById('items-grid');
+            
+            // Construct URL with existing params
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('page', page);
+            const url = `${window.location.pathname}?${urlParams.toString()}`;
+
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                    
+                    if (data.has_next) {
+                        btn.setAttribute('data-page', parseInt(page) + 1);
+                        btn.disabled = false;
+                        btn.textContent = 'Load More';
+                    } else {
+                        btn.remove();
+                    }
+                } else {
+                    btn.remove();
+                }
+            })
+            .catch(err => {
+                console.error('Error loading items:', err);
+                btn.disabled = false;
+                btn.textContent = 'Load More';
+            });
+        });
+    }
 });

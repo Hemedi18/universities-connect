@@ -23,6 +23,20 @@ class Category(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
+
+        if not self.code:
+            # Auto-generate code (CAT-XX) if not provided
+            existing_codes = Category.objects.filter(code__startswith='CAT-').values_list('code', flat=True)
+            max_val = 0
+            for c in existing_codes:
+                try:
+                    val = int(c.split('-')[1])
+                    if val > max_val:
+                        max_val = val
+                except (IndexError, ValueError):
+                    pass
+            self.code = f"CAT-{max_val + 1:02d}"
+
         super().save(*args, **kwargs)
 
     def __str__(self):

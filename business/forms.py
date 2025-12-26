@@ -57,7 +57,7 @@ class ItemForm(forms.ModelForm):
                 # Add a special class to identify dynamic attributes for JS wizard
                 self.fields[field_name].widget.attrs['data-wizard-step'] = '2' # Default to step 2
                 # If it's Brand/Make, move to step 1
-                if attr.name in ['Brand', 'Make', 'Provider', 'Publisher']:
+                if attr.name in ['Brand', 'Make', 'Provider', 'Publisher', 'Company']:
                     self.fields[field_name].widget.attrs['data-wizard-step'] = '1'
 
     def save(self, commit=True):

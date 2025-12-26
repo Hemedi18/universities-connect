@@ -18,20 +18,15 @@
                 <a href="{% url 'business:post_item' %}?category={{ category.id }}" class="category-link">
                     <div class="category-info">
                         <div class="category-icon-wrapper"><i class="bi {{ category.icon }}"></i></div>
-                        <span class="category-name">{{ category.name }}</span>
+                        <div class="category-text-wrapper">
+                            <span class="category-name">{{ category.name }}</span>
+                            {% if category.children.exists %}
+                                <span class="category-sub-label">View Subcategories</span>
+                            {% endif %}
+                        </div>
                     </div>
                     <i class="bi bi-chevron-right"></i>
                 </a>
-                <!-- Show children if any -->
-                {% if category.children.all %}
-                    <div class="subcategory-list">
-                        {% for child in category.children.all %}
-                            <a href="{% url 'business:post_item' %}?category={{ child.id }}" class="subcategory-link">
-                                {{ child.name }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
             </div>
         {% endfor %}
     </div>

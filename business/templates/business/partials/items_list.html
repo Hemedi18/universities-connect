@@ -1,0 +1,16 @@
+{% for item in items %}
+<div class="item-card">
+    <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+        {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+        {% endif %}
+        <div class="item-details">
+            <h3 class="item-title">{{ item.title }}</h3>
+            <p class="item-price">{{ item.price }}</p>
+            <div class="item-meta">
+                <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location }}</span>
+            </div>
+        </div>
+    </a>
+</div>
+{% endfor %}

@@ -148,6 +148,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Related Products Section -->
+        {% if related_items %}
+        <div class="category-section" style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
+            <div class="category-header">
+                <h2 class="category-title">Related Products</h2>
+            </div>
+            <div class="horizontal-scroll-container">
+                {% for r_item in related_items %}
+                    <div class="item-card">
+                        <a href="{% url 'business:item_detail' r_item.id %}" class="item-link-block">
+                            <img src="{{ r_item.image.url }}" alt="{{ r_item.title }}" class="item-image">
+                            <div class="item-details">
+                                <h3 class="item-title">{{ r_item.title }}</h3>
+                                <p class="item-price">{{ r_item.price }}</p>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="{% url 'business:home' %}?category={{ item.category_obj.id }}" class="btn-outline-icon" style="font-size: 0.9rem; padding: 0.5rem 1.5rem; display: inline-flex;">
+                    <span>View More</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
