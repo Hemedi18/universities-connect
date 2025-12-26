@@ -164,15 +164,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function getTickHtml(status) {
             let tickClass = 'tick-sent';
-            let text = '✔';
-            if (status === 'delivered') {
-                text = '✔✔';
-                tickClass = 'tick-delivered';
-            } else if (status === 'read') {
-                text = '✔✔';
-                tickClass = 'tick-read';
+            // SVG for single tick (Check)
+            let svgContent = '<path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>';
+            
+            if (status === 'delivered' || status === 'read') {
+                // SVG for double tick (Done All)
+                svgContent = '<path fill="currentColor" d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"/>';
+                tickClass = (status === 'read') ? 'tick-read' : 'tick-delivered';
             }
-            return `<span class="tick-icon ${tickClass}">${text}</span>`;
+            return `<span class="tick-icon ${tickClass}"><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">${svgContent}</svg></span>`;
         }
 
         function appendMessage(msg) {
@@ -202,9 +202,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (getMessagesUrl) {
-            setInterval(() => {
+            const fetchMessages = () => {
                 const lastMsg = messagesContainer.querySelector('.message-bubble:last-child');
-                const lastId = lastMsg ? lastMsg.dataset.id : 0;
+                // Ensure lastId is valid; if data-id is missing/undefined, default to 0 to prevent server errors
+                const lastId = (lastMsg && lastMsg.dataset.id) ? lastMsg.dataset.id : 0;
                 fetch(`${getMessagesUrl}?last_id=${lastId}`)
                 .then(res => res.json())
                 .then(data => { 
@@ -216,14 +217,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             const bubble = document.querySelector(`.message-bubble[data-id="${st.id}"]`);
                             if (bubble && bubble.classList.contains('sent')) {
                                 const timeDiv = bubble.querySelector('.message-time');
-                                const existingTick = timeDiv.querySelector('.tick-icon');
-                                if(existingTick) existingTick.remove();
-                                timeDiv.insertAdjacentHTML('beforeend', getTickHtml(st.status));
+                                if (timeDiv) {
+                                    const existingTick = timeDiv.querySelector('.tick-icon');
+                                    if(existingTick) existingTick.remove();
+                                    timeDiv.insertAdjacentHTML('beforeend', getTickHtml(st.status));
+                                }
                             }
                         });
                     }
                 });
-            }, 2000);
+            };
+            
+            // Run immediately to update existing messages
+            fetchMessages();
+            // Poll every 2 seconds
+            setInterval(fetchMessages, 2000);
         }
     }
 
@@ -257,5 +265,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (document.querySelector('.container-mobile-full')) {
         document.body.classList.add('page-sell-mobile');
+    }
+
+    // --- Global: Unread Messages Badge ---
+    function updateUnreadCount() {
+        fetch('/chat/api/unread/')
+            .then(response => response.json())
+            .then(data => {
+                const count = data.count;
+                // Find chat link in navbar - assuming it contains 'chat' or 'inbox' in href
+                const chatLinks = document.querySelectorAll('a[href*="/chat/"]');
+                chatLinks.forEach(link => {
+                    let badge = link.querySelector('.nav-badge');
+                    if (count > 0) {
+                        if (!badge) {
+                            badge = document.createElement('span');
+                            badge.className = 'nav-badge';
+                            link.appendChild(badge);
+                            link.style.position = 'relative'; // Ensure positioning context
+                        }
+                        badge.textContent = count;
+                        badge.style.display = 'flex';
+                    } else if (badge) {
+                        badge.style.display = 'none';
+                    }
+                });
+            })
+            .catch(err => console.log('Error fetching unread count:', err));
+    }
+    
+    // Poll every 5 seconds if user is logged in (check if chat link exists)
+    if (document.querySelector('a[href*="/chat/"]')) {
+        updateUnreadCount();
+        setInterval(updateUnreadCount, 5000);
+    }
+
+    // --- Chat Room: Mobile Keyboard Fix ---
+    // Uses visualViewport API to resize container when keyboard pushes screen up
+    if (window.visualViewport && document.querySelector('.chat-room-container')) {
+        const chatContainer = document.querySelector('.chat-room-container');
+        const msgContainer = document.getElementById('messagesContainer');
+        
+        const resizeHandler = () => {
+            if (window.innerWidth <= 768) {
+                // Calculate visible height minus header (approx 70px)
+                const height = window.visualViewport.height - 70;
+                chatContainer.style.height = `${height}px`;
+                if (msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight;
+            }
+        };
+
+        window.visualViewport.addEventListener('resize', resizeHandler);
     }
 });

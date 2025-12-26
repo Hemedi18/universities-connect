@@ -148,3 +148,9 @@ def check_typing_status(request, conversation_id):
         return JsonResponse({"is_typing": bool(is_typing)})
     
     return JsonResponse({"is_typing": False})
+
+@login_required
+def get_total_unread(request):
+    # Count unread messages in all conversations for this user
+    count = Message.objects.filter(conversation__participants=request.user, is_read=False).exclude(sender=request.user).count()
+    return JsonResponse({'count': count})

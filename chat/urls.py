@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/messages/<int:conversation_id>/', views.get_messages, name='get_messages'),
     path('typing/update/<int:conversation_id>/', views.update_typing_status, name='update_typing'),
     path('typing/check/<int:conversation_id>/', views.check_typing_status, name='check_typing'),
+    path('api/unread/', views.get_total_unread, name='get_total_unread'),
 ]
