@@ -10,6 +10,7 @@ class ItemForm(forms.ModelForm):
             'price',
             'condition',
             'description',
+            'campus_location',
             'contact_method',
             'contact_email',
             'contact_phone',
@@ -19,4 +20,5 @@ class ItemForm(forms.ModelForm):
         ]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+            'campus_location': forms.TextInput(attrs={'placeholder': 'e.g. Hall 5, Library, Main Gate'}),
         }
