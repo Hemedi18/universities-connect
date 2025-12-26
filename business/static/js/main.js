@@ -359,4 +359,150 @@ document.addEventListener('DOMContentLoaded', function() {
 
         window.visualViewport.addEventListener('resize', resizeHandler);
     }
+
+    // --- Sell Page: Multi-step Wizard ---
+    const sellForm = document.querySelector('.sell-container form');
+    if (sellForm) {
+        // Wrap existing form groups into steps
+        const groups = Array.from(sellForm.querySelectorAll('.form-group'));
+        if (groups.length > 0) {
+            // Create Step Containers
+            const step1 = document.createElement('div'); step1.className = 'wizard-step active'; step1.dataset.step = '1';
+            const step2 = document.createElement('div'); step2.className = 'wizard-step'; step2.dataset.step = '2';
+            const step3 = document.createElement('div'); step3.className = 'wizard-step'; step3.dataset.step = '3';
+
+            step1.innerHTML = '<h3 class="step-title" style="margin-bottom:1rem; grid-column:1/-1;">Step 1: Basic Information</h3>';
+            step2.innerHTML = '<h3 class="step-title" style="margin-bottom:1rem; grid-column:1/-1;">Step 2: Detailed Specifications</h3>';
+            step3.innerHTML = '<h3 class="step-title" style="margin-bottom:1rem; grid-column:1/-1;">Step 3: Payment & Order Details</h3>';
+
+            // Distribute fields based on name or data attribute
+            groups.forEach(group => {
+                const input = group.querySelector('input, select, textarea');
+                if (!input) return;
+                const name = input.name;
+                
+                // Step 1: Basic Info (Title, Condition, Image, Brand/Make)
+                if (['title', 'condition', 'image'].includes(name) || input.getAttribute('data-wizard-step') === '1') {
+                    step1.appendChild(group);
+                }
+                // Step 3: Payment & Order (Price, Stock, Min Order, Shipping, Contact)
+                else if (['price', 'compare_at_price', 'stock_quantity', 'minimum_order_quantity', 'contact_method', 'contact_email', 'contact_phone', 'image2', 'image3', 'sku', 'tax_class', 'shipping_weight', 'shipping_dimensions'].includes(name)) {
+                    step3.appendChild(group);
+                }
+                // Step 2: Detailed Info (Description, Location, Attributes)
+                else {
+                    step2.appendChild(group);
+                }
+            });
+            
+            // Insert Steps
+            const submitBtn = sellForm.querySelector('.btn-submit');
+            sellForm.insertBefore(step1, submitBtn);
+            sellForm.insertBefore(step2, submitBtn);
+            sellForm.insertBefore(step3, submitBtn);
+
+            // Create Navigation Buttons
+            const navDiv = document.createElement('div');
+            navDiv.className = 'wizard-nav';
+            navDiv.innerHTML = `
+                <button type="button" class="btn-prev" style="display:none;">Previous</button>
+                <button type="button" class="btn-next">Next</button>
+            `;
+            sellForm.insertBefore(navDiv, submitBtn);
+
+            // Hide Submit initially
+            submitBtn.style.display = 'none';
+
+            // Wizard Logic
+            let currentStep = 1;
+            const totalSteps = 3;
+            
+            // Auto-detect step with errors
+            const steps = [step1, step2, step3];
+            for (let i = 0; i < steps.length; i++) {
+                if (steps[i].querySelector('.error-text-custom') || steps[i].querySelector('.errorlist')) {
+                    currentStep = i + 1;
+                    break;
+                }
+            }
+
+            const prevBtn = navDiv.querySelector('.btn-prev');
+            const nextBtn = navDiv.querySelector('.btn-next');
+
+            function updateWizard() {
+                document.querySelectorAll('.wizard-step').forEach(s => {
+                    s.style.display = s.dataset.step == currentStep ? '' : 'none';
+                });
+
+                prevBtn.style.display = currentStep === 1 ? 'none' : 'inline-block';
+                
+                if (currentStep === totalSteps) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                } else {
+                    nextBtn.style.display = 'inline-block';
+                    submitBtn.style.display = 'none';
+                }
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if(currentStep < totalSteps) {
+                    currentStep++;
+                    updateWizard();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if(currentStep > 1) {
+                    currentStep--;
+                    updateWizard();
+                }
+            });
+
+            updateWizard(); // Init
+        }
+    }
+
+    // --- Custom Datalist Logic ---
+    const customDatalistContainers = document.querySelectorAll('.custom-datalist-container');
+    
+    customDatalistContainers.forEach(container => {
+        const input = container.querySelector('input');
+        const list = container.querySelector('.custom-datalist');
+        
+        if (!input || !list) return;
+        
+        const options = Array.from(list.querySelectorAll('.custom-option'));
+        
+        const filterOptions = () => {
+            const filter = input.value.toLowerCase();
+            let hasVisible = false;
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    option.style.display = 'block';
+                    hasVisible = true;
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            list.classList.toggle('active', hasVisible);
+        };
+
+        input.addEventListener('focus', () => { list.classList.add('active'); filterOptions(); });
+        input.addEventListener('input', () => { list.classList.add('active'); filterOptions(); });
+        
+        // Hide on click outside
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) list.classList.remove('active');
+        });
+        
+        // Handle option click
+        list.addEventListener('click', (e) => {
+            if (e.target.classList.contains('custom-option')) {
+                input.value = e.target.getAttribute('data-value');
+                list.classList.remove('active');
+            }
+        });
+    });
 });

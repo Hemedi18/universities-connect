@@ -1,0 +1,39 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Select Category - U-Connect{% endblock %}
+
+{% block content %}
+<div class="form-container sell-container">
+    <h2>What are you selling?</h2>
+    {% if parent_category %}
+        <p class="text-muted" style="text-align: center; margin-bottom: 2rem;">Select a sub-category for <strong>{{ parent_category.name }}</strong></p>
+        <a href="javascript:history.back()" class="back-link" style="display:block; text-align:center; margin-bottom:1rem;"><i class="bi bi-arrow-left"></i> Back</a>
+    {% else %}
+        <p class="text-muted" style="text-align: center; margin-bottom: 2rem;">Choose a category to get started</p>
+    {% endif %}
+    
+    <div class="category-selection-list">
+        {% for category in categories %}
+            <div class="category-item-select">
+                <a href="{% url 'business:post_item' %}?category={{ category.id }}" class="category-link">
+                    <div class="category-info">
+                        <div class="category-icon-wrapper"><i class="bi {{ category.icon }}"></i></div>
+                        <span class="category-name">{{ category.name }}</span>
+                    </div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <!-- Show children if any -->
+                {% if category.children.all %}
+                    <div class="subcategory-list">
+                        {% for child in category.children.all %}
+                            <a href="{% url 'business:post_item' %}?category={{ child.id }}" class="subcategory-link">
+                                {{ child.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

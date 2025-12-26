@@ -36,31 +36,85 @@
             <!-- Info Section -->
             <div class="product-info">
                 <h1>{{ item.title }}</h1>
-                <p class="item-price item-price-large">{{ item.price }}</p>
+                <p class="item-price item-price-large">
+                    {{ item.price }}
+                    {% if item.compare_at_price %}
+                        <span style="text-decoration: line-through; color: var(--text-muted); font-size: 0.5em; font-weight: normal;">{{ item.compare_at_price }}</span>
+                    {% endif %}
+                </p>
                 
                 <div class="product-location">
                     <i class="bi bi-geo-alt-fill"></i>
                     <span>{{ item.campus_location }}</span>
                 </div>
                 
-                <div class="item-meta-grid">
-                    <div>
-                        <small class="text-uppercase-muted">Condition</small>
-                        <div class="font-weight-600">{{ item.get_condition_display }}</div>
-                    </div>
-                    <div>
-                        <small class="text-uppercase-muted">Category</small>
-                        <div class="font-weight-600">{{ item.get_category_display }}</div>
-                    </div>
-                    <div>
-                        <small class="text-uppercase-muted">Location</small>
-                        <div class="font-weight-600">{{ item.campus_location }}</div>
-                    </div>
-                    <div>
-                        <small class="text-uppercase-muted">Posted</small>
-                        <div class="font-weight-600">{{ item.created_at|date:"M d, Y" }}</div>
-                    </div>
+                <div class="attributes-section" style="margin-top: 1rem;">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Condition</th>
+                                <td>{{ item.condition|default:"N/A"|title }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Category</th>
+                                <td>{{ item.category_obj.name|default:item.category|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Location</th>
+                                <td>{{ item.campus_location|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Posted</th>
+                                <td>{{ item.created_at|date:"M d, Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Stock</th>
+                                <td>{{ item.stock_quantity|default:"0" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Min. Order</th>
+                                <td>{{ item.minimum_order_quantity|default:"1" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">SKU</th>
+                                <td>{{ item.sku|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Weight</th>
+                                <td>{% if item.shipping_weight %}{{ item.shipping_weight }} kg{% else %}N/A{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dimensions</th>
+                                <td>{{ item.shipping_dimensions|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tax Class</th>
+                                <td>{{ item.tax_class|default:"N/A" }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Seller</th>
+                                <td>{{ item.seller.username|default:"N/A" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+
+                <!-- Dynamic Attributes Section -->
+                {% if item.attribute_values.all %}
+                <div class="attributes-section">
+                    <h3 class="description-title">Specifications</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            {% for attr_val in item.attribute_values.all %}
+                            <tr>
+                                <th scope="row">{{ attr_val.attribute.name }}</th>
+                                <td>{{ attr_val.value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
 
                 <div class="description-section">
                     <h3 class="description-title">Description</h3>

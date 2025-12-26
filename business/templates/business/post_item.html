@@ -3,29 +3,42 @@
 {% block title %}Sell Item - U-Connect{% endblock %}
 
 {% block content %}
-<div class="form-container sell-container container-mobile-full">
-    <h2>{{ title|default:"Sell an Item" }}</h2>
-    <form method="post" enctype="multipart/form-data">
+<div class="form-container sell-container">
+    <h2>Sell Item {% if category %}<small class="text-muted" style="font-size: 0.6em;">in {{ category.name }}</small>{% endif %}</h2>
+    
+    <form method="post" enctype="multipart/form-data" action="?category={{ category.id }}">
         {% csrf_token %}
         
+        {% if form.non_field_errors %}
+            <div class="errorlist">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
         <div class="form-grid">
         {% for field in form %}
-        <div class="form-group {% if field.name == 'description' %}full-width{% endif %}">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}
-                <p class="help-text-custom">{{ field.help_text }}</p>
-            {% endif %}
-            {% if field.errors %}
-                <div class="error-text-custom">
-                    {{ field.errors }}
+            <div class="form-group {% if field.name == 'description' or field.name == 'title' %}full-width{% endif %}" {% if field.is_hidden %}style="display:none;"{% endif %}>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                
+                <div class="custom-datalist-container">
+                    {{ field }}
+                    
+                    {% if field.field.datalist_options %}
+                    <ul class="custom-datalist">
+                        {% for option in field.field.datalist_options %}
+                            <li class="custom-option" data-value="{{ option }}">{{ option }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
-            {% endif %}
-        </div>
+
+                {% if field.help_text %}<p class="help-text-custom">{{ field.help_text }}</p>{% endif %}
+                {% if field.errors %}<div class="error-text-custom">{{ field.errors }}</div>{% endif %}
+            </div>
         {% endfor %}
         </div>
-        
-        <button type="submit" class="btn-submit">{{ button_text|default:"Post Item" }}</button>
+
+        <button type="submit" class="btn-submit">Post Item</button>
     </form>
 </div>
 {% endblock %}

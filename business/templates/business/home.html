@@ -1,43 +1,73 @@
 {% extends 'business/base.html' %}
 
-{% block title %}Buy - U-Connect{% endblock %}
+{% block title %}
+    {% if search_query %}Search: {{ search_query }}
+    {% elif current_category %}{{ current_category.name }}
+    {% else %}Marketplace{% endif %} - U-Connect
+{% endblock %}
 
 {% block content %}
 <div class="home-container-mobile">
-    <h1 class="home-title">Marketplace</h1>
-    
-    {% if items %}
-        {# Sort items by category first so regroup works correctly #}
-        {% regroup items|dictsort:"category" by get_category_display as category_list %}
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form action="{% url 'business:home' %}" method="get" class="search-form">
+            <input type="text" name="q" placeholder="Search products..." value="{{ search_query|default:'' }}" class="search-input">
+            <button type="submit" class="search-btn"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
 
-        {% for category in category_list %}
-        <div class="category-section">
-            <div class="category-header">
-                <h2 class="category-title">{{ category.grouper }}</h2>
-            </div>
-            
-            <div class="horizontal-scroll-container">
-                {% for item in category.list %}
-                <div class="item-card">
-                    <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
-                        {% if item.image %}
-                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
-                        {% endif %}
-                        <div class="item-details">
-                            <h3 class="item-title">{{ item.title }}</h3>
-                            <p class="item-price">{{ item.price }}</p>
-                            <div class="item-meta">
-                                <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location }}</span>
-                            </div>
+    {% if search_query %}
+        <h1 class="home-title">Search Results for "{{ search_query }}"</h1>
+        <a href="{% url 'business:home' %}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Categories</a>
+    {% elif current_category %}
+        <h1 class="home-title">{{ current_category.name }}</h1>
+        <a href="{% url 'business:home' %}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Categories</a>
+    {% else %}
+        <h1 class="home-title">Browse Categories</h1>
+    {% endif %}
+    
+    {% if categories %}
+        <!-- Categories Grid -->
+        <div class="category-selection-list home-categories">
+            {% for category in categories %}
+                <div class="category-item-select">
+                    <a href="{% url 'business:home' %}?category={{ category.id }}" class="category-link">
+                        <div class="category-info">
+                            <div class="category-icon-wrapper"><i class="bi {{ category.icon }}"></i></div>
+                            <span class="category-name">{{ category.name }}</span>
                         </div>
+                        <i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+    {% elif items %}
+        <!-- Items Grid -->
+        <div class="items-grid">
+            {% for item in items %}
+            <div class="item-card">
+                <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                    {% endif %}
+                    <div class="item-details">
+                        <h3 class="item-title">{{ item.title }}</h3>
+                        <p class="item-price">{{ item.price }}</p>
+                        <div class="item-meta">
+                            <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location }}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p class="home-empty-text">No items listed yet. Be the first to sell!</p>
+        <div class="empty-state">
+            <p class="home-empty-text">No items found.</p>
+            {% if search_query or current_category %}
+                <a href="{% url 'business:home' %}" class="btn-submit" style="width: auto; display: inline-block; margin-top: 1rem;">Browse All Categories</a>
+            {% endif %}
+        </div>
     {% endif %}
 </div>
 {% endblock %}
