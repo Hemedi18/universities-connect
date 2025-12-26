@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | U-Connect Admin{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="manifest" href="/manifest.json">
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                console.log('ServiceWorker registration successful');
+            }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+</script>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">U-Connect Administration</a></h1>
+{% endblock %}
+
+{% block userlinks %}
+    <!-- Debug Indicator: If you see 'App Status', the template is loading correctly -->
+    <span style="color: #9ca3af; font-size: 0.85rem; margin-right: 10px;" title="PWA Status">App Status</span>
+    
+    <a href="#" id="admin-install-app-btn" style="margin-right: 15px; font-weight: bold; color: #4f46e5;">Install App</a>
+    {{ block.super }}
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('admin-install-app-btn');
+        console.log('Admin PWA Script Loaded'); // Check your browser console for this
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt fired - App is installable');
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+        installBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('App installation is not available.\n\nPossible reasons:\n1. App is already installed.\n2. Not running on localhost or HTTPS.\n3. Manifest icons are missing or invalid.\n\nCheck the browser console for details.');
+            }
+        });
+    </script>
+{% endblock %}

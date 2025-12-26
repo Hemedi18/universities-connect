@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/uconnect.ico' %}">
+    <link rel="manifest" href="/manifest.json">
     <!-- The title block can be overridden by child templates -->
     <title>{% block title %}U-Connect{% endblock %}</title>
     
@@ -87,6 +89,14 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% if user.is_superuser %}
+                    <li id="install-app-item">
+                        <a href="#" id="install-app-btn" title="Install App">
+                            <i class="bi bi-download"></i>
+                            <span>Install</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     <li><a><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button><span>Theme</span></a></li>
                 </ul>
                 
@@ -144,5 +154,39 @@
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="{% static 'js/main.js' %}"></script>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
+        let deferredPrompt;
+        const installItem = document.getElementById('install-app-item');
+        const installBtn = document.getElementById('install-app-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        deferredPrompt = null;
+                    });
+                } else {
+                    alert('App installation is not available. Check if already installed or not served via HTTPS/localhost.');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

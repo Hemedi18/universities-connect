@@ -1,0 +1,61 @@
+{% extends "admin/index.html" %}
+{% load static %}
+{% load admin_dashboard %}
+
+{% block content %}
+<div style="margin-bottom: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h2 style="margin-top: 0; color: #333; font-size: 18px; margin-bottom: 15px;">New Items (Last 30 Days)</h2>
+    <div style="height: 300px; width: 100%;">
+        <canvas id="itemsChart"></canvas>
+    </div>
+</div>
+
+{% get_daily_stats as stats %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('itemsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ stats.labels|safe }},
+            datasets: [{
+                label: 'New Items',
+                data: {{ stats.data|safe }},
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: '#4f46e5'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+{{ block.super }}
+{% endblock %}
