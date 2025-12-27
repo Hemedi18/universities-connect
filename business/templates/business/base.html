@@ -1,5 +1,6 @@
 {% load static %}
 {% load pwa %}
+{% load admin_dashboard %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +18,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
@@ -47,6 +49,15 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{% url 'business:user_notifications' %}" title="Notifications" class="position-relative">
+                            <i class="bi bi-bell"></i>
+                            <span>Alerts</span>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; margin-left: -10px; margin-top: 5px;">{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url 'chat:inbox' %}" title="Messages">
                             <i class="bi bi-chat-dots-fill"></i>
                             <span>Chat</span>
@@ -64,6 +75,21 @@
                             <span>Logout</span>
                         </a>
                     </li>
+                    {% if user|is_company_owner %}
+                    <li>
+                        <a href="{% url 'business:company_dashboard' %}" title="Company Dashboard" style="color: #4f46e5; font-weight: bold;">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'business:personal_dashboard' %}" title="My Dashboard">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     {% else %}
                     <li>
                         <a href="{% url 'business:about' %}" title="About">
@@ -90,12 +116,14 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% if user.is_superuser %}
                     <li id="install-app-item">
                         <a href="#" id="install-app-btn" title="Install App">
                             <i class="bi bi-download"></i>
                             <span>Install</span>
                         </a>
                     </li>
+                    {% endif %}
                     <li><a><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button><span>Theme</span></a></li>
                 </ul>
                 
@@ -108,7 +136,7 @@
         </nav>
     </header>
 
-    <main class="container">
+    <main class="container {% block main_class %}{% endblock %}">
         <!-- This is where the content of other pages will be inserted -->
         {% block content %}{% endblock %}
     </main>
@@ -125,6 +153,7 @@
                     <li><a href="{% url 'business:home' %}">Marketplace</a></li>
                     <li><a href="{% url 'business:about' %}">About Us</a></li>
                     <li><a href="{% url 'business:contact' %}">Contact Support</a></li>
+                    <li><a href="{% url 'business:documentation' %}">Documentation</a></li>
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>

@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your models here.
 
@@ -50,6 +54,22 @@ class Attribute(models.Model):
     def __str__(self):
         return self.name
 
+class Company(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company_profile')
+    name = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    followers = models.ManyToManyField(User, related_name='following_companies', blank=True)
+    is_verified = models.BooleanField(default=False)
+    address = models.CharField(max_length=255, blank=True, help_text="Physical location of the company")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Companies"
+
 class Item(models.Model):
     # --- Global Requirements (Mandatory for ALL Products) ---
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -63,6 +83,7 @@ class Item(models.Model):
     # Category (Link to Categories Table)
     category = models.CharField(max_length=50, default='others', blank=True) # Kept for legacy data
     category_obj = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='items', verbose_name="Category")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
     
     # Base Price & Compare Price
     price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Base Price")
@@ -102,6 +123,8 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, default='active')
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='purchases')
+    is_pinned = models.BooleanField(default=False, verbose_name="Pinned to Top")
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -113,3 +136,87 @@ class ProductAttributeValue(models.Model):
     
     def __str__(self):
         return f"{self.product.title} - {self.attribute.name}: {self.value}"
+
+class Notification(models.Model):
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    link = models.CharField(max_length=255, blank=True, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Notification for {self.recipient.username}"
+
+class Review(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=5)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+class Comment(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.item}"
+
+class Report(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='reports')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reason = models.CharField(max_length=255)
+    details = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Report: {self.company.name}"
+
+@receiver(post_save, sender=Item)
+def send_new_item_notification(sender, instance, created, **kwargs):
+    """
+    Signal to send email notification to company followers when a new item is posted.
+    """
+    if created and instance.company:
+        followers = instance.company.followers.all()
+        
+        # Create in-app notifications
+        notifications_to_create = []
+        for user in followers:
+            notifications_to_create.append(Notification(
+                recipient=user,
+                message=f"New from {instance.company.name}: {instance.title}",
+                link=f"/item/{instance.id}/"
+            ))
+        Notification.objects.bulk_create(notifications_to_create)
+
+        recipient_list = [user.email for user in followers if user.email]
+        
+        if recipient_list:
+            subject = f"New Product from {instance.company.name}: {instance.title}"
+            # In production, use your actual domain or Django's Site framework
+            item_url = f"http://127.0.0.1:8000/item/{instance.id}/"
+            
+            message = (
+                f"Hello,\n\n"
+                f"{instance.company.name} has just posted a new product: {instance.title}.\n\n"
+                f"Price: {instance.price}\n\n"
+                f"View it here: {item_url}\n\n"
+                f"Best regards,\nU-Connect Team"
+            )
+            
+            send_mail(
+                subject,
+                message,
+                getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@u-connect.com'),
+                recipient_list,
+                fail_silently=True
+            )

@@ -30,6 +30,96 @@
         <a href="{% url 'business:home' %}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Categories</a>
     {% else %}
         <!-- Default Home Feed Header -->
+        {% if featured_items %}
+        <div class="category-section" style="margin-bottom: 2rem;">
+            <div class="category-header">
+                <h2 class="category-title"><i class="bi bi-star-fill text-warning"></i> Featured Products</h2>
+            </div>
+            <div class="horizontal-scroll-container">
+                {% for item in featured_items %}
+                    <div class="item-card">
+                        <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                            {% else %}
+                            <div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="item-details">
+                                <h3 class="item-title">{{ item.title }}</h3>
+                                <p class="item-price">{{ item.price }}</p>
+                                <div class="item-meta">
+                                    <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location|truncatechars:15 }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if trending_items %}
+        <div class="category-section" style="margin-bottom: 2rem;">
+            <div class="category-header">
+                <h2 class="category-title"><i class="bi bi-graph-up-arrow text-primary"></i> Trending Now</h2>
+            </div>
+            <div class="horizontal-scroll-container">
+                {% for item in trending_items %}
+                    <div class="item-card">
+                        <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                            {% else %}
+                            <div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="item-details">
+                                <h3 class="item-title">{{ item.title }}</h3>
+                                <p class="item-price">{{ item.price }}</p>
+                                <div class="item-meta">
+                                    <span class="item-location"><i class="bi bi-eye-fill"></i> {{ item.views }} views</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if recently_viewed %}
+        <div class="category-section" style="margin-bottom: 2rem;">
+            <div class="category-header">
+                <h2 class="category-title"><i class="bi bi-clock-history text-secondary"></i> Recently Viewed</h2>
+            </div>
+            <div class="horizontal-scroll-container">
+                {% for item in recently_viewed %}
+                    <div class="item-card">
+                        <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+                            {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+                            {% else %}
+                            <div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                            <div class="item-details">
+                                <h3 class="item-title">{{ item.title }}</h3>
+                                <p class="item-price">{{ item.price }}</p>
+                                <div class="item-meta">
+                                    <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location|truncatechars:15 }}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <h2 class="home-title" style="font-size: 1.5rem; margin-top: 1rem;">
             Recommended for You
         </h2>

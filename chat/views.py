@@ -40,7 +40,7 @@ def chat_room(request, conversation_id):
     unread_messages.update(is_read=True)
 
     if request.method == 'POST':
-        form = MessageForm(request.POST)
+        form = MessageForm(request.POST, request.FILES)
         if form.is_valid():
             message = form.save(commit=False)
             message.conversation = conversation
@@ -54,6 +54,7 @@ def chat_room(request, conversation_id):
                     'message': {
                         'id': message.id,
                         'content': message.content,
+                        'image_url': message.image.url if message.image else None,
                         'timestamp': message.timestamp.strftime("%I:%M %p"),
                         'sender_id': request.user.id
                     }
@@ -114,6 +115,7 @@ def get_messages(request, conversation_id):
             'id': msg.id,
             'sender_id': msg.sender.id,
             'content': msg.content,
+            'image_url': msg.image.url if msg.image else None,
             'timestamp': msg.timestamp.strftime("%I:%M %p"),
             'is_sent': msg.sender == request.user,
             'status': status

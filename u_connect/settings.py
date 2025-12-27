@@ -36,10 +36,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = [
     # Local apps
+    'business', # Move business above jazzmin to override templates
     'users',
-    'business',
     'chat',
     'pwa',
+    'jazzmin',
 
     # Default Django apps
     'django.contrib.admin',
@@ -74,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'business.context_processors.notifications',
             ],
         },
     },
@@ -174,3 +176,64 @@ PWA_APP_ICONS_APPLE = [
     }
 ]
 PWA_APP_LANG = 'en-us'
+
+# Jazzmin Admin Settings
+JAZZMIN_SETTINGS = {
+    "site_title": "U-Connect Admin",
+    "site_header": "U-Connect",
+    "site_brand": "U-Connect",
+    "welcome_sign": "Welcome to U-Connect Admin",
+    "copyright": "U-Connect",
+    "search_model": "auth.User",
+    "show_sidebar": True,
+    "navigation_expanded": False,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "users.user": "fas fa-user",
+        "business.item": "fas fa-shopping-bag",
+    },
+    "show_ui_builder": True,
+    "custom_links": {
+        "business": [{
+            "name": "View Site", 
+            "url": "/", 
+            "icon": "fas fa-globe",
+        }]
+    }
+}
+
+# Jazzmin UI Tweaks (Purple Theme)
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-purple",
+    "accent": "accent-purple",
+    "navbar": "navbar-purple navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-light-purple",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
+
+# Email Settings (Development)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@u-connect.com'

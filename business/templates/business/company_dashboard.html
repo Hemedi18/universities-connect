@@ -1,0 +1,380 @@
+{% extends "business/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - {{ company.name }}{% endblock %}
+
+{% block main_class %}dashboard-full-width{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+        <div class="sidebar-header">
+            {% if company.logo %}
+            <img src="{{ company.logo.url }}" alt="Logo" class="sidebar-logo">
+            {% else %}
+            <div class="sidebar-logo-placeholder"><i class="bi bi-building"></i></div>
+            {% endif %}
+            <h5 class="sidebar-company-name">{{ company.name }}</h5>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#overview" class="sidebar-link active" onclick="switchTab(event, 'overview')">
+                <i class="bi bi-speedometer2"></i> <span>Overview</span>
+            </a>
+            <a href="#products" class="sidebar-link" onclick="switchTab(event, 'products')">
+                <i class="bi bi-box-seam"></i> <span>Products</span>
+            </a>
+            <a href="#reviews" class="sidebar-link" onclick="switchTab(event, 'reviews')">
+                <i class="bi bi-star"></i> <span>Reviews</span>
+            </a>
+            <a href="#comments" class="sidebar-link" onclick="switchTab(event, 'comments')">
+                <i class="bi bi-chat-left-text"></i> <span>Comments</span>
+            </a>
+            <a href="{% url 'business:edit_company_profile' %}" class="sidebar-link">
+                <i class="bi bi-gear"></i> <span>Settings</span>
+            </a>
+            <a href="{% url 'business:view_company_profile' company.id %}" class="sidebar-link" target="_blank">
+                <i class="bi bi-eye"></i> <span>View Public Page</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button id="theme-toggle-sidebar" class="theme-toggle-btn w-100 justify-content-start px-3">
+                <i class="bi bi-moon"></i> <span>Toggle Theme</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Overview Tab -->
+        <div id="overview" class="dashboard-tab active">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <h2 class="dashboard-title mb-0">Dashboard Overview</h2>
+                
+                <div class="d-flex flex-column flex-md-row gap-2 align-items-md-center">
+                    <form method="get" class="d-flex gap-2 align-items-center">
+                        <input type="date" name="start_date" class="form-control form-control-sm" value="{{ start_date|default:'' }}" title="Start Date">
+                        <span class="text-muted">-</span>
+                        <input type="date" name="end_date" class="form-control form-control-sm" value="{{ end_date|default:'' }}" title="End Date">
+                        <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-funnel"></i> Filter</button>
+                        {% if start_date or end_date %}
+                            <a href="{% url 'business:company_dashboard' %}" class="btn btn-sm btn-outline-secondary" title="Clear Filter"><i class="bi bi-x-lg"></i></a>
+                        {% endif %}
+                    </form>
+                    <a href="{% url 'business:post_item' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Add Product</a>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary-light text-primary"><i class="bi bi-box-seam"></i></div>
+                    <div class="stat-info">
+                        <h3>{{ total_products }}</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-success-light text-success"><i class="bi bi-eye"></i></div>
+                    <div class="stat-info">
+                        <h3>{{ total_views }}</h3>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning-light text-warning"><i class="bi bi-star"></i></div>
+                    <div class="stat-info">
+                        <h3>{{ avg_rating|floatformat:1 }}</h3>
+                        <p>Avg Rating ({{ total_reviews }})</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-info-light text-info"><i class="bi bi-cart-check"></i></div>
+                    <div class="stat-info">
+                        <h3>{{ items.count }}</h3> 
+                        <p>Active Listings</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="dashboard-card h-100">
+                        <div class="card-header-custom">
+                            <h5>Views per Category</h5>
+                        </div>
+                        <div class="card-body-custom">
+                            <canvas id="viewsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="dashboard-card h-100">
+                        <div class="card-header-custom">
+                            <h5>Product Status</h5>
+                        </div>
+                        <div class="card-body-custom">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending & Suggestions -->
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="dashboard-card">
+                        <div class="card-header-custom">
+                            <h5>Trending Products (Most Viewed)</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Views</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in trending_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {% if item.image %}
+                                                <img src="{{ item.image.url }}" class="rounded" width="40" height="40" style="object-fit: cover;">
+                                                {% else %}
+                                                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="bi bi-image"></i></div>
+                                                {% endif %}
+                                                <span class="fw-bold text-truncate" style="max-width: 150px;">{{ item.title }}</span>
+                                            </div>
+                                        </td>
+                                        <td>{{ item.views }}</td>
+                                        <td>{{ item.price }}</td>
+                                        <td><span class="badge bg-success">{{ item.status|title }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="dashboard-card">
+                        <div class="card-header-custom">
+                            <h5>Suggestions & Alerts</h5>
+                        </div>
+                        <div class="suggestions-list">
+                            {% for suggestion in suggestions %}
+                            <div class="suggestion-item">
+                                <div class="suggestion-icon"><i class="bi bi-lightbulb text-warning"></i></div>
+                                <div class="suggestion-content">
+                                    <h6>{{ suggestion.item.title }}</h6>
+                                    <ul class="mb-0 ps-3 small text-muted">
+                                        {% for issue in suggestion.issues %}
+                                        <li>{{ issue }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <a href="{% url 'business:edit_item' suggestion.item.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-check-circle text-success fs-1"></i>
+                                <p class="mt-2">Great job! No suggestions found.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products" class="dashboard-tab">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="dashboard-title">My Products</h2>
+                <a href="{% url 'business:post_item' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Product</a>
+            </div>
+            <div class="dashboard-card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Views</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>
+                                    {% if item.image %}
+                                    <img src="{{ item.image.url }}" class="rounded" width="50" height="50" style="object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-image"></i></div>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-bold">{{ item.title }}</td>
+                                <td>{{ item.category_obj.name }}</td>
+                                <td>{{ item.price }}</td>
+                                <td>{{ item.stock_quantity }}</td>
+                                <td>{{ item.views }}</td>
+                                <td>
+                                    <span class="badge {% if item.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ item.status|title }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'business:edit_item' item.id %}" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="bi bi-pencil"></i></a>
+                                        <a href="{% url 'business:toggle_pin_item' item.id %}" class="btn btn-sm {% if item.is_pinned %}btn-warning{% else %}btn-outline-secondary{% endif %}" title="Pin"><i class="bi bi-pin-angle"></i></a>
+                                        <a href="{% url 'business:delete_item' item.id %}" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this item?')"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="reviews" class="dashboard-tab">
+            <h2 class="dashboard-title mb-4">Product Reviews</h2>
+            <div class="dashboard-card">
+                {% if recent_reviews %}
+                <div class="list-group list-group-flush">
+                    {% for review in recent_reviews %}
+                    <div class="list-group-item p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">{{ review.user.username }}</h6>
+                                <div class="text-warning small mb-2">
+                                    {% for i in "12345"|make_list %}{% if forloop.counter <= review.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}{% endfor %}
+                                </div>
+                                <p class="mb-1 text-muted">{{ review.comment }}</p>
+                            </div>
+                            <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-chat-square-text fs-1"></i>
+                    <p class="mt-3">No reviews yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Comments Tab -->
+        <div id="comments" class="dashboard-tab">
+            <h2 class="dashboard-title mb-4">Product Comments</h2>
+            <div class="dashboard-card">
+                {% if recent_comments %}
+                <div class="list-group list-group-flush">
+                    {% for comment in recent_comments %}
+                    <div class="list-group-item p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="mb-1">{{ comment.user.username }} <span class="text-muted fw-normal">on</span> <a href="{% url 'business:item_detail' comment.item.id %}" class="text-decoration-none">{{ comment.item.title }}</a></h6>
+                                    <small class="text-muted">{{ comment.created_at|date:"M d, H:i" }}</small>
+                                </div>
+                                <p class="mb-1 text-muted">{{ comment.content }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-chat-left-text fs-1"></i>
+                    <p class="mt-3">No comments yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Tab Switching Logic
+    function switchTab(event, tabId) {
+        event.preventDefault();
+        
+        // Hide all tabs
+        document.querySelectorAll('.dashboard-tab').forEach(tab => tab.classList.remove('active'));
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        
+        // Update sidebar active state
+        document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    // Charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Views Chart
+        const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+        new Chart(viewsCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ cat_labels|safe }},
+                datasets: [{
+                    label: 'Total Views',
+                    data: {{ cat_data|safe }},
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Status Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ status_labels|safe }},
+                datasets: [{
+                    data: {{ status_data|safe }},
+                    backgroundColor: ['#10b981', '#6b7280', '#ef4444']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+        
+        // Theme Toggle for Sidebar
+        const themeBtn = document.getElementById('theme-toggle-sidebar');
+        if(themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
+    });
+</script>
+{% endblock %}

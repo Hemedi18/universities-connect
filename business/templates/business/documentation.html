@@ -1,0 +1,229 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}Documentation - U-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <nav class="wiki-sidebar">
+                <div class="mb-3">
+                    <input type="text" id="docSearch" class="form-control" placeholder="Search docs...">
+                </div>
+                <h5 class="fw-bold mb-3 text-uppercase text-muted small ls-1">Contents</h5>
+                <a href="#introduction" class="wiki-nav-link">Introduction</a>
+                <a href="#getting-started" class="wiki-nav-link">Getting Started</a>
+                <a href="#buying" class="wiki-nav-link">Buying Guide</a>
+                <a href="#selling" class="wiki-nav-link">Selling Guide</a>
+                <a href="#chat" class="wiki-nav-link">Communication</a>
+                <a href="#dashboard" class="wiki-nav-link">Business Tools</a>
+                <a href="#faq" class="wiki-nav-link">FAQ & Troubleshooting</a>
+                <a href="#support" class="wiki-nav-link">Contact Support</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="wiki-content">
+                <div id="introduction" class="wiki-section">
+                    <h1 class="display-5 fw-bold mb-4">U-Connect Documentation</h1>
+                    <p class="lead text-muted">Welcome to the comprehensive user guide for U-Connect. This documentation is designed to help you navigate every feature of the platform, from setting up your account to managing a student business.</p>
+                    <p>U-Connect is a campus-centric marketplace built to facilitate safe and easy trading between students. Whether you are looking for textbooks, selling old electronics, or promoting your small business, this guide covers everything you need to know.</p>
+                </div>
+
+                <div id="getting-started" class="wiki-section">
+                    <h2>Getting Started</h2>
+                    <p>Before you can start trading, you need to set up your presence on U-Connect. Follow these steps to get up and running.</p>
+                    
+                    <h4 class="mt-4">1. Account Registration</h4>
+                    <p>To ensure safety and trust, most features require an account.</p>
+                    <ul>
+                        <li>Click on the <strong>Register</strong> link in the top navigation bar.</li>
+                        <li>Fill in your username, email address, and a strong password.</li>
+                        <li>Once registered, you will be automatically logged in.</li>
+                    </ul>
+
+                    <h4 class="mt-4">2. Setting Up Your Profile</h4>
+                    <p>A complete profile builds trust with other buyers and sellers.</p>
+                    <ul>
+                        <li>Navigate to <strong>Account</strong> in the menu.</li>
+                        <li>Click "Edit Profile" to upload a profile picture.</li>
+                        <li>Add a bio to let others know who you are (e.g., "Computer Science Student, Year 2").</li>
+                    </ul>
+
+                    <h4 class="mt-4">3. Installing the App (PWA)</h4>
+                    <p>U-Connect is a Progressive Web App, meaning you can install it on your phone without visiting an app store.</p>
+                    <ul>
+                        <li><strong>On Android:</strong> Open Chrome, tap the menu (three dots), and select "Install App" or "Add to Home Screen".</li>
+                        <li><strong>On iOS:</strong> Open Safari, tap the Share button, and select "Add to Home Screen".</li>
+                        <li><strong>On Desktop:</strong> Look for the install icon in the browser address bar.</li>
+                    </ul>
+                </div>
+
+                <div id="buying" class="wiki-section">
+                    <h2>Buying Guide</h2>
+                    <p>Finding the right item on campus has never been easier. Here is a deep dive into finding and purchasing items.</p>
+
+                    <h4 class="mt-4">Browsing and Searching</h4>
+                    <ul>
+                        <li><strong>Categories:</strong> Use the "Buy" page to explore specific categories like <em>Electronics</em>, <em>Books</em>, or <em>Fashion</em>. Subcategories help narrow down your search further.</li>
+                        <li><strong>Search Bar:</strong> Enter keywords in the search bar at the top of the home page. The search looks through item titles and descriptions.</li>
+                        <li><strong>Filters & Sorting:</strong> Use the sort dropdown to organize results by <em>Price (Low to High)</em>, <em>Newest First</em>, or <em>Popularity</em>.</li>
+                    </ul>
+
+                    <h4 class="mt-4">Understanding Item Details</h4>
+                    <p>Click on any product to view its full details page. Pay attention to:</p>
+                    <ul>
+                        <li><strong>Condition:</strong> Check if the item is New, Used, or Refurbished.</li>
+                        <li><strong>Location:</strong> See where on campus the item is located to plan your meetup.</li>
+                        <li><strong>Seller Info:</strong> View the seller's profile to see if they are a verified student or a business.</li>
+                    </ul>
+
+                    <h4 class="mt-4">Safety Tips for Buyers</h4>
+                    <div class="alert alert-info">
+                        <strong>Stay Safe:</strong> Always meet in public, well-lit areas on campus (e.g., Student Center, Library, Cafeteria). Avoid transferring money before seeing the item.
+                    </div>
+                </div>
+
+                <div id="selling" class="wiki-section">
+                    <h2>Selling Guide</h2>
+                    <p>Turn your unused items into cash or run your student business efficiently.</p>
+
+                    <h4 class="mt-4">How to Post an Item</h4>
+                    <ol>
+                        <li>Click the <strong>Sell</strong> button in the navigation bar.</li>
+                        <li><strong>Select Category:</strong> Choose the most relevant category. If unsure, check similar items on the marketplace.</li>
+                        <li><strong>Upload Photos:</strong> You can upload up to 3 images.
+                            <ul>
+                                <li><em>Tip:</em> Use good lighting and a plain background.</li>
+                                <li><em>Tip:</em> Show any defects or scratches honestly.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Description:</strong> Be detailed. Mention the brand, model, age, and reason for selling.</li>
+                        <li><strong>Price:</strong> Set a competitive price. You can check other listings to gauge the market rate.</li>
+                    </ol>
+
+                    <h4 class="mt-4">Managing Your Listings</h4>
+                    <p>Go to <strong>Account > Manage Items</strong> (or Dashboard for businesses) to:</p>
+                    <ul>
+                        <li><strong>Edit:</strong> Update the price or description if an item isn't selling.</li>
+                        <li><strong>Delete:</strong> Remove an item if you decide not to sell it.</li>
+                        <li><strong>Mark as Sold:</strong> It is good practice to remove items immediately after they are sold to avoid unnecessary messages.</li>
+                    </ul>
+                </div>
+
+                <div id="chat" class="wiki-section">
+                    <h2>Communication System</h2>
+                    <p>U-Connect features a built-in real-time chat system to keep your personal phone number private.</p>
+
+                    <h4 class="mt-4">Features</h4>
+                    <ul>
+                        <li><strong>Instant Messaging:</strong> Chat happens in real-time without page reloads.</li>
+                        <li><strong>Image Sharing:</strong> You can send additional photos of items directly in the chat.</li>
+                        <li><strong>Online Status:</strong> See if a seller is currently online or when they were last active.</li>
+                        <li><strong>Typing Indicators:</strong> Know when the other person is responding.</li>
+                    </ul>
+
+                    <h4 class="mt-4">Notifications</h4>
+                    <p>You will receive notifications for:</p>
+                    <ul>
+                        <li>New messages in your inbox.</li>
+                        <li>Updates to your order status (if applicable).</li>
+                        <li>System announcements.</li>
+                    </ul>
+                </div>
+
+                <div id="dashboard" class="wiki-section">
+                    <h2>Business Tools</h2>
+                    <p>For student entrepreneurs and power sellers, the <strong>Company Dashboard</strong> offers advanced tools to grow your business.</p>
+
+                    <h4 class="mt-4">Analytics & Insights</h4>
+                    <p>The dashboard provides visual graphs to help you understand your performance:</p>
+                    <ul>
+                        <li><strong>Views per Category:</strong> See which types of products are getting the most attention.</li>
+                        <li><strong>Trending Products:</strong> Identify your best-performing items.</li>
+                        <li><strong>Status Overview:</strong> Quickly see how many items are active, sold, or pending.</li>
+                    </ul>
+
+                    <h4 class="mt-4">AI Suggestions</h4>
+                    <p>Our system analyzes your listings and provides actionable tips, such as:</p>
+                    <ul>
+                        <li>"Description is too short" - encouraging you to add more detail.</li>
+                        <li>"Missing main image" - reminding you to add visuals.</li>
+                        <li>"Low visibility" - suggesting you share the item link externally.</li>
+                    </ul>
+                </div>
+
+                <div id="faq" class="wiki-section">
+                    <h2>FAQ & Troubleshooting</h2>
+                    <p>Encountering an issue? Check the solutions below.</p>
+
+                    <div class="accordion mt-4" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    I cannot upload images for my item.
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Ensure your image is in <strong>JPG, PNG, or JPEG</strong> format. The maximum file size allowed is <strong>5MB</strong>. If you are on a slow connection, try uploading one image at a time.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    How do I delete my account?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Currently, account deletion must be processed by an administrator for security reasons. Please contact support via the <a href="{% url 'business:contact' %}">Contact Page</a> with your request.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    A seller is not replying to my messages.
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Check the seller's profile to see their "Last Active" status. If they haven't been online recently, try finding a similar item from another seller. We encourage all users to reply within 24 hours.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="support" class="wiki-section">
+                    <div class="alert alert-light border mt-5">
+                        <h4 class="h5">Still need help?</h4>
+                        <p class="mb-0">Contact our support team at <a href="mailto:support@u-connect.com">support@u-connect.com</a> or visit the <a href="{% url 'business:contact' %}">Contact Page</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('docSearch');
+        const sections = document.querySelectorAll('.wiki-section');
+
+        searchInput.addEventListener('keyup', function(e) {
+            const term = e.target.value.toLowerCase();
+            
+            sections.forEach(section => {
+                const text = section.innerText.toLowerCase();
+                section.style.display = text.includes(term) ? 'block' : 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

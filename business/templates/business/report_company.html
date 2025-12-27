@@ -1,0 +1,36 @@
+{% extends "business/base.html" %}
+{% load static %}
+
+{% block title %}Report {{ company.name }} | U-Connect{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-flag-fill"></i> Report {{ company.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Please describe why you are reporting this company. This report will be reviewed by our administration.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Reason</label>
+                            {{ form.reason }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Details</label>
+                            {{ form.details }}
+                        </div>
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'business:view_company_profile' company.id %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Submit Report</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

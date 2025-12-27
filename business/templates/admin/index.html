@@ -1,61 +1,67 @@
 {% extends "admin/index.html" %}
-{% load static %}
-{% load admin_dashboard %}
+{% load static admin_dashboard %}
 
 {% block content %}
-<div style="margin-bottom: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h2 style="margin-top: 0; color: #333; font-size: 18px; margin-bottom: 15px;">New Items (Last 30 Days)</h2>
-    <div style="height: 300px; width: 100%;">
-        <canvas id="itemsChart"></canvas>
+{% get_daily_stats as daily_stats %}
+{% get_category_stats as category_stats %}
+
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-6 col-sm-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-line"></i> New Items</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="dailyItemsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-pie"></i> Categories</h3>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryItemsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
-{% get_daily_stats as stats %}
+{{ block.super }}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('itemsChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {{ stats.labels|safe }},
-            datasets: [{
-                label: 'New Items',
-                data: {{ stats.data|safe }},
-                borderColor: '#4f46e5',
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4,
-                pointRadius: 3,
-                pointBackgroundColor: '#4f46e5'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Daily Items Chart
+        const dailyCtx = document.getElementById('dailyItemsChart').getContext('2d');
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: {{ daily_stats.labels|safe }},
+                datasets: [{
+                    label: 'New Items',
+                    data: {{ daily_stats.data|safe }},
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
 
-{{ block.super }}
+        // Category Items Chart
+        const catCtx = document.getElementById('categoryItemsChart').getContext('2d');
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ category_stats.labels|safe }},
+                datasets: [{ data: {{ category_stats.data|safe }}, backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de', '#4f46e5', '#ec4899', '#8b5cf6', '#10b981'] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    });
+</script>
 {% endblock %}

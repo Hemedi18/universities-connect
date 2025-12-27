@@ -7,14 +7,22 @@
     <div class="chat-room-header">
         <a href="{% url 'chat:inbox' %}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
         <div class="chat-user-info">
-            <span class="chat-username">{{ other_user.first_name|default:other_user.username }}</span>
+            <span class="chat-username" id="chat-username">{{ other_user.first_name|default:other_user.username }}</span>
+            <div id="status-container" class="header-status">
+                <span id="typing-indicator" style="display: none;">typing...</span>
+            </div>
         </div>
     </div>
 
     <div class="messages-container" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
         {% for message in messages %}
         <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}" data-id="{{ message.id }}">
-            <div class="message-content">{{ message.content }}</div>
+            {% if message.image %}
+                <img src="{{ message.image.url }}" alt="Image" class="chat-image">
+            {% endif %}
+            {% if message.content %}
+                <div class="message-content">{{ message.content }}</div>
+            {% endif %}
             <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
         </div>
         {% empty %}
@@ -22,13 +30,81 @@
         {% endfor %}
     </div>
 
+    <button id="scrollToBottomBtn" class="scroll-bottom-btn" style="display: none;">
+        <i class="bi bi-arrow-down"></i>
+    </button>
+
     <div class="chat-input-area">
-        <form method="post" class="chat-input-form">
+        <form method="post" class="chat-input-form" enctype="multipart/form-data">
             {% csrf_token %}
+            <label for="chat-image-input" class="chat-file-label">
+                <i class="bi bi-paperclip" style="font-size: 1.5rem;"></i>
+            </label>
+            {{ form.image }}
             {{ form.content }}
             <button type="submit" class="btn-send"><i class="bi bi-send-fill"></i></button>
         </form>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const scrollBtn = document.getElementById('scrollToBottomBtn');
+
+        // Initial scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Show/Hide button on scroll
+        messagesContainer.addEventListener('scroll', function() {
+            if (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 300) {
+                scrollBtn.style.display = 'flex';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        });
+
+        // Scroll to bottom on click
+        scrollBtn.addEventListener('click', function() {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // --- Typing Indicator Logic ---
+    const chatInput = document.querySelector('input[name="content"]');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const conversationId = "{{ conversation.id }}";
+    const otherUserId = "{{ other_user.id }}";
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    // 1. Send typing status when this user types
+    chatInput.addEventListener('input', () => {
+        fetch(`/chat/room/${conversationId}/typing/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        });
+    });
+
+    // 2. Check for other user's typing status periodically
+    setInterval(() => {
+        // The main get_messages poll in main.js already handles online status.
+        // This is specifically for the typing indicator.
+        fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_typing) {
+                    typingIndicator.style.display = 'inline';
+                } else {
+                    typingIndicator.style.display = 'none';
+                }
+            });
+    }, 2500); // Check every 2.5 seconds
+</script>
 {% endblock %}
