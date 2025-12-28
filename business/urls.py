@@ -29,4 +29,5 @@ urlpatterns = [
     path('review/delete/<int:review_id>/', views.delete_review, name='delete_review'),
     path('company/<int:company_id>/report/', views.report_company, name='report_company'),
     path('item/pin/<int:item_id>/', views.toggle_pin_item, name='toggle_pin_item'),
+    path('ajax/load-districts/', views.load_districts, name='ajax_load_districts'),
 ]

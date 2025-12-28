@@ -1,0 +1,22 @@
+<div class="item-card">
+    <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+        {% else %}
+        <div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-image text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="item-details">
+            <h3 class="item-title">{{ item.title }}</h3>
+            <p class="item-price">{{ item.price }}</p>
+            <div class="item-meta">
+                {% if meta_type == 'views' %}
+                <span class="item-location"><i class="bi bi-eye-fill"></i> {{ item.views }} views</span>
+                {% else %}
+                <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location|truncatechars:15 }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+</div>

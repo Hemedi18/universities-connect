@@ -4,33 +4,33 @@
 {% block title %}Edit Company Profile | U-Connect{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0">Edit Company Profile</h4>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold">Edit Company Profile</h4>
                 </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="companyForm" data-districts-url="{% url 'business:ajax_load_districts' %}">
                         {% csrf_token %}
                         
                         {% for field in form %}
                         <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
                             {{ field }}
                             {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
+                            <div class="form-text">{{ field.help_text }}</div>
                             {% endif %}
                             {% if field.errors %}
-                                <div class="text-danger">{{ field.errors }}</div>
+                            <div class="text-danger small mt-1">{{ field.errors }}</div>
                             {% endif %}
                         </div>
                         {% endfor %}
 
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
                             <a href="{% url 'business:company_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -38,4 +38,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const regionSelect = document.getElementById('id_region');
+        const districtSelect = document.getElementById('id_district');
+        const url = document.getElementById('companyForm').getAttribute('data-districts-url');
+
+        regionSelect.addEventListener('change', function() {
+            const regionId = this.value;
+            
+            fetch(`${url}?region=${regionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    districtSelect.innerHTML = '<option value="">---------</option>';
+                    data.forEach(district => {
+                        districtSelect.innerHTML += `<option value="${district.id}">${district.name}</option>`;
+                    });
+                })
+                .catch(error => console.error('Error loading districts:', error));
+        });
+    });
+</script>
 {% endblock %}

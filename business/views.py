@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from .forms import ItemForm, CompanyForm, ReviewForm, ReportForm, CommentForm
-from .models import Item, Category, ProductAttributeValue, Company, Notification, Review, Report, Comment
+from .models import Item, Category, ProductAttributeValue, Company, Notification, Review, Report, Comment, District
 
 # Create your views here.
 
@@ -40,6 +40,10 @@ def home(request):
             Q(title__icontains=query) | 
             Q(description__icontains=query)
         ).select_related('category_obj')
+        
+        # Fetch trending items for empty state if no results found
+        if not items.exists():
+            trending_items = Item.objects.filter(status='active').order_by('-views')[:8]
     
     # 2. Category Filter
     elif category_id:
@@ -83,6 +87,25 @@ def home(request):
     # Default Home Feed: Show Recommendations / Items
     else:
         is_home_feed = True
+        
+        # Fetch categories for top navigation (Visual Hierarchy)
+        categories = Category.objects.filter(parent=None)
+        icon_mapping = {
+            'Electronics': 'bi-laptop',
+            'Transportation': 'bi-car-front-fill',
+            'Food & Beverages': 'bi-basket2-fill',
+            'Fashion': 'bi-bag-heart-fill',
+            'Home & Kitchen': 'bi-house-door-fill',
+            'Health & Beauty': 'bi-heart-pulse-fill',
+            'Real Estate': 'bi-buildings-fill',
+            'Industrial': 'bi-tools',
+            'Media & Books': 'bi-book-half',
+            'Services': 'bi-people-fill',
+            'Others': 'bi-grid-fill',
+        }
+        for cat in categories:
+            cat.icon = icon_mapping.get(cat.name, 'bi-tag-fill')
+
         last_search = request.session.get('last_search')
         # Show all active items by default (as requested: "see all products as normal")
         items = Item.objects.filter(status='active')
@@ -440,7 +463,7 @@ def edit_company_profile(request):
 
 def view_company_profile(request, company_id):
     company = get_object_or_404(Company, pk=company_id)
-    items_qs = Item.objects.filter(company=company, status='active').order_by('-is_pinned', '-created_at')
+    items_qs = Item.objects.filter(company=company, status='active').order_by('-created_at')
 
     query = request.GET.get('q')
     if query:
@@ -448,8 +471,20 @@ def view_company_profile(request, company_id):
             Q(title__icontains=query) | 
             Q(description__icontains=query)
         )
+
+    # Category Filter
+    cat_filter = request.GET.get('category')
+    if cat_filter:
+        items_qs = items_qs.filter(category_obj__id=cat_filter)
+
+    # Separate Pinned Items (Featured) from Main Grid
+    pinned_items = items_qs.filter(is_pinned=True)
+    items = items_qs.exclude(is_pinned=True)
+
+    # Get categories for filter chips (only categories that have items)
+    company_categories = Category.objects.filter(items__company=company, items__status='active').distinct()
     
-    paginator = Paginator(items_qs, 12) # Show 12 items per page
+    paginator = Paginator(items, 12) # Show 12 items per page
     page_number = request.GET.get('page')
     items = paginator.get_page(page_number)
 
@@ -472,8 +507,29 @@ def view_company_profile(request, company_id):
 
     avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     review_form = ReviewForm()
+    report_form = ReportForm()
+
+    # Business Hours Logic
+    is_open = False
+    now = timezone.localtime().time()
+    if company.opening_time and company.closing_time:
+        if company.opening_time <= now <= company.closing_time:
+            is_open = True
     
-    return render(request, 'business/company_profile.html', {'company': company, 'items': items, 'is_following': is_following, 'reviews': reviews, 'avg_rating': avg_rating, 'review_form': review_form, 'review_sort': review_sort})
+    return render(request, 'business/company_profile.html', {
+        'company': company, 
+        'items': items, 
+        'pinned_items': pinned_items,
+        'is_following': is_following, 
+        'reviews': reviews, 
+        'avg_rating': avg_rating, 
+        'review_form': review_form, 
+        'report_form': report_form,
+        'review_sort': review_sort,
+        'company_categories': company_categories,
+        'current_category': cat_filter,
+        'is_open': is_open
+    })
 
 @login_required
 def toggle_follow_company(request, company_id):
@@ -561,3 +617,8 @@ def toggle_pin_item(request, item_id):
         item.is_pinned = not item.is_pinned
         item.save()
     return redirect('business:view_company_profile', company_id=item.company.id)
+
+def load_districts(request):
+    region_id = request.GET.get('region')
+    districts = District.objects.filter(region_id=region_id).order_by('name')
+    return JsonResponse(list(districts.values('id', 'name')), safe=False)
