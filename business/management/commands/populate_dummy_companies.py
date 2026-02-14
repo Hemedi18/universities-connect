@@ -21,8 +21,8 @@ class Command(BaseCommand):
 
         # 2. Define the Tech Company
         company_data = {
-            'username': 'tech_galaxy_admin',
-            'password': 'password123',
+            'username': 'electronics',
+            'password': 'hemy@2004',
             'email': 'admin@techgalaxy.com',
             'name': 'Tech Galaxy Tanzania',
             'desc': 'The #1 Premium Electronics Retailer in Tanzania. Authentic products, warranty included.',
