@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
-from django.urls import reverse
-from .models import Category, Attribute, Item, ProductAttributeValue, Company, Notification, Review, Report
+from django.urls import reverse 
+from .models import Category, Attribute, Item, ProductAttributeValue, Notification
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -27,12 +27,6 @@ class AttributeAdmin(admin.ModelAdmin):
 class ProductAttributeValueInline(admin.TabularInline):
     model = ProductAttributeValue
     extra = 1
-
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'is_verified', 'created_at')
-    list_filter = ('is_verified',)
-    search_fields = ('name', 'user__username', 'address')
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
@@ -62,17 +56,6 @@ class ProductAttributeValueAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'message', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
-
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('user', 'company', 'rating', 'created_at')
-    list_filter = ('rating', 'created_at')
-
-@admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
-    list_display = ('company', 'user', 'reason', 'created_at', 'is_resolved')
-    list_filter = ('is_resolved', 'created_at')
-    search_fields = ('company__name', 'user__username', 'reason')
 
 # Unregister existing User admin to extend it
 try:

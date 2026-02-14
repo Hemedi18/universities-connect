@@ -22,9 +22,11 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('business.urls')),
+    path('', include('customer.urls')),
+    path('business/', include('business.urls')),
     path('users/', include('users.urls')),
     path('chat/', include('chat.urls')),
+    path('company/', include('company.urls')),
     path('', include('pwa.urls')),
 ]
 

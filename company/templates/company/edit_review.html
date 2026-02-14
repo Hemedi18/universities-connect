@@ -1,0 +1,64 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}Edit Review - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="mb-4">Edit Your Review for {{ company.name }}</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.rating }}
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input">
+                                {% for i in "12345" %}
+                                    <i class="bi bi-star fs-3 text-warning" data-value="{{ forloop.counter }}" style="cursor: pointer;"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Review</label>
+                            {{ form.comment }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update Review</button>
+                            <a href="{% url 'company:profile' company.id %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize stars based on existing value
+    const initialRating = document.getElementById('id_rating').value;
+    updateStars(initialRating);
+
+    document.querySelectorAll('.rating-input i').forEach(star => {
+        star.addEventListener('click', function() {
+            const value = this.dataset.value;
+            document.getElementById('id_rating').value = value;
+            updateStars(value);
+        });
+    });
+
+    function updateStars(value) {
+        document.querySelectorAll('.rating-input i').forEach(s => {
+            if (s.dataset.value <= value) {
+                s.classList.remove('bi-star');
+                s.classList.add('bi-star-fill');
+            } else {
+                s.classList.remove('bi-star-fill');
+                s.classList.add('bi-star');
+            }
+        });
+    }
+</script>
+{% endblock %}

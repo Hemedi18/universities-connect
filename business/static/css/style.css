@@ -1,6 +1,7 @@
 :root {
     --primary-color: #4f46e5;
     --primary-hover: #4338ca;
+    --primary-glow: rgba(79, 70, 229, 0.4);
     --bg-color: #f3f4f6;
     --card-bg: #ffffff;
     --text-main: #1f2937;
@@ -11,6 +12,7 @@
 
 body.dark-mode {
     --bg-color: #111827;
+    --primary-glow: rgba(129, 140, 248, 0.3);
     --card-bg: #1f2937;
     --text-main: #f9fafb;
     --text-muted: #9ca3af;
@@ -2365,18 +2367,41 @@ body.page-chat-room {
 }
 
 /* =========================================
+   ANIMATIONS & AOS
+   ========================================= */
+[data-aos] {
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+[data-aos="fade-up"] {
+    transform: translateY(50px);
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes shine {
+    from { transform: translateX(-100%) skewX(-25deg); }
+    to { transform: translateX(200%) skewX(-25deg); }
+}
+
+/* =========================================
    PAGE: COMPANY DASHBOARD (New Layout)
    ========================================= */
 .dashboard-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: 260px 1fr;
     min-height: 100vh;
     width: 100%;
 }
 
 .dashboard-sidebar {
-    width: 260px;
-    background-color: var(--card-bg);
-    border-right: 1px solid var(--border-color);
+    width: 100%;
+    background: linear-gradient(160deg, #4f46e5 0%, #6366f1 100%);
+    color: white;
     display: flex;
     flex-direction: column;
     position: sticky;
@@ -2384,12 +2409,18 @@ body.page-chat-room {
     height: 100vh;
     overflow-y: auto;
     flex-shrink: 0;
+    transition: width 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 4px 0 25px rgba(79, 70, 229, 0.15);
+    border-right: none;
+    z-index: 100;
 }
 
 .sidebar-header {
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
 }
 
 .sidebar-logo {
@@ -2404,19 +2435,22 @@ body.page-chat-room {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #e0e7ff;
-    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     margin: 0 auto 0.5rem;
+    backdrop-filter: blur(5px);
 }
 
 .sidebar-company-name {
     font-weight: 700;
     font-size: 1rem;
     margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .sidebar-nav {
@@ -2428,27 +2462,33 @@ body.page-chat-room {
     display: flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    color: var(--text-muted);
+    margin: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 500;
     transition: all 0.2s;
     gap: 0.75rem;
+    border-radius: 0.75rem;
+    border: none;
 }
 
 .sidebar-link:hover, .sidebar-link.active {
-    background-color: rgba(79, 70, 229, 0.05);
-    color: var(--primary-color);
-    border-right: 3px solid var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    backdrop-filter: blur(5px);
 }
 
 .sidebar-link i {
     font-size: 1.2rem;
+    transition: transform 0.2s;
 }
 
 .sidebar-footer {
     padding: 1rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
+.dashboard-title { font-weight: 800; }
 .dashboard-main {
     flex-grow: 1;
     padding: 1.5rem;
@@ -2475,11 +2515,31 @@ body.page-chat-room {
 .stat-card {
     background: var(--card-bg);
     padding: 1.5rem;
-    border-radius: 1rem;
-    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+    border: none;
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(110deg, transparent 40%, var(--primary-glow) 50%, transparent 60%);
+    animation: shine 2.5s infinite linear;
 }
 
 .stat-icon {
@@ -2490,12 +2550,54 @@ body.page-chat-room {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
+    transition: transform 0.3s ease;
 }
 
-.bg-primary-light { background: #e0e7ff; }
-.bg-success-light { background: #dcfce7; }
-.bg-warning-light { background: #fef3c7; }
-.bg-info-light { background: #e0f2fe; }
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(-8deg);
+}
+
+/* New Colorful Gradients for Stat Cards */
+.stat-card.gradient-blue { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border: none; }
+.stat-card.gradient-green { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: none; }
+.stat-card.gradient-orange { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: none; }
+.stat-card.gradient-purple { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border: none; }
+
+.stat-card.gradient-blue .stat-icon,
+.stat-card.gradient-green .stat-icon,
+.stat-card.gradient-orange .stat-icon,
+.stat-card.gradient-purple .stat-icon {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+}
+
+.welcome-decoration {
+    position: absolute;
+    right: -20px;
+    bottom: -40px;
+    font-size: 12rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.bg-primary-light { background: rgba(79, 70, 229, 0.15); color: #4f46e5; }
+.bg-success-light { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.bg-warning-light { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.bg-info-light { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
 
 .stat-info h3 {
     font-size: 1.5rem;
@@ -2512,15 +2614,24 @@ body.page-chat-room {
 
 .dashboard-card {
     background: var(--card-bg);
-    border-radius: 1rem;
-    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+    border: none;
     overflow: hidden;
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
 }
 
 .card-header-custom {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
     font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .card-header-custom h5 { margin: 0; font-size: 1.1rem; font-weight: 700; }
@@ -2534,6 +2645,7 @@ body.page-chat-room {
     display: flex;
     gap: 1rem;
     padding: 1rem;
+    transition: background-color 0.2s ease;
     border-bottom: 1px solid var(--border-color);
     align-items: flex-start;
 }
@@ -2541,6 +2653,10 @@ body.page-chat-room {
 .suggestion-item:last-child { border-bottom: none; }
 
 .suggestion-icon {
+    background-color: #fffbe6;
+    color: #f59e0b;
+    padding: 0.5rem;
+    border-radius: 50%;
     font-size: 1.2rem;
     margin-top: 2px;
 }
@@ -2554,14 +2670,20 @@ body.page-chat-room {
     font-weight: 600;
 }
 
+body.dark-mode .dashboard-sidebar { 
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    box-shadow: 2px 0 15px rgba(0,0,0,0.2); 
+}
+body.dark-mode .stat-card:hover { box-shadow: 0 12px 25px rgba(0,0,0,0.2); }
+body.dark-mode .dashboard-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
 @media (max-width: 992px) {
     .dashboard-wrapper {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
     }
     
-    
     .dashboard-sidebar {
-        width: 100%;
         height: auto;
         position: static;
         border-right: none;
@@ -2573,6 +2695,12 @@ body.page-chat-room {
         display: flex;
         overflow-x: auto;
         padding: 0;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE 10+ */
+    }
+
+    .sidebar-nav::-webkit-scrollbar { 
+        display: none; /* Chrome/Safari */
     }
     
     .sidebar-link {
@@ -2582,8 +2710,9 @@ body.page-chat-room {
     }
     
     .sidebar-link:hover, .sidebar-link.active {
-        border-right: none;
-        border-bottom-color: var(--primary-color);
+        transform: none;
+        background-color: transparent;
+        border-bottom: 3px solid var(--primary-color);
     }
 
     .dashboard-main {

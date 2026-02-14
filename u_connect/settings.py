@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'business', # Move business above jazzmin to override templates
     'users',
     'chat',
+    'company',
+    'customer',
     'pwa',
     'jazzmin',
 

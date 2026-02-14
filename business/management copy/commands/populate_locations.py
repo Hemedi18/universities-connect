@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from company.models import Region, District
+from business.models import Region, District
 
 class Command(BaseCommand):
     help = 'Populates Tanzania Regions and Districts'

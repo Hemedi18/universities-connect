@@ -58,7 +58,7 @@ def register_user(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('business:home')
+            return redirect('customer:home')
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
@@ -71,7 +71,11 @@ def login_user(request):
             login(request, user)
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
-            return redirect('business:home')
+            
+            # Redirect business users to dashboard, others to home
+            if hasattr(user, 'company_profile'):
+                return redirect('company:dashboard')
+            return redirect('customer:home')
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})

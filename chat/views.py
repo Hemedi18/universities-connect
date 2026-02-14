@@ -39,6 +39,17 @@ def chat_room(request, conversation_id):
     unread_messages = conversation.messages.filter(is_read=False).exclude(sender=request.user)
     unread_messages.update(is_read=True)
 
+    other_user = conversation.participants.exclude(id=request.user.id).first()
+    if not other_user:
+        # Handle case where the other user is deleted
+        class DeletedUser:
+            username = "Deleted User"
+            first_name = "Deleted User"
+            id = None
+            def __str__(self):
+                return self.username
+        other_user = DeletedUser()
+
     if request.method == 'POST':
         form = MessageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -67,7 +78,7 @@ def chat_room(request, conversation_id):
         'conversation': conversation,
         'messages': conversation.messages.all(),
         'form': form,
-        'other_user': conversation.participants.exclude(id=request.user.id).first()
+        'other_user': other_user
     })
 
 @login_required

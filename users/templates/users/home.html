@@ -1,85 +1,115 @@
-{% extends "business/base.html" %}
+{% extends 'business/base.html' %}
 {% load static %}
 
 {% block title %}My Account - U-Connect{% endblock %}
 
 {% block content %}
-<div class="account-container">
-    <!-- 1. Profile Header -->
-    <div class="profile-header">
-        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
-        <div class="profile-info">
-            <h1>{{ user.first_name|default:user.username }} {{ user.last_name }}</h1>
-            <p class="text-muted">{{ user.profile.major|default:'No major specified' }}</p>
-            {% if user.profile.is_email_verified %}
-                <span class="verification-badge">✔️ Verified</span>
-            {% endif %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">My Account</h2>
+            <p class="text-muted">Manage your purchases, sales, and business profile.</p>
         </div>
-        <a href="{% url 'users:edit_profile' %}" class="btn-edit-profile">Edit Profile</a>
     </div>
 
-    <!-- 2. Dashboard -->
-    <div class="dashboard">
-        <div class="tabs">
-            <button class="tab-link active" data-tab="Listings">My Listings</button>
-            <button class="tab-link" data-tab="History">History</button>
-            <button class="tab-link" data-tab="Watchlist">Watchlist</button>
-            <button class="tab-link" data-tab="Settings">Settings</button>
-        </div>
-
-        <div id="Listings" class="tab-content">
-            <h3>My Active Listings</h3>
-            {% if active_listings %}
-                <div class="items-grid">
-                    {% for item in active_listings %}
-                    <div class="item-card">
-                        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
-                        <div class="item-details">
-                            <h4 class="item-title">{{ item.title }}</h4>
-                            <p class="item-price">{{ item.price }}</p>
-                            <div class="item-manage-buttons item-manage-btns">
-                                <a href="{% url 'business:edit_item' item.id %}" class="btn-icon edit" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                                <a href="{% url 'business:delete_item' item.id %}" class="btn-icon delete delete-item-btn" title="Delete"><i class="bi bi-trash"></i></a>
-                            </div>
-                        </div>
+    <!-- Business Options -->
+    <div class="row mb-5 g-4">
+        <div class="col-md-6">
+            <div class="card h-100 border-primary shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-person-workspace fs-1 text-primary"></i>
                     </div>
+                    <h3 class="h4 mb-3">Personal Business</h3>
+                    <p class="text-muted mb-4">Sell products as an individual seller. Track your personal sales and manage items.</p>
+                    <a href="{% url 'business:personal_dashboard' %}" class="btn btn-primary w-100">
+                        <i class="bi bi-speedometer2 me-2"></i> Manage Personal Business
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-success shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-building fs-1 text-success"></i>
+                    </div>
+                    <h3 class="h4 mb-3">Company Business</h3>
+                    {% if user.company_profile %}
+                        <p class="text-muted mb-4">Manage your registered company store, products, and reviews.</p>
+                        <a href="{% url 'company:dashboard' %}" class="btn btn-success w-100">
+                            <i class="bi bi-speedometer me-2"></i> Go to Company Dashboard
+                        </a>
+                    {% else %}
+                        <p class="text-muted mb-4">Register a verified company profile to build your brand and unlock features.</p>
+                        <a href="{% url 'company:register' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle me-2"></i> Register Company
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Purchases -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h4 class="h5 mb-0">My Purchases</h4>
+        </div>
+        <div class="card-body">
+            {% if my_purchases %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in my_purchases %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'customer:item_detail' item.id %}" class="text-decoration-none">
+                                        {{ item.title }}
+                                    </a>
+                                </td>
+                                <td>{{ item.created_at|date:"M d, Y" }}</td>
+                                <td>{{ item.price }}</td>
+                                <td><span class="badge bg-success">Purchased</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center my-3">You haven't purchased any items yet.</p>
+                <div class="text-center">
+                    <a href="{% url 'customer:home' %}" class="btn btn-outline-primary btn-sm">Start Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Watchlist -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h4 class="h5 mb-0">My Watchlist</h4>
+        </div>
+        <div class="card-body">
+            {% if watchlist_items %}
+                <div class="row row-cols-1 row-cols-md-4 g-3">
+                    {% for item in watchlist_items %}
+                        <div class="col">
+                            {% include 'business/partials/_item_card.html' %}
+                        </div>
                     {% endfor %}
                 </div>
             {% else %}
-                <p>You have no active listings. <a href="{% url 'business:post_item' %}">Sell something!</a></p>
+                <p class="text-muted text-center my-3">Your watchlist is empty.</p>
             {% endif %}
-        </div>
-
-        <div id="History" class="tab-content d-none-important">
-            <h3>Sold History</h3>
-            {% for item in sold_history %}<p>{{item.title}}</p>{% empty %}<p>You haven't sold any items yet.</p>{% endfor %}
-            <hr>
-            <h3>My Purchases</h3>
-            {% for item in my_purchases %}<p>{{item.title}}</p>{% empty %}<p>You haven't purchased any items yet.</p>{% endfor %}
-        </div>
-
-        <div id="Watchlist" class="tab-content d-none-important">
-            <h3>My Watchlist</h3>
-            {% if watchlist_items %}
-                <div class="items-grid">
-                    {% for item in watchlist_items %}
-                    <div class="item-card">
-                        <a href="#">
-                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
-                            <div class="item-details">
-                                <h5 class="item-title">{{ item.title }}</h5>
-                                <p class="item-price">{{ item.price }}</p>
-                            </div>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}<p>Your watchlist is empty.</p>{% endif %}
-        </div>
-
-        <div id="Settings" class="tab-content d-none-important">
-            <h4>Safe Meetup Guide</h4>
-            <p>Always meet in well-lit, public places on campus. Recommended spots include the Library Lobby, Student Union, or near campus police stations. Never share personal financial information.</p>
         </div>
     </div>
 </div>

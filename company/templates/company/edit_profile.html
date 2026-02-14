@@ -1,0 +1,39 @@
+{% extends "business/base.html" %}
+{% load static %}
+
+{% block title %}Edit Company Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2>Edit Company Profile</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger mb-3" style="color: #ef4444;">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="help-text">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn-submit">Save Changes</button>
+            <a href="{% url 'business:company_dashboard' %}" class="btn-submit" style="background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); text-align: center; text-decoration: none;">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

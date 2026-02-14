@@ -25,25 +25,27 @@
     <header class="main-header">
         <nav class="navbar">
             <div class="navbar-brand">
-                <a href="{% url 'business:home' %}">U-Connect</a>
+                <a href="{% url 'customer:home' %}">U-Connect</a>
             </div>
             <div class="navbar-links">
                 <ul>
-                    {% if user.is_authenticated %}
                     <li>
-                        <a href="{% url 'business:home' %}" title="Buy">
+                        <a href="{% url 'customer:home' %}" title="Buy">
                             <i class="bi bi-shop"></i>
                             <span>Buy</span>
                         </a>
                     </li>
+                    {% if user.is_authenticated %}
+                    {% if user|is_company_owner or user.item_set.exists %}
                     <li>
                         <a href="{% url 'business:post_item' %}" title="Sell">
                             <i class="bi bi-plus-square"></i>
                             <span>Sell</span>
                         </a>
                     </li>
+                    {% endif %}
                     <li>
-                        <a href="{% url 'business:view_cart' %}" title="Cart">
+                        <a href="{% url 'customer:view_cart' %}" title="Cart">
                             <i class="bi bi-cart"></i>
                             <span>Cart</span>
                         </a>
@@ -64,9 +66,12 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'users:home' %}" title="Account">
+                        <a href="{% url 'users:home' %}" title="Account" class="position-relative">
                             <i class="bi bi-person-circle"></i>
                             <span>Account</span>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; margin-left: -10px; margin-top: 5px;">{{ unread_notifications_count }}</span>
+                            {% endif %}
                         </a>
                     </li>
                     <li>
@@ -77,14 +82,7 @@
                     </li>
                     {% if user|is_company_owner %}
                     <li>
-                        <a href="{% url 'business:company_dashboard' %}" title="Company Dashboard" style="color: #4f46e5; font-weight: bold;">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    {% else %}
-                    <li>
-                        <a href="{% url 'business:personal_dashboard' %}" title="My Dashboard">
+                        <a href="{% url 'company:dashboard' %}" title="Company Dashboard" style="color: #4f46e5; font-weight: bold;">
                             <i class="bi bi-speedometer2"></i>
                             <span>Dashboard</span>
                         </a>
@@ -92,13 +90,13 @@
                     {% endif %}
                     {% else %}
                     <li>
-                        <a href="{% url 'business:about' %}" title="About">
+                        <a href="{% url 'customer:about' %}" title="About">
                             <i class="bi bi-info-circle"></i>
                             <span>About</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'business:contact' %}" title="Contact">
+                        <a href="{% url 'customer:contact' %}" title="Contact">
                             <i class="bi bi-question-circle-fill"></i>
                             <span>Contact</span>
                         </a>
@@ -150,10 +148,10 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="{% url 'business:home' %}">Marketplace</a></li>
-                    <li><a href="{% url 'business:about' %}">About Us</a></li>
-                    <li><a href="{% url 'business:contact' %}">Contact Support</a></li>
-                    <li><a href="{% url 'business:documentation' %}">Documentation</a></li>
+                    <li><a href="{% url 'customer:home' %}">Marketplace</a></li>
+                    <li><a href="{% url 'customer:about' %}">About Us</a></li>
+                    <li><a href="{% url 'customer:contact' %}">Contact Support</a></li>
+                    <li><a href="{% url 'customer:documentation' %}">Documentation</a></li>
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>

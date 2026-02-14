@@ -1,0 +1,356 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}{{ company.name }} - U-Connect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Company Header -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    {% if company.logo %}
+                        <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="img-fluid rounded-circle mb-3 mb-md-0" style="width: 120px; height: 120px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 mb-md-0" style="width: 120px; height: 120px;">
+                            <i class="bi bi-building fs-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-7">
+                    <h1 class="h3 mb-1">
+                        {{ company.name }}
+                        {% if company.is_verified %}
+                            <i class="bi bi-patch-check-fill text-primary" title="Verified Business"></i>
+                        {% endif %}
+                    </h1>
+                    <p class="text-muted mb-2">
+                        {% if company.region %}{{ company.region.name }}{% endif %}
+                        {% if company.district %}, {{ company.district.name }}{% endif %}
+                    </p>
+                    <div class="mb-2">
+                        <span class="badge bg-warning text-dark me-2">
+                            <i class="bi bi-star-fill"></i> {{ avg_rating|floatformat:1 }} ({{ reviews.count }} reviews)
+                        </span>
+                        {% if is_open %}
+                            <span class="badge bg-success">Open Now</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Closed</span>
+                        {% endif %}
+                    </div>
+                    <p class="mb-2">{{ company.description|truncatechars:200 }}</p>
+                </div>
+                <div class="col-md-3 text-center text-md-end">
+                    {% if user.is_authenticated and user != company.user %}
+                        <button id="follow-btn" data-url="{% url 'company:toggle_follow' company.id %}" class="btn {% if is_following %}btn-outline-primary{% else %}btn-primary{% endif %} mb-2 w-100">
+                            {% if is_following %}Unfollow{% else %}Follow{% endif %}
+                        </button>
+                        <button type="button" class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#reportModal">
+                            <i class="bi bi-flag"></i> Report
+                        </button>
+                    {% endif %}
+                    
+                    <button id="share-btn" class="btn btn-outline-secondary w-100 mb-2">
+                        <i class="bi bi-share"></i> Share
+                    </button>
+
+                    <div class="mt-3 d-flex justify-content-center justify-content-md-end gap-2">
+                        {% if company.instagram_link %}
+                            <a href="{{ company.instagram_link }}" target="_blank" class="text-decoration-none fs-4 text-danger"><i class="bi bi-instagram"></i></a>
+                        {% endif %}
+                        {% if company.whatsapp_number %}
+                            <a href="https://wa.me/{{ company.whatsapp_number }}" target="_blank" class="text-decoration-none fs-4 text-success"><i class="bi bi-whatsapp"></i></a>
+                        {% endif %}
+                        {% if company.website_link %}
+                            <a href="{{ company.website_link }}" target="_blank" class="text-decoration-none fs-4 text-primary"><i class="bi bi-globe"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar: Categories & Info -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">Contact Info</div>
+                <div class="card-body">
+                    {% if company.address %}
+                        <p class="mb-2"><i class="bi bi-geo-alt me-2"></i> {{ company.address }}</p>
+                    {% endif %}
+                    {% if company.opening_time and company.closing_time %}
+                        <p class="mb-2"><i class="bi bi-clock me-2"></i> {{ company.opening_time|time:"H:i" }} - {{ company.closing_time|time:"H:i" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">Categories</div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'company:profile' company.id %}" class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">
+                        All Products
+                    </a>
+                    {% for cat in company_categories %}
+                        <a href="{% url 'company:profile' company.id %}?category={{ cat.id }}" class="list-group-item list-group-item-action {% if current_category|stringformat:'s' == cat.id|stringformat:'s' %}active{% endif %}">
+                            {{ cat.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content: Products -->
+        <div class="col-lg-9">
+            <!-- Search within store -->
+            <form action="" method="get" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search in this store..." value="{{ request.GET.q|default:'' }}">
+                    <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+
+            <!-- Pinned Items -->
+            {% if pinned_items %}
+                <h4 class="mb-3">Featured Products</h4>
+                <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+                    {% for item in pinned_items %}
+                        <div class="col">
+                            {% include 'business/partials/_item_card.html' %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- All Items -->
+            <h4 class="mb-3">All Products</h4>
+            <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+                {% for item in items %}
+                    <div class="col">
+                        {% include 'business/partials/_item_card.html' %}
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">No products found.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if items.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if items.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">Previous</a></li>
+                        {% endif %}
+                        {% for num in items.paginator.page_range %}
+                            <li class="page-item {% if items.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if items.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+            
+            <!-- Reviews Section -->
+            <div class="mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Reviews</h4>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Sort by: {{ review_sort|title }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="?review_sort=newest">Newest</a></li>
+                            <li><a class="dropdown-item" href="?review_sort=oldest">Oldest</a></li>
+                            <li><a class="dropdown-item" href="?review_sort=highest">Highest Rating</a></li>
+                            <li><a class="dropdown-item" href="?review_sort=lowest">Lowest Rating</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated and user != company.user %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Write a Review</h6>
+                            <form action="{% url 'company:add_review' company.id %}" method="post">
+                                {% csrf_token %}
+                                {{ review_form.rating }}
+                                <div class="mb-2">
+                                    <label class="form-label">Rating:</label>
+                                    <div class="rating-input">
+                                        {% for i in "12345" %}
+                                            <i class="bi bi-star fs-4 text-warning" data-value="{{ forloop.counter }}" style="cursor: pointer;"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ review_form.comment }}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="mb-0">{{ review.user.username }}</h6>
+                                        <div class="text-warning small">
+                                            {% for i in "12345"|make_list %}
+                                                {% if forloop.counter <= review.rating %}
+                                                    <i class="bi bi-star-fill"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ review.created_at|timesince }} ago</small>
+                                </div>
+                                <p class="mt-2 mb-0">{{ review.comment }}</p>
+                                {% if user == review.user %}
+                                    <div class="mt-2 text-end">
+                                        <a href="{% url 'company:edit_review' review.id %}" class="btn btn-link btn-sm text-decoration-none">Edit</a>
+                                        <a href="{% url 'company:delete_review' review.id %}" class="btn btn-link btn-sm text-danger text-decoration-none" onclick="return confirm('Are you sure?')">Delete</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">No reviews yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Report {{ company.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="report-form" action="{% url 'company:report' company.id %}" method="post">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% for field in report_form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple star rating script
+    document.querySelectorAll('.rating-input i').forEach(star => {
+        star.addEventListener('click', function() {
+            const value = this.dataset.value;
+            document.getElementById('id_rating').value = value;
+            
+            document.querySelectorAll('.rating-input i').forEach(s => {
+                if (s.dataset.value <= value) {
+                    s.classList.remove('bi-star');
+                    s.classList.add('bi-star-fill');
+                } else {
+                    s.classList.remove('bi-star-fill');
+                    s.classList.add('bi-star');
+                }
+            });
+        });
+    });
+
+    // AJAX for Follow Button
+    const followBtn = document.getElementById('follow-btn');
+    if (followBtn) {
+        followBtn.addEventListener('click', function() {
+            const url = this.dataset.url;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    if (data.is_following) {
+                        followBtn.textContent = 'Unfollow';
+                        followBtn.classList.remove('btn-primary');
+                        followBtn.classList.add('btn-outline-primary');
+                    } else {
+                        followBtn.textContent = 'Follow';
+                        followBtn.classList.remove('btn-outline-primary');
+                        followBtn.classList.add('btn-primary');
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+
+    // AJAX for Report Form
+    const reportForm = document.getElementById('report-form');
+    if (reportForm) {
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const modalEl = document.getElementById('reportModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    alert('Report submitted successfully.');
+                    reportForm.reset();
+                } else {
+                    alert('Error submitting report. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+
+    // Share Button Logic
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                }, 2000);
+            }).catch(err => console.error('Failed to copy:', err));
+        });
+    }
+</script>
+{% endblock %}

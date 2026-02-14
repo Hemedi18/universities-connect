@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import send_mail 
 from django.conf import settings
 
 # Create your models here.
@@ -54,78 +54,24 @@ class Attribute(models.Model):
     def __str__(self):
         return self.name
 
-class Region(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-class District(models.Model):
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-class Company(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company_profile')
-    name = models.CharField(max_length=255)
-    logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    followers = models.ManyToManyField(User, related_name='following_companies', blank=True)
-    is_verified = models.BooleanField(default=False)
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
-    district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
-    address = models.CharField(max_length=255, blank=True, null=True, help_text="Street, Building, or specific location")
-    instagram_link = models.URLField(blank=True, null=True)
-    whatsapp_number = models.CharField(max_length=20, blank=True, null=True, help_text="Format: 255712345678")
-    website_link = models.URLField(blank=True, null=True)
-    opening_time = models.TimeField(blank=True, null=True)
-    closing_time = models.TimeField(blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name_plural = "Companies"
-
 class Item(models.Model):
     # --- Global Requirements (Mandatory for ALL Products) ---
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
-    
-    # Product ID / SKU
     sku = models.CharField(max_length=100, unique=True, blank=True, null=True, verbose_name="Product ID / SKU")
-    
-    # Product Title
     title = models.CharField(max_length=255, verbose_name="Product Title")
-    
-    # Category (Link to Categories Table)
     category = models.CharField(max_length=50, default='others', blank=True) # Kept for legacy data
     category_obj = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='items', verbose_name="Category")
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='items', null=True, blank=True)
-    
-    # Base Price & Compare Price
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name='items', null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Base Price")
     compare_at_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name="Compare at Price")
-    
-    # Stock Quantity
     stock_quantity = models.IntegerField(default=1, verbose_name="Stock Quantity")
     minimum_order_quantity = models.IntegerField(default=1, verbose_name="Minimum Order Quantity")
-    
-    # Product Description
     description = models.TextField(verbose_name="Product Description")
-    
-    # Product Images
     image = models.ImageField(upload_to='item_images/', verbose_name="Main Image")
     image2 = models.ImageField(upload_to='item_images/', blank=True, null=True, verbose_name="Image 2")
     image3 = models.ImageField(upload_to='item_images/', blank=True, null=True, verbose_name="Image 3")
-    
-    # Shipping Weight & Dimensions
     shipping_weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, help_text="kg")
     shipping_dimensions = models.CharField(max_length=100, blank=True, null=True, help_text="L x W x H")
-    
-    # Tax Class
     tax_class = models.CharField(max_length=50, default="Standard", blank=True)
 
     # --- Legacy / App Specific Fields (Kept for compatibility) ---
@@ -170,36 +116,6 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notification for {self.recipient.username}"
 
-class Review(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(default=5)
-    comment = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-created_at']
-
-class Comment(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Comment by {self.user} on {self.item}"
-
-class Report(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='reports')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    reason = models.CharField(max_length=255)
-    details = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_resolved = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Report: {self.company.name}"
-
 @receiver(post_save, sender=Item)
 def send_new_item_notification(sender, instance, created, **kwargs):
     """
@@ -240,3 +156,20 @@ def send_new_item_notification(sender, instance, created, **kwargs):
                 recipient_list,
                 fail_silently=True
             )
+
+class Comment(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.item}"
+
+@receiver(post_save, sender='company.Company')
+def migrate_personal_items_to_company(sender, instance, created, **kwargs):
+    """
+    When a Company is created, move the user's existing personal items to the company.
+    """
+    if created:
+        Item.objects.filter(seller=instance.user, company__isnull=True).update(company=instance)
