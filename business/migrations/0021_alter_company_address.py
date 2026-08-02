@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0020_district_region_alter_company_address_and_more'),
+        ("business", "0020_district_region_alter_company_address_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='company',
-            name='address',
-            field=models.CharField(blank=True, help_text='Street, Building, or specific location', max_length=255, null=True),
+            model_name="company",
+            name="address",
+            field=models.CharField(
+                blank=True,
+                help_text="Street, Building, or specific location",
+                max_length=255,
+                null=True,
+            ),
         ),
     ]

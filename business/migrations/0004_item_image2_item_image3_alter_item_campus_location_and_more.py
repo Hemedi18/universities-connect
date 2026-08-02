@@ -6,28 +6,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0003_item_buyer_item_status'),
+        ("business", "0003_item_buyer_item_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='image2',
-            field=models.ImageField(blank=True, null=True, upload_to='item_images/', verbose_name='Optional Photo 2'),
+            model_name="item",
+            name="image2",
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to="item_images/",
+                verbose_name="Optional Photo 2",
+            ),
         ),
         migrations.AddField(
-            model_name='item',
-            name='image3',
-            field=models.ImageField(blank=True, null=True, upload_to='item_images/', verbose_name='Optional Photo 3'),
+            model_name="item",
+            name="image3",
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                upload_to="item_images/",
+                verbose_name="Optional Photo 3",
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='campus_location',
-            field=models.CharField(blank=True, help_text='Specific campus or dorm', max_length=255, verbose_name='Campus/Location'),
+            model_name="item",
+            name="campus_location",
+            field=models.CharField(
+                blank=True,
+                help_text="Specific campus or dorm",
+                max_length=255,
+                verbose_name="Campus/Location",
+            ),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='image',
-            field=models.ImageField(upload_to='item_images/', verbose_name='Cover Photo'),
+            model_name="item",
+            name="image",
+            field=models.ImageField(
+                upload_to="item_images/", verbose_name="Cover Photo"
+            ),
         ),
     ]

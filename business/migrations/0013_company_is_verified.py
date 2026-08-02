@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0012_notification'),
+        ("business", "0012_notification"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='company',
-            name='is_verified',
+            model_name="company",
+            name="is_verified",
             field=models.BooleanField(default=False),
         ),
     ]

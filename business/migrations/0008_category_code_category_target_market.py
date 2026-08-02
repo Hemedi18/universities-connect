@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0007_attribute_categories'),
+        ("business", "0007_attribute_categories"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='category',
-            name='code',
-            field=models.CharField(blank=True, max_length=20, null=True, verbose_name='Category ID'),
+            model_name="category",
+            name="code",
+            field=models.CharField(
+                blank=True, max_length=20, null=True, verbose_name="Category ID"
+            ),
         ),
         migrations.AddField(
-            model_name='category',
-            name='target_market',
+            model_name="category",
+            name="target_market",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
     ]

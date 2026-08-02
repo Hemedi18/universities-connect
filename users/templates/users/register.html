@@ -3,29 +3,28 @@
 {% block title %}Register - U-Connect{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Join U-Connect</h2>
-    <form method="post">
-        {% csrf_token %}
-        
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-                <div class="error-message register-error-container">
-                    {% for error in field.errors %}
-                        <p class="register-error-text">{{ error }}</p>
-                    {% endfor %}
+<div class="uc-page">
+    <div class="uc-auth">
+        <h2>Join U-Connect</h2>
+        <p class="text-muted small mb-3">Namba ya simu / WhatsApp ni lazima — inahitajika ukiuza au buyer akikuhitaji.</p>
+        <form method="post" class="uc-form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="text-danger small">
+                    {% for error in field.errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
                 </div>
-            {% endif %}
-        </div>
-        {% endfor %}
-        
-        <button type="submit" class="btn-submit">Register</button>
-    </form>
-    <p class="register-login-link">
-        Already have an account? <a href="{% url 'users:login' %}" class="register-login-anchor">Login here</a>
-    </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn-submit">Register</button>
+        </form>
+        <p class="text-center mt-3 mb-0 text-muted">
+            Already have an account? <a href="{% url 'users:login' %}" class="text-primary fw-semibold">Login</a>
+        </p>
+    </div>
 </div>
 {% endblock %}

@@ -7,49 +7,55 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0021_alter_company_address'),
-        ('company', '0001_initial'),
+        ("business", "0021_alter_company_address"),
+        ("company", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='report',
-            name='company',
+            model_name="report",
+            name="company",
         ),
         migrations.RemoveField(
-            model_name='review',
-            name='company',
+            model_name="review",
+            name="company",
         ),
         migrations.AlterField(
-            model_name='item',
-            name='company',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='items', to='company.company'),
+            model_name="item",
+            name="company",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="items",
+                to="company.company",
+            ),
         ),
         migrations.RemoveField(
-            model_name='district',
-            name='region',
+            model_name="district",
+            name="region",
         ),
         migrations.RemoveField(
-            model_name='report',
-            name='user',
+            model_name="report",
+            name="user",
         ),
         migrations.RemoveField(
-            model_name='review',
-            name='user',
+            model_name="review",
+            name="user",
         ),
         migrations.DeleteModel(
-            name='Company',
+            name="Company",
         ),
         migrations.DeleteModel(
-            name='District',
+            name="District",
         ),
         migrations.DeleteModel(
-            name='Region',
+            name="Region",
         ),
         migrations.DeleteModel(
-            name='Report',
+            name="Report",
         ),
         migrations.DeleteModel(
-            name='Review',
+            name="Review",
         ),
     ]

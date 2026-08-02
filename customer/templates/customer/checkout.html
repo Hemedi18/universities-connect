@@ -1,0 +1,144 @@
+{% extends 'business/base.html' %}
+{% load static %}
+{% load tancoin_tags %}
+
+{% block title %}Checkout · U-Connect{% endblock %}
+{% block body_class %}cf-flow{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout-flow.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cf-shell" id="cf-checkout">
+    <header class="cf-top">
+        <a href="{% url 'customer:view_cart' %}" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
+        <h1>Checkout</h1>
+        <span style="width:40px;"></span>
+    </header>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="cf-body"><div class="alert alert-danger">{{ form.non_field_errors }}</div></div>
+        {% endif %}
+
+        <div class="cf-body">
+            {# —— Payment —— #}
+            <section class="cf-section">
+                <div class="cf-section-head">
+                    <h2>Payment</h2>
+                </div>
+                {{ form.payment_method }}
+                <div class="cf-pay-list">
+                    <div class="cf-pay-option" style="cursor:default;">
+                        <span class="cf-pay-icon"><i class="bi bi-cash-stack"></i></span>
+                        <span class="cf-pay-label">Cash on Delivery</span>
+                        <span class="cf-radio" style="border-color:var(--uc-ink);" aria-hidden="true"><span style="position:absolute;inset:3px;border-radius:50%;background:var(--uc-ink);"></span></span>
+                    </div>
+                </div>
+                <p class="cf-ship-summary" style="margin-top:0.5rem;">
+                    Pay in cash when you receive your order.
+                </p>
+            </section>
+
+            {# —— Shipping —— #}
+            <section class="cf-section">
+                <div class="cf-section-head">
+                    <h2>Shipping Information</h2>
+                    <button type="button" class="cf-edit-toggle" id="cf-edit-ship">Edit</button>
+                </div>
+
+                <div class="cf-ship-summary" id="cf-ship-summary">
+                    <div><strong id="cf-sum-name">{{ form.full_name.value|default:user.get_full_name|default:user.username }}</strong></div>
+                    <div id="cf-sum-phone">{{ form.phone.value|default:"—" }}{% if form.email.value %} · {{ form.email.value }}{% endif %}</div>
+                    <div id="cf-sum-place">
+                        {% if form.campus_location.value %}{{ form.campus_location.value }}{% elif form.address_line.value %}{{ form.address_line.value }}{% else %}Tap Edit to add pickup / delivery details{% endif %}
+                    </div>
+                </div>
+
+                <div class="cf-ship-fields">
+                    <div class="cf-fulfill">
+                        {% for radio in form.fulfillment_method %}
+                        <label>{{ radio.tag }} {{ radio.choice_label }}</label>
+                        {% endfor %}
+                    </div>
+                    {{ form.fulfillment_method.errors }}
+
+                    <div class="cf-field">
+                        <label>{{ form.full_name.label }}</label>
+                        {{ form.full_name }}
+                        {{ form.full_name.errors }}
+                    </div>
+                    <div class="cf-field">
+                        <label>{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                        {{ form.phone.errors }}
+                    </div>
+                    <div class="cf-field">
+                        <label>{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="cf-field">
+                        <label>{{ form.campus_location.label }}</label>
+                        {{ form.campus_location }}
+                        {{ form.campus_location.errors }}
+                    </div>
+                    <div class="cf-field">
+                        <label>{{ form.address_line.label }}</label>
+                        {{ form.address_line }}
+                        {{ form.address_line.errors }}
+                    </div>
+                    <div class="cf-field">
+                        <label>{{ form.notes.label }}</label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+            </section>
+
+            {# Mini order list #}
+            <section class="cf-section">
+                <div class="cf-section-head"><h2>Order</h2></div>
+                {% for line in cart_lines %}
+                <div class="d-flex justify-content-between mb-2" style="font-size:0.88rem;">
+                    <span>{{ line.item.title|truncatechars:26 }} × {{ line.quantity }}</span>
+                    <span>{{ line.line_total|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+                {% if shipping_preview_tan %}
+                <div class="d-flex justify-content-between small text-muted mt-2">
+                    <span>Shipping preview</span>
+                    <span>+{{ shipping_preview_tan|floatformat:0 }}</span>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+
+        <div class="cf-footer">
+            <div class="cf-footer-inner">
+                <div class="cf-total-row">
+                    <span>Total</span>
+                    <strong>{{ subtotal_tan|floatformat:0 }}</strong>
+                </div>
+                <button type="submit" class="cf-btn cf-btn-dark">Pay</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var shell = document.getElementById('cf-checkout');
+  var btn = document.getElementById('cf-edit-ship');
+  if (!shell || !btn) return;
+  var hasErrors = {{ form.errors|yesno:"true,false" }};
+  if (hasErrors) shell.classList.add('is-editing');
+  btn.addEventListener('click', function () {
+    shell.classList.toggle('is-editing');
+    btn.textContent = shell.classList.contains('is-editing') ? 'Done' : 'Edit';
+  });
+})();
+</script>
+{% endblock %}

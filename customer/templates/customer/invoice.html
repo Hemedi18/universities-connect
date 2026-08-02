@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ order.order_number }}</title>
+    <style>
+        body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; color: #222; }
+        h1 { margin-bottom: 0; }
+        .muted { color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { border-bottom: 2px solid #333; }
+        .totals { margin-top: 16px; width: 280px; margin-left: auto; }
+        .totals div { display: flex; justify-content: space-between; padding: 4px 0; }
+        .actions { margin-bottom: 24px; }
+        @media print { .actions { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="actions">
+        <button onclick="window.print()">Print</button>
+        <a href="{% url 'customer:order_detail' order.id %}">Back</a>
+    </div>
+    <h1>U-Connect Invoice</h1>
+    <p class="muted">{{ order.order_number }} · {{ order.created_at|date:"Y-m-d H:i" }}</p>
+
+    <p>
+        <strong>Bill to</strong><br>
+        {{ order.full_name }}<br>
+        {{ order.phone }}{% if order.email %}<br>{{ order.email }}{% endif %}<br>
+        {% if order.campus_location %}{{ order.campus_location }}<br>{% endif %}
+        {% if order.address_line %}{{ order.address_line }}{% endif %}
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in order.items.all %}
+            <tr>
+                <td>{{ line.title }}{% if line.sku %}<br><span class="muted">{{ line.sku }}</span>{% endif %}</td>
+                <td>{{ line.quantity }}</td>
+                <td>{{ line.unit_price_tan }}</td>
+                <td>{{ line.line_total_tan }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <div><span>Subtotal</span><span>{{ order.subtotal_tan }}</span></div>
+        <div><span>Shipping</span><span>{{ order.shipping_fee_tan }}</span></div>
+        <div><span>Tax</span><span>{{ order.tax_tan }}</span></div>
+        <div><strong>Total</strong><strong>{{ order.total_tan }}</strong></div>
+        {% if order.total_fiat_estimate %}
+        <div class="muted"><span>Fiat estimate</span><span>{{ order.total_fiat_estimate }} {{ order.fiat_currency_code }}</span></div>
+        {% endif %}
+    </div>
+
+    <p class="muted" style="margin-top:32px;">
+        Payment: {{ order.get_payment_method_display }} · {{ order.get_payment_status_display }}
+        {% if order.payment_reference %} · Ref {{ order.payment_reference }}{% endif %}
+    </p>
+</body>
+</html>

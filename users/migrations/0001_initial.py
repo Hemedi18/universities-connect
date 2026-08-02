@@ -10,24 +10,82 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('business', '0003_item_buyer_item_status'),
+        ("business", "0003_item_buyer_item_status"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('profile_picture', models.ImageField(default='profile_pictures/default_profile.jpg', upload_to='profile_pictures')),
-                ('major', models.CharField(blank=True, help_text='e.g., Computer Science', max_length=100)),
-                ('graduation_year', models.IntegerField(blank=True, help_text='e.g., 2026', null=True)),
-                ('is_email_verified', models.BooleanField(default=False, help_text='Indicates if the user has verified their university email.')),
-                ('phone_number', models.CharField(blank=True, help_text='Your phone number (kept private).', max_length=20)),
-                ('linkedin_url', models.URLField(blank=True, help_text='Link to your LinkedIn profile.')),
-                ('instagram_handle', models.CharField(blank=True, help_text='Your Instagram username (without @).', max_length=100)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('watchlist', models.ManyToManyField(blank=True, related_name='watched_by', to='business.item')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "profile_picture",
+                    models.ImageField(
+                        default="profile_pictures/default_profile.jpg",
+                        upload_to="profile_pictures",
+                    ),
+                ),
+                (
+                    "major",
+                    models.CharField(
+                        blank=True, help_text="e.g., Computer Science", max_length=100
+                    ),
+                ),
+                (
+                    "graduation_year",
+                    models.IntegerField(blank=True, help_text="e.g., 2026", null=True),
+                ),
+                (
+                    "is_email_verified",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Indicates if the user has verified their university email.",
+                    ),
+                ),
+                (
+                    "phone_number",
+                    models.CharField(
+                        blank=True,
+                        help_text="Your phone number (kept private).",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "linkedin_url",
+                    models.URLField(
+                        blank=True, help_text="Link to your LinkedIn profile."
+                    ),
+                ),
+                (
+                    "instagram_handle",
+                    models.CharField(
+                        blank=True,
+                        help_text="Your Instagram username (without @).",
+                        max_length=100,
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "watchlist",
+                    models.ManyToManyField(
+                        blank=True, related_name="watched_by", to="business.item"
+                    ),
+                ),
             ],
         ),
     ]

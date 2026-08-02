@@ -1,0 +1,45 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Sales Orders - U-Connect{% endblock %}
+
+{% block content %}
+<div class="uc-page">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h1 class="uc-page-title mb-0">Sales orders</h1>
+        <a href="{% url 'customer:my_orders' %}" class="uc-btn" style="width:auto;padding:0.45rem 0.85rem;">My purchases</a>
+    </div>
+
+    {% if orders %}
+    <div class="uc-panel" style="overflow-x:auto;">
+        <table class="uc-table">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Buyer</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>{{ order.order_number }}</strong></td>
+                    <td>{{ order.buyer.username }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>{{ order.items.count }}</td>
+                    <td><span class="uc-badge-soft">{{ order.get_status_display }}</span></td>
+                    <td><span class="uc-badge-soft">{{ order.get_payment_status_display }}</span></td>
+                    <td><a class="btn-shop" style="padding:0.35rem 0.7rem;" href="{% url 'customer:seller_order_detail' order.id %}">Manage</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="uc-panel text-center py-4 text-muted">No sales orders yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

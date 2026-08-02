@@ -1,48 +1,48 @@
 {% load static %}
-const staticCacheName = "u-connect-v1";
+const staticCacheName = "u-connect-v2";
 const filesToCache = [
-    '/',
     '{% static "css/style.css" %}',
     '{% static "js/main.js" %}',
     '{% static "images/uconnect_192.png" %}',
     '{% static "images/uconnect_512.png" %}',
     '{% static "images/uconnect.ico" %}',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
-    'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js'
 ];
 
-self.addEventListener("install", event => {
-    this.skipWaiting();
+self.addEventListener("install", (event) => {
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(staticCacheName)
-            .then(cache => {
-                return cache.addAll(filesToCache);
-            })
+        caches.open(staticCacheName).then((cache) => cache.addAll(filesToCache))
     );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener("activate", (event) => {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
+        caches.keys().then((cacheNames) =>
+            Promise.all(
                 cacheNames
-                    .filter(cacheName => (cacheName.startsWith("u-connect-")))
-                    .filter(cacheName => (cacheName !== staticCacheName))
-                    .map(cacheName => caches.delete(cacheName))
-            );
-        })
+                    .filter((name) => name.startsWith("u-connect-"))
+                    .filter((name) => name !== staticCacheName)
+                    .map((name) => caches.delete(name))
+            )
+        ).then(() => self.clients.claim())
     );
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
+    if (event.request.method !== "GET") return;
+
+    const url = new URL(event.request.url);
+    // Never intercept media / uploads — broken SW was returning HTML for images
+    if (url.pathname.startsWith("/media/")) return;
+
+    if (event.request.mode === "navigate") {
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match("/"))
+        );
+        return;
+    }
+
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-            .catch(() => {
-                return caches.match('/');
-            })
+        caches.match(event.request).then((cached) => cached || fetch(event.request))
     );
 });

@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0008_category_code_category_target_market'),
+        ("business", "0008_category_code_category_target_market"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='attribute',
-            name='options',
-            field=models.TextField(blank=True, help_text='Comma-separated options for dropdowns', null=True),
+            model_name="attribute",
+            name="options",
+            field=models.TextField(
+                blank=True, help_text="Comma-separated options for dropdowns", null=True
+            ),
         ),
         migrations.AddField(
-            model_name='item',
-            name='minimum_order_quantity',
-            field=models.IntegerField(default=1, verbose_name='Minimum Order Quantity'),
+            model_name="item",
+            name="minimum_order_quantity",
+            field=models.IntegerField(default=1, verbose_name="Minimum Order Quantity"),
         ),
     ]

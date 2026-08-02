@@ -1,47 +1,71 @@
 {% extends 'business/base.html' %}
+{% load static %}
+{% load tancoin_tags %}
 
-{% block title %}My Products - U-Connect{% endblock %}
+{% block title %}My Products · U-Connect{% endblock %}
+{% block body_class %}mg-page{% endblock %}
+{% block main_class %}shop-full{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="manage-header">
-        <h1 class="manage-title">My Products</h1>
-        <a href="{% url 'business:post_item' %}" class="btn-submit manage-add-btn" title="Add New Product"><i class="bi bi-plus-lg"></i></a>
-    </div>
+<div class="mg-shell">
+    <header class="mg-top">
+        <div class="mg-top-text">
+            <h1>My products</h1>
+            <p>{% if items %}{{ items|length }} listing{{ items|length|pluralize }}{% else %}No listings yet{% endif %}</p>
+        </div>
+        <a href="{% url 'business:post_item' %}" class="mg-add">
+            <i class="bi bi-plus-lg"></i>
+            <span>Add product</span>
+        </a>
+    </header>
 
     {% if items %}
-        <div class="cart-container">
-            {% for item in items %}
-            <div class="cart-item">
-                <div class="cart-item-image">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.title }}">
-                    {% else %}
-                        <div class="manage-no-img">No Img</div>
-                    {% endif %}
+    <div class="mg-list">
+        {% for item in items %}
+        <article class="mg-row">
+            <a class="mg-thumb" href="{% url 'customer:item_detail' item.id %}" aria-label="View {{ item.title }}">
+                {% if item.image %}
+                <img src="{{ item.image.url }}" alt="" loading="lazy" width="96" height="96">
+                {% else %}
+                <span class="mg-thumb-empty"><i class="bi bi-image"></i></span>
+                {% endif %}
+            </a>
+
+            <div class="mg-body">
+                <div class="mg-title-row">
+                    <h2><a href="{% url 'customer:item_detail' item.id %}">{{ item.title|truncatechars:56 }}</a></h2>
+                    <span class="mg-badge mg-badge-{{ item.status|default:'active' }}">{{ item.status|default:'active'|title }}</span>
                 </div>
-                <div class="cart-item-details">
-                    <h3><a href="{% url 'business:item_detail' item.id %}">{{ item.title }}</a></h3>
-                    <p class="cart-item-price">{{ item.price }}</p>
-                    <div class="manage-meta">
-                        <span>{{ item.created_at|date:"M d, Y" }}</span> • 
-                        <span>{{ item.get_condition_display }}</span>
-                    </div>
-                </div>
-                <div class="cart-item-actions manage-actions">
-                    <a href="{% url 'business:edit_item' item.id %}" class="btn-icon edit" title="Edit"><i class="bi bi-pencil-square"></i></a>
-                    <a href="{% url 'business:delete_item' item.id %}" class="btn-icon delete delete-item-btn" title="Delete"><i class="bi bi-trash"></i></a>
-                </div>
+                <div class="mg-price">{{ item.price|floatformat:0 }}</div>
+                <ul class="mg-meta">
+                    <li><i class="bi bi-box-seam"></i> Stock {{ item.stock_quantity }}</li>
+                    <li><i class="bi bi-eye"></i> {{ item.views }} view{{ item.views|pluralize }}</li>
+                    {% if item.condition %}<li>{{ item.get_condition_display }}</li>{% endif %}
+                    <li>{{ item.created_at|date:"M d, Y" }}</li>
+                </ul>
             </div>
-            {% endfor %}
-        </div>
+
+            <div class="mg-actions">
+                <a href="{% url 'business:edit_item' item.id %}" class="mg-btn mg-btn-edit">
+                    <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="{% url 'business:delete_item' item.id %}" class="mg-btn mg-btn-delete delete-item-btn" data-confirm="Delete this product?">
+                    <i class="bi bi-trash3"></i> Delete
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="manage-empty-container">
-            <div class="manage-empty-icon">📦</div>
-            <h2 class="manage-empty-title">No products yet</h2>
-            <p class="manage-empty-text">You haven't uploaded any products for sale.</p>
-            <a href="{% url 'business:post_item' %}" class="btn-submit manage-start-btn">Start Selling</a>
-        </div>
+    <div class="mg-empty">
+        <div class="mg-empty-icon"><i class="bi bi-bag-plus"></i></div>
+        <h2>No products yet</h2>
+        <p>Upload your first listing and start selling on campus.</p>
+        <a href="{% url 'business:post_item' %}" class="mg-add mg-add-lg">
+            <i class="bi bi-plus-lg"></i>
+            <span>Start selling</span>
+        </a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

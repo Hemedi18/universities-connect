@@ -3,42 +3,31 @@
 {% block title %}Contact Us - U-Connect{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center mb-5">
-            <h1 class="fw-bold mb-3">Get in touch with us!</h1>
-            <p class="lead text-muted">If you have any questions, feedback, or inquiries, feel free to reach out to us. We're here to help and would love to hear from you!</p>
+<section class="uc-hero-band">
+    <h1>Get in touch</h1>
+    <p class="mb-0" style="opacity:.85;">Questions, feedback, or help with an order — we’re here.</p>
+</section>
+
+<div class="uc-page">
+    <div class="uc-feature-grid">
+        <div class="uc-feature">
+            <i class="bi bi-envelope-fill"></i>
+            <h3>Email</h3>
+            <p class="text-muted mb-0">support@u-connect.com</p>
+        </div>
+        <div class="uc-feature">
+            <i class="bi bi-telephone-fill"></i>
+            <h3>Call</h3>
+            <p class="text-muted mb-0">+255 123 456 789</p>
+        </div>
+        <div class="uc-feature">
+            <i class="bi bi-geo-alt-fill"></i>
+            <h3>Visit</h3>
+            <p class="text-muted mb-0">Main Campus, Student Center</p>
         </div>
     </div>
-
-    <div class="row g-4 justify-content-center">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center py-4">
-                <div class="card-body">
-                    <div class="mb-3 text-primary"><i class="bi bi-envelope-fill fs-1"></i></div>
-                    <h5 class="card-title">Email Us</h5>
-                    <p class="card-text text-muted">support@u-connect.com</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center py-4">
-                <div class="card-body">
-                    <div class="mb-3 text-success"><i class="bi bi-telephone-fill fs-1"></i></div>
-                    <h5 class="card-title">Call Us</h5>
-                    <p class="card-text text-muted">+255 123 456 789</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm text-center py-4">
-                <div class="card-body">
-                    <div class="mb-3 text-danger"><i class="bi bi-geo-alt-fill fs-1"></i></div>
-                    <h5 class="card-title">Visit Us</h5>
-                    <p class="card-text text-muted">Main Campus, Student Center</p>
-                </div>
-            </div>
-        </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'guest_chat' %}" class="btn-shop">Chat with support</a>
     </div>
 </div>
 {% endblock %}

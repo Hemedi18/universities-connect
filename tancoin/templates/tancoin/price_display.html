@@ -1,0 +1,17 @@
+{% if variant == 'large' %}
+<p class="item-price item-price-large">
+    <span class="price-amount">{{ price|floatformat:0 }}</span>
+    {% if compare_at %}
+    <span class="text-muted" style="text-decoration: line-through; font-size: 0.55em; font-weight: normal;">{{ compare_at|floatformat:0 }}</span>
+    {% endif %}
+</p>
+{% elif variant == 'compact' %}
+<span class="price-amount">{{ price|floatformat:0 }}</span>
+{% else %}
+<p class="item-price mb-0">
+    <span class="price-amount">{{ price|floatformat:0 }}</span>
+    {% if compare_at %}
+    <span class="text-muted text-decoration-line-through ms-1 small">{{ compare_at|floatformat:0 }}</span>
+    {% endif %}
+</p>
+{% endif %}

@@ -8,19 +8,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0002_item_contact_email_item_contact_phone'),
+        ("business", "0002_item_contact_email_item_contact_phone"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='buyer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='purchases', to=settings.AUTH_USER_MODEL),
+            model_name="item",
+            name="buyer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="purchases",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='item',
-            name='status',
-            field=models.CharField(choices=[('active', 'Active'), ('pending', 'Pending Sale'), ('sold', 'Sold')], default='active', max_length=10),
+            model_name="item",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("active", "Active"),
+                    ("pending", "Pending Sale"),
+                    ("sold", "Sold"),
+                ],
+                default="active",
+                max_length=10,
+            ),
         ),
     ]

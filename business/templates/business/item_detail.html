@@ -1,282 +1,678 @@
 {% extends 'business/base.html' %}
 {% load static %}
 
-{% block title %}{{ item.title }} - U-Connect{% endblock %}
+{% block title %}{{ item.title }} · U-Connect{% endblock %}
+{% block extra_head %}
+<meta property="og:type" content="product">
+<meta property="og:title" content="{{ item.title }}">
+<meta property="og:description" content="{{ price_label }} · Cash on Delivery · {{ item.description|truncatechars:140 }}">
+<meta property="og:url" content="{% if request.is_secure or 'ngrok' in request.get_host %}https{% else %}{{ request.scheme }}{% endif %}://{{ request.get_host }}{{ request.path }}">
+{% if item.image %}
+<meta property="og:image" content="{% if 'ngrok' in request.get_host %}https{% else %}{{ request.scheme }}{% endif %}://{{ request.get_host }}{{ item.image.url }}">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{% if 'ngrok' in request.get_host %}https{% else %}{{ request.scheme }}{% endif %}://{{ request.get_host }}{{ item.image.url }}">
+{% endif %}
+{% endblock %}
+{% block body_class %}pd-flow{% endblock %}
+{% block main_class %}shop-full{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=20">
+{% endblock %}
 
 {% block content %}
-<div class="container container-98" style="padding-bottom: 80px;">
-    <div class="product-detail-container">
-        <div class="product-grid">
-            <!-- Image Section -->
-            <div class="product-image-wrapper">
-                {% if item.image %}
-                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="product-image-large" id="mainImage">
-                {% else %}
-                    <div class="product-image-placeholder">
-                        <span class="text-muted-span">No Image Available</span>
-                    </div>
-                {% endif %}
+<div class="pdx" id="pdxRoot" {% if gallery_video %}data-video="{{ gallery_video.file.url }}"{% endif %}>
 
-                <!-- Extra Images Thumbnails -->
-                {% if item.image2 or item.image3 %}
-                <div class="product-thumbnails">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" class="thumbnail active">
-                    {% endif %}
-                    {% if item.image2 %}
-                        <img src="{{ item.image2.url }}" class="thumbnail">
-                    {% endif %}
-                    {% if item.image3 %}
-                        <img src="{{ item.image3.url }}" class="thumbnail">
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Info Section -->
-            <div class="product-info">
-                <h1>{{ item.title }}</h1>
-                <p class="item-price item-price-large">
-                    {{ item.price }}
-                    {% if item.compare_at_price %}
-                        <span style="text-decoration: line-through; color: var(--text-muted); font-size: 0.5em; font-weight: normal;">{{ item.compare_at_price }}</span>
-                    {% endif %}
-                </p>
-                
-                <div class="product-location">
-                    <i class="bi bi-geo-alt-fill"></i>
-                    <span>{{ item.campus_location }}</span>
-                </div>
-
-                <!-- Quick Specs Grid (New) -->
-                <div class="quick-specs-grid mb-4">
-                    <div class="spec-card">
-                        <span class="spec-label">Condition</span>
-                        <span class="spec-value">{{ item.condition|default:"N/A"|title }}</span>
-                    </div>
-                    <div class="spec-card">
-                        <span class="spec-label">Stock</span>
-                        <span class="spec-value">{{ item.stock_quantity|default:"0" }}</span>
-                    </div>
-                    <div class="spec-card">
-                        <span class="spec-label">Category</span>
-                        <span class="spec-value">{{ item.category_obj.name|default:item.category|default:"N/A" }}</span>
-                    </div>
-                </div>
-
-                <!-- Company Section (Moved Up) -->
-                {% if item.company %}
-                <div class="card mb-4 shadow-sm border-0 bg-light">
-                    <div class="card-body p-3">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3">
-                                {% if item.company.logo %}
-                                    <img src="{{ item.company.logo.url }}" alt="{{ item.company.name }}" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
-                                {% else %}
-                                    <div class="rounded-circle bg-white border d-flex align-items-center justify-content-center text-primary" style="width: 50px; height: 50px;">
-                                        <i class="bi bi-building fs-4"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div>
-                                <h6 class="fw-bold mb-0">
-                                    {{ item.company.name }}
-                                    {% if item.company.is_verified %}
-                                        <i class="bi bi-patch-check-fill verified-badge" title="Verified Company" style="font-size: 0.9em;"></i>
-                                    {% endif %}
-                                </h6>
-                                <a href="{% url 'business:view_company_profile' item.company.id %}" class="small text-decoration-none">View Store</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="description-section mt-0">
-                    <h3 class="description-title">Description</h3>
-                    <p class="description-text">{{ item.description|linebreaks }}</p>
-                </div>
-
-                <!-- Full Specifications (Table) -->
-                <div class="attributes-section mt-4">
-                    <h3 class="description-title" style="font-size: 1.1rem;">Full Specifications</h3>
-                    <table class="table table-striped table-sm">
-                        <tbody>
-                            <tr>
-                                <th scope="row">Posted</th>
-                                <td>{{ item.created_at|date:"M d, Y" }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Min. Order</th>
-                                <td>{{ item.minimum_order_quantity|default:"1" }}</td>
-                            </tr>
-                            {% if item.sku %}
-                            <tr>
-                                <th scope="row">SKU</th>
-                                <td>{{ item.sku }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if item.shipping_weight %}
-                            <tr>
-                                <th scope="row">Weight</th>
-                                <td>{{ item.shipping_weight }} kg</td>
-                            </tr>
-                            {% endif %}
-                            {% if item.shipping_dimensions %}
-                            <tr>
-                                <th scope="row">Dimensions</th>
-                                <td>{{ item.shipping_dimensions }}</td>
-                            </tr>
-                            {% endif %}
-                            {% if item.tax_class %}
-                            <tr>
-                                <th scope="row">Tax Class</th>
-                                <td>{{ item.tax_class }}</td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <th scope="row">Seller</th>
-                                <td>{{ item.seller.username }}</td>
-                            </tr>
-                            <!-- Dynamic Attributes -->
-                            {% for attr_val in item.attribute_values.all %}
-                            <tr>
-                                <th scope="row">{{ attr_val.attribute.name }}</th>
-                                <td>{{ attr_val.value }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="action-buttons-container d-none d-lg-flex">
-                    <!-- Add to Cart Button -->
-                    <a href="{% url 'business:add_to_cart' item.id %}" class="btn-cart btn-action-custom" title="Add to Cart">
-                        <i class="bi bi-cart-plus" style="font-size: 1.5rem;"></i>
-                    </a>
-
-                    <!-- Buy/Contact Button -->
-                    {% if item.contact_method == 'email' and item.contact_email %}
-                        <a href="mailto:{{ item.contact_email }}?subject=Interested in {{ item.title }}" class="btn-submit btn-action-chat" title="Email Seller">
-                            <i class="bi bi-envelope" style="font-size: 1.5rem;"></i>
-                        </a>
-                    {% elif item.contact_method == 'phone' and item.contact_phone %}
-                        <a href="tel:{{ item.contact_phone }}" class="btn-submit btn-action-chat" title="Call Seller">
-                            <i class="bi bi-telephone" style="font-size: 1.5rem;"></i>
-                        </a>
-                    {% else %}
-                        <a href="{% url 'chat:start_chat' item.seller.id %}" class="btn-submit btn-action-chat" title="Chat with Seller">
-                            <i class="bi bi-chat-dots" style="font-size: 1.5rem;"></i>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
+    {# —— Gallery (left on PC) —— #}
+    <div class="pdx-gallery">
+        <div class="pdx-thumbs" id="pdxThumbs" aria-label="Product images">
+            {% for media in gallery_images %}
+            <button type="button" class="pdx-thumb {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.counter0 }}">
+                <img src="{{ media.file.url }}" alt="">
+                {% if forloop.first and gallery_video %}<span class="pdx-thumb-vid"><i class="bi bi-camera-video-fill"></i></span>{% endif %}
+            </button>
+            {% empty %}
+            {% if item.image %}
+            <button type="button" class="pdx-thumb is-on" data-i="0">
+                <img src="{{ item.image.url }}" alt="">
+                {% if gallery_video %}<span class="pdx-thumb-vid"><i class="bi bi-camera-video-fill"></i></span>{% endif %}
+            </button>
+            {% endif %}
+            {% endfor %}
         </div>
 
-        <!-- Comments Section -->
-        <div class="category-section" style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
-            <div class="category-header mb-4">
-                <h2 class="category-title">Comments & Questions</h2>
-            </div>
-            
-            <!-- Comment Form -->
-            {% if user.is_authenticated %}
-            <div class="card mb-4 shadow-sm border-0">
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            {{ comment_form.content }}
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
-                    </form>
-                </div>
-            </div>
+        <div class="pdx-hero" id="pdxHero">
+            <a class="pdx-back" href="javascript:history.back()" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
+            {% if gallery_video %}
+            <button type="button" class="pdx-video-btn" id="pdxVideoBtn" aria-label="Play video" title="Watch video">
+                <i class="bi bi-camera-video-fill"></i>
+            </button>
             {% endif %}
 
-            <!-- Comments List -->
-            <div class="comments-list">
-                {% for comment in comments %}
-                <div class="card mb-3 border-0 shadow-sm bg-light">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <h6 class="fw-bold mb-0">{{ comment.user.username }}</h6>
-                            <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
-                        </div>
-                        <p class="mb-0 text-secondary">{{ comment.content }}</p>
-                    </div>
+            <button type="button" class="pdx-nav pdx-nav-prev" id="pdxPrev" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+            <button type="button" class="pdx-nav pdx-nav-next" id="pdxNext" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+
+            <div class="pdx-slider" id="pdxSlider">
+                {% for media in gallery_images %}
+                <div class="pdx-slide">
+                    <img src="{{ media.file.url }}" alt="{{ item.title }}" draggable="false">
+                    {% if forloop.first and gallery_video %}
+                    <button type="button" class="pdx-play" id="pdxPlayOverlay" aria-label="Play video"><i class="bi bi-play-fill"></i></button>
+                    {% endif %}
                 </div>
                 {% empty %}
-                <p class="text-muted">No comments yet. Be the first to ask!</p>
+                {% if item.image %}
+                <div class="pdx-slide">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" draggable="false">
+                    {% if gallery_video %}
+                    <button type="button" class="pdx-play" id="pdxPlayOverlay" aria-label="Play video"><i class="bi bi-play-fill"></i></button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="pdx-slide"><div class="pdx-hero-empty"><i class="bi bi-image"></i></div></div>
+                {% endif %}
                 {% endfor %}
+            </div>
+            <div class="pdx-dots" id="pdxDots"></div>
+        </div>
+    </div>
+
+    {# —— Main info (center on PC) —— #}
+    <div class="pdx-sheet pdx-main">
+        {% if item.category_obj %}
+        <p class="pdx-brand">{{ item.category_obj.name }}</p>
+        {% endif %}
+        <h1 class="pdx-name">{{ item.title }}</h1>
+        <div class="pdx-stats">
+            {% if avg_rating %}
+            <a class="pdx-stars" href="#nav-review"><i class="bi bi-star-fill"></i> {{ avg_rating }}</a>
+            <a href="#nav-review">{{ review_count }} review{{ review_count|pluralize }}</a>
+            {% else %}
+            <span class="pdx-stars pdx-stars-muted"><i class="bi bi-star"></i> No ratings yet</span>
+            {% endif %}
+            {% if item.condition %}<span class="pdx-chip">{{ item.condition|title }}</span>{% endif %}
+            {% if item.views %}<span>{{ item.views }} view{{ item.views|pluralize }}</span>{% endif %}
+        </div>
+
+        <div class="pdx-deal">
+            <div class="pdx-deal-label">Bei</div>
+            <div class="pdx-deal-price">
+                <strong>{{ price_label }}</strong>
+                {% if compare_label %}<span class="was">{{ compare_label }}</span>{% endif %}
             </div>
         </div>
 
-        <!-- Related Products Section -->
-        {% if related_items %}
-        <div class="category-section" style="margin-top: 4rem; border-top: 1px solid var(--border-color); padding-top: 2rem;">
-            <div class="category-header">
-                <h2 class="category-title">Related Products</h2>
-            </div>
-            <div class="horizontal-scroll-container">
-                {% for r_item in related_items %}
-                    <div class="item-card">
-                        <a href="{% url 'business:item_detail' r_item.id %}" class="item-link-block">
-                            <img src="{{ r_item.image.url }}" alt="{{ r_item.title }}" class="item-image">
-                            <div class="item-details">
-                                <h3 class="item-title">{{ r_item.title }}</h3>
-                                <p class="item-price">{{ r_item.price }}</p>
-                            </div>
-                        </a>
-                    </div>
+        <section class="pdx-specs" aria-label="Product details">
+            <h2 class="pdx-h">Maelezo ya bidhaa</h2>
+            <dl class="pdx-spec-list">
+                {% if item.category_obj %}
+                <div><dt>Category</dt><dd>{{ item.category_obj.name }}</dd></div>
+                {% endif %}
+                {% if item.condition %}
+                <div><dt>Condition</dt><dd>{{ item.condition|title }}</dd></div>
+                {% endif %}
+                {% if item.sku %}
+                <div><dt>SKU</dt><dd>{{ item.sku }}</dd></div>
+                {% endif %}
+                <div><dt>Stock</dt><dd>{{ item.stock_quantity }} available</dd></div>
+                {% if item.minimum_order_quantity and item.minimum_order_quantity > 1 %}
+                <div><dt>Min. order</dt><dd>{{ item.minimum_order_quantity }}</dd></div>
+                {% endif %}
+                {% if item.campus_location %}
+                <div><dt>Location</dt><dd>{{ item.campus_location }}</dd></div>
+                {% endif %}
+                {% if item.shipping_weight %}
+                <div><dt>Weight</dt><dd>{{ item.shipping_weight }} kg</dd></div>
+                {% endif %}
+                {% if item.shipping_dimensions %}
+                <div><dt>Dimensions</dt><dd>{{ item.shipping_dimensions }}</dd></div>
+                {% endif %}
+                {% if item.contact_method %}
+                <div><dt>Contact via</dt><dd>{{ item.get_contact_method_display }}</dd></div>
+                {% endif %}
+                {% for attr_val in item_attrs %}
+                <div>
+                    <dt>{{ attr_val.attribute.name }}</dt>
+                    <dd>{{ attr_val.value }}</dd>
+                </div>
                 {% endfor %}
+            </dl>
+        </section>
+
+        {% if qty_choices %}
+        <div class="pdx-opt-head">
+            <strong>Quantity</strong>
+            <span>{{ item.stock_quantity }} left</span>
+        </div>
+        <div class="pdx-opts pdx-opts-mobile" id="pdxQtyOpts">
+            {% for n in qty_choices %}
+            <button type="button" class="pdx-opt{% if forloop.first %} is-on{% endif %}" data-qty="{{ n }}">{{ n }}</button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="pdx-contact pdx-contact-mobile">
+            <div class="pdx-cod-warn">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa tu baada ya kuona bidhaa (Cash on Delivery).</p>
             </div>
-            <div style="text-align: center; margin-top: 1.5rem;">
-                <a href="{% url 'business:home' %}?category={{ item.category_obj.id }}" class="btn-outline-icon" style="font-size: 0.9rem; padding: 0.5rem 1.5rem; display: inline-flex;">
-                    <span>View More</span>
-                    <i class="bi bi-arrow-right"></i>
-                </a>
+            {% if item.stock_quantity > 0 and item.status == 'active' %}
+            <div class="pdx-contact-label">Wasiliana na muuzaji</div>
+            {% if contact_phone %}
+            <div class="pdx-phone">{{ contact_phone }}</div>
+            {% else %}
+            <div class="pdx-phone pdx-phone-muted">Namba haipo — tumia chat</div>
+            {% endif %}
+            <div class="pdx-contact-icons">
+                {% if user.is_authenticated %}
+                <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                {% else %}
+                <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                {% endif %}
+                {% if tel_url %}
+                <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call seller"><i class="bi bi-telephone-fill"></i></a>
+                {% else %}
+                <span class="pdx-ci pdx-ci-disabled" title="No phone" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
+                {% endif %}
+                <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp seller"><i class="bi bi-whatsapp"></i></a>
             </div>
+            {% endif %}
+        </div>
+
+        <section class="pdx-desc-block">
+            <h2 class="pdx-h">Description</h2>
+            <p class="pdx-about" id="pdxAbout">{{ item.description|linebreaksbr }}</p>
+        </section>
+
+        <div class="pdx-divider"></div>
+        <section class="pdx-reviews" id="nav-review">
+            <h2 class="pdx-h">Customer Reviews{% if review_count %} ({{ review_count }}){% endif %}</h2>
+            {% if avg_rating %}
+            <div class="pdx-review-head">
+                <div class="pdx-review-score">
+                    <strong>{{ avg_rating }}</strong>
+                    <div class="pdx-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <span>{{ review_count }} reviews</span>
+                </div>
+                {% if rating_bars %}
+                <div class="pdx-bars">
+                    {% for bar in rating_bars %}
+                    <div class="pdx-bar-row">
+                        <span>{{ bar.stars }} stars</span>
+                        <div class="pdx-bar-track"><i style="width:{{ bar.pct }}%"></i></div>
+                        <span>{{ bar.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="pdx-about">Hakuna ratings bado — kuwa wa kwanza kutoa maoni.</p>
+            {% endif %}
+            {% for comment in comments|slice:":8" %}
+            <div class="pdx-cmt">
+                <div class="pdx-cmt-top">
+                    <strong>{{ comment.user.username }}</strong>
+                    <span>{{ comment.created_at|timesince }} ago</span>
+                </div>
+                <p>{{ comment.content }}</p>
+            </div>
+            {% empty %}
+            {% if not review_count %}<p class="pdx-about">No comments yet.</p>{% endif %}
+            {% endfor %}
+            {% if user.is_authenticated %}
+            <form method="post" class="pdx-cmt-form">
+                {% csrf_token %}
+                {{ comment_form.content }}
+                <button type="submit" class="pdx-post">Post comment</button>
+            </form>
+            {% endif %}
+        </section>
+
+        {% if related_items %}
+        <div class="pdx-divider"></div>
+        <h2 class="pdx-h">You may also like</h2>
+        <div class="pdx-hscroll">
+            {% for r in related_items|slice:":6" %}
+            <a class="pdx-rel" href="{% url 'customer:item_detail' r.id %}">
+                {% if r.image %}<img src="{{ r.image.url }}" alt="" loading="lazy">{% endif %}
+                <strong>{{ r.title|truncatechars:28 }}</strong>
+                <span>Tsh {{ r.price|floatformat:0 }}</span>
+            </a>
+            {% endfor %}
         </div>
         {% endif %}
     </div>
+
+    {# —— Buy box (right on PC) —— #}
+    <aside class="pdx-buy">
+        <div class="pdx-buy-card">
+            {% if item.company %}
+            <div class="pdx-buy-seller">
+                {% if item.company.logo %}
+                <img src="{{ item.company.logo.url }}" alt="">
+                {% else %}
+                <span class="pdx-avatar">{{ item.company.name|slice:":1"|upper }}</span>
+                {% endif %}
+                <div>
+                    <a href="{% url 'company:profile' item.company.id %}"><strong>{{ item.company.name }}</strong></a>
+                    {% if item.company.is_verified %}<i class="bi bi-patch-check-fill" style="color:#3b82f6;"></i>{% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="pdx-buy-seller">
+                <span class="pdx-avatar">{{ item.seller.username|slice:":1"|upper }}</span>
+                <div><strong>{{ item.seller.username }}</strong></div>
+            </div>
+            {% endif %}
+
+            <div class="pdx-buy-price">
+                <strong>{{ price_label }}</strong>
+                {% if compare_label %}<span class="was">{{ compare_label }}</span>{% endif %}
+            </div>
+
+            <ul class="pdx-ship">
+                <li><i class="bi bi-truck"></i> Campus meetup / delivery</li>
+                <li><i class="bi bi-geo-alt"></i> {{ item.campus_location|default:"Campus pickup" }}</li>
+                <li><i class="bi bi-cash-stack"></i> Cash on Delivery</li>
+                <li><i class="bi bi-shield-check"></i> Buyer protection</li>
+            </ul>
+
+            <div class="pdx-cod-warn">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa tu baada ya kuona bidhaa (Cash on Delivery).</p>
+            </div>
+
+            {% if item.stock_quantity > 0 and item.status == 'active' %}
+            <div class="pdx-contact">
+                <div class="pdx-contact-label">Wasiliana na muuzaji</div>
+                {% if contact_phone %}
+                <div class="pdx-phone">{{ contact_phone }}</div>
+                {% else %}
+                <div class="pdx-phone pdx-phone-muted">Namba haipo — tumia chat</div>
+                {% endif %}
+                <div class="pdx-contact-icons">
+                    {% if user.is_authenticated %}
+                    <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                    {% else %}
+                    <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                    {% endif %}
+                    {% if tel_url %}
+                    <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call seller"><i class="bi bi-telephone-fill"></i></a>
+                    {% else %}
+                    <span class="pdx-ci pdx-ci-disabled" title="No phone" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
+                    {% endif %}
+                    <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp seller"><i class="bi bi-whatsapp"></i></a>
+                </div>
+            </div>
+            {% else %}
+            <button type="button" class="pdx-cart pdx-cart-desk" disabled>Out of stock</button>
+            {% endif %}
+        </div>
+    </aside>
+
+    {# —— Mobile sticky bar —— #}
+    <div class="pdx-bar pdx-bar-mobile">
+        <div class="pdx-bar-inner pdx-bar-contact">
+            {% if item.stock_quantity > 0 and item.status == 'active' %}
+            {% if user.is_authenticated %}
+            <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots-fill"></i></a>
+            {% else %}
+            <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots-fill"></i></a>
+            {% endif %}
+            {% if tel_url %}
+            <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call"><i class="bi bi-telephone-fill"></i></a>
+            {% endif %}
+            <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            {% else %}
+            <button type="button" class="pdx-cart" disabled>Out of stock</button>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-<!-- Mobile Sticky Actions -->
-<div class="mobile-sticky-actions d-lg-none">
-    <a href="{% url 'business:add_to_cart' item.id %}" class="btn-sticky-cart">
-        <i class="bi bi-cart-plus"></i> Add to Cart
-    </a>
-    {% if item.contact_method == 'email' and item.contact_email %}
-        <a href="mailto:{{ item.contact_email }}?subject=Interested in {{ item.title }}" class="btn-sticky-chat">
-            <i class="bi bi-envelope"></i> Email
-        </a>
-    {% elif item.contact_method == 'phone' and item.contact_phone %}
-        <a href="tel:{{ item.contact_phone }}" class="btn-sticky-chat">
-            <i class="bi bi-telephone"></i> Call
-        </a>
-    {% else %}
-        <a href="{% url 'chat:start_chat' item.seller.id %}" class="btn-sticky-chat">
-            <i class="bi bi-chat-dots"></i> Chat
-        </a>
-    {% endif %}
+{% if gallery_video %}
+<div class="pdx-modal" id="pdxVideoModal" hidden>
+    <div class="pdx-modal-backdrop" data-close></div>
+    <div class="pdx-modal-panel" role="dialog" aria-modal="true" aria-label="Product video">
+        <button type="button" class="pdx-modal-close" data-close aria-label="Close"><i class="bi bi-x-lg"></i></button>
+        <video id="pdxVideoPlayer" controls playsinline preload="metadata" src="{{ gallery_video.file.url }}"></video>
+    </div>
 </div>
+{% endif %}
+{% endblock %}
 
-<!-- JS for Gallery -->
+{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        const mainImage = document.getElementById('mainImage');
+(function () {
+  var root = document.getElementById('pdxRoot');
+  if (!root) return;
 
-        if(mainImage) {
-            thumbnails.forEach(thumb => {
-                thumb.addEventListener('click', function() {
-                    mainImage.src = this.src;
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-        }
+  var slider = document.getElementById('pdxSlider');
+  var dotsWrap = document.getElementById('pdxDots');
+  var thumbs = Array.from(document.querySelectorAll('#pdxThumbs .pdx-thumb'));
+  var slides = slider ? Array.from(slider.querySelectorAll('.pdx-slide')) : [];
+  var count = slides.length;
+  var idx = 0;
+  var timer = null;
+  var paused = false;
+  var dragging = false;
+  var AUTO_MS = 3500;
+  var ZOOM = 2.5;
+  var hero = document.getElementById('pdxHero');
+  var minQ = {{ qty_choices.0|default:1 }};
+  var maxQ = {{ item.stock_quantity|default:1 }};
+  var modal = document.getElementById('pdxVideoModal');
+
+  function currentImg() {
+    if (!slides[idx]) return null;
+    return slides[idx].querySelector('img');
+  }
+
+  function videoOpen() {
+    return modal && !modal.hidden;
+  }
+
+  function resetZoom() {
+    if (!hero) return;
+    hero.classList.remove('is-zooming');
+    slides.forEach(function (s) {
+      var im = s.querySelector('img');
+      if (im) {
+        im.style.transform = '';
+        im.style.transformOrigin = '';
+      }
     });
+  }
+
+  function canZoomImages() {
+    return hero && window.innerWidth >= 992 && !dragging && !videoOpen();
+  }
+
+  function currentSlideHasVideo() {
+    return !!(slides[idx] && slides[idx].querySelector('.pdx-play'));
+  }
+
+  function overVideoControls(e) {
+    if (!e || e.clientX == null) return false;
+    // Hit-test so play stays usable even if zoom was active
+    var el = document.elementFromPoint(e.clientX, e.clientY);
+    if (!el || !el.closest) return false;
+    return !!(
+      el.closest('.pdx-play') ||
+      el.closest('.pdx-video-btn') ||
+      el.closest('#pdxVideoModal') ||
+      el.closest('video')
+    );
+  }
+
+  function applyZoom(e) {
+    // Images only — no zoom on video cover / while video open / over play controls
+    if (!canZoomImages() || currentSlideHasVideo() || overVideoControls(e)) {
+      resetZoom();
+      return;
+    }
+    if (e.target.closest && (
+      e.target.closest('.pdx-nav') ||
+      e.target.closest('.pdx-video-btn') ||
+      e.target.closest('.pdx-play') ||
+      e.target.closest('.pdx-back') ||
+      e.target.closest('#pdxVideoModal') ||
+      e.target.closest('video')
+    )) {
+      resetZoom();
+      return;
+    }
+    if (!(e.target.closest && e.target.closest('.pdx-slide'))) {
+      resetZoom();
+      return;
+    }
+    var img = currentImg();
+    if (!img) return;
+    var rect = hero.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = (e.clientY - rect.top) / rect.height;
+    x = Math.max(0, Math.min(1, x));
+    y = Math.max(0, Math.min(1, y));
+    paused = true;
+    stopAuto();
+    hero.classList.add('is-zooming');
+    img.style.transformOrigin = (x * 100) + '% ' + (y * 100) + '%';
+    img.style.transform = 'scale(' + ZOOM + ')';
+  }
+
+  // Bind zoom to gallery images only — not the video modal / cover
+  if (hero) {
+    hero.addEventListener('mousemove', applyZoom);
+    hero.addEventListener('mouseenter', function (e) {
+      if (!canZoomImages() || currentSlideHasVideo()) return;
+      paused = true;
+      stopAuto();
+    });
+    hero.addEventListener('mouseleave', function () {
+      resetZoom();
+      if (!videoOpen()) {
+        paused = false;
+        startAuto();
+      }
+    });
+  }
+
+  function syncChrome() {
+    if (dotsWrap) {
+      dotsWrap.querySelectorAll('button').forEach(function (b, n) {
+        b.classList.toggle('is-on', n === idx);
+      });
+    }
+    thumbs.forEach(function (t) {
+      t.classList.toggle('is-on', parseInt(t.getAttribute('data-i'), 10) === idx);
+    });
+  }
+
+  function goTo(i, smooth) {
+    if (!slider || !count) return;
+    resetZoom();
+    idx = (i + count) % count;
+    slider.scrollTo({ left: slides[idx].offsetLeft, behavior: smooth === false ? 'auto' : 'smooth' });
+    syncChrome();
+  }
+
+  function syncFromScroll() {
+    if (!slider || !count) return;
+    var left = slider.scrollLeft;
+    var best = 0, bestDist = Infinity;
+    slides.forEach(function (s, n) {
+      var d = Math.abs(s.offsetLeft - left);
+      if (d < bestDist) { bestDist = d; best = n; }
+    });
+    idx = best;
+    syncChrome();
+  }
+
+  function startAuto() {
+    stopAuto();
+    if (count < 2 || paused) return;
+    timer = setInterval(function () { goTo(idx + 1); }, AUTO_MS);
+  }
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  if (count > 1) {
+    if (dotsWrap) {
+      slides.forEach(function (_, n) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        if (n === 0) b.className = 'is-on';
+        b.addEventListener('click', function () {
+          paused = true; stopAuto(); goTo(n);
+          setTimeout(function () { paused = false; startAuto(); }, 5000);
+        });
+        dotsWrap.appendChild(b);
+      });
+    }
+
+    thumbs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        paused = true; stopAuto();
+        goTo(parseInt(t.getAttribute('data-i'), 10));
+        setTimeout(function () { paused = false; startAuto(); }, 5000);
+      });
+    });
+
+    var prev = document.getElementById('pdxPrev');
+    var next = document.getElementById('pdxNext');
+    if (prev) prev.addEventListener('click', function () { paused = true; stopAuto(); goTo(idx - 1); setTimeout(function(){paused=false;startAuto();}, 4000); });
+    if (next) next.addEventListener('click', function () { paused = true; stopAuto(); goTo(idx + 1); setTimeout(function(){paused=false;startAuto();}, 4000); });
+
+    var scrollEnd;
+    slider.addEventListener('scroll', function () {
+      syncFromScroll();
+      clearTimeout(scrollEnd);
+      scrollEnd = setTimeout(syncFromScroll, 80);
+    }, { passive: true });
+
+    ['pointerdown', 'touchstart', 'mousedown'].forEach(function (ev) {
+      slider.addEventListener(ev, function () { paused = true; stopAuto(); }, { passive: true });
+    });
+    ['pointerup', 'touchend', 'mouseup', 'mouseleave'].forEach(function (ev) {
+      slider.addEventListener(ev, function () {
+        setTimeout(function () { paused = false; startAuto(); }, 2500);
+      }, { passive: true });
+    });
+
+    var pressStartX = null, startScroll = 0;
+    slider.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) return;
+      if (e.target.closest && (e.target.closest('.pdx-nav') || e.target.closest('.pdx-play'))) return;
+      dragging = false;
+      pressStartX = e.pageX;
+      startScroll = slider.scrollLeft;
+    });
+    window.addEventListener('mousemove', function (e) {
+      if (pressStartX === null) return;
+      if (!slider.classList.contains('is-dragging') && Math.abs(e.pageX - pressStartX) < 8) return;
+      if (!slider.classList.contains('is-dragging')) {
+        dragging = true;
+        resetZoom();
+        slider.classList.add('is-dragging');
+      }
+      slider.scrollLeft = startScroll - (e.pageX - pressStartX);
+    });
+    window.addEventListener('mouseup', function () {
+      if (slider.classList.contains('is-dragging')) {
+        dragging = false;
+        slider.classList.remove('is-dragging');
+        syncFromScroll();
+        goTo(idx);
+      }
+      pressStartX = null;
+      dragging = false;
+    });
+
+    startAuto();
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+  }
+
+  // Qty sync desktop + mobile
+  function setQty(n) {
+    n = Math.max(minQ, Math.min(maxQ, n));
+    var desk = document.getElementById('pdxQtyDesk');
+    var mob = document.getElementById('pdxQty');
+    var disp = document.getElementById('pdxQtyDisplay');
+    if (desk) desk.value = n;
+    if (mob) mob.value = n;
+    if (disp) disp.value = n;
+    document.querySelectorAll('#pdxQtyOpts .pdx-opt').forEach(function (b) {
+      b.classList.toggle('is-on', parseInt(b.getAttribute('data-qty'), 10) === n);
+    });
+  }
+  var qtyCtrl = document.getElementById('pdxQtyCtrl');
+  if (qtyCtrl) {
+    qtyCtrl.querySelectorAll('button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var cur = parseInt((document.getElementById('pdxQtyDisplay') || {}).value || minQ, 10);
+        setQty(cur + parseInt(btn.getAttribute('data-dir'), 10));
+      });
+    });
+  }
+
+  document.querySelectorAll('#pdxOpts .pdx-opt, #pdxQtyOpts .pdx-opt').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      btn.parentElement.querySelectorAll('.pdx-opt').forEach(function (b) { b.classList.remove('is-on'); });
+      btn.classList.add('is-on');
+      var q = btn.getAttribute('data-qty');
+      if (q) setQty(parseInt(q, 10));
+    });
+  });
+
+  // Video: no hover-zoom / no scale — images keep zoom when modal closed
+  var videoBtn = document.getElementById('pdxVideoBtn');
+  var playOverlay = document.getElementById('pdxPlayOverlay');
+  var player = document.getElementById('pdxVideoPlayer');
+  function openVideo() {
+    if (!modal || !player) return;
+    resetZoom();
+    paused = true; stopAuto();
+    modal.hidden = false;
+    root.classList.add('pdx-video-open');
+    document.body.style.overflow = 'hidden';
+    player.currentTime = 0;
+    player.play().catch(function () {});
+  }
+  function closeVideo() {
+    if (!modal || !player) return;
+    player.pause();
+    modal.hidden = true;
+    root.classList.remove('pdx-video-open');
+    document.body.style.overflow = '';
+    resetZoom();
+    paused = false; startAuto();
+  }
+  if (videoBtn) videoBtn.addEventListener('click', openVideo);
+  if (playOverlay) playOverlay.addEventListener('click', openVideo);
+  if (modal) {
+    modal.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', closeVideo);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeVideo();
+    });
+    // Block wheel / pinch-style zoom while watching video
+    modal.addEventListener('wheel', function (e) { e.preventDefault(); }, { passive: false });
+    if (player) {
+      player.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+      player.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+    }
+  }
+
+  var about = document.getElementById('pdxAbout');
+  var more = document.getElementById('pdxMore');
+  if (about && more && about.scrollHeight > about.clientHeight + 4) {
+    more.hidden = false;
+    more.addEventListener('click', function () {
+      about.classList.remove('clamp');
+      more.hidden = true;
+    });
+  }
+
+  var heart = document.getElementById('pdxHeart');
+  if (heart) {
+    var key = 'uc-wish-{{ item.id }}';
+    var icon = heart.querySelector('i');
+    function paint(on) {
+      heart.classList.toggle('is-on', on);
+      if (icon) icon.className = on ? 'bi bi-heart-fill' : 'bi bi-heart';
+    }
+    paint(localStorage.getItem(key) === '1');
+    heart.addEventListener('click', function () {
+      var on = localStorage.getItem(key) !== '1';
+      if (on) localStorage.setItem(key, '1'); else localStorage.removeItem(key);
+      paint(on);
+    });
+  }
+})();
 </script>
 {% endblock %}

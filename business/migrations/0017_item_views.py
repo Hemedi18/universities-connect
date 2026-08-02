@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0016_item_is_pinned'),
+        ("business", "0016_item_is_pinned"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='views',
+            model_name="item",
+            name="views",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

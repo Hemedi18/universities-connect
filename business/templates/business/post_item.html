@@ -1,12 +1,17 @@
 {% extends 'business/base.html' %}
+{% load static %}
 
-{% block title %}Sell Item - U-Connect{% endblock %}
+{% block title %}{% if title %}{{ title }}{% else %}Sell Item{% endif %} - U-Connect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/file-uploader.css' %}?v=1">
+{% endblock %}
 
 {% block content %}
 <div class="form-container sell-container">
-    <h2>Sell Item {% if category %}<small class="text-muted" style="font-size: 0.6em;">in {{ category.name }}</small>{% endif %}</h2>
+    <h2>{% if title %}{{ title }}{% else %}Sell Item{% endif %} {% if category %}<small class="text-muted" style="font-size: 0.6em;">in {{ category.name }}</small>{% endif %}</h2>
     
-    <form method="post" enctype="multipart/form-data" action="?category={{ category.id }}">
+    <form method="post" enctype="multipart/form-data" {% if category %}action="?category={{ category.id }}"{% endif %} id="sell-item-form">
         {% csrf_token %}
         
         {% if form.non_field_errors %}
@@ -36,9 +41,21 @@
                 {% if field.errors %}<div class="error-text-custom">{{ field.errors }}</div>{% endif %}
             </div>
         {% endfor %}
+
+            <div class="sell-media-block full-width">
+                <label class="sell-media-label">Photos &amp; videos <small class="text-muted">(max {{ max_media|default:6 }}, at least 1 photo)</small></label>
+                {% include 'business/partials/_file_uploader.html' with existing_media=existing_media max_files=max_media input_name='media_files' input_id='id_media_files' %}
+            </div>
         </div>
 
-        <button type="submit" class="btn-submit">Post Item</button>
+        <button type="submit" class="btn-submit">{% if button_text %}{{ button_text }}{% else %}Post Item{% endif %}</button>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelector('.fu-uploader')?.setAttribute('data-require-image', '1');
+</script>
+<script src="{% static 'js/file-uploader.js' %}?v=1"></script>
 {% endblock %}

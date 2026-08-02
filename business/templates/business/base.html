@@ -1,225 +1,228 @@
 {% load static %}
 {% load pwa %}
 {% load admin_dashboard %}
+{% load tancoin_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/uconnect.ico' %}">
     {% progressive_web_app_meta %}
-    <!-- The title block can be overridden by child templates -->
     <title>{% block title %}U-Connect{% endblock %}</title>
-    
-    <!-- Link to your main stylesheet (You can add this file later) -->
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    {% block extra_head %}{% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=10">
     {% block extra_css %}{% endblock %}
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark-mode' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('theme-dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <style>
+        html.theme-dark body { background: #0f0f0f !important; color: #f2f2f2 !important; }
+    </style>
 </head>
-<body>
-
-    <header class="main-header">
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <a href="{% url 'customer:home' %}">U-Connect</a>
+<body class="store-theme has-tabbar{% block body_class %}{% endblock %}">
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark-mode' || (!saved && prefersDark)) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    document.documentElement.classList.remove('theme-dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <div class="uc-masthead">
+        <div class="uc-wrap uc-masthead-inner">
+            <div class="uc-mast-top">
+                <a class="uc-logo" href="{% url 'customer:home' %}">U-<span>Connect</span></a>
+                <form class="uc-search js-live-search" action="{% url 'customer:home' %}" method="get" data-suggest-url="{% url 'customer:search_suggest' %}" autocomplete="off">
+                    <div class="live-search-wrap">
+                        <input type="search" name="q" class="js-live-search-input" placeholder="Search products..." value="{{ request.GET.q|default:'' }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+                        <div class="live-search-dropdown" role="listbox" hidden></div>
+                    </div>
+                    {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
+                    {% if request.GET.sort %}<input type="hidden" name="sort" value="{{ request.GET.sort }}">{% endif %}
+                    {% if request.GET.filter %}<input type="hidden" name="filter" value="{{ request.GET.filter }}">{% endif %}
+                    <input type="hidden" name="view" value="shop">
+                    <button type="submit"><i class="bi bi-search"></i></button>
+                </form>
             </div>
-            <div class="navbar-links">
-                <ul>
-                    <li>
-                        <a href="{% url 'customer:home' %}" title="Buy">
-                            <i class="bi bi-shop"></i>
-                            <span>Buy</span>
-                        </a>
-                    </li>
-                    {% if user.is_authenticated %}
-                    {% if user|is_company_owner or user.item_set.exists %}
-                    <li>
-                        <a href="{% url 'business:post_item' %}" title="Sell">
-                            <i class="bi bi-plus-square"></i>
-                            <span>Sell</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a href="{% url 'customer:view_cart' %}" title="Cart">
-                            <i class="bi bi-cart"></i>
-                            <span>Cart</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'business:user_notifications' %}" title="Notifications" class="position-relative">
-                            <i class="bi bi-bell"></i>
-                            <span>Alerts</span>
-                            {% if unread_notifications_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; margin-left: -10px; margin-top: 5px;">{{ unread_notifications_count }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'chat:inbox' %}" title="Messages">
-                            <i class="bi bi-chat-dots-fill"></i>
-                            <span>Chat</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'users:home' %}" title="Account" class="position-relative">
-                            <i class="bi bi-person-circle"></i>
-                            <span>Account</span>
-                            {% if unread_notifications_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; margin-left: -10px; margin-top: 5px;">{{ unread_notifications_count }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'users:logout' %}" title="Logout">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li>
-                    {% if user|is_company_owner %}
-                    <li>
-                        <a href="{% url 'company:dashboard' %}" title="Company Dashboard" style="color: #4f46e5; font-weight: bold;">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    {% endif %}
+            <div class="uc-mast-actions">
+                <a href="{% url 'customer:home' %}" title="Home" aria-label="Home"><i class="bi bi-house-door-fill"></i></a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'chat:inbox' %}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots"></i></a>
+                <a href="{% url 'business:user_notifications' %}" title="Alerts" aria-label="Alerts">
+                    <i class="bi bi-bell"></i>
+                    {% if unread_notifications_count %}<span class="uc-badge">{{ unread_notifications_count }}</span>{% endif %}
+                </a>
+                {% endif %}
+                <a href="{% url 'customer:view_cart' %}" title="Cart" aria-label="Cart">
+                    <i class="bi bi-cart3"></i>
+                    {% if cart_item_count %}<span class="uc-badge">{{ cart_item_count }}</span>{% endif %}
+                </a>
+                <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="uc-menu-links" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                {% if user.is_authenticated %}
+                <a href="{% url 'users:home' %}" title="Account" class="uc-mast-avatar uc-mast-account" aria-label="Account">
+                    {% if user.profile and user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}">
                     {% else %}
-                    <li>
-                        <a href="{% url 'customer:about' %}" title="About">
-                            <i class="bi bi-info-circle"></i>
-                            <span>About</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'customer:contact' %}" title="Contact">
-                            <i class="bi bi-question-circle-fill"></i>
-                            <span>Contact</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'users:login' %}" title="Login">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            <span>Login</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'users:register' %}" title="Register">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Register</span>
-                        </a>
-                    </li>
+                    <span class="uc-mast-avatar-fallback">{{ user.username|slice:":1"|upper }}</span>
                     {% endif %}
-                    {% if user.is_superuser %}
-                    <li id="install-app-item">
-                        <a href="#" id="install-app-btn" title="Install App">
-                            <i class="bi bi-download"></i>
-                            <span>Install</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li><a><button id="theme-toggle-btn" class="theme-toggle-btn">🌙</button><span>Theme</span></a></li>
-                </ul>
-                
+                </a>
+                {% else %}
+                <a href="{% url 'users:login' %}" title="Account" class="uc-mast-account" aria-label="Account"><i class="bi bi-person"></i></a>
+                {% endif %}
             </div>
-            <div class="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </nav>
-    </header>
+            <ul class="uc-menu-links" id="uc-menu-links">
+                <li>
+                    <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter %}is-active{% endif %}" title="Home">
+                        <i class="bi bi-house-door-fill" aria-hidden="true"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li><a href="{% url 'customer:home' %}?filter=new">New</a></li>
+                <li><a href="{% url 'customer:home' %}?filter=bestseller">Featured</a></li>
+                <li><a href="{% url 'customer:home' %}?view=shop">Shop</a></li>
+                <li><a href="{% url 'customer:about' %}">About</a></li>
+                <li><a href="{% url 'customer:contact' %}">Contact</a></li>
+                {% if user.is_authenticated and user|is_company_owner %}
+                <li><a href="{% url 'company:dashboard' %}">Dashboard</a></li>
+                {% elif user.is_authenticated %}
+                <li><a href="{% url 'business:post_item' %}">Sell</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 
-    <main class="container {% block main_class %}{% endblock %}">
-        <!-- This is where the content of other pages will be inserted -->
+    <nav class="uc-tabbar" aria-label="Primary">
+        <a href="{% url 'customer:home' %}" class="uc-tab {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}is-active{% endif %}">
+            <i class="bi bi-house-door-fill"></i><span>Home</span>
+        </a>
+        <a href="{% url 'customer:home' %}?view=shop" class="uc-tab">
+            <i class="bi bi-grid"></i><span>Shop</span>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'business:post_item' %}" class="uc-tab">
+            <i class="bi bi-plus-circle"></i><span>Sell</span>
+        </a>
+        <a href="{% url 'chat:inbox' %}" class="uc-tab {% if request.resolver_match.app_name == 'chat' %}is-active{% endif %}">
+            <i class="bi bi-chat-dots"></i><span>Chat</span>
+        </a>
+        {% else %}
+        <a href="{% url 'users:login' %}" class="uc-tab">
+            <i class="bi bi-plus-circle"></i><span>Sell</span>
+        </a>
+        <a href="{% url 'users:login' %}" class="uc-tab">
+            <i class="bi bi-chat-dots"></i><span>Chat</span>
+        </a>
+        {% endif %}
+        <a href="{% url 'customer:view_cart' %}" class="uc-tab {% if request.resolver_match.url_name == 'view_cart' %}is-active{% endif %}">
+            <i class="bi bi-cart3"></i><span>Cart</span>
+            {% if cart_item_count %}<em class="uc-tab-badge">{{ cart_item_count }}</em>{% endif %}
+        </a>
+        <a href="{% if user.is_authenticated %}{% url 'users:home' %}{% else %}{% url 'users:login' %}{% endif %}" class="uc-tab {% if request.resolver_match.app_name == 'users' %}is-active{% endif %}">
+            <i class="bi bi-person"></i><span>Account</span>
+        </a>
+    </nav>
+
+    <main class="{% block main_class %}container{% endblock %}">
+        {% if messages %}
+        <div class="uc-wrap pt-3">
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>U-Connect</h3>
-                <p>The trusted marketplace for students to buy, sell, and connect on campus.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul class="footer-links">
-                    <li><a href="{% url 'customer:home' %}">Marketplace</a></li>
+    <footer class="uc-footer">
+        <div class="uc-wrap uc-footer-inner">
+            <div class="uc-footer-col">
+                <h4>Company</h4>
+                <ul>
                     <li><a href="{% url 'customer:about' %}">About Us</a></li>
-                    <li><a href="{% url 'customer:contact' %}">Contact Support</a></li>
+                    <li><a href="{% url 'customer:contact' %}">Contact</a></li>
                     <li><a href="{% url 'customer:documentation' %}">Documentation</a></li>
-                    <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p><i class="bi bi-envelope-fill"></i> support@u-connect.com</p>
-                <p><i class="bi bi-telephone-fill"></i> +255 123 456 789</p>
-                <p><i class="bi bi-geo-alt-fill"></i> Main Campus, Student Center</p>
+            <div class="uc-footer-col">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><a href="{% url 'customer:home' %}">Shop</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=new">New Arrivals</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=bestseller">Best Sellers</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=discount">On Sale</a></li>
+                </ul>
             </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-icons">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-whatsapp"></i></a>
+            <div class="uc-footer-col">
+                <h4>Customer Care</h4>
+                <ul>
+                    <li><a href="{% url 'customer:my_orders' %}">My Orders</a></li>
+                    <li><a href="{% url 'customer:view_cart' %}">Saved items</a></li>
+                    <li><a href="{% url 'users:home' %}">My Account</a></li>
+                </ul>
+            </div>
+            <div class="uc-footer-col uc-footer-news">
+                <h4>Newsletter</h4>
+                <p>Get campus deals and new listings in your inbox.</p>
+                <form class="shop-newsletter-form" method="get" action="{% url 'customer:contact' %}">
+                    <input type="email" name="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+                <div class="uc-social">
+                    <a href="#" aria-label="X"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
+        <div class="uc-wrap uc-footer-bottom">
             <p>&copy; {% now "Y" %} U-Connect. All rights reserved.</p>
+            <p>Campus marketplace</p>
         </div>
     </footer>
 
-    <!-- Load JavaScript for animations -->
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="{% static 'js/main.js' %}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="{% static 'js/main.js' %}?v=5"></script>
     <script>
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/serviceworker.js')
-                    .then(reg => console.log('SW registered!', reg))
-                    .catch(err => console.log('SW failed:', err));
+        const hamburger = document.getElementById('uc-hamburger');
+        const menuLinks = document.getElementById('uc-menu-links');
+        if (hamburger && menuLinks) {
+            hamburger.addEventListener('click', () => {
+                const open = menuLinks.classList.toggle('is-open');
+                hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
             });
         }
-
-        // Install App Logic
-        let deferredPrompt;
-        const installItem = document.getElementById('install-app-item');
-        const installBtn = document.getElementById('install-app-btn');
-
-        // Hide button initially (if using CSS to show it, ensure it starts hidden)
-        if (installItem) installItem.style.display = 'none';
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Show the install button only when the prompt is ready
-            if (installItem) installItem.style.display = 'block';
-        });
-
-        if (installBtn) {
-            installBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('User accepted the install prompt');
-                            if (installItem) installItem.style.display = 'none';
-                        }
-                        deferredPrompt = null;
-                    });
-                }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/serviceworker.js').catch(() => {});
             });
         }
     </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,48 +1,142 @@
 {% extends 'business/base.html' %}
+{% load static %}
+{% load tancoin_tags %}
 
-{% block title %}My Cart - U-Connect{% endblock %}
+{% block title %}Cart · U-Connect{% endblock %}
+{% block body_class %}cf-flow cf-cart{% endblock %}
+{% block main_class %}shop-full{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout-flow.css' %}?v=4">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="cart-title">My Cart</h1>
+<div class="cf-shell cf-cart-shell">
+    <header class="cf-top">
+        <a href="{% url 'customer:home' %}?view=shop" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
+        <h1>My list{% if cart_count %} <span class="cf-count">({{ cart_count }})</span>{% endif %}</h1>
+        {% if cart_lines %}
+        <form method="post" action="{% url 'customer:clear_cart' %}" class="js-confirm-clear" data-confirm="Clear all items from your list?">
+            {% csrf_token %}
+            <button type="submit" aria-label="Clear list" title="Clear list"><i class="bi bi-trash3"></i></button>
+        </form>
+        {% else %}
+        <span style="width:40px;"></span>
+        {% endif %}
+    </header>
 
-    {% if cart_items %}
-        <div class="cart-container">
-            {% for item in cart_items %}
-            <div class="cart-item">
-                <div class="cart-item-image">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.title }}">
-                    {% else %}
-                        <div class="cart-no-img">No Img</div>
-                    {% endif %}
-                </div>
-                <div class="cart-item-details">
-                    <h3><a href="{% url 'business:item_detail' item.id %}">{{ item.title }}</a></h3>
-                    <p class="cart-item-price">{{ item.price }}</p>
-                    <p class="cart-location">{{ item.campus_location }}</p>
-                </div>
-                <div class="cart-item-actions">
-                    <a href="{% url 'business:remove_from_cart' item.id %}" class="btn-remove">Remove</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="cart-summary">
-            <p class="cart-summary-text">
-                You have {{ cart_items.count }} item(s) in your cart.
-            </p>
-            <button class="btn-submit btn-checkout">Proceed to Checkout</button>
-            <a href="{% url 'business:home' %}" class="cart-continue-link">Continue Shopping</a>
-        </div>
-    {% else %}
-        <div class="cart-empty-container">
-            <div class="cart-empty-icon">🛒</div>
-            <h2 class="cart-empty-title">Your cart is empty</h2>
-            <p class="cart-empty-text">Looks like you haven't added any items yet.</p>
-            <a href="{% url 'business:home' %}" class="btn-submit cart-start-btn">Start Shopping</a>
-        </div>
+    {% if cart_lines %}
+    <div class="cf-cod-warn cf-cod-mobile">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa baada ya kuona bidhaa.</p>
+    </div>
     {% endif %}
+
+    <div class="cf-cart-layout">
+        <div class="cf-body">
+            {% if cart_lines %}
+            {% for line in cart_lines %}
+            <article class="cf-line">
+                <a class="cf-thumb-link" href="{% url 'customer:item_detail' line.item.id %}">
+                    {% if line.item.image %}
+                    <img class="cf-thumb" src="{{ line.item.image.url }}" alt="{{ line.item.title }}">
+                    {% else %}
+                    <div class="cf-thumb cf-thumb-empty"><i class="bi bi-image"></i></div>
+                    {% endif %}
+                </a>
+                <div class="cf-line-info">
+                    <a href="{% url 'customer:item_detail' line.item.id %}">{{ line.item.title }}</a>
+                    <div class="cf-line-meta">
+                        {% if line.item.campus_location %}{{ line.item.campus_location }}{% else %}Campus item{% endif %}
+                        · {{ line.unit_price|floatformat:0 }} each
+                    </div>
+                    <div class="cf-line-actions">
+                        <div class="cf-qty">
+                            <form method="post" action="{% url 'customer:update_cart' line.item.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="{{ line.quantity|add:'-1' }}">
+                                <button type="submit" aria-label="Decrease">−</button>
+                            </form>
+                            <span>{{ line.quantity }}</span>
+                            <form method="post" action="{% url 'customer:update_cart' line.item.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="{{ line.quantity|add:'1' }}">
+                                <button type="submit" aria-label="Increase">+</button>
+                            </form>
+                        </div>
+                        <div class="cf-line-price">{{ line.line_total|floatformat:0 }}</div>
+                        <form method="post" action="{% url 'customer:remove_from_cart' line.item.id %}" class="js-confirm-remove" data-confirm="Do you want to delete “{{ line.item.title|truncatechars:40 }}” from your list?">
+                            {% csrf_token %}
+                            <button type="submit" class="cf-del" aria-label="Delete item" title="Delete">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cf-line-contact">
+                    {% if line.contact.contact_phone %}
+                    <div class="cf-phone">{{ line.contact.contact_phone }}</div>
+                    {% else %}
+                    <div class="cf-phone cf-phone-muted">Contact seller</div>
+                    {% endif %}
+                    <div class="cf-contact-icons">
+                        {% if user.is_authenticated %}
+                        <a class="cf-ci cf-ci-chat" href="{{ line.contact.chat_url }}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots-fill"></i></a>
+                        {% endif %}
+                        {% if line.contact.tel_url %}
+                        <a class="cf-ci cf-ci-call" href="{{ line.contact.tel_url }}" title="Call" aria-label="Call"><i class="bi bi-telephone-fill"></i></a>
+                        {% endif %}
+                        {% if line.contact.whatsapp_url %}
+                        <a class="cf-ci cf-ci-wa" href="{{ line.contact.whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="cf-empty">
+                <h2>Your list is empty</h2>
+                <p>Open a product and contact the seller (Cash on Delivery).</p>
+                <a href="{% url 'customer:home' %}?view=shop" class="cf-btn cf-btn-primary">Start shopping</a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if cart_lines %}
+        <aside class="cf-summary">
+            <h2>Contact sellers</h2>
+            <div class="cf-cod-warn">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa baada ya kuona bidhaa.</p>
+            </div>
+            <div class="cf-total-row">
+                <span>Subtotal</span>
+                <strong>{{ cart_total_tan|floatformat:0 }}</strong>
+            </div>
+            <div class="cf-total-row cf-total-muted">
+                <span>Items</span>
+                <span>{{ cart_count }}</span>
+            </div>
+            <p class="cf-contact-hint">Tumia chat, call, au WhatsApp kwenye kila item — ujumbe una jina la bidhaa kiotomatiki.</p>
+            <a href="{% url 'customer:home' %}?view=shop" class="cf-continue">Continue shopping</a>
+        </aside>
+        {% endif %}
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  function bindConfirm(selector) {
+    document.querySelectorAll(selector).forEach(function (form) {
+      form.addEventListener('submit', function (e) {
+        var msg = form.getAttribute('data-confirm') || 'Are you sure?';
+        if (!window.confirm(msg)) e.preventDefault();
+      });
+    });
+  }
+  bindConfirm('.js-confirm-remove');
+  bindConfirm('.js-confirm-clear');
+})();
+</script>
 {% endblock %}

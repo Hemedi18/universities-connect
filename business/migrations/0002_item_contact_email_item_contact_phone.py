@@ -6,18 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0001_initial'),
+        ("business", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='contact_email',
-            field=models.EmailField(blank=True, help_text='Required if Contact Method is Email', max_length=254, verbose_name='Contact Email'),
+            model_name="item",
+            name="contact_email",
+            field=models.EmailField(
+                blank=True,
+                help_text="Required if Contact Method is Email",
+                max_length=254,
+                verbose_name="Contact Email",
+            ),
         ),
         migrations.AddField(
-            model_name='item',
-            name='contact_phone',
-            field=models.CharField(blank=True, help_text='Required if Contact Method is Phone', max_length=20, verbose_name='Contact Phone'),
+            model_name="item",
+            name="contact_phone",
+            field=models.CharField(
+                blank=True,
+                help_text="Required if Contact Method is Phone",
+                max_length=20,
+                verbose_name="Contact Phone",
+            ),
         ),
     ]

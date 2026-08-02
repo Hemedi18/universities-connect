@@ -1,22 +1,46 @@
-<div class="item-card">
-    <a href="{% url 'business:item_detail' item.id %}" class="item-link-block">
-        {% if item.image %}
-        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+{% load money_tags %}
+<article class="ae-card {% if compact %}ae-mini-card{% endif %}" data-item-id="{{ item.id }}">
+    <div class="ae-img-wrap">
+        <a class="ae-img-link js-rec-click" href="{% url 'customer:item_detail' item.id %}" data-item-id="{{ item.id }}">
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="400" height="400">
+            {% else %}
+            <div class="ae-img-empty"><i class="bi bi-image"></i></div>
+            {% endif %}
+        </a>
+        {% if item.stock_quantity > 0 and item.status == 'active' and item.seller_id %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'chat:start_chat' item.seller_id %}?item={{ item.id }}" class="ae-add-fab" title="Chat with seller" aria-label="Chat with seller">
+            <i class="bi bi-chat-dots"></i>
+        </a>
         {% else %}
-        <div class="item-image" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
-            <i class="bi bi-image text-muted"></i>
-        </div>
+        <a href="{% url 'users:login' %}?next={% url 'chat:start_chat' item.seller_id %}%3Fitem%3D{{ item.id }}" class="ae-add-fab" title="Chat with seller" aria-label="Chat with seller">
+            <i class="bi bi-chat-dots"></i>
+        </a>
         {% endif %}
-        <div class="item-details">
-            <h3 class="item-title">{{ item.title }}</h3>
-            <p class="item-price">{{ item.price }}</p>
-            <div class="item-meta">
-                {% if meta_type == 'views' %}
-                <span class="item-location"><i class="bi bi-eye-fill"></i> {{ item.views }} views</span>
-                {% else %}
-                <span class="item-location"><i class="bi bi-geo-alt-fill"></i> {{ item.campus_location|truncatechars:15 }}</span>
-                {% endif %}
-            </div>
+        {% endif %}
+    </div>
+    <div class="ae-card-body">
+        <h3 class="ae-card-title{% if compact %} ae-mini-title{% endif %}">
+            <a href="{% url 'customer:item_detail' item.id %}" class="js-rec-click" data-item-id="{{ item.id }}">{% if compact %}{{ item.title|truncatechars:36 }}{% else %}{{ item.title|truncatechars:48 }}{% endif %}</a>
+        </h3>
+        <div class="ae-card-meta">
+            {% if item.avg_rating %}
+            <span class="ae-rating"><i class="bi bi-star-fill"></i> {{ item.avg_rating|floatformat:1 }}</span>
+            {% if item.review_count %}<span class="ae-reviews">({{ item.review_count }})</span>{% endif %}
+            {% else %}
+            <span class="ae-rating ae-rating-new"><i class="bi bi-star"></i> New</span>
+            {% endif %}
+            {% if item.condition %}<span class="ae-cond">{{ item.condition|title }}</span>{% endif %}
         </div>
-    </a>
-</div>
+        <div class="ae-card-price-row">
+            <span class="ae-card-price{% if compact %} ae-mini-price{% endif %}">{{ item.price|tsh }}</span>
+            {% if item.compare_at_price and item.compare_at_price > item.price %}
+            <span class="ae-discount">Sale</span>
+            {% endif %}
+        </div>
+        {% if item.compare_at_price and item.compare_at_price > item.price %}
+        <div class="ae-strike">{{ item.compare_at_price|tsh }}</div>
+        {% endif %}
+    </div>
+</article>

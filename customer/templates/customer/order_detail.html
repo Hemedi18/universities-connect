@@ -1,0 +1,76 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Order {{ order.order_number }} - U-Connect{% endblock %}
+
+{% block content %}
+<div class="uc-page">
+    <div class="uc-breadcrumb">
+        <a href="{% url 'customer:home' %}">Home</a> /
+        <a href="{% url 'customer:my_orders' %}">Orders</a> /
+        {{ order.order_number }}
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+            <h1 class="uc-page-title mb-1">Order {{ order.order_number }}</h1>
+            <p class="text-muted mb-0">Placed {{ order.created_at|date:"M d, Y H:i" }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'customer:order_invoice' order.id %}" class="uc-btn" style="width:auto;padding:0.45rem 0.85rem;">Invoice</a>
+            <a href="{% url 'customer:my_orders' %}" class="uc-btn" style="width:auto;padding:0.45rem 0.85rem;">All orders</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="uc-panel mb-3">
+                <h2 class="uc-panel-head">Items</h2>
+                {% for line in order.items.all %}
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <div>
+                        <strong>{{ line.title }}</strong>
+                        <div class="small text-muted">Qty {{ line.quantity }} · {{ line.get_fulfillment_status_display }}</div>
+                    </div>
+                    <div style="color:var(--uc-accent);font-weight:700;">{{ line.line_total_tan }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if order.payment_method == 'mobile_money' or order.payment_method == 'bank_transfer' %}
+            {% if order.payment_status != 'paid' %}
+            <div class="uc-panel mb-3">
+                <h2 class="uc-panel-head">Submit payment reference</h2>
+                <p class="text-muted small">After paying via {{ order.get_payment_method_display }}, enter your transaction ID.</p>
+                <form method="post" action="{% url 'customer:submit_payment_reference' order.id %}" class="uc-form">
+                    {% csrf_token %}
+                    <div class="mb-3">{{ ref_form.payment_reference }}</div>
+                    <button type="submit" class="btn-shop">Submit reference</button>
+                </form>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <div class="uc-panel mb-3">
+                <div class="mb-2"><span class="text-muted">Status</span><br><strong>{{ order.get_status_display }}</strong></div>
+                <div class="mb-2"><span class="text-muted">Payment</span><br><strong>{{ order.get_payment_status_display }}</strong> ({{ order.get_payment_method_display }})</div>
+                <div class="mb-2"><span class="text-muted">Fulfillment</span><br><strong>{{ order.get_fulfillment_method_display }}</strong></div>
+                {% if order.campus_location %}<div class="mb-2 small">Meetup: {{ order.campus_location }}</div>{% endif %}
+                {% if order.address_line %}<div class="mb-2 small">Address: {{ order.address_line }}</div>{% endif %}
+                {% if order.payment_reference %}<div class="mb-2 small">Ref: {{ order.payment_reference }}</div>{% endif %}
+                <hr>
+                <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ order.subtotal_tan }}</span></div>
+                <div class="d-flex justify-content-between"><span>Shipping</span><span>{{ order.shipping_fee_tan }}</span></div>
+                <div class="d-flex justify-content-between"><span>Tax</span><span>{{ order.tax_tan }}</span></div>
+                <div class="d-flex justify-content-between fw-bold mt-1" style="color:var(--uc-accent);"><span>Total</span><span>{{ order.total_tan }}</span></div>
+            </div>
+            {% if order.can_cancel %}
+            <form method="post" action="{% url 'customer:cancel_order' order.id %}" onsubmit="return confirm('Cancel this order?');">
+                {% csrf_token %}
+                <button type="submit" class="uc-btn" style="border-color:var(--uc-accent);color:var(--uc-accent);">Cancel order</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

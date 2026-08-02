@@ -1,116 +1,124 @@
 {% extends 'business/base.html' %}
 {% load static %}
+{% load tancoin_tags %}
 
-{% block title %}My Account - U-Connect{% endblock %}
+{% block title %}My Account · U-Connect{% endblock %}
+{% block body_class %}acc-page{% endblock %}
+{% block main_class %}shop-full{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="mb-3">My Account</h2>
-            <p class="text-muted">Manage your purchases, sales, and business profile.</p>
-        </div>
-    </div>
-
-    <!-- Business Options -->
-    <div class="row mb-5 g-4">
-        <div class="col-md-6">
-            <div class="card h-100 border-primary shadow-sm">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-workspace fs-1 text-primary"></i>
-                    </div>
-                    <h3 class="h4 mb-3">Personal Business</h3>
-                    <p class="text-muted mb-4">Sell products as an individual seller. Track your personal sales and manage items.</p>
-                    <a href="{% url 'business:personal_dashboard' %}" class="btn btn-primary w-100">
-                        <i class="bi bi-speedometer2 me-2"></i> Manage Personal Business
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card h-100 border-success shadow-sm">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-building fs-1 text-success"></i>
-                    </div>
-                    <h3 class="h4 mb-3">Company Business</h3>
-                    {% if user.company_profile %}
-                        <p class="text-muted mb-4">Manage your registered company store, products, and reviews.</p>
-                        <a href="{% url 'company:dashboard' %}" class="btn btn-success w-100">
-                            <i class="bi bi-speedometer me-2"></i> Go to Company Dashboard
-                        </a>
-                    {% else %}
-                        <p class="text-muted mb-4">Register a verified company profile to build your brand and unlock features.</p>
-                        <a href="{% url 'company:register' %}" class="btn btn-outline-success w-100">
-                            <i class="bi bi-plus-circle me-2"></i> Register Company
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- My Purchases -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white">
-            <h4 class="h5 mb-0">My Purchases</h4>
-        </div>
-        <div class="card-body">
-            {% if my_purchases %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Date</th>
-                                <th>Price</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in my_purchases %}
-                            <tr>
-                                <td>
-                                    <a href="{% url 'customer:item_detail' item.id %}" class="text-decoration-none">
-                                        {{ item.title }}
-                                    </a>
-                                </td>
-                                <td>{{ item.created_at|date:"M d, Y" }}</td>
-                                <td>{{ item.price }}</td>
-                                <td><span class="badge bg-success">Purchased</span></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+<div class="acc-shell">
+    <header class="acc-hero">
+        <div class="acc-avatar">
+            {% if user.profile and user.profile.profile_picture %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="">
             {% else %}
-                <p class="text-muted text-center my-3">You haven't purchased any items yet.</p>
-                <div class="text-center">
-                    <a href="{% url 'customer:home' %}" class="btn btn-outline-primary btn-sm">Start Shopping</a>
-                </div>
+            <span>{{ user.username|slice:":1"|upper }}</span>
             {% endif %}
         </div>
-    </div>
+        <div class="acc-hero-text">
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <p>@{{ user.username }}{% if user.profile.phone_number %} · {{ user.profile.phone_number }}{% endif %}</p>
+        </div>
+        <div class="acc-hero-actions">
+            <a href="{% url 'users:edit_profile' %}" class="acc-btn acc-btn-ghost"><i class="bi bi-pencil"></i> Edit</a>
+            <a href="{% url 'users:logout' %}" class="acc-btn acc-btn-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </header>
 
-    <!-- Watchlist -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-white">
-            <h4 class="h5 mb-0">My Watchlist</h4>
-        </div>
-        <div class="card-body">
-            {% if watchlist_items %}
-                <div class="row row-cols-1 row-cols-md-4 g-3">
-                    {% for item in watchlist_items %}
-                        <div class="col">
-                            {% include 'business/partials/_item_card.html' %}
-                        </div>
-                    {% endfor %}
-                </div>
+    <section class="acc-section">
+        <h2 class="acc-section-title">Quick actions</h2>
+        <div class="acc-grid">
+            <a class="acc-tile" href="{% url 'business:manage_items' %}">
+                <span class="acc-tile-icon"><i class="bi bi-box-seam"></i></span>
+                <strong>My products</strong>
+                <em>{{ active_listings|length }} active</em>
+            </a>
+            <a class="acc-tile" href="{% url 'business:post_item' %}">
+                <span class="acc-tile-icon"><i class="bi bi-plus-lg"></i></span>
+                <strong>Sell item</strong>
+                <em>New listing</em>
+            </a>
+            <a class="acc-tile" href="{% url 'customer:view_cart' %}">
+                <span class="acc-tile-icon"><i class="bi bi-bag-heart"></i></span>
+                <strong>Saved items</strong>
+                <em>My list</em>
+            </a>
+            <a class="acc-tile" href="{% url 'chat:inbox' %}">
+                <span class="acc-tile-icon"><i class="bi bi-chat-dots"></i></span>
+                <strong>Messages</strong>
+                <em>Inbox</em>
+            </a>
+            <a class="acc-tile" href="{% url 'customer:my_orders' %}">
+                <span class="acc-tile-icon"><i class="bi bi-receipt"></i></span>
+                <strong>My orders</strong>
+                <em>Purchases</em>
+            </a>
+            <a class="acc-tile" href="{% url 'customer:seller_orders' %}">
+                <span class="acc-tile-icon"><i class="bi bi-shop"></i></span>
+                <strong>Sales</strong>
+                <em>Seller orders</em>
+            </a>
+            {% if user.company_profile %}
+            <a class="acc-tile" href="{% url 'company:dashboard' %}">
+                <span class="acc-tile-icon"><i class="bi bi-building"></i></span>
+                <strong>Company</strong>
+                <em>Dashboard</em>
+            </a>
             {% else %}
-                <p class="text-muted text-center my-3">Your watchlist is empty.</p>
+            <a class="acc-tile" href="{% url 'company:register' %}">
+                <span class="acc-tile-icon"><i class="bi bi-building-add"></i></span>
+                <strong>Company</strong>
+                <em>Register</em>
+            </a>
             {% endif %}
+            <a class="acc-tile" href="{% url 'business:personal_dashboard' %}">
+                <span class="acc-tile-icon"><i class="bi bi-speedometer2"></i></span>
+                <strong>Dashboard</strong>
+                <em>Personal</em>
+            </a>
         </div>
-    </div>
+    </section>
+
+    <section class="acc-section">
+        <div class="acc-section-head">
+            <h2 class="acc-section-title">Recent orders</h2>
+            <a href="{% url 'customer:my_orders' %}" class="acc-link">View all</a>
+        </div>
+        {% if my_orders %}
+        <div class="acc-orders">
+            {% for order in my_orders %}
+            <a class="acc-order" href="{% url 'customer:order_detail' order.id %}">
+                <div class="acc-order-main">
+                    <strong>{{ order.order_number }}</strong>
+                    <span>{{ order.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="acc-order-side">
+                    <strong class="acc-order-price">{{ order.total_tan|floatformat:0 }}</strong>
+                    <span class="acc-pill">{{ order.get_status_display }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="acc-empty">
+            <p>No orders yet.</p>
+            <a href="{% url 'customer:home' %}?view=shop" class="acc-btn acc-btn-primary">Start shopping</a>
+        </div>
+        {% endif %}
+    </section>
+
+    {% if watchlist_items %}
+    <section class="acc-section">
+        <div class="acc-section-head">
+            <h2 class="acc-section-title">Watchlist</h2>
+        </div>
+        <div class="acc-watch">
+            {% for item in watchlist_items %}
+            {% include 'business/partials/_item_card.html' with item=item compact=True %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}

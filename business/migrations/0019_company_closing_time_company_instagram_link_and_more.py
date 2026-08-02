@@ -6,33 +6,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('business', '0018_comment'),
+        ("business", "0018_comment"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='company',
-            name='closing_time',
+            model_name="company",
+            name="closing_time",
             field=models.TimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='company',
-            name='instagram_link',
+            model_name="company",
+            name="instagram_link",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='company',
-            name='opening_time',
+            model_name="company",
+            name="opening_time",
             field=models.TimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='company',
-            name='website_link',
+            model_name="company",
+            name="website_link",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='company',
-            name='whatsapp_number',
-            field=models.CharField(blank=True, help_text='Format: 255712345678', max_length=20, null=True),
+            model_name="company",
+            name="whatsapp_number",
+            field=models.CharField(
+                blank=True, help_text="Format: 255712345678", max_length=20, null=True
+            ),
         ),
     ]

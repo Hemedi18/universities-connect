@@ -1,27 +1,86 @@
 {% extends 'business/base.html' %}
+{% load static %}
+{% load chat_extras %}
 
 {% block title %}Chat with {{ other_user.username }} - U-Connect{% endblock %}
+{% block body_class %} no-tabbar page-chat page-chat-room{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deal-rating.css' %}?v=2">
+{% endblock %}
 
 {% block content %}
+{% with header_deal=deals.0 %}
 <div class="chat-room-container chat-room-container-override chat-room-height-mobile" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
     <div class="chat-room-header">
-        <a href="{% url 'chat:inbox' %}" class="back-btn"><i class="bi bi-arrow-left"></i></a>
+        <a href="{% url 'chat:inbox' %}" class="back-btn" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
         <div class="chat-user-info">
             <span class="chat-username" id="chat-username">{{ other_user.first_name|default:other_user.username }}</span>
             <div id="status-container" class="header-status">
                 <span id="typing-indicator" style="display: none;">typing...</span>
             </div>
         </div>
+        {% if header_deal %}
+        <div class="deal-header-slot" id="dealHeaderSlot">
+            <button type="button"
+                class="deal-header-icon status-{{ header_deal.status }}{% if header_deal.is_seller and header_deal.status == 'pending' %} is-action{% endif %}"
+                id="dealHeaderBtn"
+                data-deal-id="{{ header_deal.id }}"
+                data-status="{{ header_deal.status }}"
+                data-is-seller="{{ header_deal.is_seller|yesno:'1,0' }}"
+                data-max="{{ header_deal.max_qty }}"
+                data-stock="{{ header_deal.stock_quantity }}"
+                title="{% if header_deal.status == 'sold' %}Sold{% elif header_deal.status == 'not_sold' %}Not sold{% else %}Pending{% endif %}"
+                aria-label="Deal status">
+                {% if header_deal.status == 'sold' %}
+                <i class="bi bi-check-circle-fill"></i>
+                {% elif header_deal.status == 'not_sold' %}
+                <i class="bi bi-x-circle"></i>
+                {% else %}
+                <i class="bi bi-hourglass-split"></i>
+                {% endif %}
+            </button>
+            {% if header_deal.is_seller and header_deal.status == 'pending' %}
+            <div class="deal-header-menu" id="dealHeaderMenu" hidden>
+                <button type="button" class="js-deal-sold" data-deal-id="{{ header_deal.id }}" data-max="{{ header_deal.max_qty }}">
+                    <i class="bi bi-check2"></i> Sold
+                </button>
+                <button type="button" class="js-deal-not-sold" data-deal-id="{{ header_deal.id }}">
+                    <i class="bi bi-x"></i> Not sold
+                </button>
+            </div>
+            {% elif header_deal.is_seller and header_deal.status == 'sold' %}
+            <div class="deal-header-menu" id="dealHeaderMenu" hidden>
+                <label class="deal-mini-stock">Stock
+                    <input type="number" min="0" class="js-stock-input" value="{{ header_deal.stock_quantity }}">
+                </label>
+                <button type="button" class="js-deal-stock-save" data-deal-id="{{ header_deal.id }}">Save</button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 
     <div class="messages-container" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
         {% for message in messages %}
-        <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}" data-id="{{ message.id }}">
+        <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}{% if message.image or message.item %} has-media{% endif %}" data-id="{{ message.id }}">
+            {% if message.item %}
+            <a class="chat-item-card" href="{% url 'customer:item_detail' message.item.id %}">
+                {% if message.item.image %}
+                <img src="{{ message.item.image.url }}" alt="">
+                {% endif %}
+                <span>
+                    <strong>{{ message.item.title|truncatechars:42 }}</strong>
+                    <em>Tsh {{ message.item.price|floatformat:0 }}</em>
+                </span>
+            </a>
+            {% endif %}
             {% if message.image %}
-                <img src="{{ message.image.url }}" alt="Image" class="chat-image">
+                <a class="chat-image-link" href="{{ message.image.url }}" target="_blank" rel="noopener">
+                    <img src="{{ message.image.url }}" alt="Image" class="chat-image">
+                </a>
             {% endif %}
             {% if message.content %}
-                <div class="message-content">{{ message.content }}</div>
+                <div class="message-content">{{ message.content|chat_message }}</div>
             {% endif %}
             <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
         </div>
@@ -46,65 +105,219 @@
         </form>
     </div>
 </div>
+{% endwith %}
+
+<div class="deal-modal" id="soldQtyModal" hidden>
+    <div class="deal-modal-backdrop" data-close></div>
+    <div class="deal-modal-card" role="dialog" aria-modal="true" aria-labelledby="soldQtyTitle">
+        <h3 id="soldQtyTitle">Thibitisha ununuzi</h3>
+        <p>Weka idadi iliyonunuliwa (stock itapungua).</p>
+        <label class="deal-qty-label">Quantity
+            <input type="number" id="soldQtyInput" min="1" value="1">
+        </label>
+        <div class="deal-modal-actions">
+            <button type="button" class="deal-btn deal-btn-ghost" data-close>Cancel</button>
+            <button type="button" class="deal-btn deal-btn-sold" id="soldQtyConfirm">Confirm sold</button>
+        </div>
+    </div>
+</div>
+
+<div class="rate-modal" id="rateModal" hidden {% if rating_deal %}data-open="1" data-deal-id="{{ rating_deal.id }}" data-title="{{ rating_deal.item_title|escape }}"{% endif %}>
+    <div class="rate-modal-backdrop" data-close-rate></div>
+    <div class="rate-card" role="dialog" aria-modal="true" aria-labelledby="rateTitle">
+        <div class="rate-wave" aria-hidden="true"></div>
+        <div class="rate-emoji" aria-hidden="true">😆</div>
+        <h2 id="rateTitle">How would you rate this purchase?</h2>
+        <p class="rate-sub" id="rateSub">Je, umeridhika na bidhaa / muuzaji?</p>
+        <div class="rate-stars" id="rateStars" role="radiogroup" aria-label="Star rating">
+            <button type="button" class="rate-star" data-v="1" aria-label="1 star"><i class="bi bi-star"></i></button>
+            <button type="button" class="rate-star" data-v="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
+            <button type="button" class="rate-star" data-v="3" aria-label="3 stars"><i class="bi bi-star"></i></button>
+            <button type="button" class="rate-star" data-v="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
+            <button type="button" class="rate-star" data-v="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
+        </div>
+        <label class="rate-label" for="rateComment">Can you tell us more?</label>
+        <textarea id="rateComment" rows="3" placeholder="We'd love to hear more!"></textarea>
+        <div class="rate-actions">
+            <button type="button" class="rate-btn rate-btn-cancel" data-close-rate>Cancel</button>
+            <button type="button" class="rate-btn rate-btn-submit" id="rateSubmit">Submit</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const messagesContainer = document.getElementById('messagesContainer');
-        const scrollBtn = document.getElementById('scrollToBottomBtn');
-
-        // Initial scroll to bottom
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        // Show/Hide button on scroll
-        messagesContainer.addEventListener('scroll', function() {
-            if (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 300) {
-                scrollBtn.style.display = 'flex';
-            } else {
-                scrollBtn.style.display = 'none';
-            }
-        });
-
-        // Scroll to bottom on click
-        scrollBtn.addEventListener('click', function() {
-            messagesContainer.scrollTo({
-                top: messagesContainer.scrollHeight,
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // --- Typing Indicator Logic ---
-    const chatInput = document.querySelector('input[name="content"]');
-    const typingIndicator = document.getElementById('typing-indicator');
+document.addEventListener('DOMContentLoaded', function() {
+    const messagesContainer = document.getElementById('messagesContainer');
+    const scrollBtn = document.getElementById('scrollToBottomBtn');
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
     const conversationId = "{{ conversation.id }}";
     const otherUserId = "{{ other_user.id }}";
-    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-    // 1. Send typing status when this user types
-    chatInput.addEventListener('input', () => {
-        fetch(`/chat/room/${conversationId}/typing/`, {
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        messagesContainer.addEventListener('scroll', function() {
+            scrollBtn.style.display =
+                (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 300)
+                ? 'flex' : 'none';
+        });
+    }
+    if (scrollBtn) {
+        scrollBtn.addEventListener('click', function() {
+            messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
+        });
+    }
+
+    const chatInput = document.querySelector('input[name="content"]');
+    const typingIndicator = document.getElementById('typing-indicator');
+    if (chatInput) {
+        chatInput.addEventListener('input', () => {
+            fetch(`/chat/room/${conversationId}/typing/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+        });
+    }
+    setInterval(() => {
+        fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
+            .then(r => r.json())
+            .then(data => {
+                if (typingIndicator) typingIndicator.style.display = data.is_typing ? 'inline' : 'none';
+            }).catch(() => {});
+    }, 2500);
+
+    function postJSON(url, body) {
+        return fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify(body || {})
+        }).then(r => r.json());
+    }
+
+    const headerBtn = document.getElementById('dealHeaderBtn');
+    const headerMenu = document.getElementById('dealHeaderMenu');
+    if (headerBtn && headerMenu) {
+        headerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            headerMenu.hidden = !headerMenu.hidden;
+        });
+        document.addEventListener('click', () => { headerMenu.hidden = true; });
+        headerMenu.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    let pendingSoldDealId = null;
+    const soldModal = document.getElementById('soldQtyModal');
+    const soldQtyInput = document.getElementById('soldQtyInput');
+
+    document.querySelectorAll('.js-deal-sold').forEach(btn => {
+        btn.addEventListener('click', () => {
+            pendingSoldDealId = btn.getAttribute('data-deal-id');
+            const max = parseInt(btn.getAttribute('data-max') || '1', 10);
+            soldQtyInput.max = Math.max(1, max);
+            soldQtyInput.value = '1';
+            if (headerMenu) headerMenu.hidden = true;
+            soldModal.hidden = false;
+        });
+    });
+    document.querySelectorAll('[data-close]').forEach(el => {
+        el.addEventListener('click', () => { soldModal.hidden = true; pendingSoldDealId = null; });
+    });
+    document.getElementById('soldQtyConfirm').addEventListener('click', () => {
+        if (!pendingSoldDealId) return;
+        postJSON(`/chat/deal/${pendingSoldDealId}/sold/`, {
+            quantity: parseInt(soldQtyInput.value || '1', 10)
+        }).then(data => {
+            if (data.error) { alert(data.error); return; }
+            location.reload();
+        });
+    });
+    document.querySelectorAll('.js-deal-not-sold').forEach(btn => {
+        btn.addEventListener('click', () => {
+            postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/not-sold/`, {}).then(data => {
+                if (data.error) { alert(data.error); return; }
+                location.reload();
+            });
+        });
+    });
+    document.querySelectorAll('.js-deal-stock-save').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = document.querySelector('.js-stock-input');
+            postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/stock/`, {
+                stock_quantity: parseInt((input && input.value) || '0', 10)
+            }).then(data => {
+                if (data.error) { alert(data.error); return; }
+                if (headerMenu) headerMenu.hidden = true;
+                if (headerBtn && data.deal) {
+                    headerBtn.setAttribute('data-stock', data.deal.stock_quantity);
+                }
+            });
         });
     });
 
-    // 2. Check for other user's typing status periodically
-    setInterval(() => {
-        // The main get_messages poll in main.js already handles online status.
-        // This is specifically for the typing indicator.
-        fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.is_typing) {
-                    typingIndicator.style.display = 'inline';
-                } else {
-                    typingIndicator.style.display = 'none';
-                }
+    const rateModal = document.getElementById('rateModal');
+    let selectedStars = 0;
+    let rateDealId = rateModal ? rateModal.getAttribute('data-deal-id') : null;
+
+    function paintStars(n) {
+        selectedStars = n;
+        document.querySelectorAll('.rate-star').forEach(btn => {
+            const v = parseInt(btn.getAttribute('data-v'), 10);
+            const on = v <= n;
+            btn.classList.toggle('is-on', on);
+            const icon = btn.querySelector('i');
+            if (icon) icon.className = on ? 'bi bi-star-fill' : 'bi bi-star';
+        });
+    }
+    document.querySelectorAll('.rate-star').forEach(btn => {
+        btn.addEventListener('mouseenter', () => paintStars(parseInt(btn.getAttribute('data-v'), 10)));
+        btn.addEventListener('click', () => paintStars(parseInt(btn.getAttribute('data-v'), 10)));
+    });
+    const starsWrap = document.getElementById('rateStars');
+    if (starsWrap) starsWrap.addEventListener('mouseleave', () => paintStars(selectedStars));
+
+    function openRate(deal) {
+        if (!rateModal || !deal) return;
+        rateDealId = deal.id;
+        rateModal.setAttribute('data-deal-id', deal.id);
+        const sub = document.getElementById('rateSub');
+        if (sub && deal.item_title) sub.textContent = `How was “${deal.item_title}”?`;
+        paintStars(0);
+        document.getElementById('rateComment').value = '';
+        rateModal.hidden = false;
+    }
+    function closeRate() { if (rateModal) rateModal.hidden = true; }
+
+    document.querySelectorAll('[data-close-rate]').forEach(el => el.addEventListener('click', closeRate));
+    const rateSubmit = document.getElementById('rateSubmit');
+    if (rateSubmit) {
+        rateSubmit.addEventListener('click', () => {
+            if (!rateDealId) return;
+            if (!selectedStars) { alert('Please select a star rating.'); return; }
+            postJSON(`/chat/deal/${rateDealId}/rate/`, {
+                rating: selectedStars,
+                comment: document.getElementById('rateComment').value || ''
+            }).then(data => {
+                if (data.error) { alert(data.error); return; }
+                closeRate();
             });
-    }, 2500); // Check every 2.5 seconds
+        });
+    }
+
+    if (rateModal && rateModal.getAttribute('data-open') === '1') {
+        openRate({ id: rateModal.getAttribute('data-deal-id'), item_title: rateModal.getAttribute('data-title') });
+    }
+
+    setInterval(() => {
+        fetch(`/chat/room/${conversationId}/messages/?last_id=999999999`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.rating_deal && rateModal && rateModal.hidden) openRate(data.rating_deal);
+            }).catch(() => {});
+    }, 8000);
+});
 </script>
 {% endblock %}

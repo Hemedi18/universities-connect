@@ -1,24 +1,155 @@
 {% extends "business/base.html" %}
 {% load static %}
 
-{% block title %}Edit Profile - U-Connect{% endblock %}
+{% block title %}Settings · U-Connect{% endblock %}
+{% block body_class %}settings-page{% endblock %}
+{% block main_class %}shop-full{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/file-uploader.css' %}?v=1">
+{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Edit Your Profile</h2>
-    <form method="POST" enctype="multipart/form-data">
+<div class="set-shell">
+    <header class="set-top">
+        <div>
+            <h1>Settings</h1>
+            <p>Update your account and contact details</p>
+        </div>
+        <a href="{% url 'users:home' %}" class="set-back"><i class="bi bi-arrow-left"></i> Account</a>
+    </header>
+
+    <form method="POST" enctype="multipart/form-data" class="set-form">
         {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">User Info</legend>
-            {{ user_form.as_p }}
-        </fieldset>
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile Info</legend>
-            {{ profile_form.as_p }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn-submit" type="submit">Update Profile</button>
+
+        {% if user_form.errors or profile_form.errors %}
+        <div class="set-errors">
+            {{ user_form.non_field_errors }}
+            {{ profile_form.non_field_errors }}
+            {% for field in user_form %}{% for error in field.errors %}<p>{{ field.label }}: {{ error }}</p>{% endfor %}{% endfor %}
+            {% for field in profile_form %}{% for error in field.errors %}<p>{{ field.label }}: {{ error }}</p>{% endfor %}{% endfor %}
+        </div>
+        {% endif %}
+
+        <section class="set-card">
+            <h2>User info</h2>
+            <div class="set-grid">
+                <label class="set-field">
+                    <span>First name</span>
+                    {{ user_form.first_name }}
+                </label>
+                <label class="set-field">
+                    <span>Last name</span>
+                    {{ user_form.last_name }}
+                </label>
+                <label class="set-field set-field-full">
+                    <span>Email</span>
+                    {{ user_form.email }}
+                </label>
+            </div>
+        </section>
+
+        <section class="set-card">
+            <h2>Profile photo</h2>
+            <div class="fu-uploader fu-compact" data-max="1" data-multiple="0" data-existing="{% if profile_form.instance.profile_picture %}1{% else %}0{% endif %}">
+                <div class="fu-dropzone" tabindex="0" role="button" aria-label="Upload profile photo">
+                    <div class="fu-drop-inner">
+                        <i class="bi bi-cloud-arrow-up fu-icon"></i>
+                        <p class="fu-drop-text">Upload your photo here</p>
+                        <button type="button" class="fu-browse">Browse</button>
+                    </div>
+                    {{ profile_form.profile_picture }}
+                </div>
+                <div class="fu-pending" hidden>
+                    <div class="fu-pending-head">
+                        <strong class="fu-pending-title">Selected</strong>
+                        <span class="fu-pending-count"></span>
+                    </div>
+                    <div class="fu-pending-thumbs"></div>
+                    <div class="fu-progress"><span></span></div>
+                    <p class="fu-pending-hint">1 photo max</p>
+                </div>
+                <div class="fu-recent">
+                    <div class="fu-recent-head">
+                        <strong>Current photo</strong>
+                        <span class="fu-recent-count">{% if profile_form.instance.profile_picture %}1 item{% else %}0 items{% endif %}</span>
+                    </div>
+                    <ul class="fu-recent-list">
+                        {% if profile_form.instance.profile_picture %}
+                        <li class="fu-recent-item">
+                            <div class="fu-thumb">
+                                <img src="{{ profile_form.instance.profile_picture.url }}" alt="">
+                            </div>
+                            <div class="fu-meta">
+                                <strong>Profile picture</strong>
+                                <span>Image</span>
+                            </div>
+                            <span></span>
+                        </li>
+                        {% else %}
+                        <li class="fu-recent-empty">No photo yet — use Browse to add one.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <p class="fu-error" hidden></p>
+            </div>
+        </section>
+
+        <section class="set-card">
+            <h2>Appearance</h2>
+            <p class="set-appear-copy">Choose how U-Connect looks on this device.</p>
+            <button type="button" id="theme-toggle-btn" class="set-theme-toggle" aria-label="Toggle dark mode">
+                <i class="bi bi-moon-stars" aria-hidden="true"></i>
+                <span class="set-theme-text">
+                    <strong>Theme</strong>
+                    <em class="js-theme-state">Light</em>
+                </span>
+            </button>
+        </section>
+
+        <section class="set-card">
+            <h2>Profile info</h2>
+            <div class="set-grid">
+                <label class="set-field">
+                    <span>Phone / WhatsApp</span>
+                    {{ profile_form.phone_number }}
+                    {% if profile_form.phone_number.help_text %}<small class="set-hint">{{ profile_form.phone_number.help_text }}</small>{% endif %}
+                </label>
+                <label class="set-field">
+                    <span>Major</span>
+                    {{ profile_form.major }}
+                </label>
+                <label class="set-field">
+                    <span>Graduation year</span>
+                    {{ profile_form.graduation_year }}
+                </label>
+                <label class="set-field">
+                    <span>Instagram</span>
+                    {{ profile_form.instagram_handle }}
+                </label>
+                <label class="set-field set-field-full">
+                    <span>LinkedIn URL</span>
+                    {{ profile_form.linkedin_url }}
+                </label>
+            </div>
+        </section>
+
+        <div class="set-actions">
+            <button class="set-submit" type="submit">Save changes</button>
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var input = document.getElementById('id_profile_picture');
+  if (input) {
+    input.classList.add('fu-input');
+    input.accept = 'image/*';
+  }
+})();
+</script>
+<script src="{% static 'js/file-uploader.js' %}?v=1"></script>
 {% endblock %}

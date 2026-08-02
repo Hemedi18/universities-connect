@@ -12,34 +12,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- Theme Toggler ---
-    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeToggleBtns = document.querySelectorAll('#theme-toggle-btn, #theme-toggle');
     const body = document.body;
 
-    // Check for saved theme or system preference
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme === 'dark-mode' || (!savedTheme && systemPrefersDark)) {
-        body.classList.add('dark-mode');
-    }
-
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', function() {
-            body.classList.toggle('dark-mode');
-            
-            // Add animation class
-            themeToggleBtn.classList.add('theme-toggle-anim');
-            
-            // Remove animation class after it finishes
-            setTimeout(() => {
-                themeToggleBtn.classList.remove('theme-toggle-anim');
-            }, 500);
-
-            // Save preference
-            const isDarkMode = body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDarkMode ? 'dark-mode' : 'light-mode');
+    function syncThemeIcons(isDark) {
+        themeToggleBtns.forEach((btn) => {
+            const icon = btn.querySelector('i');
+            if (!icon) return;
+            // Single-icon buttons (e.g. AE header moon)
+            if (!btn.querySelector('.icon-moon') && !btn.querySelector('.icon-sun')) {
+                icon.className = isDark ? 'bi bi-sun' : 'bi bi-moon-stars';
+            }
+            const state = btn.querySelector('.js-theme-state');
+            if (state) {
+                state.textContent = isDark ? 'Dark' : 'Light';
+            }
         });
     }
+
+    function applyTheme(isDark) {
+        body.classList.toggle('dark-mode', isDark);
+        document.documentElement.classList.toggle('theme-dark', isDark);
+        localStorage.setItem('theme', isDark ? 'dark-mode' : 'light-mode');
+        syncThemeIcons(isDark);
+    }
+
+    // Sync from storage (also applied early in <head>, keep consistent)
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark-mode' || (!savedTheme && systemPrefersDark)) {
+        applyTheme(true);
+    } else if (savedTheme === 'light-mode') {
+        applyTheme(false);
+    } else {
+        syncThemeIcons(body.classList.contains('dark-mode'));
+    }
+
+    themeToggleBtns.forEach((themeToggleBtn) => {
+        themeToggleBtn.addEventListener('click', function() {
+            const nextDark = !body.classList.contains('dark-mode');
+            applyTheme(nextDark);
+            themeToggleBtn.classList.add('theme-toggle-anim');
+            setTimeout(() => themeToggleBtn.classList.remove('theme-toggle-anim'), 500);
+        });
+    });
 
     // --- Item Detail: Change Main Image ---
     const thumbnails = document.querySelectorAll('.thumbnail');
@@ -175,18 +191,64 @@ document.addEventListener('DOMContentLoaded', function() {
             return `<span class="tick-icon ${tickClass}"><svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">${svgContent}</svg></span>`;
         }
 
+        function escapeChatHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function formatChatMessage(text) {
+            let html = escapeChatHtml(text);
+            html = html.replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
+            html = html.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
+                const clean = url.replace(/[).,;\]>"']+$/g, '');
+                const lower = clean.toLowerCase();
+                let label = 'Open link';
+                if (lower.includes('/item/')) label = 'View product';
+                else if (lower.includes('wa.me') || lower.includes('whatsapp')) label = 'WhatsApp';
+                return `<a class="chat-link" href="${clean}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+            });
+            return html.replace(/\n/g, '<br>');
+        }
+
         function appendMessage(msg) {
             if(document.querySelector(`.message-bubble[data-id="${msg.id}"]`)) return;
             const div = document.createElement('div');
             const isSent = msg.sender_id == currentUserId || msg.is_sent;
             div.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
             div.dataset.id = msg.id;
+            if (msg.image_url || msg.item) {
+                div.classList.add('has-media');
+            }
             
             let ticks = '';
             if (isSent) {
                 ticks = getTickHtml(msg.status || 'sent');
             }
-            div.innerHTML = `<div class="message-content">${msg.content}</div><div class="message-time">${msg.timestamp}${ticks}</div>`;
+            let itemHtml = '';
+            if (msg.item) {
+                const img = msg.item.image
+                    ? `<img src="${msg.item.image}" alt="">`
+                    : '';
+                itemHtml =
+                    `<a class="chat-item-card" href="${msg.item.url}">` +
+                    img +
+                    `<span><strong>${escapeChatHtml(msg.item.title || '')}</strong>` +
+                    `<em>${escapeChatHtml(msg.item.price || '')}</em></span></a>`;
+            }
+            const imgHtml = msg.image_url
+                ? `<a class="chat-image-link" href="${msg.image_url}" target="_blank" rel="noopener"><img src="${msg.image_url}" alt="Image" class="chat-image"></a>`
+                : '';
+            const contentHtml = msg.content
+                ? `<div class="message-content">${formatChatMessage(msg.content)}</div>`
+                : '';
+            div.innerHTML =
+                itemHtml +
+                imgHtml +
+                contentHtml +
+                `<div class="message-time">${msg.timestamp}${ticks}</div>`;
             messagesContainer.appendChild(div);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -312,7 +374,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Global: Unread Messages Badge ---
     function updateUnreadCount() {
         fetch('/chat/api/unread/')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('unread ' + response.status);
+                return response.json();
+            })
             .then(data => {
                 const count = data.count;
                 // Find chat link in navbar - assuming it contains 'chat' or 'inbox' in href
@@ -550,4 +615,192 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // --- Live search (Google-style suggestions) ---
+    document.querySelectorAll('.js-live-search').forEach((form) => {
+        const input = form.querySelector('.js-live-search-input');
+        const dropdown = form.querySelector('.live-search-dropdown');
+        const suggestUrl = form.getAttribute('data-suggest-url');
+        if (!input || !dropdown || !suggestUrl) return;
+
+        let timer = null;
+        let activeIndex = -1;
+        let items = [];
+        let lastQuery = '';
+
+        function hide() {
+            dropdown.hidden = true;
+            dropdown.innerHTML = '';
+            activeIndex = -1;
+            items = [];
+            input.setAttribute('aria-expanded', 'false');
+        }
+
+        function setActive(index) {
+            const nodes = dropdown.querySelectorAll('[data-index]');
+            nodes.forEach((el) => el.classList.remove('is-active'));
+            if (index < 0 || index >= nodes.length) {
+                activeIndex = -1;
+                return;
+            }
+            activeIndex = index;
+            nodes[index].classList.add('is-active');
+            nodes[index].scrollIntoView({ block: 'nearest' });
+        }
+
+        function render(data) {
+            const q = data.query || '';
+            const rows = [];
+            items = [];
+
+            if (data.categories && data.categories.length) {
+                rows.push('<div class="live-search-label">Categories</div>');
+                data.categories.forEach((cat) => {
+                    const idx = items.length;
+                    items.push({ url: cat.url, type: 'category' });
+                    rows.push(
+                        `<a class="live-search-item" href="${cat.url}" data-index="${idx}" role="option">` +
+                        `<span class="live-search-thumb"><i class="bi bi-grid"></i></span>` +
+                        `<span class="live-search-text"><strong>${escapeHtml(cat.name)}</strong><span>Category</span></span>` +
+                        `</a>`
+                    );
+                });
+            }
+
+            if (data.items && data.items.length) {
+                rows.push('<div class="live-search-label">Products</div>');
+                data.items.forEach((item) => {
+                    const idx = items.length;
+                    items.push({ url: item.url, type: 'item' });
+                    const thumb = item.image
+                        ? `<img src="${item.image}" alt="">`
+                        : `<span class="live-search-thumb"><i class="bi bi-box"></i></span>`;
+                    rows.push(
+                        `<a class="live-search-item" href="${item.url}" data-index="${idx}" role="option">` +
+                        thumb +
+                        `<span class="live-search-text"><strong>${escapeHtml(item.title)}</strong>` +
+                        `<span>${escapeHtml(item.meta || '')}</span></span>` +
+                        `<span class="live-search-price">${escapeHtml(item.price)}</span>` +
+                        `</a>`
+                    );
+                });
+            }
+
+            const params = new URLSearchParams();
+            params.set('q', q);
+            form.querySelectorAll('input[type="hidden"]').forEach((el) => {
+                if (el.name && el.value) params.set(el.name, el.value);
+            });
+            if (!params.has('view')) params.set('view', 'shop');
+            const searchHref = form.action + '?' + params.toString();
+
+            if (!rows.length) {
+                rows.push(`<div class="live-search-empty">No matches for “${escapeHtml(q)}”</div>`);
+            }
+
+            rows.push(
+                `<a class="live-search-foot" href="${searchHref}">` +
+                `<i class="bi bi-search"></i> Search for “${escapeHtml(q)}”</a>`
+            );
+
+            dropdown.innerHTML = rows.join('');
+            dropdown.hidden = false;
+            input.setAttribute('aria-expanded', 'true');
+            activeIndex = -1;
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function fetchSuggest(q) {
+            if (!q.trim()) {
+                hide();
+                return;
+            }
+            lastQuery = q;
+            const params = new URLSearchParams({ q });
+            const categoryInput = form.querySelector('input[name="category"]');
+            if (categoryInput && categoryInput.value) {
+                params.set('category', categoryInput.value);
+            }
+            fetch(suggestUrl + '?' + params.toString(), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            })
+                .then((r) => r.json())
+                .then((data) => {
+                    if (input.value.trim() !== lastQuery.trim()) return;
+                    render(data);
+                })
+                .catch(() => hide());
+        }
+
+        input.addEventListener('input', () => {
+            clearTimeout(timer);
+            const q = input.value.trim();
+            if (!q) {
+                hide();
+                return;
+            }
+            timer = setTimeout(() => fetchSuggest(q), 180);
+        });
+
+        input.addEventListener('focus', () => {
+            const q = input.value.trim();
+            if (q) fetchSuggest(q);
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (dropdown.hidden) return;
+            const nodes = dropdown.querySelectorAll('[data-index]');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setActive(activeIndex + 1 >= nodes.length ? 0 : activeIndex + 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setActive(activeIndex <= 0 ? nodes.length - 1 : activeIndex - 1);
+            } else if (e.key === 'Enter' && activeIndex >= 0 && items[activeIndex]) {
+                e.preventDefault();
+                window.location.href = items[activeIndex].url;
+            } else if (e.key === 'Escape') {
+                hide();
+                input.blur();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!form.contains(e.target)) hide();
+        });
+    });
+
+    // --- Recommendation click beacon ---
+    function postRecEvents(events) {
+        try {
+            const body = JSON.stringify(events);
+            if (navigator.sendBeacon) {
+                const blob = new Blob([body], { type: 'application/json' });
+                navigator.sendBeacon('/api/events', blob);
+                return;
+            }
+            fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: body,
+                credentials: 'same-origin',
+                keepalive: true,
+            }).catch(() => {});
+        } catch (e) {}
+    }
+
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('.js-rec-click');
+        if (!link) return;
+        const itemId = parseInt(link.getAttribute('data-item-id') || '0', 10);
+        if (!itemId) return;
+        postRecEvents([{ event_type: 'click', item_id: itemId }]);
+    });
 });

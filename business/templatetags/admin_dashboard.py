@@ -8,96 +8,111 @@ from business.models import Item
 # Register the template tag library
 register = template.Library()
 
+
 @register.simple_tag
 def get_daily_stats():
     # Get data for the last 30 days
     end_date = timezone.now()
     start_date = end_date - timedelta(days=30)
-    
+
     # Query items created per day
-    daily_items = Item.objects.filter(
-        created_at__gte=start_date
-    ).annotate(
-        date=TruncDay('created_at')
-    ).values('date').annotate(
-        count=Count('id')
-    ).order_by('date')
-    
+    daily_items = (
+        Item.objects.filter(created_at__gte=start_date)
+        .annotate(date=TruncDay("created_at"))
+        .values("date")
+        .annotate(count=Count("id"))
+        .order_by("date")
+    )
+
     # Prepare data for Chart.js
     labels = []
     data = []
-    
+
     # Create a dict for easy lookup
-    stats_dict = {item['date'].strftime('%Y-%m-%d'): item['count'] for item in daily_items}
-    
+    stats_dict = {
+        item["date"].strftime("%Y-%m-%d"): item["count"] for item in daily_items
+    }
+
     # Fill in missing days with 0
     current_date = start_date
     while current_date <= end_date:
-        date_str = current_date.strftime('%Y-%m-%d')
+        date_str = current_date.strftime("%Y-%m-%d")
         labels.append(date_str)
         data.append(stats_dict.get(date_str, 0))
         current_date += timedelta(days=1)
-        
+
     return {
-        'labels': labels,
-        'data': data,
+        "labels": labels,
+        "data": data,
     }
+
 
 @register.simple_tag
 def get_category_stats():
     # Count items per category
-    category_counts = Item.objects.values('category').annotate(count=Count('id')).order_by('-count')
-    
-    labels = [item['category'] for item in category_counts if item['category']]
-    data = [item['count'] for item in category_counts if item['category']]
-    
+    category_counts = (
+        Item.objects.values("category").annotate(count=Count("id")).order_by("-count")
+    )
+
+    labels = [item["category"] for item in category_counts if item["category"]]
+    data = [item["count"] for item in category_counts if item["category"]]
+
     return {
-        'labels': labels,
-        'data': data,
+        "labels": labels,
+        "data": data,
     }
+
 
 @register.filter
 def is_company_owner(user):
     """Check if user has a company profile"""
-    return hasattr(user, 'company_profile')
+    return hasattr(user, "company_profile")
+
 
 @register.simple_tag
 def get_company_daily_stats(user):
-    if not hasattr(user, 'company_profile'):
-        return {'labels': [], 'data': []}
-    
+    if not hasattr(user, "company_profile"):
+        return {"labels": [], "data": []}
+
     company = user.company_profile
     end_date = timezone.now()
     start_date = end_date - timedelta(days=30)
-    
-    daily_items = Item.objects.filter(
-        company=company,
-        created_at__gte=start_date
-    ).annotate(
-        date=TruncDay('created_at')
-    ).values('date').annotate(
-        count=Count('id')
-    ).order_by('date')
-    
+
+    daily_items = (
+        Item.objects.filter(company=company, created_at__gte=start_date)
+        .annotate(date=TruncDay("created_at"))
+        .values("date")
+        .annotate(count=Count("id"))
+        .order_by("date")
+    )
+
     labels = []
     data = []
-    stats_dict = {item['date'].strftime('%Y-%m-%d'): item['count'] for item in daily_items}
-    
+    stats_dict = {
+        item["date"].strftime("%Y-%m-%d"): item["count"] for item in daily_items
+    }
+
     current_date = start_date
     while current_date <= end_date:
-        date_str = current_date.strftime('%Y-%m-%d')
+        date_str = current_date.strftime("%Y-%m-%d")
         labels.append(date_str)
         data.append(stats_dict.get(date_str, 0))
         current_date += timedelta(days=1)
-        
-    return {'labels': labels, 'data': data}
+
+    return {"labels": labels, "data": data}
+
 
 @register.simple_tag
 def get_company_category_stats(user):
-    if not hasattr(user, 'company_profile'):
-        return {'labels': [], 'data': []}
+    if not hasattr(user, "company_profile"):
+        return {"labels": [], "data": []}
     company = user.company_profile
-    category_counts = Item.objects.filter(company=company).values('category').annotate(count=Count('id')).order_by('-count')
-    labels = [item['category'] for item in category_counts if item['category']]
-    data = [item['count'] for item in category_counts if item['category']]
-    return {'labels': labels, 'data': data}
+    category_counts = (
+        Item.objects.filter(company=company)
+        .values("category")
+        .annotate(count=Count("id"))
+        .order_by("-count")
+    )
+    labels = [item["category"] for item in category_counts if item["category"]]
+    data = [item["count"] for item in category_counts if item["category"]]
+    return {"labels": labels, "data": data}

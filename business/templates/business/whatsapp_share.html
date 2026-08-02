@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tuma picha · WhatsApp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root { --ink:#191919; --soft:#f0f3f7; --wa:#25d366; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+            background: var(--soft);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.25rem;
+        }
+        .card {
+            width: min(420px, 100%);
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 28px rgba(0,0,0,.08);
+        }
+        .card img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: #eee;
+        }
+        .body { padding: 1.1rem 1.2rem 1.35rem; }
+        h1 { margin: 0 0 .35rem; font-size: 1.1rem; }
+        p { margin: 0 0 1rem; color: #606472; font-size: .9rem; line-height: 1.4; }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            width: 100%;
+            border: 0;
+            border-radius: 999px;
+            padding: .95rem 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-wa { background: var(--wa); color: #fff !important; }
+        .btn-wa:disabled { opacity: .65; cursor: wait; }
+        .btn-ghost {
+            margin-top: .55rem;
+            background: transparent;
+            color: #606472;
+            font-weight: 600;
+            font-size: .88rem;
+        }
+        .status { font-size: .8rem; color: #606472; margin-top: .75rem; text-align: center; min-height: 1.2em; }
+        a.back { align-self: flex-start; color: var(--ink); text-decoration: none; margin-bottom: .75rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <a class="back" href="{% url 'customer:item_detail' item.id %}"><i class="bi bi-arrow-left"></i> Rudi</a>
+    <div class="card">
+        <img id="waProductImg" src="{{ item_image_url }}" alt="{{ item.title }}" crossorigin="anonymous">
+        <div class="body">
+            <h1>{{ item.title|truncatechars:60 }}</h1>
+            <p>Bonyeza hapa chini — picha itaenda kama <strong>photo</strong> (si link), pamoja na maelezo ya bidhaa. Chagua <strong>WhatsApp</strong> kwenye orodha.</p>
+            <button type="button" class="btn btn-wa" id="waShareBtn">
+                <i class="bi bi-whatsapp"></i>
+                <span>Tuma picha kwa WhatsApp</span>
+            </button>
+            <a class="btn btn-ghost" href="{{ whatsapp_url }}">Text only (bila picha)</a>
+            <div class="status" id="waStatus"></div>
+        </div>
+    </div>
+
+    {{ whatsapp_caption|json_script:"wa-caption" }}
+    {{ whatsapp_url|json_script:"wa-url" }}
+    <script>
+    (function () {
+      var btn = document.getElementById('waShareBtn');
+      var statusEl = document.getElementById('waStatus');
+      var img = document.getElementById('waProductImg');
+      var caption = JSON.parse(document.getElementById('wa-caption').textContent);
+      var waUrl = JSON.parse(document.getElementById('wa-url').textContent);
+
+      function setStatus(t) { statusEl.textContent = t || ''; }
+
+      function blobToFile(blob) {
+        var type = blob.type || 'image/jpeg';
+        var ext = (type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+        return new File([blob], 'uconnect-item.' + ext, { type: type });
+      }
+
+      function canvasFile() {
+        return new Promise(function (resolve, reject) {
+          var c = document.createElement('canvas');
+          c.width = img.naturalWidth || img.width;
+          c.height = img.naturalHeight || img.height;
+          if (!c.width || !c.height) return reject(new Error('no image'));
+          c.getContext('2d').drawImage(img, 0, 0);
+          c.toBlob(function (b) {
+            if (!b) return reject(new Error('canvas'));
+            resolve(blobToFile(b));
+          }, 'image/jpeg', 0.92);
+        });
+      }
+
+      async function getFile() {
+        try {
+          var res = await fetch(img.currentSrc || img.src, { credentials: 'same-origin' });
+          if (!res.ok) throw new Error('fetch');
+          return blobToFile(await res.blob());
+        } catch (e) {
+          return canvasFile();
+        }
+      }
+
+      async function sharePhoto() {
+        if (!navigator.share) {
+          setStatus('Browser hii haiwezi kushare picha. Tumia simu au text only.');
+          return;
+        }
+        btn.disabled = true;
+        setStatus('Inatayarisha picha…');
+        try {
+          var file = await getFile();
+          await navigator.share({ files: [file], text: caption, title: 'U-Connect' });
+          setStatus('Chagua WhatsApp — picha itaonekana full, si link.');
+        } catch (err) {
+          if (err && err.name === 'AbortError') {
+            setStatus('');
+            btn.disabled = false;
+            return;
+          }
+          try {
+            var file2 = await getFile();
+            await navigator.share({ files: [file2] });
+            setStatus('Picha imeshirikiwa. Ongeza maelezo kwenye WhatsApp.');
+          } catch (err2) {
+            if (err2 && err2.name === 'AbortError') {
+              setStatus('');
+              btn.disabled = false;
+              return;
+            }
+            setStatus('Imeshindikana. Jaribu tena au text only.');
+          }
+        }
+        btn.disabled = false;
+      }
+
+      btn.addEventListener('click', sharePhoto);
+    })();
+    </script>
+</body>
+</html>

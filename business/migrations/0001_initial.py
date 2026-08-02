@@ -15,20 +15,105 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(help_text="e.g., 'Organic Chemistry 2nd Ed Textbook'", max_length=255, verbose_name='Product Title')),
-                ('category', models.CharField(choices=[('books', 'Books'), ('electronics', 'Electronics'), ('furniture', 'Furniture'), ('clothing', 'Clothing'), ('others', 'Others')], max_length=50)),
-                ('price', models.CharField(help_text='e.g., $50, Negotiable, or Free', max_length=50)),
-                ('condition', models.CharField(choices=[('new', 'New'), ('like_new', 'Like New'), ('good', 'Good'), ('fair', 'Fair'), ('poor', 'Poor')], max_length=50)),
-                ('description', models.TextField(help_text="Details about wear and tear, specs, or why it's being sold", verbose_name='Description')),
-                ('campus_location', models.CharField(help_text='Specific campus or dorm', max_length=255, verbose_name='Campus/Location')),
-                ('preferred_meetup', models.CharField(blank=True, help_text="Specific safe spots (e.g., 'The Student Union' or 'Library Lobby')", max_length=255, verbose_name='Preferred Meetup')),
-                ('contact_method', models.CharField(choices=[('chat', 'In-app Chat'), ('email', 'University Email'), ('phone', 'Phone Number')], max_length=50, verbose_name='Contact Method')),
-                ('image', models.ImageField(upload_to='item_images/', verbose_name='Photos')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('seller', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(
+                        help_text="e.g., 'Organic Chemistry 2nd Ed Textbook'",
+                        max_length=255,
+                        verbose_name="Product Title",
+                    ),
+                ),
+                (
+                    "category",
+                    models.CharField(
+                        choices=[
+                            ("books", "Books"),
+                            ("electronics", "Electronics"),
+                            ("furniture", "Furniture"),
+                            ("clothing", "Clothing"),
+                            ("others", "Others"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "price",
+                    models.CharField(
+                        help_text="e.g., $50, Negotiable, or Free", max_length=50
+                    ),
+                ),
+                (
+                    "condition",
+                    models.CharField(
+                        choices=[
+                            ("new", "New"),
+                            ("like_new", "Like New"),
+                            ("good", "Good"),
+                            ("fair", "Fair"),
+                            ("poor", "Poor"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        help_text="Details about wear and tear, specs, or why it's being sold",
+                        verbose_name="Description",
+                    ),
+                ),
+                (
+                    "campus_location",
+                    models.CharField(
+                        help_text="Specific campus or dorm",
+                        max_length=255,
+                        verbose_name="Campus/Location",
+                    ),
+                ),
+                (
+                    "preferred_meetup",
+                    models.CharField(
+                        blank=True,
+                        help_text="Specific safe spots (e.g., 'The Student Union' or 'Library Lobby')",
+                        max_length=255,
+                        verbose_name="Preferred Meetup",
+                    ),
+                ),
+                (
+                    "contact_method",
+                    models.CharField(
+                        choices=[
+                            ("chat", "In-app Chat"),
+                            ("email", "University Email"),
+                            ("phone", "Phone Number"),
+                        ],
+                        max_length=50,
+                        verbose_name="Contact Method",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(upload_to="item_images/", verbose_name="Photos"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "seller",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

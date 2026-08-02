@@ -1,0 +1,72 @@
+{# Shared multi-file / single-file uploader (screenshot style) #}
+{% comment %}
+Expected context:
+  input_name (default media_files)
+  input_id (default id_media_files)
+  max_files (default 6)
+  multiple (default True)
+  accept (default image/*,video/*)
+  existing_media (list of ItemMedia, optional)
+  title / help (optional)
+{% endcomment %}
+<div class="fu-uploader"
+     data-max="{{ max_files|default:6 }}"
+     data-multiple="{{ multiple|yesno:'1,0' }}"
+     data-existing="{{ existing_media|length|default:0 }}">
+    <div class="fu-dropzone" tabindex="0" role="button" aria-label="Upload files">
+        <div class="fu-drop-inner">
+            <i class="bi bi-cloud-arrow-up fu-icon"></i>
+            <p class="fu-drop-text">Upload your files here</p>
+            <button type="button" class="fu-browse">Browse</button>
+        </div>
+        <input type="file"
+               name="{{ input_name|default:'media_files' }}"
+               id="{{ input_id|default:'id_media_files' }}"
+               class="fu-input"
+               accept="{{ accept|default:'image/*,video/*' }}"
+               {% if multiple|default:True %}multiple{% endif %}
+               {% if not multiple|default:True %}{% endif %}>
+    </div>
+
+    <div class="fu-pending" hidden>
+        <div class="fu-pending-head">
+            <strong class="fu-pending-title">Selected files</strong>
+            <span class="fu-pending-count"></span>
+        </div>
+        <div class="fu-pending-thumbs"></div>
+        <div class="fu-progress"><span></span></div>
+        <p class="fu-pending-hint">Ready to upload · max {{ max_files|default:6 }} total</p>
+    </div>
+
+    <div class="fu-recent">
+        <div class="fu-recent-head">
+            <strong>Recent uploaded</strong>
+            <span class="fu-recent-count">{% if existing_media %}{{ existing_media|length }} item{{ existing_media|length|pluralize }}{% else %}0 items{% endif %}</span>
+        </div>
+        <ul class="fu-recent-list">
+            {% for media in existing_media %}
+            <li class="fu-recent-item" data-media-id="{{ media.id }}">
+                <div class="fu-thumb">
+                    {% if media.media_type == 'video' %}
+                    <video src="{{ media.file.url }}" muted playsinline preload="metadata"></video>
+                    <span class="fu-badge-vid"><i class="bi bi-camera-video-fill"></i></span>
+                    {% else %}
+                    <img src="{{ media.file.url }}" alt="">
+                    {% endif %}
+                </div>
+                <div class="fu-meta">
+                    <strong>{{ media.file.name|cut:"item_media/"|truncatechars:28 }}</strong>
+                    <span>{% if media.media_type == 'video' %}Video{% else %}Image{% endif %} · {{ media.created_at|date:"M d Y" }}</span>
+                </div>
+                <label class="fu-remove-existing" title="Remove">
+                    <input type="checkbox" name="remove_media_ids" value="{{ media.id }}" class="fu-remove-check">
+                    <i class="bi bi-trash3"></i>
+                </label>
+            </li>
+            {% empty %}
+            <li class="fu-recent-empty">No files yet — use Browse to add photos or videos.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <p class="fu-error" hidden></p>
+</div>

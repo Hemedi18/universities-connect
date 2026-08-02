@@ -1,5 +1,6 @@
 {% extends "business/base.html" %}
 {% load static %}
+{% load tancoin_tags %}
 
 {% block title %}{{ company.name }} | U-Connect{% endblock %}
 
@@ -160,7 +161,7 @@
         <div class="horizontal-scroll-container">
             {% for item in pinned_items %}
             <div class="item-card" style="min-width: 250px; max-width: 250px;">
-                <a href="{% url 'business:item_detail' item.id %}" class="text-decoration-none text-dark">
+                <a href="{% url 'customer:item_detail' item.id %}" class="text-decoration-none text-dark">
                     <div class="position-relative">
                         {% if item.image %}
                             <img src="{{ item.image.url }}" class="item-image" alt="{{ item.title }}">
@@ -173,7 +174,7 @@
                     </div>
                     <div class="item-details">
                         <h5 class="item-title">{{ item.title }}</h5>
-                        <p class="item-price">{{ item.price }}</p>
+                        <div class="item-price">{% tancoin_price_display item.price item.compare_at_price %}</div>
                     </div>
                 </a>
                 {% if user == company.user %}
@@ -220,7 +221,7 @@
             {% for item in items %}
             <div class="col">
                 <div class="card h-100 shadow-sm border-0 item-card-hover">
-                    <a href="{% url 'business:item_detail' item.id %}" class="text-decoration-none text-dark">
+                    <a href="{% url 'customer:item_detail' item.id %}" class="text-decoration-none text-dark">
                         <div class="position-relative" style="padding-top: 100%; overflow: hidden;">
                             {% if item.image %}
                                 <img src="{{ item.image.url }}" class="card-img-top position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover;" alt="{{ item.title }}">
@@ -232,7 +233,7 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title text-truncate" style="font-size: 1rem;">{{ item.title }}</h5>
-                            <p class="card-text fw-bold text-primary">{{ item.price }}</p>
+                            <div class="card-text fw-bold text-primary">{% tancoin_price_display item.price item.compare_at_price %}</div>
                             <div class="d-flex justify-content-between align-items-center small text-muted">
                                 <span><i class="bi bi-geo-alt"></i> {{ item.campus_location|truncatechars:15 }}</span>
                             </div>

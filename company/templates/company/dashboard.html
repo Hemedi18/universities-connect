@@ -1,5 +1,6 @@
 {% extends "business/base.html" %}
 {% load static %}
+{% load tancoin_tags %}
 
 {% block title %}Dashboard - {{ company.name }}{% endblock %}
 
@@ -24,6 +25,9 @@
             </a>
             <a href="#products" class="sidebar-link" onclick="switchTab(event, 'products')">
                 <i class="bi bi-box-seam"></i> <span>Products</span>
+            </a>
+            <a href="{% url 'customer:seller_orders' %}" class="sidebar-link">
+                <i class="bi bi-receipt"></i> <span>Sales Orders</span>
             </a>
             <a href="#reviews" class="sidebar-link" onclick="switchTab(event, 'reviews')">
                 <i class="bi bi-star"></i> <span>Reviews</span>
@@ -130,7 +134,7 @@
                                             </div>
                                         </td>
                                         <td>{{ item.views }}</td>
-                                        <td>{{ item.price }}</td>
+                                        <td>{% tancoin_price_display item.price variant='compact' %}</td>
                                         <td><span class="badge {% if item.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ item.status|title }}</span></td>
                                     </tr>
                                     {% empty %}
@@ -239,7 +243,7 @@
                                 </td>
                                 <td class="fw-bold">{{ item.title }}</td>
                                 <td>{{ item.category_obj.name }}</td>
-                                <td>{{ item.price }}</td>
+                                <td>{% tancoin_price_display item.price variant='compact' %}</td>
                                 <td>{{ item.stock_quantity }}</td>
                                 <td>{{ item.views }}</td>
                                 <td>
@@ -301,7 +305,7 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="w-100">
                                 <div class="d-flex justify-content-between">
-                                    <h6 class="mb-1">{{ comment.user.username }} <span class="text-muted fw-normal">on</span> <a href="{% url 'business:item_detail' comment.item.id %}" class="text-decoration-none">{{ comment.item.title }}</a></h6>
+                                    <h6 class="mb-1">{{ comment.user.username }} <span class="text-muted fw-normal">on</span> <a href="{% url 'customer:item_detail' comment.item.id %}" class="text-decoration-none">{{ comment.item.title }}</a></h6>
                                     <small class="text-muted">{{ comment.created_at|date:"M d, H:i" }}</small>
                                 </div>
                                 <p class="mb-1 text-muted">{{ comment.content }}</p>

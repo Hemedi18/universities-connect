@@ -20,79 +20,93 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i9t--^m#x+)=w-xvm(0j5t(v5azjzozojf2vtgc-(5(8rjx!az'
+SECRET_KEY = "django-insecure-i9t--^m#x+)=w-xvm(0j5t(v5azjzozojf2vtgc-(5(8rjx!az"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '.pythonanywhere.com', '.ngrok-free.app']
+# Production / always-safe hosts (no tunnels)
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+    "localhost",
+    "127.0.0.1",
+    ".pythonanywhere.com",
+]
+
+# Ngrok only while developing — never ship this with DEBUG=False
+if DEBUG:
+    ALLOWED_HOSTS += [
+        ".ngrok-free.app",
+        ".ngrok-free.dev",
+        ".ngrok.io",
+    ]
 
 # Trust the X-Forwarded-Proto header for HTTPS (useful for Ngrok/PythonAnywhere)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # Local apps
-    'business', # Move business above jazzmin to override templates
-    'users',
-    'chat',
-    'company',
-    'customer',
-    'pwa',
-    'jazzmin',
-
+    "business",  # Move business above jazzmin to override templates
+    "tancoin",
+    "users",
+    "chat",
+    "company",
+    "customer",
+    "recommend",
+    "pwa",
+    "jazzmin",
     # Default Django apps
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'u_connect.urls'
+ROOT_URLCONF = "u_connect.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'business.context_processors.notifications',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "business.context_processors.notifications",
+                "tancoin.context_processors.tancoin_exchange",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'u_connect.wsgi.application'
+WSGI_APPLICATION = "u_connect.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -102,16 +116,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -119,9 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -131,53 +145,48 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+# Allow short product video uploads (up to ~25 MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 30 * 1024 * 1024
+
+LOGIN_URL = "/users/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 # CSRF settings for Ngrok (Required for Django 4.0+ over HTTPS)
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.ngrok-free.app',
+    "https://*.ngrok-free.app",
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # PWA Settings
-PWA_APP_NAME = 'U-Connect'
-PWA_APP_DESCRIPTION = "The trusted marketplace for students to buy, sell, and connect on campus."
-PWA_APP_THEME_COLOR = '#4f46e5'
-PWA_APP_BACKGROUND_COLOR = '#ffffff'
-PWA_APP_DISPLAY = 'standalone'
-PWA_APP_SCOPE = '/'
-PWA_APP_ORIENTATION = 'portrait'
-PWA_APP_START_URL = '/'
-PWA_APP_STATUS_BAR_COLOR = '#4f46e5'
+PWA_APP_NAME = "U-Connect"
+PWA_APP_DESCRIPTION = (
+    "The trusted marketplace for students to buy, sell, and connect on campus."
+)
+PWA_APP_THEME_COLOR = "#4f46e5"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "portrait"
+PWA_APP_START_URL = "/"
+PWA_APP_STATUS_BAR_COLOR = "#4f46e5"
 PWA_APP_ICONS = [
-    {
-        'src': '/static/images/uconnect_192.png',
-        'sizes': '192x192'
-    },
-    {
-        'src': '/static/images/uconnect_512.png',
-        'sizes': '512x512'
-    }
+    {"src": "/static/images/uconnect_192.png", "sizes": "192x192"},
+    {"src": "/static/images/uconnect_512.png", "sizes": "512x512"},
 ]
-PWA_APP_ICONS_APPLE = [
-    {
-        'src': '/static/images/uconnect_192.png',
-        'sizes': '192x192'
-    }
-]
-PWA_APP_LANG = 'en-us'
+PWA_APP_ICONS_APPLE = [{"src": "/static/images/uconnect_192.png", "sizes": "192x192"}]
+PWA_APP_LANG = "en-us"
 
 # Jazzmin Admin Settings
 JAZZMIN_SETTINGS = {
@@ -193,15 +202,18 @@ JAZZMIN_SETTINGS = {
         "auth": "fas fa-users-cog",
         "users.user": "fas fa-user",
         "business.item": "fas fa-shopping-bag",
+        "tancoin.exchangerate": "fas fa-coins",
     },
     "show_ui_builder": True,
     "custom_links": {
-        "business": [{
-            "name": "View Site", 
-            "url": "/", 
-            "icon": "fas fa-globe",
-        }]
-    }
+        "business": [
+            {
+                "name": "View Site",
+                "url": "/",
+                "icon": "fas fa-globe",
+            }
+        ]
+    },
 }
 
 # Jazzmin UI Tweaks (Purple Theme)
@@ -232,10 +244,15 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
-    }
+        "success": "btn-success",
+    },
 }
 
 # Email Settings (Development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@u-connect.com'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@u-connect.com"
+
+# Recommendations: auto-rebuild feature store when stale (lazy, on request)
+RECOMMEND_REBUILD_ON_REQUEST = True
+RECOMMEND_REBUILD_INTERVAL_SECONDS = 6 * 60 * 60  # 6 hours
+

@@ -1,0 +1,84 @@
+{% extends 'business/base.html' %}
+
+{% block title %}Manage {{ order.order_number }} - U-Connect{% endblock %}
+
+{% block content %}
+<div class="uc-page">
+    <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+        <div>
+            <h1 class="uc-page-title mb-1">Manage {{ order.order_number }}</h1>
+            <p class="text-muted mb-0">Buyer: {{ order.buyer.username }} · {{ order.full_name }} · {{ order.phone }}</p>
+        </div>
+        <a href="{% url 'customer:seller_orders' %}" class="uc-btn" style="width:auto;padding:0.45rem 0.85rem;">Back</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="uc-panel mb-3">
+                <h2 class="uc-panel-head">Your items</h2>
+                {% for line in my_items %}
+                <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ line.title }}</strong>
+                            <div class="small text-muted">Qty {{ line.quantity }} · {{ line.line_total_tan }}</div>
+                        </div>
+                        <span class="uc-badge-soft">{{ line.get_fulfillment_status_display }}</span>
+                    </div>
+                    <form method="post" class="row g-2 align-items-end mt-2 uc-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_item">
+                        <input type="hidden" name="item_id" value="{{ line.id }}">
+                        <div class="col-md-8">
+                            <select name="fulfillment_status" class="form-select">
+                                {% for value, label in fulfillment_choices %}
+                                <option value="{{ value }}" {% if line.fulfillment_status == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn-shop w-100" type="submit">Update item</button>
+                        </div>
+                    </form>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">No items assigned to you on this order.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="uc-panel mb-3">
+                <div class="mb-2"><span class="text-muted">Order status</span><br><strong>{{ order.get_status_display }}</strong></div>
+                <div class="mb-2"><span class="text-muted">Payment</span><br><strong>{{ order.get_payment_status_display }}</strong></div>
+                <div class="mb-2"><span class="text-muted">Method</span><br>{{ order.get_payment_method_display }}</div>
+                {% if order.payment_reference %}<div class="mb-2 small">Ref: {{ order.payment_reference }}</div>{% endif %}
+                <div class="mb-2"><span class="text-muted">Fulfillment</span><br>{{ order.get_fulfillment_method_display }}</div>
+                <hr>
+                <div class="fw-bold" style="color:var(--uc-accent);">Order total: {{ order.total_tan }}</div>
+            </div>
+
+            {% if order.payment_status != 'paid' %}
+            <form method="post" class="mb-3">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="mark_paid">
+                <input type="hidden" name="payment_reference" value="{{ order.payment_reference }}">
+                <button type="submit" class="btn-shop w-100" style="justify-content:center;">Confirm payment received</button>
+            </form>
+            {% endif %}
+
+            <form method="post" class="uc-panel uc-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_status">
+                <label class="form-label">Update order status</label>
+                <select name="status" class="form-select mb-2">
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-shop w-100" style="justify-content:center;">Save status</button>
+            </form>
+            <a href="{% url 'customer:order_invoice' order.id %}" class="uc-btn mt-3">View invoice</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
