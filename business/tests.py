@@ -62,3 +62,49 @@ class FlexibleAttributesAndSellingTestCase(TestCase):
         self.assertEqual(resp.context["registered_email"], "seller1@udsm.ac.tz")
         self.assertEqual(resp.context["form"]["contact_phone"].value(), "0712345678")
         self.assertEqual(resp.context["form"]["contact_email"].value(), "seller1@udsm.ac.tz")
+
+
+class MultiLanguageTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_default_language_is_english(self):
+        """Web pages default to English and LTR layout."""
+        from django.conf import settings
+        self.assertEqual(settings.LANGUAGE_CODE, "en")
+        resp = self.client.get("/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'lang="en"')
+        self.assertContains(resp, 'dir="ltr"')
+
+    def test_switch_language_to_swahili(self):
+        """Direct switcher /set-language/sw/ sets cookie and renders Swahili text."""
+        resp = self.client.get("/set-language/sw/?next=/")
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.cookies["django_language"].value, "sw")
+
+        # Request homepage with Swahili cookie
+        resp_sw = self.client.get("/", headers={"cookie": "django_language=sw"})
+        self.assertContains(resp_sw, 'lang="sw"')
+        self.assertContains(resp_sw, 'dir="ltr"')
+        self.assertContains(resp_sw, "Nyumbani")
+        self.assertContains(resp_sw, "Duka")
+
+    def test_switch_language_to_arabic_with_rtl(self):
+        """Direct switcher /set-language/ar/ activates Arabic and renders dir='rtl'."""
+        resp = self.client.get("/set-language/ar/?next=/")
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.cookies["django_language"].value, "ar")
+
+        # Request homepage with Arabic cookie
+        resp_ar = self.client.get("/", headers={"cookie": "django_language=ar"})
+        self.assertContains(resp_ar, 'lang="ar"')
+        self.assertContains(resp_ar, 'dir="rtl"')
+        self.assertContains(resp_ar, "الرئيسية")
+        self.assertContains(resp_ar, "المتجر")
+
+    def test_invalid_language_falls_back_to_english(self):
+        """Non-supported language codes fall back safely to English."""
+        resp = self.client.get("/set-language/invalid_lang/?next=/")
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.cookies["django_language"].value, "en")

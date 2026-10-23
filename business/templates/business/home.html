@@ -1,8 +1,9 @@
 {% extends 'business/base.html' %}
 {% load static %}
 {% load tancoin_tags %}
+{% load i18n %}
 
-{% block title %}Shop · U-Connect{% endblock %}
+{% block title %}{% trans "Shop" %} · U-Connect{% endblock %}
 {% block body_class %}ae-home{% endblock %}
 {% block main_class %}shop-full{% endblock %}
 {% block extra_css %}
@@ -14,17 +15,17 @@
 {# —— Hot picks —— #}
 <section class="ae-section">
     <div class="ae-section-head">
-        <h3>Hot picks{% if recs_personalized %} for you{% endif %}</h3>
-        <a href="{% url 'customer:home' %}?view=shop&sort=popular">View more</a>
+        <h3>{% if recs_personalized %}{% trans "Hot picks for you" %}{% else %}{% trans "Hot picks" %}{% endif %}</h3>
+        <a href="{% url 'customer:home' %}?view=shop&sort=popular">{% trans "View more" %}</a>
     </div>
     {% if recs_personalized %}
-    <p class="ae-recs-note px-3 mb-2">Based on your activity</p>
+    <p class="ae-recs-note px-3 mb-2">{% trans "Based on your activity" %}</p>
     {% endif %}
     <div class="ae-hscroll">
         {% for item in featured_items %}
         {% include 'business/partials/_item_card.html' with item=item compact=True %}
         {% empty %}
-        <p class="text-muted px-3">No picks yet.</p>
+        <p class="text-muted px-3">{% trans "No picks yet." %}</p>
         {% endfor %}
     </div>
 </section>
@@ -34,10 +35,10 @@
 {# —— Category tabs —— #}
 <nav class="ae-tabs">
     <a class="ae-tab {% if not current_category and current_sort != 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}?view=shop{% if query %}&q={{ query|urlencode }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' and current_sort != 'popular' %}&sort={{ current_sort }}{% endif %}">
-        <i class="bi bi-stars"></i> Recommended
+        <i class="bi bi-stars"></i> {% trans "Recommended" %}
     </a>
     <a class="ae-tab {% if current_sort == 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}?view=shop&sort=popular{% if query %}&q={{ query|urlencode }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}">
-        <i class="bi bi-fire"></i> Best sellers
+        <i class="bi bi-fire"></i> {% trans "Best sellers" %}
     </a>
     {% for cat in categories %}
     <a class="ae-tab {% if current_category == cat.slug %}is-active{% endif %}" href="{% url 'customer:home' %}?category={{ cat.slug }}&view=shop{% if query %}&q={{ query|urlencode }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">
@@ -53,7 +54,7 @@
         {% if current_category_name %}<span class="ae-search-bar-scope">in {{ current_category_name }}</span>{% endif %}
     </div>
     <div class="ae-search-bar-chips">
-        <a class="ae-chip" href="{% url 'customer:home' %}?view=shop{% if current_category %}&category={{ current_category }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">Clear search</a>
+        <a class="ae-chip" href="{% url 'customer:home' %}?view=shop{% if current_category %}&category={{ current_category }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">{% trans "Clear search" %}</a>
         {% if current_category %}
         <a class="ae-chip" href="{% url 'customer:home' %}?view=shop&q={{ query|urlencode }}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">Clear {{ current_category_name }}</a>
         {% endif %}

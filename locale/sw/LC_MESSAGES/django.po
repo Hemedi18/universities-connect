@@ -1,0 +1,189 @@
+# Swahili translations for U-Connect.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: U-Connect 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-23 16:30+0300\n"
+"PO-Revision-Date: 2026-10-23 16:30+0300\n"
+"Last-Translator: Antigravity\n"
+"Language-Team: Swahili\n"
+"Language: sw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "English"
+msgstr "Kiingereza"
+
+msgid "Swahili"
+msgstr "Kiswahili"
+
+msgid "Arabic"
+msgstr "Kiarabu"
+
+msgid "Language"
+msgstr "Lugha"
+
+msgid "Select Language"
+msgstr "Chagua Lugha"
+
+msgid "Home"
+msgstr "Nyumbani"
+
+msgid "Shop"
+msgstr "Duka"
+
+msgid "New"
+msgstr "Vipya"
+
+msgid "Featured"
+msgstr "Vilivyoangaziwa"
+
+msgid "About"
+msgstr "Kuhusu"
+
+msgid "About Us"
+msgstr "Kuhusu Sisi"
+
+msgid "Contact"
+msgstr "Mawasiliano"
+
+msgid "Help / Docs"
+msgstr "Msaada / Mwongozo"
+
+msgid "Sell"
+msgstr "Uza"
+
+msgid "Chat"
+msgstr "Ujumbe"
+
+msgid "Alerts"
+msgstr "Taarifa"
+
+msgid "Cart"
+msgstr "Riksho"
+
+msgid "Account"
+msgstr "Akaunti"
+
+msgid "My Account"
+msgstr "Akaunti Yangu"
+
+msgid "Search products..."
+msgstr "Tafuta bidhaa..."
+
+msgid "Search"
+msgstr "Tafuta"
+
+msgid "Company"
+msgstr "Kampuni"
+
+msgid "Documentation"
+msgstr "Mwongozo na Nyaraka"
+
+msgid "Useful Links"
+msgstr "Viungo Muhimu"
+
+msgid "New Arrivals"
+msgstr "Mizigo Mipya"
+
+msgid "Best Sellers"
+msgstr "Zinazouzika Sana"
+
+msgid "On Sale"
+msgstr "Punguzo la Bei"
+
+msgid "Customer Care"
+msgstr "Huduma kwa Wateja"
+
+msgid "My Orders"
+msgstr "Oda Zangu"
+
+msgid "Saved items"
+msgstr "Vitu Vilivyohifadhiwa"
+
+msgid "Newsletter"
+msgstr "Jarida Letu"
+
+msgid "Get campus deals and new listings in your inbox."
+msgstr "Pata ofa bora za chuo na bidhaa mpya kwenye barua pepe yako."
+
+msgid "Your email"
+msgstr "Barua pepe yako"
+
+msgid "Subscribe"
+msgstr "Jiunge"
+
+msgid "Campus marketplace"
+msgstr "Soko huru la chuo"
+
+msgid "All rights reserved."
+msgstr "Haki zote zimehifadhiwa."
+
+msgid "Staff Mode"
+msgstr "Njia ya Msimamizi"
+
+msgid "Managed Mode"
+msgstr "Njia ya Usimamizi"
+
+msgid "Normal Mode"
+msgstr "Njia ya Kawaida"
+
+msgid "Open Admin"
+msgstr "Fungua Utawala"
+
+msgid "Dashboard"
+msgstr "Dashibodi"
+
+msgid "Recommended"
+msgstr "Inayopendekezwa"
+
+msgid "Best sellers"
+msgstr "Zinazouzika Sana"
+
+msgid "Hot picks"
+msgstr "Chaguo Moto"
+
+msgid "Hot picks for you"
+msgstr "Chaguo moto kwa ajili yako"
+
+msgid "Based on your activity"
+msgstr "Kulingana na mienendo yako"
+
+msgid "View more"
+msgstr "Tazama zaidi"
+
+msgid "No picks yet."
+msgstr "Hakuna machaguo bado."
+
+msgid "Clear search"
+msgstr "Futa utafutaji"
+
+msgid "Add to Cart"
+msgstr "Weka Kwenye Riksho"
+
+msgid "Buy Now"
+msgstr "Nunua Sasa"
+
+msgid "Price"
+msgstr "Bei"
+
+msgid "Category"
+msgstr "Kitengo"
+
+msgid "Description"
+msgstr "Maelezo"
+
+msgid "Hitilafu (Error)"
+msgstr "Hitilafu (Error)"
+
+msgid "Tahadhari (Warning)"
+msgstr "Tahadhari (Warning)"
+
+msgid "Imekamilika (Success)"
+msgstr "Imekamilika (Success)"
+
+msgid "Taarifa (Notice)"
+msgstr "Taarifa (Notice)"

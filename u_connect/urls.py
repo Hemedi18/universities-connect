@@ -37,6 +37,45 @@ def service_worker(request):
 
 from django.shortcuts import redirect
 from django.views.generic import RedirectView
+from django.utils.translation import activate
+from django.http import HttpResponseRedirect
+from django.utils.http import url_has_allowed_host_and_scheme
+
+
+def set_language_view(request, lang_code):
+    """
+    Direct language switcher endpoint allowing users to switch easily to
+    English ('en'), Swahili ('sw'), or Arabic ('ar'). Sets the language
+    cookie, updates the session, and redirects back to the previous page.
+    """
+    lang_code = (lang_code or "").lower()
+    valid_codes = [code for code, _name in getattr(settings, "LANGUAGES", [])]
+    if lang_code not in valid_codes:
+        lang_code = getattr(settings, "LANGUAGE_CODE", "en")
+
+    next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "/"
+    if not url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = "/"
+
+    response = HttpResponseRedirect(next_url)
+    cookie_name = getattr(settings, "LANGUAGE_COOKIE_NAME", "django_language")
+    cookie_age = getattr(settings, "LANGUAGE_COOKIE_AGE", 86400 * 365)
+    cookie_path = getattr(settings, "LANGUAGE_COOKIE_PATH", "/")
+    response.set_cookie(
+        cookie_name,
+        lang_code,
+        max_age=cookie_age,
+        path=cookie_path,
+        samesite="Lax",
+    )
+    if hasattr(request, "session"):
+        request.session[cookie_name] = lang_code
+    activate(lang_code)
+    return response
 
 def admin_mode_router(request):
     """
@@ -61,6 +100,8 @@ def admin_mode_router(request):
     return resp
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
+    path("set-language/<str:lang_code>/", set_language_view, name="set_language_direct"),
     path("admin/", admin_mode_router, name="admin_mode_router"),
     path("admin/", admin.site.urls),
     path(

@@ -1,0 +1,189 @@
+# Arabic translations for U-Connect.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: U-Connect 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-23 16:30+0300\n"
+"PO-Revision-Date: 2026-10-23 16:30+0300\n"
+"Last-Translator: Antigravity\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "English"
+msgstr "الإنجليزية"
+
+msgid "Swahili"
+msgstr "السواحيلية"
+
+msgid "Arabic"
+msgstr "العربية"
+
+msgid "Language"
+msgstr "اللغة"
+
+msgid "Select Language"
+msgstr "اختر اللغة"
+
+msgid "Home"
+msgstr "الرئيسية"
+
+msgid "Shop"
+msgstr "المتجر"
+
+msgid "New"
+msgstr "الجديد"
+
+msgid "Featured"
+msgstr "المميزة"
+
+msgid "About"
+msgstr "من نحن"
+
+msgid "About Us"
+msgstr "من نحن"
+
+msgid "Contact"
+msgstr "اتصل بنا"
+
+msgid "Help / Docs"
+msgstr "المساعدة / الدليل"
+
+msgid "Sell"
+msgstr "بيع"
+
+msgid "Chat"
+msgstr "المحادثة"
+
+msgid "Alerts"
+msgstr "التنبيهات"
+
+msgid "Cart"
+msgstr "السلة"
+
+msgid "Account"
+msgstr "الحساب"
+
+msgid "My Account"
+msgstr "حسابي"
+
+msgid "Search products..."
+msgstr "ابحث عن المنتجات..."
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Company"
+msgstr "الشركة"
+
+msgid "Documentation"
+msgstr "الدليل والتوثيق"
+
+msgid "Useful Links"
+msgstr "روابط مفيدة"
+
+msgid "New Arrivals"
+msgstr "وصل حديثاً"
+
+msgid "Best Sellers"
+msgstr "الأكثر مبيعاً"
+
+msgid "On Sale"
+msgstr "تخفيضات"
+
+msgid "Customer Care"
+msgstr "خدمة العملاء"
+
+msgid "My Orders"
+msgstr "طلباتي"
+
+msgid "Saved items"
+msgstr "العناصر المحفوظة"
+
+msgid "Newsletter"
+msgstr "النشرة البريدية"
+
+msgid "Get campus deals and new listings in your inbox."
+msgstr "احصل على أفضل عروض الحرم الجامعي والقوائم الجديدة في بريدك."
+
+msgid "Your email"
+msgstr "بريدك الإلكتروني"
+
+msgid "Subscribe"
+msgstr "اشتراك"
+
+msgid "Campus marketplace"
+msgstr "سوق الحرم الجامعي"
+
+msgid "All rights reserved."
+msgstr "جميع الحقوق محفوظة."
+
+msgid "Staff Mode"
+msgstr "وضع الإدارة"
+
+msgid "Managed Mode"
+msgstr "الوضع الإداري"
+
+msgid "Normal Mode"
+msgstr "الوضع العادي"
+
+msgid "Open Admin"
+msgstr "فتح لوحة التحكم"
+
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+msgid "Recommended"
+msgstr "موصى به"
+
+msgid "Best sellers"
+msgstr "الأكثر مبيعاً"
+
+msgid "Hot picks"
+msgstr "أفضل المختارات"
+
+msgid "Hot picks for you"
+msgstr "مختارات خاصة لك"
+
+msgid "Based on your activity"
+msgstr "بناءً على نشاطك"
+
+msgid "View more"
+msgstr "عرض المزيد"
+
+msgid "No picks yet."
+msgstr "لا توجد مختارات بعد."
+
+msgid "Clear search"
+msgstr "مسح البحث"
+
+msgid "Add to Cart"
+msgstr "أضف إلى السلة"
+
+msgid "Buy Now"
+msgstr "اشتر الآن"
+
+msgid "Price"
+msgstr "السعر"
+
+msgid "Category"
+msgstr "الفئة"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Hitilafu (Error)"
+msgstr "خطأ"
+
+msgid "Tahadhari (Warning)"
+msgstr "تحذير"
+
+msgid "Imekamilika (Success)"
+msgstr "تم بنجاح"
+
+msgid "Taarifa (Notice)"
+msgstr "إشعار"

@@ -1,0 +1,189 @@
+# English translations for U-Connect.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: U-Connect 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-23 16:30+0300\n"
+"PO-Revision-Date: 2026-10-23 16:30+0300\n"
+"Last-Translator: Antigravity\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "English"
+msgstr "English"
+
+msgid "Swahili"
+msgstr "Swahili"
+
+msgid "Arabic"
+msgstr "Arabic"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Select Language"
+msgstr "Select Language"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Shop"
+msgstr "Shop"
+
+msgid "New"
+msgstr "New"
+
+msgid "Featured"
+msgstr "Featured"
+
+msgid "About"
+msgstr "About"
+
+msgid "About Us"
+msgstr "About Us"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Help / Docs"
+msgstr "Help / Docs"
+
+msgid "Sell"
+msgstr "Sell"
+
+msgid "Chat"
+msgstr "Chat"
+
+msgid "Alerts"
+msgstr "Alerts"
+
+msgid "Cart"
+msgstr "Cart"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "My Account"
+msgstr "My Account"
+
+msgid "Search products..."
+msgstr "Search products..."
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Company"
+msgstr "Company"
+
+msgid "Documentation"
+msgstr "Documentation"
+
+msgid "Useful Links"
+msgstr "Useful Links"
+
+msgid "New Arrivals"
+msgstr "New Arrivals"
+
+msgid "Best Sellers"
+msgstr "Best Sellers"
+
+msgid "On Sale"
+msgstr "On Sale"
+
+msgid "Customer Care"
+msgstr "Customer Care"
+
+msgid "My Orders"
+msgstr "My Orders"
+
+msgid "Saved items"
+msgstr "Saved items"
+
+msgid "Newsletter"
+msgstr "Newsletter"
+
+msgid "Get campus deals and new listings in your inbox."
+msgstr "Get campus deals and new listings in your inbox."
+
+msgid "Your email"
+msgstr "Your email"
+
+msgid "Subscribe"
+msgstr "Subscribe"
+
+msgid "Campus marketplace"
+msgstr "Campus marketplace"
+
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+msgid "Staff Mode"
+msgstr "Staff Mode"
+
+msgid "Managed Mode"
+msgstr "Managed Mode"
+
+msgid "Normal Mode"
+msgstr "Normal Mode"
+
+msgid "Open Admin"
+msgstr "Open Admin"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Recommended"
+msgstr "Recommended"
+
+msgid "Best sellers"
+msgstr "Best sellers"
+
+msgid "Hot picks"
+msgstr "Hot picks"
+
+msgid "Hot picks for you"
+msgstr "Hot picks for you"
+
+msgid "Based on your activity"
+msgstr "Based on your activity"
+
+msgid "View more"
+msgstr "View more"
+
+msgid "No picks yet."
+msgstr "No picks yet."
+
+msgid "Clear search"
+msgstr "Clear search"
+
+msgid "Add to Cart"
+msgstr "Add to Cart"
+
+msgid "Buy Now"
+msgstr "Buy Now"
+
+msgid "Price"
+msgstr "Price"
+
+msgid "Category"
+msgstr "Category"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Hitilafu (Error)"
+msgstr "Error"
+
+msgid "Tahadhari (Warning)"
+msgstr "Warning"
+
+msgid "Imekamilika (Success)"
+msgstr "Success"
+
+msgid "Taarifa (Notice)"
+msgstr "Notice"

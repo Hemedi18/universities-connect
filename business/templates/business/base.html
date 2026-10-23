@@ -2,9 +2,10 @@
 {% load pwa %}
 {% load admin_dashboard %}
 {% load tancoin_tags %}
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" dir="{% if request.LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,6 +50,94 @@
         .uc-theme-btn:hover {
             transform: rotate(20deg) scale(1.15);
             color: #f59e0b !important;
+        }
+
+        /* Language Dropdown & Selector */
+        .uc-lang-dropdown {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .uc-lang-btn {
+            background: rgba(120, 120, 120, 0.08);
+            border: 1px solid rgba(120, 120, 120, 0.22);
+            color: inherit;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .uc-lang-btn:hover {
+            background: rgba(37, 99, 235, 0.12);
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        .uc-lang-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 155px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.22), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 6px;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+        }
+        html.theme-dark .uc-lang-menu {
+            background: #1e1e1e;
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+        }
+        .uc-lang-menu.show {
+            display: flex;
+        }
+        .uc-lang-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: inherit !important;
+            text-decoration: none !important;
+            transition: background 0.15s ease;
+        }
+        .uc-lang-option:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb !important;
+        }
+        .uc-lang-option.active {
+            font-weight: 700;
+            color: #2563eb !important;
+            background: rgba(37, 99, 235, 0.08);
+        }
+        /* RTL adjustments */
+        html[dir="rtl"] body {
+            text-align: right;
+            direction: rtl;
+        }
+        html[dir="rtl"] .uc-lang-menu {
+            right: auto;
+            left: 0;
+        }
+        html[dir="rtl"] .live-search-dropdown {
+            text-align: right;
+        }
+        html[dir="rtl"] .uc-search input {
+            text-align: right;
+        }
+        html[dir="rtl"] .uc-menu-links {
+            text-align: right;
         }
 
         /* Global Floating Toast Popup */
@@ -173,13 +262,13 @@
             <div class="uc-toast-body">
                 <div class="uc-toast-badge">
                     {% if message.tags == 'error' or message.tags == 'danger' %}
-                        Hitilafu (Error)
+                        {% trans "Hitilafu (Error)" %}
                     {% elif message.tags == 'warning' %}
-                        Tahadhari (Warning)
+                        {% trans "Tahadhari (Warning)" %}
                     {% elif message.tags == 'success' %}
-                        Imekamilika (Success)
+                        {% trans "Imekamilika (Success)" %}
                     {% else %}
-                        Taarifa (Notice)
+                        {% trans "Taarifa (Notice)" %}
                     {% endif %}
                 </div>
                 <div class="uc-toast-msg">{{ message }}</div>
@@ -247,14 +336,14 @@
                 <a class="uc-logo" href="{% url 'customer:home' %}">U-<span>Connect</span></a>
                 <form class="uc-search js-live-search" action="{% url 'customer:home' %}" method="get" data-suggest-url="{% url 'customer:search_suggest' %}" autocomplete="off">
                     <div class="live-search-wrap">
-                        <input type="search" name="q" class="js-live-search-input" placeholder="Search products..." value="{{ request.GET.q|default:'' }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+                        <input type="search" name="q" class="js-live-search-input" placeholder="{% trans 'Search products...' %}" value="{{ request.GET.q|default:'' }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
                         <div class="live-search-dropdown" role="listbox" hidden></div>
                     </div>
                     {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
                     {% if request.GET.sort %}<input type="hidden" name="sort" value="{{ request.GET.sort }}">{% endif %}
                     {% if request.GET.filter %}<input type="hidden" name="filter" value="{{ request.GET.filter }}">{% endif %}
                     <input type="hidden" name="view" value="shop">
-                    <button type="submit"><i class="bi bi-search"></i></button>
+                    <button type="submit" aria-label="{% trans 'Search' %}"><i class="bi bi-search"></i></button>
                 </form>
             </div>
             <div class="uc-mast-actions">
@@ -266,18 +355,40 @@
                     <span class="d-none d-md-inline">{% if request.COOKIES.admin_mode == 'normal' %}Normal{% else %}Managed{% endif %}</span>
                 </a>
                 {% endif %}
-                <a href="{% url 'customer:home' %}" title="Home" aria-label="Home"><i class="bi bi-house-door-fill"></i></a>
+                <a href="{% url 'customer:home' %}" title="{% trans 'Home' %}" aria-label="{% trans 'Home' %}"><i class="bi bi-house-door-fill"></i></a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'chat:inbox' %}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots"></i></a>
-                <a href="{% url 'business:user_notifications' %}" title="Alerts" aria-label="Alerts">
+                <a href="{% url 'chat:inbox' %}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots"></i></a>
+                <a href="{% url 'business:user_notifications' %}" title="{% trans 'Alerts' %}" aria-label="{% trans 'Alerts' %}">
                     <i class="bi bi-bell"></i>
                     {% if unread_notifications_count %}<span class="uc-badge">{{ unread_notifications_count }}</span>{% endif %}
                 </a>
                 {% endif %}
-                <a href="{% url 'customer:view_cart' %}" title="Cart" aria-label="Cart">
+                <a href="{% url 'customer:view_cart' %}" title="{% trans 'Cart' %}" aria-label="{% trans 'Cart' %}">
                     <i class="bi bi-cart3"></i>
                     {% if cart_item_count %}<span class="uc-badge">{{ cart_item_count }}</span>{% endif %}
                 </a>
+                <!-- Language Selector Dropdown -->
+                <div class="uc-lang-dropdown" id="ucLangDropdown">
+                    <button type="button" class="uc-lang-btn" id="ucLangToggleBtn" onclick="toggleLangMenu(event)" title="{% trans 'Select Language' %}" aria-expanded="false">
+                        <i class="bi bi-globe2"></i>
+                        <span class="uc-lang-current">{{ request.LANGUAGE_CODE|upper }}</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.65rem;"></i>
+                    </button>
+                    <div class="uc-lang-menu" id="ucLangMenu">
+                        <a href="{% url 'set_language_direct' 'en' %}?next={{ request.get_full_path|urlencode }}" class="uc-lang-option {% if request.LANGUAGE_CODE == 'en' %}active{% endif %}">
+                            <span>🇺🇸 English</span>
+                            {% if request.LANGUAGE_CODE == 'en' %}<i class="bi bi-check2"></i>{% endif %}
+                        </a>
+                        <a href="{% url 'set_language_direct' 'sw' %}?next={{ request.get_full_path|urlencode }}" class="uc-lang-option {% if request.LANGUAGE_CODE == 'sw' %}active{% endif %}">
+                            <span>🇹🇿 Kiswahili</span>
+                            {% if request.LANGUAGE_CODE == 'sw' %}<i class="bi bi-check2"></i>{% endif %}
+                        </a>
+                        <a href="{% url 'set_language_direct' 'ar' %}?next={{ request.get_full_path|urlencode }}" class="uc-lang-option {% if request.LANGUAGE_CODE == 'ar' %}active{% endif %}">
+                            <span>🇸🇦 العربية</span>
+                            {% if request.LANGUAGE_CODE == 'ar' %}<i class="bi bi-check2"></i>{% endif %}
+                        </a>
+                    </div>
+                </div>
                 <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="Badili Theme (Dark/Light)" aria-label="Toggle Theme">
                     <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
                 </button>
@@ -285,7 +396,7 @@
                     <span></span><span></span><span></span>
                 </button>
                 {% if user.is_authenticated %}
-                <a href="{% url 'users:home' %}" title="Account" class="uc-mast-avatar uc-mast-account" aria-label="Account">
+                <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account" aria-label="{% trans 'Account' %}">
                     {% if user.profile and user.profile.profile_picture %}
                     <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}">
                     {% else %}
@@ -293,10 +404,21 @@
                     {% endif %}
                 </a>
                 {% else %}
-                <a href="{% url 'users:login' %}" title="Account" class="uc-mast-account" aria-label="Account"><i class="bi bi-person"></i></a>
+                <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
                 {% endif %}
             </div>
             <ul class="uc-menu-links" id="uc-menu-links">
+                <li class="d-md-none border-bottom pb-2 mb-2">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="small fw-bold"><i class="bi bi-globe2 me-2"></i>{% trans "Language" %}</span>
+                        <span class="badge bg-primary">{{ request.LANGUAGE_CODE|upper }}</span>
+                    </div>
+                    <div class="btn-group btn-group-sm w-100" role="group" aria-label="Language Selector">
+                        <a href="{% url 'set_language_direct' 'en' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'en' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">English</a>
+                        <a href="{% url 'set_language_direct' 'sw' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'sw' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">Kiswahili</a>
+                        <a href="{% url 'set_language_direct' 'ar' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'ar' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">العربية</a>
+                    </div>
+                </li>
                 <li class="d-md-none border-bottom pb-2 mb-2">
                     <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning">
                         <span><i class="bi bi-circle-half me-2"></i>Badili Theme (Dark/Light)</span>
@@ -304,21 +426,21 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter %}is-active{% endif %}" title="Home">
+                    <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter %}is-active{% endif %}" title="{% trans 'Home' %}">
                         <i class="bi bi-house-door-fill" aria-hidden="true"></i>
-                        <span>Home</span>
+                        <span>{% trans "Home" %}</span>
                     </a>
                 </li>
-                <li><a href="{% url 'customer:home' %}?filter=new">New</a></li>
-                <li><a href="{% url 'customer:home' %}?filter=bestseller">Featured</a></li>
-                <li><a href="{% url 'customer:home' %}?view=shop">Shop</a></li>
-                <li><a href="{% url 'customer:about' %}">About</a></li>
-                <li><a href="{% url 'customer:contact' %}">Contact</a></li>
-                <li><a href="{% url 'customer:documentation' %}">Help / Docs</a></li>
+                <li><a href="{% url 'customer:home' %}?filter=new">{% trans "New" %}</a></li>
+                <li><a href="{% url 'customer:home' %}?filter=bestseller">{% trans "Featured" %}</a></li>
+                <li><a href="{% url 'customer:home' %}?view=shop">{% trans "Shop" %}</a></li>
+                <li><a href="{% url 'customer:about' %}">{% trans "About" %}</a></li>
+                <li><a href="{% url 'customer:contact' %}">{% trans "Contact" %}</a></li>
+                <li><a href="{% url 'customer:documentation' %}">{% trans "Help / Docs" %}</a></li>
                 {% if user.is_authenticated and user|is_company_owner %}
-                <li><a href="{% url 'company:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'company:dashboard' %}">{% trans "Dashboard" %}</a></li>
                 {% elif user.is_authenticated %}
-                <li><a href="{% url 'business:post_item' %}">Sell</a></li>
+                <li><a href="{% url 'business:post_item' %}">{% trans "Sell" %}</a></li>
                 {% endif %}
                 {% if user.is_authenticated and user.is_staff %}
                 <li class="uc-menu-admin-item">
@@ -334,32 +456,32 @@
 
     <nav class="uc-tabbar" aria-label="Primary">
         <a href="{% url 'customer:home' %}" class="uc-tab {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}is-active{% endif %}">
-            <i class="bi bi-house-door-fill"></i><span>Home</span>
+            <i class="bi bi-house-door-fill"></i><span>{% trans "Home" %}</span>
         </a>
         <a href="{% url 'customer:home' %}?view=shop" class="uc-tab">
-            <i class="bi bi-grid"></i><span>Shop</span>
+            <i class="bi bi-grid"></i><span>{% trans "Shop" %}</span>
         </a>
         {% if user.is_authenticated %}
         <a href="{% url 'business:post_item' %}" class="uc-tab">
-            <i class="bi bi-plus-circle"></i><span>Sell</span>
+            <i class="bi bi-plus-circle"></i><span>{% trans "Sell" %}</span>
         </a>
         <a href="{% url 'chat:inbox' %}" class="uc-tab {% if request.resolver_match.app_name == 'chat' %}is-active{% endif %}">
-            <i class="bi bi-chat-dots"></i><span>Chat</span>
+            <i class="bi bi-chat-dots"></i><span>{% trans "Chat" %}</span>
         </a>
         {% else %}
         <a href="{% url 'users:login' %}" class="uc-tab">
-            <i class="bi bi-plus-circle"></i><span>Sell</span>
+            <i class="bi bi-plus-circle"></i><span>{% trans "Sell" %}</span>
         </a>
         <a href="{% url 'users:login' %}" class="uc-tab">
-            <i class="bi bi-chat-dots"></i><span>Chat</span>
+            <i class="bi bi-chat-dots"></i><span>{% trans "Chat" %}</span>
         </a>
         {% endif %}
         <a href="{% url 'customer:view_cart' %}" class="uc-tab {% if request.resolver_match.url_name == 'view_cart' %}is-active{% endif %}">
-            <i class="bi bi-cart3"></i><span>Cart</span>
+            <i class="bi bi-cart3"></i><span>{% trans "Cart" %}</span>
             {% if cart_item_count %}<em class="uc-tab-badge">{{ cart_item_count }}</em>{% endif %}
         </a>
         <a href="{% if user.is_authenticated %}{% url 'users:home' %}{% else %}{% url 'users:login' %}{% endif %}" class="uc-tab {% if request.resolver_match.app_name == 'users' %}is-active{% endif %}">
-            <i class="bi bi-person"></i><span>Account</span>
+            <i class="bi bi-person"></i><span>{% trans "Account" %}</span>
         </a>
     </nav>
 
@@ -380,36 +502,36 @@
     <footer class="uc-footer">
         <div class="uc-wrap uc-footer-inner">
             <div class="uc-footer-col">
-                <h4>Company</h4>
+                <h4>{% trans "Company" %}</h4>
                 <ul>
-                    <li><a href="{% url 'customer:about' %}">About Us</a></li>
-                    <li><a href="{% url 'customer:contact' %}">Contact</a></li>
-                    <li><a href="{% url 'customer:documentation' %}">Documentation</a></li>
+                    <li><a href="{% url 'customer:about' %}">{% trans "About Us" %}</a></li>
+                    <li><a href="{% url 'customer:contact' %}">{% trans "Contact" %}</a></li>
+                    <li><a href="{% url 'customer:documentation' %}">{% trans "Documentation" %}</a></li>
                 </ul>
             </div>
             <div class="uc-footer-col">
-                <h4>Useful Links</h4>
+                <h4>{% trans "Useful Links" %}</h4>
                 <ul>
-                    <li><a href="{% url 'customer:home' %}">Shop</a></li>
-                    <li><a href="{% url 'customer:home' %}?filter=new">New Arrivals</a></li>
-                    <li><a href="{% url 'customer:home' %}?filter=bestseller">Best Sellers</a></li>
-                    <li><a href="{% url 'customer:home' %}?filter=discount">On Sale</a></li>
+                    <li><a href="{% url 'customer:home' %}">{% trans "Shop" %}</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=new">{% trans "New Arrivals" %}</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=bestseller">{% trans "Best Sellers" %}</a></li>
+                    <li><a href="{% url 'customer:home' %}?filter=discount">{% trans "On Sale" %}</a></li>
                 </ul>
             </div>
             <div class="uc-footer-col">
-                <h4>Customer Care</h4>
+                <h4>{% trans "Customer Care" %}</h4>
                 <ul>
-                    <li><a href="{% url 'customer:my_orders' %}">My Orders</a></li>
-                    <li><a href="{% url 'customer:view_cart' %}">Saved items</a></li>
-                    <li><a href="{% url 'users:home' %}">My Account</a></li>
+                    <li><a href="{% url 'customer:my_orders' %}">{% trans "My Orders" %}</a></li>
+                    <li><a href="{% url 'customer:view_cart' %}">{% trans "Saved items" %}</a></li>
+                    <li><a href="{% url 'users:home' %}">{% trans "My Account" %}</a></li>
                 </ul>
             </div>
             <div class="uc-footer-col uc-footer-news">
-                <h4>Newsletter</h4>
-                <p>Get campus deals and new listings in your inbox.</p>
+                <h4>{% trans "Newsletter" %}</h4>
+                <p>{% trans "Get campus deals and new listings in your inbox." %}</p>
                 <form class="shop-newsletter-form" method="get" action="{% url 'customer:contact' %}">
-                    <input type="email" name="email" placeholder="Your email" required>
-                    <button type="submit">Subscribe</button>
+                    <input type="email" name="email" placeholder="{% trans 'Your email' %}" required>
+                    <button type="submit">{% trans "Subscribe" %}</button>
                 </form>
                 <div class="uc-social">
                     <a href="#" aria-label="X"><i class="bi bi-twitter-x"></i></a>
@@ -420,8 +542,8 @@
             </div>
         </div>
         <div class="uc-wrap uc-footer-bottom">
-            <p>&copy; {% now "Y" %} U-Connect. All rights reserved.</p>
-            <p>Campus marketplace</p>
+            <p>&copy; {% now "Y" %} U-Connect. {% trans "All rights reserved." %}</p>
+            <p>{% trans "Campus marketplace" %}</p>
         </div>
     </footer>
 
@@ -480,6 +602,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', updateThemeIcons);
+
+        // Language Dropdown Toggle
+        function toggleLangMenu(e) {
+            if (e) e.stopPropagation();
+            const menu = document.getElementById('ucLangMenu');
+            const btn = document.getElementById('ucLangToggleBtn');
+            if (menu) {
+                const isOpen = menu.classList.toggle('show');
+                if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+        }
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('ucLangMenu');
+            const dropdown = document.getElementById('ucLangDropdown');
+            if (menu && dropdown && !dropdown.contains(e.target)) {
+                menu.classList.remove('show');
+                const btn = document.getElementById('ucLangToggleBtn');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        });
     </script>
     {% include 'business/partials/_support_drawer.html' %}
     {% block extra_js %}{% endblock %}
