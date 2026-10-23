@@ -174,6 +174,54 @@ class SupportChatTestCase(TestCase):
         session.refresh_from_db()
         self.assertEqual(session.status, "open")
 
+    def test_support_message_with_screenshot_and_page_url(self):
+        """User/guest captures screenshot and submits complaint with page_url."""
+        self.client.get(reverse("guest_chat"))
+
+        # 1x1 transparent PNG data URI
+        sample_screenshot_b64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+        post_data = {
+            "text": "Buttons are oversized on mobile help page",
+            "screenshot": sample_screenshot_b64,
+            "page_url": "https://uconnect.edusphere.co.tz/documentation/",
+        }
+        res = self.client.post(
+            reverse("support_api_send"),
+            data=json.dumps(post_data),
+            content_type="application/json",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["status"], "success")
+        self.assertTrue(data["message"]["image_url"].endswith(".png") or "/media/" in data["message"]["image_url"])
+        self.assertEqual(data["message"]["page_url"], "https://uconnect.edusphere.co.tz/documentation/")
+
+        # Poll messages and verify image_url is returned
+        poll_res = self.client.get(reverse("support_api_messages"), HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(poll_res.status_code, 200)
+        poll_data = poll_res.json()
+        last_msg = poll_data["messages"][-1]
+        self.assertIn("oversized on mobile", last_msg["text"])
+        self.assertTrue(bool(last_msg["image_url"]))
+        self.assertEqual(last_msg["page_url"], "https://uconnect.edusphere.co.tz/documentation/")
+
+    def test_switch_admin_mode_toggle(self):
+        """Staff user toggles between managed and normal mode via switch_mode."""
+        self.client.login(username="admin", password="adminpassword123")
+
+        # Switch to Normal Mode
+        res_normal = self.client.get(reverse("management:switch_mode") + "?mode=normal")
+        self.assertEqual(res_normal.status_code, 302)
+        self.assertIn("/admin/?mode=normal", res_normal["Location"])
+        self.assertEqual(res_normal.cookies["admin_mode"].value, "normal")
+
+        # Switch to Managed Mode
+        res_managed = self.client.get(reverse("management:switch_mode") + "?mode=managed")
+        self.assertEqual(res_managed.status_code, 302)
+        self.assertIn(reverse("management:dashboard"), res_managed["Location"])
+        self.assertEqual(res_managed.cookies["admin_mode"].value, "managed")
+
 
 from users.models import EmailOTP
 

@@ -1,144 +1,147 @@
 {% extends 'business/base.html' %}
 {% load static %}
 
-{% block title %}Documentation - U-Connect{% endblock %}
+{% block title %}Documentation & Help - U-Connect{% endblock %}
 
 {% block content %}
-<div class="container-fluid bg-light py-5">
+<div class="uc-doc-wrapper py-4 py-md-5">
     <div class="container">
-        <div class="row">
-            <!-- Sidebar Navigation (Sticky) -->
-            <div class="col-lg-3 mb-4">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 100px; z-index: 100;">
-                    <div class="card-header bg-white fw-bold text-uppercase text-muted small">
-                        <i class="fas fa-book me-2"></i>Contents
+        <!-- Breadcrumb / Header -->
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small mb-2">
+                    <li class="breadcrumb-item"><a href="{% url 'customer:home' %}" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Documentation</li>
+                </ol>
+            </nav>
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                    <h1 class="h2 fw-bold mb-1">Documentation & User Guide</h1>
+                    <p class="text-muted mb-0 small">Kila kitu unachohitaji kujua kuhusu jinsi U-Connect inavyofanya kazi.</p>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="if(window.openSupportDrawer){window.openSupportDrawer();}else{location.href='{% url 'guest_chat' %}';}">
+                        <i class="bi bi-chat-heart-fill me-1"></i> Uliza Msaada Moja kwa Moja
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar Navigation (Sticky on Desktop, Collapsible on Mobile) -->
+            <div class="col-lg-3">
+                <div class="card shadow-sm border-0 uc-doc-nav-card" id="docNavCard">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-2 px-3 fw-bold small text-uppercase"
+                         data-bs-toggle="collapse" data-bs-target="#docNavCollapse" aria-expanded="false" style="cursor: pointer;">
+                        <span><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Yaliyomo (Contents)</span>
+                        <span class="d-lg-none badge bg-light text-primary border"><i class="bi bi-list"></i> Menyu</span>
                     </div>
-                    <div class="list-group list-group-flush" id="doc-nav">
-                        <a href="#intro" class="list-group-item list-group-item-action border-0"><i class="fas fa-info-circle me-2 text-primary"></i>Introduction</a>
-                        <a href="#roles" class="list-group-item list-group-item-action border-0"><i class="fas fa-users me-2 text-success"></i>User Roles</a>
-                        <a href="#navigation" class="list-group-item list-group-item-action border-0 fw-bold bg-light"><i class="fas fa-compass me-2 text-warning"></i>Navigation Guide</a>
-                        <a href="#getting-started" class="list-group-item list-group-item-action border-0"><i class="fas fa-sign-in-alt me-2 text-info"></i>Getting Started</a>
-                        <a href="#buying" class="list-group-item list-group-item-action border-0"><i class="fas fa-shopping-cart me-2 text-danger"></i>Buying Guide</a>
-                        <a href="#selling" class="list-group-item list-group-item-action border-0"><i class="fas fa-store me-2 text-primary"></i>Selling & Business</a>
-                        <a href="#communication" class="list-group-item list-group-item-action border-0"><i class="fas fa-comments me-2 text-secondary"></i>Communication</a>
-                        <a href="#admin" class="list-group-item list-group-item-action border-0"><i class="fas fa-user-shield me-2 text-dark"></i>Admin Features</a>
-                        <a href="#faq" class="list-group-item list-group-item-action border-0"><i class="fas fa-question-circle me-2 text-muted"></i>FAQ</a>
+                    <div class="collapse d-lg-block" id="docNavCollapse">
+                        <div class="list-group list-group-flush small" id="doc-nav">
+                            <a href="#intro" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-info-circle-fill me-2 text-primary"></i>Utangulizi (Intro)</a>
+                            <a href="#roles" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-people-fill me-2 text-success"></i>Aina za Watumiaji (Roles)</a>
+                            <a href="#navigation" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-compass-fill me-2 text-warning"></i>Mwongozo wa Menyu</a>
+                            <a href="#getting-started" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-box-arrow-in-right me-2 text-info"></i>Kuanza (Getting Started)</a>
+                            <a href="#buying" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-cart-fill me-2 text-danger"></i>Mwongozo wa Kununua</a>
+                            <a href="#selling" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-shop me-2 text-primary"></i>Kuuza & Kampuni</a>
+                            <a href="#communication" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-chat-dots-fill me-2 text-secondary"></i>Mfumo wa Ujumbe</a>
+                            <a href="#admin" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-shield-check me-2 text-dark"></i>Mfumo wa Usimamizi (Admin)</a>
+                            <a href="#faq" class="list-group-item list-group-item-action border-0 py-2"><i class="bi bi-question-circle-fill me-2 text-muted"></i>Maswali (FAQ)</a>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Main Documentation Content -->
             <div class="col-lg-9">
-                
                 <!-- Introduction -->
-                <section id="intro" class="card shadow-sm border-0 mb-5 p-4">
-                    <h1 class="display-5 fw-bold text-primary mb-3">U-Connect Documentation</h1>
-                    <p class="lead text-muted">Welcome to the comprehensive user guide for U-Connect. This documentation is designed to help you navigate every feature of the platform, from setting up your account to managing a student business.</p>
-                    <hr>
-                    <p>U-Connect is a campus-centric marketplace built to facilitate safe and easy trading between students. Whether you are looking for textbooks, selling old electronics, or promoting your small business, this guide covers everything you need to know.</p>
+                <section id="intro" class="card shadow-sm border-0 mb-4 p-3 p-md-4">
+                    <h2 class="h3 fw-bold text-primary mb-2">U-Connect Campus Marketplace</h2>
+                    <p class="text-muted">Karibu kwenye mwongozo rasmi wa U-Connect. Mfumo huu umetengenezwa mahsusi kuwawezesha wanafunzi na jamii ya chuo kufanya biashara salama, rahisi na ya haraka bila madalali.</p>
+                    <hr class="my-3 opacity-25">
+                    <p class="mb-0 small">Iwe unatafuta vitabu vya masomo, vifaa vya kielektroniki, huduma za hosteli au kuanzisha biashara yako ndogo chuoni, U-Connect inakupa nyenzo zote kiganjani mwako.</p>
                 </section>
 
                 <!-- User Roles -->
-                <section id="roles" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">1. User Roles</h3>
+                <section id="roles" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-people-fill text-primary me-2"></i>1. Aina za Watumiaji (User Roles)</h3>
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="icon-box mb-3 text-primary"><i class="fas fa-user-graduate fa-2x"></i></div>
-                                    <h5>Personal Seller</h5>
-                                    <p class="small text-muted">Students who want to sell used items (books, phones) occasionally. No business registration required.</p>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 text-center">
+                                <div class="icon-box mb-2 text-primary bg-primary-subtle rounded-circle mx-auto">
+                                    <i class="bi bi-mortarboard-fill fs-4"></i>
                                 </div>
+                                <h6 class="fw-bold mb-1">Muuza Binafsi (Personal Seller)</h6>
+                                <p class="small text-muted mb-0">Wanafunzi wanaouza vitu vyao vilivyotumika (simu, vitabu, vifaa vya chumba) mara chache bila kuhitaji usajili wa biashara.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="icon-box mb-3 text-success"><i class="fas fa-store fa-2x"></i></div>
-                                    <h5>Company Owner</h5>
-                                    <p class="small text-muted">Local businesses or student entrepreneurs with a brand name, logo, and regular stock (e.g., Food, Fashion).</p>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 text-center">
+                                <div class="icon-box mb-2 text-success bg-success-subtle rounded-circle mx-auto">
+                                    <i class="bi bi-shop fs-4"></i>
                                 </div>
+                                <h6 class="fw-bold mb-1">Mmiliki wa Kampuni (Company Owner)</h6>
+                                <p class="small text-muted mb-0">Wajasiriamali na maduka rasmi yenye jina la biashara, nembo, na bidhaa mbalimbali (mf. Chakula, Nguo, Vifaa vya Kompyuta).</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <div class="icon-box mb-3 text-danger"><i class="fas fa-user-shield fa-2x"></i></div>
-                                    <h5>Administrator</h5>
-                                    <p class="small text-muted">System managers who oversee users, verify companies, and manage the database via the Admin Panel.</p>
+                        <div class="col-sm-12 col-md-4">
+                            <div class="card h-100 border-0 shadow-sm p-3 text-center">
+                                <div class="icon-box mb-2 text-danger bg-danger-subtle rounded-circle mx-auto">
+                                    <i class="bi bi-shield-lock-fill fs-4"></i>
                                 </div>
+                                <h6 class="fw-bold mb-1">Msimamizi (Administrator)</h6>
+                                <p class="small text-muted mb-0">Wasimamizi wa jukwaa wanaohakiki akaunti, kuzuia watumiaji wadanganyifu, na kuratibu mfumo kupitia Executive Command Center.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Navigation Guide (CRITICAL FOR ASSIGNMENT) -->
-                <section id="navigation" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3 text-primary"><i class="fas fa-map-signs me-2"></i>2. Navigation Guide</h3>
-                    <p>The navigation bar is your control center. Below is a detailed breakdown of every link available in the system.</p>
+                <!-- Navigation Guide -->
+                <section id="navigation" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3 text-primary"><i class="bi bi-compass-fill me-2"></i>2. Mwongozo wa Menyu (Navigation Guide)</h3>
+                    <p class="small text-muted">Menyu ya juu na ya chini ya mfumo inakupa udhibiti wa kila kitu:</p>
                     
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-sm overflow-hidden">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="bg-light">
+                            <table class="table table-hover align-middle mb-0 small">
+                                <thead class="table-light">
                                     <tr>
-                                        <th style="width: 20%;">Link Name</th>
-                                        <th style="width: 10%;">Icon</th>
-                                        <th style="width: 50%;">Functionality & Description</th>
-                                        <th style="width: 20%;">Visible To</th>
+                                        <th style="min-width: 110px;">Kiungo (Link)</th>
+                                        <th style="width: 50px;" class="text-center">Ikoni</th>
+                                        <th>Kazi na Maelezo</th>
+                                        <th style="min-width: 100px;">Hadhira</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td class="fw-bold">Home</td>
-                                        <td class="text-center"><i class="fas fa-home text-secondary"></i></td>
-                                        <td>Returns you to the main marketplace feed where all latest items are listed.</td>
-                                        <td><span class="badge bg-secondary">Everyone</span></td>
+                                        <td class="text-center text-primary"><i class="bi bi-house-door-fill"></i></td>
+                                        <td>Ukurasa mkuu wa soko unaoonyesha bidhaa zote mpya na zilizowekwa hivi karibuni.</td>
+                                        <td><span class="badge bg-secondary">Kila mtu</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">Companies</td>
-                                        <td class="text-center"><i class="fas fa-building text-secondary"></i></td>
-                                        <td>Displays a directory of all registered businesses (e.g., "Tech Hub", "Mama Lishe").</td>
-                                        <td><span class="badge bg-secondary">Everyone</span></td>
+                                        <td class="fw-bold">Shop</td>
+                                        <td class="text-center text-info"><i class="bi bi-grid-fill"></i></td>
+                                        <td>Duka kamili lenye machaguo ya kuchuja kulingana na kategoria, bei, na chuo.</td>
+                                        <td><span class="badge bg-secondary">Kila mtu</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">Inbox</td>
-                                        <td class="text-center"><i class="fas fa-comment-alt text-primary"></i></td>
-                                        <td>
-                                            Opens your chat messages. 
-                                            <br><small class="text-muted">Features a red badge counter for unread messages.</small>
-                                        </td>
-                                        <td><span class="badge bg-success">Logged In</span></td>
+                                        <td class="fw-bold">Chat (Inbox)</td>
+                                        <td class="text-center text-success"><i class="bi bi-chat-dots-fill"></i></td>
+                                        <td>Mfumo wa maongezi ya siri kati ya mnunuzi na muuzaji kwa ajili ya maelewano na picha.</td>
+                                        <td><span class="badge bg-success">Waliopo ndani</span></td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">Sell Item</td>
-                                        <td class="text-center"><i class="fas fa-camera text-success"></i></td>
-                                        <td>Opens the "Post Item" form to upload a new product image, price, and description.</td>
-                                        <td><span class="badge bg-success">Logged In</span></td>
+                                        <td class="text-center text-warning"><i class="bi bi-plus-circle-fill"></i></td>
+                                        <td>Fomu ya kupakia bidhaa mpya ikiwa na picha, vipimo mahususi, na kadi ya hakikisho ya papo hapo.</td>
+                                        <td><span class="badge bg-success">Waliopo ndani</span></td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">Dashboard</td>
-                                        <td class="text-center"><i class="fas fa-user-circle text-info"></i></td>
-                                        <td>
-                                            <strong>Personal:</strong> View/Edit your listed items.
-                                            <br><strong>Company:</strong> View analytics, stock, and edit business profile.
-                                        </td>
-                                        <td><span class="badge bg-success">Logged In</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Admin</td>
-                                        <td class="text-center"><i class="fas fa-cogs text-danger"></i></td>
-                                        <td>
-                                            Access to the <strong>Admin Panel</strong> (Jazzmin Theme).
-                                            <br><small class="text-muted">Manage Users, Items, Locations, and Categories.</small>
-                                        </td>
-                                        <td><span class="badge bg-danger">Superuser Only</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Login / Register</td>
-                                        <td class="text-center"><i class="fas fa-sign-in-alt text-secondary"></i></td>
-                                        <td>Allows new users to sign up or existing users to access their accounts.</td>
-                                        <td><span class="badge bg-warning text-dark">Guest Only</span></td>
+                                        <td class="fw-bold">Admin Portal</td>
+                                        <td class="text-center text-danger"><i class="bi bi-speedometer2"></i></td>
+                                        <td>Executive Command Center ya kusimamia watumiaji, bidhaa, ripoti na huduma kwa wateja.</td>
+                                        <td><span class="badge bg-danger">Admin pekee</span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -147,197 +150,182 @@
                 </section>
 
                 <!-- Getting Started -->
-                <section id="getting-started" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">3. Getting Started</h3>
-                    <p>Before you can start trading, you need to set up your presence on U-Connect. Follow these steps to get up and running.</p>
+                <section id="getting-started" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-box-arrow-in-right text-info me-2"></i>3. Jinsi ya Kuanza (Getting Started)</h3>
                     
-                    <div class="card mb-3 border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary"><i class="fas fa-user-plus me-2"></i>Account Registration</h5>
-                            <p class="card-text">
-                                To ensure safety and trust, most features require an account.
-                                <ol>
-                                    <li>Click on the <strong>Register</strong> link in the top navigation bar.</li>
-                                    <li>Fill in your username, email address, and a strong password.</li>
-                                    <li>Once registered, you will be automatically logged in.</li>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm p-3">
+                                <h6 class="fw-bold text-primary"><i class="bi bi-person-plus-fill me-2"></i>Kusajili Akaunti</h6>
+                                <ol class="small text-muted ps-3 mb-0">
+                                    <li>Bonyeza kitufe cha <strong>Register</strong> kwenye menyu ya juu au ya chini.</li>
+                                    <li>Jaza jina lako, barua pepe yako, na nenosiri imara.</li>
+                                    <li>Weka nambari ya OTP inayotumwa kwenye barua pepe yako ili kuthibitisha akaunti.</li>
+                                    <li>Baada ya hapo unaweza kuanza kununua na kuuza mara moja!</li>
                                 </ol>
-                            </p>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="card mb-3 border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary"><i class="fas fa-mobile-alt me-2"></i>Installing the App (PWA)</h5>
-                            <p class="card-text">
-                                U-Connect is a Progressive Web App, meaning you can install it on your phone without visiting an app store.
-                                <ul>
-                                    <li><strong>On Android:</strong> Open Chrome, tap the menu (three dots), and select "Install App" or "Add to Home Screen".</li>
-                                    <li><strong>On iOS:</strong> Open Safari, tap the Share button, and select "Add to Home Screen".</li>
-                                    <li><strong>On Desktop:</strong> Look for the install icon in the browser address bar.</li>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm p-3">
+                                <h6 class="fw-bold text-primary"><i class="bi bi-phone-fill me-2"></i>Kuweka Programu kwenye Simu (PWA)</h6>
+                                <p class="small text-muted mb-2">U-Connect ni Progressive Web App, maana yake unaweza kuiweka moja kwa moja kwenye simu yako:</p>
+                                <ul class="small text-muted ps-3 mb-0">
+                                    <li><strong>Android:</strong> Fungua Chrome, gusa vitone vitatu vya juu na uchague "Install app" au "Add to Home screen".</li>
+                                    <li><strong>iOS (iPhone):</strong> Fungua Safari, gusa kitufe cha Share na uchague "Add to Home Screen".</li>
                                 </ul>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Buying Guide -->
-                <section id="buying" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">4. Buying Guide</h3>
-                    <p>Finding the right item on campus has never been easier. Here is a deep dive into finding and purchasing items.</p>
-                    
+                <section id="buying" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-cart-check-fill text-danger me-2"></i>4. Mwongozo wa Kununua (Buying Guide)</h3>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary">Browsing and Searching</h6>
-                                    <ul>
-                                        <li><strong>Categories:</strong> Use the "Buy" page to explore specific categories like Electronics, Books, or Fashion.</li>
-                                        <li><strong>Search Bar:</strong> Enter keywords in the search bar at the top of the home page.</li>
-                                        <li><strong>Filters:</strong> Use the sort dropdown to organize results by Price (Low to High), Newest First, or Popularity.</li>
-                                    </ul>
-                                </div>
+                            <div class="card h-100 border-0 shadow-sm p-3">
+                                <h6 class="fw-bold text-primary"><i class="bi bi-search me-1"></i> Kutafuta na Kuchuja</h6>
+                                <ul class="small text-muted ps-3 mb-0">
+                                    <li>Tumia search bar ya juu kuandika jina la kitu unachotafuta.</li>
+                                    <li>Chagua kategoria (mfano Simu, Kompyuta, Vitabu) ili kupata matokeo sahihi zaidi.</li>
+                                    <li>Angalia bei iliyopunguzwa na beji za "Discount" au "New".</li>
+                                </ul>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary">Understanding Item Details</h6>
-                                    <ul>
-                                        <li><strong>Condition:</strong> Check if the item is New, Used, or Refurbished.</li>
-                                        <li><strong>Location:</strong> See where on campus the item is located (e.g., Hall 4).</li>
-                                        <li><strong>Seller Info:</strong> View the seller's profile to see if they are a verified student or a business.</li>
-                                    </ul>
-                                </div>
+                            <div class="card h-100 border-0 shadow-sm p-3">
+                                <h6 class="fw-bold text-primary"><i class="bi bi-shield-shaded me-1"></i> Usalama Wakati wa Kununua</h6>
+                                <ul class="small text-muted ps-3 mb-0">
+                                    <li>Kutana na muuzaji maeneo ya wazi chuoni (kama maktaba, cafeteria au lango kuu).</li>
+                                    <li>Kagua bidhaa na thibitisha inafanya kazi kabla ya kutoa pesa.</li>
+                                    <li>Tumia kitufe cha gumzo (Chat) kuwasiliana ndani ya mfumo bila kutoa namba yako binafsi.</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Selling Guide -->
-                <section id="selling" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">5. Selling Guide</h3>
-                    <p>Turn your unused items into cash or run your student business efficiently.</p>
-                    
-                    <div class="alert alert-info border-0 shadow-sm">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Tip:</strong> Use good lighting and a plain background for your photos. Be honest about any defects or scratches.
+                <section id="selling" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-shop text-success me-2"></i>5. Mwongozo wa Kuuza (Selling Guide)</h3>
+                    <div class="alert alert-info border-0 shadow-sm py-2 px-3 small d-flex align-items-center gap-2">
+                        <i class="bi bi-lightbulb-fill text-warning fs-5"></i>
+                        <div><strong>Ushauri:</strong> Piga picha zenye mwanga mzuri na ueleze ukweli kuhusu hali ya bidhaa yako ili upate wanunuzi haraka!</div>
                     </div>
 
-                    <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title text-success"><i class="fas fa-upload me-2"></i>How to Post an Item</h5>
-                            <ol>
-                                <li>Click the <strong>Sell Item</strong> button in the navigation bar.</li>
-                                <li><strong>Select Category:</strong> Choose the most relevant category (e.g., Electronics).</li>
-                                <li><strong>Upload Photos:</strong> You can upload up to 3 images.</li>
-                                <li><strong>Description:</strong> Be detailed. Mention the brand, model, age, and reason for selling.</li>
-                                <li><strong>Price:</strong> Set a competitive price.</li>
-                            </ol>
-                        </div>
-                    </div>
-
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-purple" style="color: #6f42c1;"><i class="fas fa-chart-line me-2"></i>Business Tools (For Companies)</h5>
-                            <p>For student entrepreneurs and power sellers, the Company Dashboard offers advanced tools:</p>
-                            <ul>
-                                <li><strong>Analytics:</strong> See which types of products are getting the most views.</li>
-                                <li><strong>Bulk Listing:</strong> Manage high stock quantities efficiently.</li>
-                                <li><strong>Brand Visibility:</strong> Your shop appears on the dedicated "Companies" page.</li>
-                            </ul>
-                        </div>
+                    <div class="card border-0 shadow-sm p-3 mb-3">
+                        <h6 class="fw-bold text-success mb-2"><i class="bi bi-camera-fill me-1"></i> Hatua za Kupakia Bidhaa</h6>
+                        <ol class="small text-muted ps-3 mb-0">
+                            <li>Bonyeza kitufe cha <strong>Sell</strong> kwenye menyu.</li>
+                            <li>Chagua Kategoria sahihi ya bidhaa yako (mfano Phones & Tablets).</li>
+                            <li>Weka picha hadi 3 zenye muonekano safi wa mbele na nyuma.</li>
+                            <li>Weka vipimo maalum vyenye vipimo sahihi (kama vile mAh kwa betri, GB kwa RAM na storage, Megapixels kwa camera).</li>
+                            <li>Hakiki muonekano wa kadi ya bidhaa yako upande wa kulia kisha bonyeza <strong>Chapisha Tangazo</strong>.</li>
+                        </ol>
                     </div>
                 </section>
 
                 <!-- Communication -->
-                <section id="communication" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">6. Communication System</h3>
-                    <p>U-Connect features a built-in real-time chat system to keep your personal phone number private.</p>
-                    
-                    <div class="row">
-                        <div class="col-md-4 text-center mb-3">
+                <section id="communication" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-chat-dots-fill text-secondary me-2"></i>6. Mfumo wa Mawasiliano (Chat)</h3>
+                    <div class="row g-3">
+                        <div class="col-sm-4 text-center">
                             <div class="p-3 bg-white rounded shadow-sm h-100">
-                                <i class="fas fa-bolt fa-2x text-warning mb-2"></i>
-                                <h6>Instant Messaging</h6>
-                                <p class="small text-muted">Chat happens in real-time without page reloads.</p>
+                                <i class="bi bi-lightning-charge-fill text-warning fs-3 mb-2 d-inline-block"></i>
+                                <h6 class="fw-bold small mb-1">Gumzo la Moja kwa Moja</h6>
+                                <p class="small text-muted mb-0">Meseji zinafika bila kuhitaji kurudisha au kurefresh ukurasa.</p>
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
+                        <div class="col-sm-4 text-center">
                             <div class="p-3 bg-white rounded shadow-sm h-100">
-                                <i class="fas fa-images fa-2x text-info mb-2"></i>
-                                <h6>Image Sharing</h6>
-                                <p class="small text-muted">Send additional photos of items directly in the chat.</p>
+                                <i class="bi bi-images text-info fs-3 mb-2 d-inline-block"></i>
+                                <h6 class="fw-bold small mb-1">Kutuma Picha</h6>
+                                <p class="small text-muted mb-0">Tuma picha za ziada za bidhaa moja kwa moja kwenye chat kabla ya kuamua.</p>
                             </div>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
+                        <div class="col-sm-4 text-center">
                             <div class="p-3 bg-white rounded shadow-sm h-100">
-                                <i class="fas fa-bell fa-2x text-danger mb-2"></i>
-                                <h6>Notifications</h6>
-                                <p class="small text-muted">Receive alerts for new messages and order updates.</p>
+                                <i class="bi bi-bell-fill text-danger fs-3 mb-2 d-inline-block"></i>
+                                <h6 class="fw-bold small mb-1">Arifa za Meseji</h6>
+                                <p class="small text-muted mb-0">Pokea arifa za ujumbe mpya mara moja ukiwa mtandaoni.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 <!-- Admin Features -->
-                <section id="admin" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">7. Admin Features</h3>
-                    <p>Administrators have full control over the platform via the Admin Panel.</p>
-                    <ul class="list-group list-group-flush shadow-sm rounded">
-                        <li class="list-group-item border-0"><i class="fas fa-check-circle text-success me-2"></i><strong>User Management:</strong> Block abusive users or reset passwords.</li>
-                        <li class="list-group-item border-0"><i class="fas fa-check-circle text-success me-2"></i><strong>Content Moderation:</strong> Delete fake items or inappropriate pictures.</li>
-                        <li class="list-group-item border-0"><i class="fas fa-check-circle text-success me-2"></i><strong>Location Management:</strong> Add new Regions and Districts for company registration.</li>
-                        <li class="list-group-item border-0"><i class="fas fa-check-circle text-success me-2"></i><strong>Category Management:</strong> Create new product categories.</li>
-                    </ul>
+                <section id="admin" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3 text-dark"><i class="bi bi-shield-check text-dark me-2"></i>7. Mfumo wa Wasimamizi (Admin Panel)</h3>
+                    <div class="card border-0 shadow-sm p-3">
+                        <p class="small text-muted mb-2">Wasimamizi wa U-Connect wana uwezo wa kipekee wa kusimamia mfumo mzima kupitia hali mbili:</p>
+                        <ul class="list-group list-group-flush small">
+                            <li class="list-group-item px-0 border-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-speedometer2 text-primary fs-5"></i>
+                                <div><strong>Managed Mode (Executive Command Center):</strong> Dashboard ya kisasa yenye grafu za mwenendo, usimamizi wa watumiaji, email composer, na CRM support.</div>
+                            </li>
+                            <li class="list-group-item px-0 border-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-tools text-secondary fs-5"></i>
+                                <div><strong>Normal Mode (Classic Django Admin):</strong> Kiolesura cha kiutawala cha data ghafi (raw database models) kwa marekebisho ya haraka.</div>
+                            </li>
+                        </ul>
+                    </div>
                 </section>
 
                 <!-- FAQ -->
-                <section id="faq" class="mb-5">
-                    <h3 class="border-bottom pb-2 mb-3">8. FAQ & Troubleshooting</h3>
-                    <div class="accordion shadow-sm" id="faqAccordion">
-                        <div class="accordion-item border-0">
+                <section id="faq" class="mb-4">
+                    <h3 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-question-circle-fill text-warning me-2"></i>8. Maswali Yanayoulizwa Mara kwa Mara (FAQ)</h3>
+                    <div class="accordion shadow-sm rounded-3 overflow-hidden" id="faqAccordion">
+                        <div class="accordion-item border-0 border-bottom">
                             <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                    I cannot upload images for my item.
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                    <i class="bi bi-image text-primary me-2"></i> Nashindwa kupakia picha za bidhaa yangu, nifanyeje?
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted">
-                                    Ensure your image is in JPG or PNG format and under 5MB. If the issue persists, try refreshing the page or checking your internet connection.
+                                <div class="accordion-body small text-muted">
+                                    Hakikisha picha zako ziko kwenye mfumo wa JPG au PNG na ukubwa wake hauzidi 5MB kila moja. Unaweza pia kubonyeza ikoni ya picha (camera) kwenye U-Connect Support Drawer ili kututumia picha ya hitilafu unayokutana nayo!
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item border-0">
+                        <div class="accordion-item border-0 border-bottom">
                             <h2 class="accordion-header" id="headingTwo">
-                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                    A seller is not replying to my messages.
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                    <i class="bi bi-chat-left-dots text-success me-2"></i> Muuzaji hajibu meseji zangu kwenye chat?
                                 </button>
                             </h2>
                             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted">
-                                    Check the seller's profile to see their "Last Active" status. If they haven't been online recently, try finding a similar item from another seller. We encourage all users to reply within 24 hours.
+                                <div class="accordion-body small text-muted">
+                                    Angalia wasifu wa muuzaji kuona muda aliokuwa mtandaoni mara ya mwisho. Ikiwa yuko nje ya mtandao kwa muda mrefu, unaweza kuangalia bidhaa inayofanana kutoka kwa muuzaji mwingine aliyeko hai sasa.
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item border-0">
                             <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-                                    How do I delete my account?
+                                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                    <i class="bi bi-shield-exclamation text-danger me-2"></i> Nifanyeje nikigundua tangazo la udanganyifu au bidhaa yenye matatizo?
                                 </button>
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted">
-                                    Currently, account deletion must be handled by an administrator. Please contact support@u-connect.com with your request.
+                                <div class="accordion-body small text-muted">
+                                    Tafadhali fungua kitufe chetu cha Msaada & AI kona ya chini kulia na ubonyeze kitufe cha <strong>"Piga Picha ya Ukurasa (Screenshot)"</strong>. Picha itatumwa moja kwa moja kwa wasimamizi wetu wa usalama kwa ajili ya kufuta tangazo na kumchukulia hatua mhusika.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Footer Contact -->
-                <div class="alert alert-secondary text-center border-0 shadow-sm mt-5">
-                    <h5>Still need help?</h5>
-                    <p class="mb-0">Contact our support team at <strong>support@u-connect.com</strong> or visit the <a href="#" class="alert-link">Contact Page</a>.</p>
+                <!-- Footer Support Card -->
+                <div class="card border-0 shadow-sm p-4 text-center bg-primary-subtle rounded-3">
+                    <h5 class="fw-bold mb-1">Bado unahitaji usaidizi au una malalamiko?</h5>
+                    <p class="text-muted small mb-3">Tuko hapa kukusaidia saa 24/7. Unaweza kuongea nasi papo hapo au kututumia picha ya skrini.</p>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <button type="button" class="btn btn-sm btn-primary px-3 rounded-pill" onclick="if(window.openSupportDrawer){window.openSupportDrawer();}else{location.href='{% url 'guest_chat' %}';}">
+                            <i class="bi bi-chat-fill me-1"></i> Fungua Support Chat
+                        </button>
+                        <a href="{% url 'customer:contact' %}" class="btn btn-sm btn-outline-secondary px-3 rounded-pill">
+                            <i class="bi bi-envelope-fill me-1"></i> Ukurasa wa Mawasiliano
+                        </a>
+                    </div>
                 </div>
 
             </div>
@@ -346,36 +334,95 @@
 </div>
 
 <style>
-    /* Custom Styles for Documentation */
+    .uc-doc-wrapper {
+        background-color: var(--uc-bg, #f8fafc);
+        min-height: 80vh;
+    }
     .icon-box {
-        width: 60px;
-        height: 60px;
-        line-height: 60px;
-        border-radius: 50%;
-        background-color: #f8f9fa;
-        margin: 0 auto;
+        width: 50px;
+        height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .list-group-item-action:hover {
-        background-color: #f0f2f5;
-        color: #4f46e5; /* Purple Theme */
-        border-left: 3px solid #4f46e5 !important;
-        padding-left: 1rem; /* Slight indent on hover */
-        transition: all 0.2s ease;
+    .uc-doc-nav-card {
+        border-radius: 12px;
+        overflow: hidden;
     }
-    /* Smooth scrolling for anchor links */
+    @media (min-width: 992px) {
+        .uc-doc-nav-card {
+            position: sticky;
+            top: 90px;
+            z-index: 10;
+        }
+    }
+    @media (max-width: 991.98px) {
+        .uc-doc-nav-card {
+            position: static !important;
+            top: auto !important;
+        }
+        #docNavCollapse {
+            max-height: 260px;
+            overflow-y: auto;
+        }
+    }
+    .list-group-item-action {
+        transition: all 0.15s ease;
+        border-left: 3px solid transparent !important;
+    }
+    .list-group-item-action:hover,
+    .list-group-item-action.active {
+        background-color: rgba(79, 70, 229, 0.08) !important;
+        color: #4f46e5 !important;
+        border-left-color: #4f46e5 !important;
+        font-weight: 600;
+    }
+    .accordion-button {
+        font-size: 0.95rem;
+        padding: 0.9rem 1.1rem;
+    }
+    @media (max-width: 768px) {
+        .accordion-button {
+            font-size: 0.88rem;
+            padding: 0.75rem 0.85rem;
+        }
+        .accordion-body {
+            font-size: 0.84rem;
+            padding: 0.75rem;
+        }
+    }
     html {
         scroll-behavior: smooth;
     }
     section {
-        scroll-margin-top: 100px; /* Offset for sticky header */
+        scroll-margin-top: 90px;
+    }
+    body.dark-mode .uc-doc-wrapper {
+        background-color: #0f172a;
+    }
+    body.dark-mode .card,
+    body.dark-mode .card-header,
+    body.dark-mode .list-group-item,
+    body.dark-mode .accordion-item,
+    body.dark-mode .accordion-button {
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+        border-color: #334155 !important;
+    }
+    body.dark-mode .accordion-body {
+        background-color: #1e293b !important;
+        color: #94a3b8 !important;
+    }
+    body.dark-mode .table-light {
+        background-color: #334155 !important;
+        color: #f1f5f9 !important;
+    }
+    body.dark-mode .bg-primary-subtle {
+        background-color: rgba(79, 70, 229, 0.2) !important;
     }
 </style>
 
 <script>
-    // Optional: Add active class to sidebar on scroll
     document.addEventListener('DOMContentLoaded', function() {
         const sections = document.querySelectorAll('section');
         const navLinks = document.querySelectorAll('#doc-nav a');
@@ -384,18 +431,18 @@
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 150) {
+                if (window.scrollY >= sectionTop - 130) {
                     current = section.getAttribute('id');
                 }
             });
 
             navLinks.forEach(link => {
-                link.classList.remove('active', 'bg-light', 'fw-bold');
-                if (link.getAttribute('href').includes(current)) {
-                    link.classList.add('active', 'bg-light', 'fw-bold');
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
                 }
             });
-        });
+        }, { passive: true });
     });
 </script>
 {% endblock %}

@@ -196,6 +196,9 @@ html.theme-dark .uc-ticket-table td {
                         <div class="text-truncate small">
                             <strong class="text-muted">{% if latest.sender_type == 'admin' %}You:{% else %}Guest:{% endif %}</strong>
                             {{ latest.text }}
+                            {% if latest.image %}
+                            <span class="badge bg-info text-dark ms-1" title="Picha ya Skrini (Screenshot) imeambatanishwa"><i class="bi bi-camera-fill"></i> Screenshot</span>
+                            {% endif %}
                         </div>
                         {% else %}
                         <span class="text-muted small">No messages yet</span>

@@ -1,5 +1,7 @@
 import json
 import uuid
+import base64
+from django.core.files.base import ContentFile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.contrib.auth.models import User
@@ -137,12 +139,15 @@ def support_api_messages(request):
             sender_name = session.display_name
             sender_badge = "You" if not (is_staff and is_admin_req) else "Guest"
 
+        image_url = msg.image.url if msg.image else ""
         data.append({
             "id": msg.id,
             "sender_type": msg.sender_type,
             "sender_name": sender_name,
             "sender_badge": sender_badge,
             "text": msg.text,
+            "image_url": image_url,
+            "page_url": msg.page_url,
             "time": msg.timestamp.strftime("%I:%M %p"),
             "is_read": msg.is_read,
         })
@@ -162,13 +167,15 @@ def support_api_messages(request):
 @never_cache
 @require_POST
 def support_api_send(request):
-    """JSON/Form API to send a message from either guest or admin."""
+    """JSON/Form API to send a message from either guest or admin, with optional screenshot."""
     text = ""
     session_id = None
     session_key = None
     guest_name = None
     guest_email = None
     is_admin_flag = None
+    screenshot_b64 = None
+    page_url = ""
 
     if request.content_type == "application/json":
         try:
@@ -179,6 +186,8 @@ def support_api_send(request):
             guest_name = body_data.get("guest_name")
             guest_email = body_data.get("guest_email")
             is_admin_flag = body_data.get("is_admin")
+            screenshot_b64 = body_data.get("screenshot")
+            page_url = body_data.get("page_url", "").strip()[:500]
         except Exception:
             return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
     else:
@@ -187,16 +196,33 @@ def support_api_send(request):
         session_key = request.POST.get("session_key")
         guest_name = request.POST.get("guest_name")
         guest_email = request.POST.get("guest_email")
+        screenshot_b64 = request.POST.get("screenshot")
+        page_url = request.POST.get("page_url", "").strip()[:500]
         if "is_admin" in request.POST:
             is_admin_flag = request.POST.get("is_admin") == "true"
 
+    uploaded_file = request.FILES.get("screenshot") or request.FILES.get("image")
+    saved_image = None
+    if uploaded_file:
+        saved_image = uploaded_file
+    elif screenshot_b64 and isinstance(screenshot_b64, str) and ("base64," in screenshot_b64):
+        try:
+            header, img_str = screenshot_b64.split(";base64,")
+            ext = "jpg" if "jpeg" in header else "png"
+            file_name = f"screenshot_{uuid.uuid4().hex[:10]}.{ext}"
+            saved_image = ContentFile(base64.b64decode(img_str), name=file_name)
+        except Exception:
+            saved_image = None
+
     if not text:
-        return JsonResponse({"status": "error", "message": "Message text cannot be empty"}, status=400)
+        if saved_image:
+            text = "📸 [Picha ya skrini / Screenshot ya ukurasa huu imetumwa kwa ajili ya fixing]"
+        else:
+            return JsonResponse({"status": "error", "message": "Message text or screenshot is required"}, status=400)
 
     is_staff = request.user.is_authenticated and request.user.is_staff
     explicitly_guest = (is_admin_flag is False or is_admin_flag == "false")
     is_admin_send = is_staff and not explicitly_guest and bool(session_id)
-
 
     if is_admin_send:
         if not session_id:
@@ -248,6 +274,8 @@ def support_api_send(request):
         sender_type=sender_type,
         sender_user=sender_user,
         text=text,
+        image=saved_image,
+        page_url=page_url,
         is_read=False,
     )
 
@@ -258,6 +286,8 @@ def support_api_send(request):
     else:
         sender_name = session.display_name
 
+    image_url = msg.image.url if msg.image else ""
+
     return JsonResponse({
         "status": "success",
         "message": {
@@ -266,6 +296,8 @@ def support_api_send(request):
             "sender_name": sender_name,
             "sender_badge": "Admin Support" if sender_type == "admin" else "You",
             "text": msg.text,
+            "image_url": image_url,
+            "page_url": msg.page_url,
             "time": msg.timestamp.strftime("%I:%M %p"),
             "is_read": msg.is_read,
         },

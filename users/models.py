@@ -197,6 +197,10 @@ class SupportMessage(models.Model):
         related_name="support_messages_sent",
     )
     text = models.TextField()
+    image = models.ImageField(
+        upload_to="support_screenshots/", blank=True, null=True
+    )
+    page_url = models.CharField(max_length=500, blank=True, default="")
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

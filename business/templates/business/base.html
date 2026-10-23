@@ -184,6 +184,44 @@
             } catch (e) {}
         })();
     </script>
+    {% if user.is_authenticated and user.is_staff %}
+    <!-- Admin Mode Switcher Bar (Visible on all storefront pages when logged in as Admin) -->
+    <div class="uc-admin-topbar">
+        <div class="uc-wrap uc-admin-topbar-inner">
+            <div class="uc-admin-status">
+                <span class="uc-admin-badge"><i class="bi bi-shield-lock-fill me-1"></i>Staff Mode</span>
+                <span class="uc-admin-mode-label small d-none d-sm-inline">Uko kwenye:</span>
+                <strong class="uc-admin-mode-name small">
+                    {% if request.COOKIES.admin_mode == 'normal' %}
+                    <span class="text-warning">Normal Mode</span> (Classic Admin)
+                    {% else %}
+                    <span class="text-success">Managed Mode</span> (Executive Hub)
+                    {% endif %}
+                </strong>
+            </div>
+            <div class="uc-admin-toggle-actions">
+                <div class="btn-group btn-group-sm" role="group" aria-label="Admin Mode Toggle">
+                    <a href="{% url 'management:switch_mode' %}?mode=managed" 
+                       class="btn btn-sm {% if request.COOKIES.admin_mode != 'normal' %}btn-primary active fw-bold{% else %}btn-outline-light{% endif %}"
+                       title="Badili kwenda Executive Command Center">
+                        <i class="bi bi-speedometer2 me-1"></i>Managed
+                    </a>
+                    <a href="{% url 'management:switch_mode' %}?mode=normal" 
+                       class="btn btn-sm {% if request.COOKIES.admin_mode == 'normal' %}btn-light active fw-bold text-dark{% else %}btn-outline-light{% endif %}"
+                       title="Badili kwenda Classic Django Admin">
+                        <i class="bi bi-tools me-1"></i>Normal
+                    </a>
+                </div>
+                <a href="{% if request.COOKIES.admin_mode == 'normal' %}/admin/?mode=normal{% else %}{% url 'management:dashboard' %}{% endif %}" 
+                   class="btn btn-sm btn-warning fw-bold text-dark ms-1 d-none d-md-inline-flex align-items-center"
+                   title="Fungua Admin Panel">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Open Admin
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="uc-masthead">
         <div class="uc-wrap uc-masthead-inner">
             <div class="uc-mast-top">
@@ -201,6 +239,14 @@
                 </form>
             </div>
             <div class="uc-mast-actions">
+                {% if user.is_authenticated and user.is_staff %}
+                <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" 
+                   class="uc-admin-pill-link" 
+                   title="Badili Admin Mode: Bonyeza kubadili kwenda {% if request.COOKIES.admin_mode == 'normal' %}Managed Mode{% else %}Normal Mode{% endif %}">
+                    <i class="bi bi-gear-wide-connected"></i>
+                    <span class="d-none d-md-inline">{% if request.COOKIES.admin_mode == 'normal' %}Normal{% else %}Managed{% endif %}</span>
+                </a>
+                {% endif %}
                 <a href="{% url 'customer:home' %}" title="Home" aria-label="Home"><i class="bi bi-house-door-fill"></i></a>
                 {% if user.is_authenticated %}
                 <a href="{% url 'chat:inbox' %}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots"></i></a>
@@ -240,10 +286,19 @@
                 <li><a href="{% url 'customer:home' %}?view=shop">Shop</a></li>
                 <li><a href="{% url 'customer:about' %}">About</a></li>
                 <li><a href="{% url 'customer:contact' %}">Contact</a></li>
+                <li><a href="{% url 'customer:documentation' %}">Help / Docs</a></li>
                 {% if user.is_authenticated and user|is_company_owner %}
                 <li><a href="{% url 'company:dashboard' %}">Dashboard</a></li>
                 {% elif user.is_authenticated %}
                 <li><a href="{% url 'business:post_item' %}">Sell</a></li>
+                {% endif %}
+                {% if user.is_authenticated and user.is_staff %}
+                <li class="uc-menu-admin-item">
+                    <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" class="text-warning fw-bold">
+                        <i class="bi bi-shuffle"></i>
+                        <span>Badili Mode: <strong>{% if request.COOKIES.admin_mode == 'normal' %}Managed Mode{% else %}Normal Mode{% endif %}</strong></span>
+                    </a>
+                </li>
                 {% endif %}
             </ul>
         </div>
@@ -375,6 +430,7 @@
             });
         });
     </script>
+    {% include 'business/partials/_support_drawer.html' %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>

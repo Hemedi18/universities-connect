@@ -274,6 +274,21 @@ html.theme-dark .uc-recent-item.active {
                             {% endif %}
                         </div>
                         <div class="uc-admin-bubble {% if msg.sender_type == 'admin' %}bubble-admin{% else %}bubble-guest{% endif %}">
+                            {% if msg.image %}
+                            <div class="mb-2">
+                                <a href="{{ msg.image.url }}" target="_blank" title="Bofya kufungua picha kubwa (Full Screenshot)">
+                                    <img src="{{ msg.image.url }}" alt="Screenshot" class="img-fluid rounded border shadow-sm" style="max-height: 240px; width: 100%; object-fit: contain; background: #111;">
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% if msg.page_url %}
+                            <div class="mb-1 small">
+                                <span class="badge bg-dark text-warning"><i class="bi bi-window-sidebar me-1"></i>Ukurasa:</span>
+                                <a href="{{ msg.page_url }}" target="_blank" class="text-decoration-underline {% if msg.sender_type == 'admin' %}text-white{% else %}text-primary{% endif %}">
+                                    {{ msg.page_url|truncatechars:45 }} <i class="bi bi-box-arrow-up-right small"></i>
+                                </a>
+                            </div>
+                            {% endif %}
                             <div>{{ msg.text }}</div>
                             <div class="small text-end mt-1 {% if msg.sender_type == 'admin' %}text-white-50{% else %}text-muted{% endif %}">
                                 {{ msg.timestamp|date:"g:i A" }}
@@ -425,6 +440,22 @@ html.theme-dark .uc-recent-item.active {
 
         const bubble = document.createElement('div');
         bubble.className = 'uc-admin-bubble ' + (isAdmin ? 'bubble-admin' : 'bubble-guest');
+
+        if (msg.image_url) {
+            const imgWrap = document.createElement('div');
+            imgWrap.className = 'mb-2';
+            imgWrap.innerHTML = `<a href="${encodeURI(msg.image_url)}" target="_blank" title="Bofya kufungua picha kubwa">
+                <img src="${encodeURI(msg.image_url)}" alt="Screenshot" class="img-fluid rounded border shadow-sm" style="max-height: 240px; width: 100%; object-fit: contain; background: #111;">
+            </a>`;
+            bubble.appendChild(imgWrap);
+        }
+
+        if (msg.page_url) {
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'mb-1 small';
+            pageDiv.innerHTML = `<span class="badge bg-dark text-warning me-1"><i class="bi bi-window-sidebar"></i> Ukurasa:</span><a href="${encodeURI(msg.page_url)}" target="_blank" class="text-decoration-underline ${isAdmin ? 'text-white' : 'text-primary'}">${escapeHtml(msg.page_url)} <i class="bi bi-box-arrow-up-right small"></i></a>`;
+            bubble.appendChild(pageDiv);
+        }
 
         const textDiv = document.createElement('div');
         textDiv.textContent = msg.text;
