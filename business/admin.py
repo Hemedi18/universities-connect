@@ -3,7 +3,29 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import Category, Attribute, Item, ItemMedia, ProductAttributeValue, Notification
+from .models import (
+    Category,
+    Attribute,
+    Item,
+    ItemMedia,
+    ProductAttributeValue,
+    Notification,
+    SellerMeetupLocation,
+)
+
+
+@admin.register(SellerMeetupLocation)
+class SellerMeetupLocationAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "general_location",
+        "specific_location",
+        "is_default",
+        "created_at",
+    )
+    list_filter = ("is_default", "created_at")
+    search_fields = ("user__username", "general_location", "specific_location")
+
 
 
 @admin.register(Category)

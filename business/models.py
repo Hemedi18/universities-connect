@@ -158,7 +158,29 @@ class Item(models.Model):
         max_length=255,
         blank=True,
         verbose_name="Campus/Location",
-        help_text="Specific campus or dorm",
+        help_text="Legacy / combined location string",
+    )
+    general_location = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="General Location / Area",
+        help_text="e.g. Chukwani, Zanzibar or Mwenge, Dar es Salaam",
+    )
+    specific_location = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Specific Meetup Spot",
+        help_text="e.g. SUMAIT University, Block B Entrance",
+    )
+    location_latitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Location Latitude",
+    )
+    location_longitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Location Longitude",
     )
     contact_method = models.CharField(
         max_length=50, choices=CONTACT_METHOD_CHOICES, verbose_name="Contact Method"
@@ -184,6 +206,50 @@ class Item(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_general_location(self):
+        if self.general_location:
+            return self.general_location
+        if self.campus_location:
+            return self.campus_location
+        return ""
+
+    def get_full_location(self):
+        parts = []
+        if self.specific_location:
+            parts.append(self.specific_location)
+        if self.general_location:
+            parts.append(self.general_location)
+        if parts:
+            return ", ".join(parts)
+        return self.campus_location or ""
+
+    def get_google_maps_url(self):
+        import urllib.parse
+        if self.location_latitude is not None and self.location_longitude is not None:
+            return f"https://www.google.com/maps/search/?api=1&query={self.location_latitude},{self.location_longitude}"
+        loc = self.get_full_location()
+        if loc:
+            return f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(loc)}"
+        return ""
+
+    def get_google_maps_directions_url(self, origin=None):
+        import urllib.parse
+        dest = f"{self.location_latitude},{self.location_longitude}" if (self.location_latitude is not None and self.location_longitude is not None) else self.get_full_location()
+        if not dest:
+            return ""
+        base = f"https://www.google.com/maps/dir/?api=1&destination={urllib.parse.quote(str(dest))}"
+        if origin:
+            base += f"&origin={urllib.parse.quote(str(origin))}"
+        return base
+
+    def save(self, *args, **kwargs):
+        # Auto-synchronize legacy campus_location with general & specific
+        if self.general_location or self.specific_location:
+            self.campus_location = self.get_full_location()
+        elif self.campus_location and not self.general_location:
+            self.general_location = self.campus_location
+        super().save(*args, **kwargs)
 
     def gallery_media(self):
         """Prefer ItemMedia rows; fall back to legacy image/image2/image3/video."""
@@ -355,6 +421,48 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user} on {self.item}"
+
+
+class SellerMeetupLocation(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="saved_meetup_locations"
+    )
+    general_location = models.CharField(
+        max_length=255,
+        verbose_name="General Location / Area",
+        help_text="e.g. Chukwani, Zanzibar",
+    )
+    specific_location = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Specific Meetup Spot",
+        help_text="e.g. SUMAIT University, Block B",
+    )
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    is_default = models.BooleanField(
+        default=False,
+        verbose_name="Default Location",
+        help_text="Automatically selected for new product listings",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-is_default", "-created_at"]
+        verbose_name = "Seller Meetup Location"
+        verbose_name_plural = "Seller Meetup Locations"
+
+    def __str__(self):
+        if self.specific_location:
+            return f"{self.general_location} ({self.specific_location})"
+        return self.general_location
+
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            SellerMeetupLocation.objects.filter(
+                user=self.user, is_default=True
+            ).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender="company.Company")

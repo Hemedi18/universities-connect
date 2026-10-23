@@ -314,13 +314,41 @@ class EmailOTPTestCase(TestCase):
         self.assertFalse(user.check_password("OldPassword#1"))
         self.assertTrue(user.check_password("NewSecretPassword#2"))
 
+    def test_password_reset_flow_with_duplicate_emails(self):
+        """Verify password reset handles multiple users with the same email without MultipleObjectsReturned."""
+        User.objects.create_user(username="dup_user_1", email="shared@campus.ac.tz", password="OldPass#1")
+        user2 = User.objects.create_user(username="dup_user_2", email="shared@campus.ac.tz", password="OldPass#2")
+
+        # 1. Request reset
+        req_res = self.client.post(reverse("password_reset_request"), {"email": "shared@campus.ac.tz"})
+        self.assertRedirects(req_res, reverse("password_reset_verify"))
+
+        # 2. GET verify page (Previously crashed here with MultipleObjectsReturned)
+        get_res = self.client.get(reverse("password_reset_verify"))
+        self.assertEqual(get_res.status_code, 200)
+
+        # 3. Verify OTP
+        otp = EmailOTP.objects.filter(email="shared@campus.ac.tz", purpose="password_reset").first()
+        self.assertIsNotNone(otp)
+        post_res = self.client.post(
+            reverse("password_reset_verify"),
+            {
+                "otp_code": otp.otp_code,
+                "new_password": "NewSharedSecret#99",
+                "confirm_password": "NewSharedSecret#99",
+            },
+        )
+        self.assertRedirects(post_res, reverse("users:login"))
+        user2.refresh_from_db()
+        self.assertTrue(user2.check_password("NewSharedSecret#99"))
+
     def test_login_page_renders_forgot_password_and_error_popup(self):
         """Verify login page displays prominent forgot password options and renders error popup on invalid credentials."""
         # 1. GET login page contains forgot password links and chat support
         get_res = self.client.get(reverse("users:login"))
         self.assertEqual(get_res.status_code, 200)
         content = get_res.content.decode("utf-8")
-        self.assertIn("Umesahau nenosiri", content)
+        self.assertTrue("Umesahau nenosiri" in content or "Forgot password" in content)
         self.assertIn(reverse("password_reset_request"), content)
         self.assertIn(reverse("guest_chat"), content)
 

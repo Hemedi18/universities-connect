@@ -20,4 +20,7 @@ urlpatterns = [
     path("api/logs/", views.api_system_logs, name="api_system_logs"),
     path("api/logs/<int:log_id>/resolve/", views.api_resolve_log, name="api_resolve_log"),
     path("api/logs/resolve-all/", views.api_resolve_all_logs, name="api_resolve_all_logs"),
+    # Git Deployment & cPanel Live Sync APIs
+    path("api/git/status/", views.api_git_status, name="api_git_status"),
+    path("api/git/sync/", views.api_git_sync, name="api_git_sync"),
 ]

@@ -48,11 +48,11 @@ class StorefrontAndStaticTests(TestCase):
         self.assertIn("application/json", response["Content-Type"])
 
     def test_serviceworker_returns_clean_javascript(self):
-        """Verify serviceworker.js returns 200 application/javascript with cache v4."""
+        """Verify serviceworker.js returns 200 application/javascript with cache v5."""
         response = self.client.get("/serviceworker.js")
         self.assertEqual(response.status_code, 200)
         self.assertIn("application/javascript", response["Content-Type"])
-        self.assertIn("u-connect-v4", response.content.decode("utf-8"))
+        self.assertIn("u-connect-v5", response.content.decode("utf-8"))
 
     def test_chat_root_redirects_cleanly(self):
         """Verify /chat/ root path does not 404."""

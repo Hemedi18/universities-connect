@@ -93,7 +93,7 @@ class SupportMessageAdmin(admin.ModelAdmin):
     text_snippet.short_description = "Text"
 
 
-from .models import EmailOTP
+from .models import EmailOTP, Profile
 
 
 @admin.register(EmailOTP)
@@ -102,5 +102,20 @@ class EmailOTPAdmin(admin.ModelAdmin):
     list_filter = ("purpose", "is_used", "created_at")
     search_fields = ("email", "otp_code", "user__username")
     readonly_fields = ("created_at", "expires_at", "otp_code")
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "phone_number",
+        "storage_plan",
+        "storage_quota_mb",
+        "is_email_verified",
+    )
+    list_filter = ("storage_plan", "is_email_verified")
+    search_fields = ("user__username", "user__email", "phone_number")
+    list_editable = ("storage_plan", "storage_quota_mb")
 
 

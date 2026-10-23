@@ -15,9 +15,9 @@
     {% block extra_head %}{% endblock %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=11">
-    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=11">
-    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=12">
+    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=12">
+    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=12">
     {% block extra_css %}{% endblock %}
     <script>
         (function () {
@@ -242,7 +242,7 @@
         }
     </style>
 </head>
-<body class="store-theme has-tabbar{% block body_class %}{% endblock %}">
+<body class="store-theme has-tabbar {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}has-pc-sidebar{% endif %}{% block body_class %}{% endblock %}">
     <!-- Global Floating Toast Notification Container -->
     <div id="uc-toast-container" class="uc-toast-container" aria-live="assertive" aria-atomic="true">
         {% if messages %}
@@ -289,9 +289,156 @@
                     document.body.classList.remove('dark-mode');
                     document.documentElement.classList.remove('theme-dark');
                 }
+                if (document.body.classList.contains('has-pc-sidebar') && localStorage.getItem('uc_sidebar_collapsed') === 'true') {
+                    document.body.classList.add('uc-sidebar-collapsed');
+                }
             } catch (e) {}
         })();
     </script>
+    <!-- =========================================================================
+         Global Collapsible Sidebar (Desktop) & Off-Canvas Navigation Drawer (Mobile)
+         ========================================================================= -->
+    <aside class="uc-sidebar" id="ucSidebar" aria-label="{% trans 'Main Navigation' %}">
+        <!-- Sidebar Header: Brand & Collapse Toggle -->
+        <div class="uc-sidebar-header">
+            <a class="uc-sidebar-brand" href="{% url 'customer:home' %}" title="U-Connect">
+                <span class="uc-sidebar-logo-text">U-<span class="uc-brand-accent">Connect</span></span>
+                <span class="uc-sidebar-logo-icon">U<b>C</b></span>
+            </a>
+            <!-- Desktop collapse toggle button inside sidebar -->
+            <button type="button" class="uc-sidebar-toggle-btn d-none d-lg-inline-flex" id="ucSidebarCollapseBtn" title="{% trans 'Toggle Sidebar' %}" aria-label="{% trans 'Toggle Sidebar' %}">
+                <i class="bi bi-chevron-left" id="ucSidebarToggleIcon"></i>
+            </button>
+            <!-- Mobile close button -->
+            <button type="button" class="uc-sidebar-close-btn d-lg-none" id="ucSidebarMobileClose" onclick="toggleMobileSidebar(false)" aria-label="{% trans 'Close Menu' %}">&times;</button>
+        </div>
+
+        <!-- Sidebar Navigation List with Icons -->
+        <nav class="uc-sidebar-nav">
+            <!-- Mobile Drawer Quick Controls (Language & Theme) -->
+            <div class="d-lg-none border-bottom pb-2 mb-2 px-2">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="small fw-bold"><i class="bi bi-globe2 me-2"></i>{% trans "Language" %}</span>
+                    <span class="badge bg-primary">{{ request.LANGUAGE_CODE|upper }}</span>
+                </div>
+                <div class="btn-group btn-group-sm w-100 mb-2" role="group" aria-label="Language Selector">
+                    <a href="{% url 'set_language_direct' 'en' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'en' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">EN</a>
+                    <a href="{% url 'set_language_direct' 'sw' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'sw' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">SW</a>
+                    <a href="{% url 'set_language_direct' 'ar' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'ar' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">AR</a>
+                </div>
+                <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning text-decoration-none small py-1">
+                    <span><i class="bi bi-circle-half me-2"></i>{% trans "Toggle Theme" %}</span>
+                    <span class="badge bg-secondary" id="ucThemeMobileDrawerBadge">Theme</span>
+                </a>
+            </div>
+
+            <ul class="uc-sidebar-menu">
+                <!-- 1. Home -->
+                <li>
+                    <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter and not request.GET.view %}is-active{% endif %}" data-title="{% trans 'Home' %}">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span class="uc-sidebar-label">{% trans "Home" %}</span>
+                    </a>
+                </li>
+
+                <!-- 2. New -->
+                <li>
+                    <a href="{% url 'customer:home' %}?filter=new" class="{% if request.GET.filter == 'new' %}is-active{% endif %}" data-title="{% trans 'New' %}">
+                        <i class="bi bi-stars"></i>
+                        <span class="uc-sidebar-label">{% trans "New" %}</span>
+                        <span class="uc-sidebar-pill">New</span>
+                    </a>
+                </li>
+
+                <!-- 3. Featured -->
+                <li>
+                    <a href="{% url 'customer:home' %}?filter=bestseller" class="{% if request.GET.filter == 'bestseller' %}is-active{% endif %}" data-title="{% trans 'Featured' %}">
+                        <i class="bi bi-fire"></i>
+                        <span class="uc-sidebar-label">{% trans "Featured" %}</span>
+                    </a>
+                </li>
+
+                <!-- 4. Shop -->
+                <li>
+                    <a href="{% url 'customer:home' %}?view=shop" class="{% if request.GET.view == 'shop' and not request.GET.filter %}is-active{% endif %}" data-title="{% trans 'Shop' %}">
+                        <i class="bi bi-shop"></i>
+                        <span class="uc-sidebar-label">{% trans "Shop" %}</span>
+                    </a>
+                </li>
+
+                <!-- 5. About -->
+                <li>
+                    <a href="{% url 'customer:about' %}" class="{% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'about' %}is-active{% endif %}" data-title="{% trans 'About' %}">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span class="uc-sidebar-label">{% trans "About" %}</span>
+                    </a>
+                </li>
+
+                <!-- 6. Contact -->
+                <li>
+                    <a href="{% url 'customer:contact' %}" class="{% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'contact' %}is-active{% endif %}" data-title="{% trans 'Contact' %}">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span class="uc-sidebar-label">{% trans "Contact" %}</span>
+                    </a>
+                </li>
+
+                <!-- 7. Help / Docs -->
+                <li>
+                    <a href="{% url 'customer:documentation' %}" class="{% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'documentation' %}is-active{% endif %}" data-title="{% trans 'Help / Docs' %}">
+                        <i class="bi bi-journal-text"></i>
+                        <span class="uc-sidebar-label">{% trans "Help / Docs" %}</span>
+                    </a>
+                </li>
+
+                <!-- 8. Dashboard -->
+                {% if user.is_authenticated and user|is_company_owner %}
+                <li>
+                    <a href="{% url 'company:dashboard' %}" class="{% if request.resolver_match.app_name == 'company' %}is-active{% endif %}" data-title="{% trans 'Dashboard' %}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span class="uc-sidebar-label">{% trans "Dashboard" %}</span>
+                    </a>
+                </li>
+                {% elif user.is_authenticated %}
+                <li>
+                    <a href="{% url 'business:personal_dashboard' %}" class="{% if request.resolver_match.url_name == 'personal_dashboard' %}is-active{% endif %}" data-title="{% trans 'Dashboard' %}">
+                        <i class="bi bi-speedometer2"></i>
+                        <span class="uc-sidebar-label">{% trans "Dashboard" %}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'business:post_item' %}" class="{% if request.resolver_match.url_name == 'post_item' %}is-active{% endif %}" data-title="{% trans 'Sell' %}">
+                        <i class="bi bi-plus-circle-fill" style="color: var(--primary-color);"></i>
+                        <span class="uc-sidebar-label">{% trans "Sell" %}</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- 9. Switch Mode (Admin only) -->
+                {% if user.is_authenticated and user.is_staff %}
+                <li class="uc-sidebar-admin-item">
+                    <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" data-title="{% trans 'Switch Mode' %}">
+                        <i class="bi bi-shuffle"></i>
+                        <span class="uc-sidebar-label">
+                            {% trans "Switch Mode:" %} <strong>{% if request.COOKIES.admin_mode == 'normal' %}{% trans "Managed Mode" %}{% else %}{% trans "Normal Mode" %}{% endif %}</strong>
+                        </span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Sidebar Bottom Collapse Button (Desktop) -->
+        <div class="uc-sidebar-footer d-none d-lg-block">
+            <button type="button" class="uc-sidebar-collapse-btn" id="ucSidebarBottomToggle" title="{% trans 'Collapse / Expand Sidebar' %}" data-title="{% trans 'Toggle Sidebar' %}">
+                <i class="bi bi-layout-sidebar-inset"></i>
+                <span class="uc-sidebar-label">{% trans "Collapse Sidebar" %}</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Drawer Backdrop Overlay -->
+    <div class="uc-sidebar-backdrop" id="ucSidebarBackdrop" onclick="toggleMobileSidebar(false)"></div>
+
     {% if user.is_authenticated and user.is_staff %}
     <!-- Admin Mode Switcher Bar (Visible on all storefront pages when logged in as Admin) -->
     <div class="uc-admin-topbar">
@@ -325,14 +472,32 @@
                    title="{% trans 'Open Admin Panel' %}">
                     <i class="bi bi-box-arrow-up-right me-1"></i> {% trans "Open Admin" %}
                 </a>
+
+                <!-- Live cPanel Git Sync Button (Admin Only - Appears dynamically when new commits exist) -->
+                <button type="button" 
+                        class="btn btn-sm btn-info fw-bold text-dark ms-2 d-none align-items-center" 
+                        id="btnGitSyncGlobalTrigger" 
+                        onclick="triggerGitSyncModal()" 
+                        title="{% trans 'New commits detected on GitHub! Click to sync and update cPanel live.' %}">
+                    <i class="bi bi-cloud-arrow-down-fill me-1"></i>
+                    <span>{% trans "Sync cPanel" %}</span>
+                    <span class="badge bg-danger text-white ms-1" id="gitSyncBadge">1</span>
+                </button>
             </div>
         </div>
     </div>
+    {% include 'management/partials/_git_sync_modal.html' %}
     {% endif %}
 
     <div class="uc-masthead">
         <div class="uc-wrap uc-masthead-inner">
             <div class="uc-mast-top">
+                {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}
+                <!-- PC Sidebar Masthead Toggle Button (Home Page Only) -->
+                <button type="button" class="uc-sidebar-mast-toggle d-none d-lg-inline-flex" id="ucSidebarMastToggle" title="{% trans 'Toggle Sidebar' %}" aria-label="{% trans 'Toggle Sidebar' %}">
+                    <i class="bi bi-layout-sidebar-inset"></i>
+                </button>
+                {% endif %}
                 <a class="uc-logo" href="{% url 'customer:home' %}">U-<span>Connect</span></a>
                 <form class="uc-search js-live-search" action="{% url 'customer:home' %}" method="get" data-suggest-url="{% url 'customer:search_suggest' %}" autocomplete="off">
                     <div class="live-search-wrap">
@@ -392,7 +557,7 @@
                 <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="{% trans 'Toggle Theme (Dark/Light)' %}" aria-label="{% trans 'Toggle Theme' %}">
                     <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
                 </button>
-                <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="uc-menu-links" aria-expanded="false">
+                <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="ucSidebar" aria-expanded="false">
                     <span></span><span></span><span></span>
                 </button>
                 {% if user.is_authenticated %}
@@ -407,50 +572,6 @@
                 <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account d-none d-md-inline-flex" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
                 {% endif %}
             </div>
-            <ul class="uc-menu-links" id="uc-menu-links">
-                <li class="d-md-none border-bottom pb-2 mb-2">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="small fw-bold"><i class="bi bi-globe2 me-2"></i>{% trans "Language" %}</span>
-                        <span class="badge bg-primary">{{ request.LANGUAGE_CODE|upper }}</span>
-                    </div>
-                    <div class="btn-group btn-group-sm w-100" role="group" aria-label="Language Selector">
-                        <a href="{% url 'set_language_direct' 'en' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'en' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">English</a>
-                        <a href="{% url 'set_language_direct' 'sw' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'sw' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">Kiswahili</a>
-                        <a href="{% url 'set_language_direct' 'ar' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'ar' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">العربية</a>
-                    </div>
-                </li>
-                <li class="d-md-none border-bottom pb-2 mb-2">
-                    <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning">
-                        <span><i class="bi bi-circle-half me-2"></i>{% trans "Toggle Theme (Dark/Light)" %}</span>
-                        <span class="badge bg-secondary" id="ucThemeMobileBadge">Theme</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter %}is-active{% endif %}" title="{% trans 'Home' %}">
-                        <i class="bi bi-house-door-fill" aria-hidden="true"></i>
-                        <span>{% trans "Home" %}</span>
-                    </a>
-                </li>
-                <li><a href="{% url 'customer:home' %}?filter=new">{% trans "New" %}</a></li>
-                <li><a href="{% url 'customer:home' %}?filter=bestseller">{% trans "Featured" %}</a></li>
-                <li><a href="{% url 'customer:home' %}?view=shop">{% trans "Shop" %}</a></li>
-                <li><a href="{% url 'customer:about' %}">{% trans "About" %}</a></li>
-                <li><a href="{% url 'customer:contact' %}">{% trans "Contact" %}</a></li>
-                <li><a href="{% url 'customer:documentation' %}">{% trans "Help / Docs" %}</a></li>
-                {% if user.is_authenticated and user|is_company_owner %}
-                <li><a href="{% url 'company:dashboard' %}">{% trans "Dashboard" %}</a></li>
-                {% elif user.is_authenticated %}
-                <li><a href="{% url 'business:post_item' %}">{% trans "Sell" %}</a></li>
-                {% endif %}
-                {% if user.is_authenticated and user.is_staff %}
-                <li class="uc-menu-admin-item">
-                    <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" class="text-warning fw-bold">
-                        <i class="bi bi-shuffle"></i>
-                        <span>{% trans "Switch Mode:" %} <strong>{% if request.COOKIES.admin_mode == 'normal' %}{% trans "Managed Mode" %}{% else %}{% trans "Normal Mode" %}{% endif %}</strong></span>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
         </div>
     </div>
 
@@ -550,22 +671,55 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="{% static 'js/main.js' %}?v=5"></script>
     <script>
-        const hamburger = document.getElementById('uc-hamburger');
-        const menuLinks = document.getElementById('uc-menu-links');
-        if (hamburger && menuLinks) {
-            hamburger.addEventListener('click', () => {
-                const open = menuLinks.classList.toggle('is-open');
-                hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        // Desktop Sidebar Collapse & Mobile Drawer Handlers
+        function toggleDesktopSidebar() {
+            var isCollapsed = document.body.classList.toggle('uc-sidebar-collapsed');
+            try {
+                localStorage.setItem('uc_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+            } catch (e) {}
+        }
+
+        function toggleMobileSidebar(forceOpen) {
+            var sidebar = document.getElementById('ucSidebar');
+            var backdrop = document.getElementById('ucSidebarBackdrop');
+            var hamburgerBtn = document.getElementById('uc-hamburger');
+            if (!sidebar) return;
+
+            var shouldOpen = (typeof forceOpen === 'boolean') ? forceOpen : !sidebar.classList.contains('is-mobile-open');
+            sidebar.classList.toggle('is-mobile-open', shouldOpen);
+            if (backdrop) backdrop.classList.toggle('is-active', shouldOpen);
+            if (hamburgerBtn) hamburgerBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        }
+
+        var sidebarCollapseBtn = document.getElementById('ucSidebarCollapseBtn');
+        if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.addEventListener('click', toggleDesktopSidebar);
+        }
+        var sidebarBottomToggle = document.getElementById('ucSidebarBottomToggle');
+        if (sidebarBottomToggle) {
+            sidebarBottomToggle.addEventListener('click', toggleDesktopSidebar);
+        }
+        var sidebarMastToggle = document.getElementById('ucSidebarMastToggle');
+        if (sidebarMastToggle) {
+            sidebarMastToggle.addEventListener('click', toggleDesktopSidebar);
+        }
+        var hamburger = document.getElementById('uc-hamburger');
+        if (hamburger) {
+            hamburger.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (window.innerWidth >= 992) {
+                    toggleDesktopSidebar();
+                } else {
+                    toggleMobileSidebar();
+                }
             });
         }
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/serviceworker.js').then((reg) => {
-                    // Check for updates
-                    reg.update().catch(() => {});
-                }).catch(() => {});
-            });
-        }
+        // Close mobile sidebar on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                toggleMobileSidebar(false);
+            }
+        });
         function closeToast(el) {
             if (!el) return;
             el.classList.add('uc-toast-closing');

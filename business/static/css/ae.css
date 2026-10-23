@@ -586,6 +586,38 @@ body.dark-mode .ae-tab.is-active {
 
 .ae-card-title a { color: inherit; }
 
+.ae-card-location {
+    font-size: 0.72rem;
+    color: var(--ae-text, #1e293b);
+    background: rgba(13, 110, 253, 0.08);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.35rem;
+    max-width: 100%;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.ae-card-location i {
+    font-size: 0.7rem;
+    color: #e63946;
+    flex-shrink: 0;
+}
+
+.ae-card-location span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html.theme-dark .ae-card-location {
+    background: rgba(99, 102, 241, 0.18);
+    color: #cbd5e1;
+}
+
 .ae-card-meta {
     font-size: 0.72rem;
     color: var(--ae-muted);

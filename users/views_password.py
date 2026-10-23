@@ -13,7 +13,11 @@ def request_password_reset(request):
         form = PasswordResetOTPRequestForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"].strip().lower()
-            user = User.objects.filter(email__iexact=email).first()
+            user = (
+                User.objects.filter(email__iexact=email)
+                .order_by("-is_active", "-date_joined")
+                .first()
+            )
             if user:
                 # 1. Generate & send 6-digit OTP code to the user's email
                 otp = EmailOTP.create_otp(
@@ -29,8 +33,9 @@ def request_password_reset(request):
                 # 2. Record request for admin audit
                 PasswordResetRequest.objects.create(user=user, email=email)
 
-                # 3. Store email in session and redirect to verify screen
+                # 3. Store email & user_id in session and redirect to verify screen
                 request.session["password_reset_email"] = user.email
+                request.session["password_reset_user_id"] = user.id
                 messages.info(
                     request,
                     f"Tumekutumia nambari ya OTP yenye tarakimu 6 kwenye barua pepe {user.email}.",
@@ -49,19 +54,36 @@ def request_password_reset(request):
 
 def verify_password_reset(request):
     email = request.session.get("password_reset_email")
+    user_id = request.session.get("password_reset_user_id")
     if not email:
         messages.warning(request, "Tafadhali anza kwa kuweka barua pepe yako.")
         return redirect("password_reset_request")
 
-    user = get_object_or_404(User, email__iexact=email)
+    user = None
+    if user_id:
+        user = User.objects.filter(id=user_id).first()
+    if not user:
+        user = (
+            User.objects.filter(email__iexact=email)
+            .order_by("-is_active", "-date_joined")
+            .first()
+        )
+
+    if not user:
+        messages.warning(request, "Akaunti haikupatikana. Tafadhali anza upya.")
+        return redirect("password_reset_request")
 
     if request.method == "POST":
         form = PasswordResetWithOTPForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data["otp_code"]
-            otp = EmailOTP.objects.filter(
+            otp_qs = EmailOTP.objects.filter(
                 email__iexact=email, purpose="password_reset", is_used=False
-            ).first()
+            )
+            otp = (
+                otp_qs.filter(user=user).order_by("-created_at").first()
+                or otp_qs.order_by("-created_at").first()
+            )
 
             if not otp:
                 form.add_error("otp_code", "Hakuna OTP iliyo hai. Tafadhali bonyeza 'Tuma tena OTP'.")
@@ -75,6 +97,7 @@ def verify_password_reset(request):
 
                     # Clear session
                     request.session.pop("password_reset_email", None)
+                    request.session.pop("password_reset_user_id", None)
 
                     messages.success(
                         request,
@@ -96,11 +119,25 @@ def verify_password_reset(request):
 
 def resend_password_reset_otp(request):
     email = request.session.get("password_reset_email")
+    user_id = request.session.get("password_reset_user_id")
     if not email:
         messages.warning(request, "Kipindi chako kimemalizika. Weka tena email yako.")
         return redirect("password_reset_request")
 
-    user = get_object_or_404(User, email__iexact=email)
+    user = None
+    if user_id:
+        user = User.objects.filter(id=user_id).first()
+    if not user:
+        user = (
+            User.objects.filter(email__iexact=email)
+            .order_by("-is_active", "-date_joined")
+            .first()
+        )
+
+    if not user:
+        messages.warning(request, "Akaunti haikupatikana. Tafadhali anza upya.")
+        return redirect("password_reset_request")
+
     otp = EmailOTP.create_otp(email=email, purpose="password_reset", user=user)
     send_otp_email(
         email=email,
@@ -108,6 +145,7 @@ def resend_password_reset_otp(request):
         purpose="password_reset",
         username=user.username,
     )
+    request.session["password_reset_user_id"] = user.id
     messages.success(
         request, f"Nambari mpya ya OTP ya kubadilisha password imetumwa kwenye {email}."
     )

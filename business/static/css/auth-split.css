@@ -1,0 +1,480 @@
+/* ==========================================================================
+   AUTH SPLIT CARD (Login & Register Premium Emerald Theme)
+   Matches official reference mockup with responsive & RTL support.
+   ========================================================================== */
+
+/* Unify the ENTIRE page (html, body, navbar, headers, footers, wrapper) to take the form's background color (#081410) */
+html:has(.uc-auth-split-wrapper),
+body.auth-page,
+body:has(.uc-auth-split-wrapper) {
+    background-color: #081410 !important;
+    color: #f8fafc !important;
+}
+
+body.auth-page .top-bar,
+body.auth-page .ae-header,
+body.auth-page .header,
+body.auth-page .navbar,
+body.auth-page .ae-nav-wrap,
+body.auth-page .footer,
+body.auth-page footer,
+body.auth-page .bottom-tabbar,
+body.auth-page main,
+body:has(.uc-auth-split-wrapper) .top-bar,
+body:has(.uc-auth-split-wrapper) .ae-header,
+body:has(.uc-auth-split-wrapper) .header,
+body:has(.uc-auth-split-wrapper) .navbar,
+body:has(.uc-auth-split-wrapper) .ae-nav-wrap,
+body:has(.uc-auth-split-wrapper) .footer,
+body:has(.uc-auth-split-wrapper) footer,
+body:has(.uc-auth-split-wrapper) .bottom-tabbar,
+body:has(.uc-auth-split-wrapper) main {
+    background-color: #081410 !important;
+    border-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.uc-auth-split-wrapper {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem 4rem;
+    background-color: #081410 !important;
+    background: radial-gradient(circle at 15% 25%, rgba(5, 150, 105, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.10) 0%, transparent 55%),
+                #081410 !important;
+    color: #f8fafc;
+}
+
+.uc-auth-card {
+    width: 100%;
+    max-width: 1060px;
+    background: #081410;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 28px;
+    box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.85),
+                0 0 50px rgba(5, 150, 105, 0.16);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    backdrop-filter: blur(20px);
+}
+
+/* --------------------------------------------------------------------------
+   LEFT BANNER: Brand & Value Propositions
+   -------------------------------------------------------------------------- */
+.uc-auth-banner {
+    flex: 1 1 45%;
+    background: linear-gradient(155deg, #053b28 0%, #03261a 50%, #02160f 100%);
+    padding: 3rem 2.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    border-right: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+html[dir="rtl"] .uc-auth-banner {
+    border-right: none;
+    border-left: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+.uc-auth-banner::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(0, 200, 117, 0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.uc-auth-brand-logo {
+    font-size: 1.55rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.uc-auth-brand-logo span.brand-accent {
+    color: #ef4444;
+}
+
+.uc-auth-banner-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 0.85rem;
+}
+
+.uc-auth-banner-title span.highlight-green {
+    color: #00c875;
+    display: block;
+}
+
+.uc-auth-banner-sub {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    max-width: 380px;
+}
+
+/* Feature bullets */
+.uc-auth-perks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.uc-auth-perk-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.uc-auth-perk-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #00c875;
+    color: #022013;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(0, 200, 117, 0.38);
+}
+
+.uc-auth-perk-text h6 {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.98rem;
+    margin: 0 0 0.15rem;
+}
+
+.uc-auth-perk-text p {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+/* Decorative Illustration Graphic at Bottom of Banner */
+.uc-auth-banner-graphic {
+    position: relative;
+    margin-top: 1rem;
+    text-align: center;
+    z-index: 1;
+}
+
+.uc-auth-banner-graphic svg {
+    max-width: 220px;
+    height: auto;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
+}
+
+/* --------------------------------------------------------------------------
+   RIGHT SECTION: Form & Interactive Controls
+   -------------------------------------------------------------------------- */
+.uc-auth-form-side {
+    flex: 1 1 55%;
+    padding: 3rem 2.75rem;
+    background: #081410;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.uc-auth-badge-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(0, 200, 117, 0.12);
+    border: 1px solid rgba(0, 200, 117, 0.32);
+    color: #00c875;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.uc-auth-form-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 0.35rem;
+}
+
+.uc-auth-form-subtitle {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    margin-bottom: 1.75rem;
+}
+
+/* Form Controls */
+.uc-auth-form-side .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.uc-auth-form-side .form-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: #cbd5e1;
+    margin-bottom: 0.45rem;
+}
+
+.uc-auth-form-side .form-label i.label-icon {
+    color: #ef4444;
+    margin-right: 0.35rem;
+    font-size: 0.95rem;
+}
+
+html[dir="rtl"] .uc-auth-form-side .form-label i.label-icon {
+    margin-right: 0;
+    margin-left: 0.35rem;
+}
+
+.uc-auth-form-side .form-control {
+    background: #0f201a !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #f8fafc !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.92rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.uc-auth-form-side .form-control:focus {
+    border-color: #00c875 !important;
+    box-shadow: 0 0 0 3px rgba(0, 200, 117, 0.22) !important;
+    background: #132720 !important;
+    outline: none !important;
+}
+
+.uc-auth-form-side .form-control::placeholder {
+    color: #64748b !important;
+    opacity: 0.8;
+}
+
+/* Password Eye Toggle */
+.uc-password-wrap {
+    position: relative;
+}
+
+.uc-password-wrap .form-control {
+    padding-right: 2.85rem !important;
+}
+
+html[dir="rtl"] .uc-password-wrap .form-control {
+    padding-right: 1rem !important;
+    padding-left: 2.85rem !important;
+}
+
+.btn-toggle-eye {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.15rem;
+    padding: 0.25rem 0.5rem;
+    z-index: 5;
+    transition: color 0.15s ease;
+}
+
+html[dir="rtl"] .btn-toggle-eye {
+    right: auto;
+    left: 0.75rem;
+}
+
+.btn-toggle-eye:hover {
+    color: #00c875;
+}
+
+/* Forgot Password Link */
+.uc-link-forgot {
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: opacity 0.15s ease;
+}
+
+.uc-link-forgot:hover {
+    color: #f87171;
+    text-decoration: underline;
+}
+
+/* Primary Action Submit Button */
+.btn-auth-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #00c875 0%, #059669 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.98rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 8px 24px -4px rgba(0, 200, 117, 0.45);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 0.5rem;
+}
+
+.btn-auth-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -4px rgba(0, 200, 117, 0.6);
+    color: #ffffff;
+}
+
+.btn-auth-submit:active {
+    transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   HELPER CARDS: Forgot Password & Live Chat
+   -------------------------------------------------------------------------- */
+.uc-auth-helper-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.uc-auth-helper-box {
+    background: rgba(15, 32, 26, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.85rem 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.uc-auth-helper-box:hover {
+    border-color: rgba(0, 200, 117, 0.3);
+}
+
+.uc-auth-helper-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.uc-auth-helper-info i.helper-icon {
+    font-size: 1.25rem;
+}
+
+.uc-auth-helper-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin: 0;
+}
+
+.uc-auth-helper-desc {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    margin: 0;
+}
+
+.btn-auth-helper-action {
+    background: transparent;
+    border: 1px solid rgba(0, 200, 117, 0.45);
+    color: #00c875;
+    font-weight: 600;
+    font-size: 0.82rem;
+    border-radius: 8px;
+    padding: 0.4rem 0.9rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-auth-helper-action:hover {
+    background: rgba(0, 200, 117, 0.15);
+    color: #34d399;
+    border-color: #00c875;
+}
+
+/* Switch Auth Link (Register / Login) */
+.uc-auth-switch-link {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+}
+
+.uc-auth-switch-link a {
+    color: #00c875;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.uc-auth-switch-link a:hover {
+    color: #34d399;
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN (<= 991px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+    .uc-auth-card {
+        flex-direction: column;
+        max-width: 540px;
+        border-radius: 20px;
+    }
+
+    .uc-auth-banner {
+        border-right: none;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.18);
+        padding: 2.25rem 1.75rem 1.75rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .uc-auth-banner-title {
+        font-size: 1.85rem;
+    }
+
+    .uc-auth-banner-graphic {
+        display: none;
+    }
+
+    .uc-auth-form-side {
+        padding: 2.25rem 1.75rem;
+    }
+}

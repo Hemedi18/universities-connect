@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: U-Connect 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 14:06+0000\n"
+"POT-Creation-Date: 2026-10-23 16:34+0000\n"
 "PO-Revision-Date: 2026-10-23 16:30+0300\n"
 "Last-Translator: Antigravity\n"
 "Language-Team: Arabic\n"
@@ -31,242 +31,718 @@ msgstr "تم بنجاح"
 msgid "Taarifa (Notice)"
 msgstr "إشعار"
 
-#: business/templates/business/base.html:300
-msgid "Staff Mode"
-msgstr "وضع الإدارة"
-
 #: business/templates/business/base.html:301
-msgid "Current mode:"
-msgstr "الوضع الحالي:"
+msgid "Main Navigation"
+msgstr "التنقل الرئيسي"
 
-#: business/templates/business/base.html:304
-#: business/templates/business/base.html:449
-msgid "Normal Mode"
-msgstr "الوضع العادي"
-
-#: business/templates/business/base.html:304
-msgid "Classic Admin"
-msgstr "الإدارة التقليدية"
-
-#: business/templates/business/base.html:306
-#: business/templates/business/base.html:449
-msgid "Managed Mode"
-msgstr "الوضع الإداري"
-
-#: business/templates/business/base.html:306
-msgid "Executive Hub"
-msgstr "مركز الإدارة التنفيذي"
-
-#: business/templates/business/base.html:311
-msgid "Admin Mode Toggle"
-msgstr "تبديل وضع الإدارة"
-
-#: business/templates/business/base.html:314
-msgid "Switch to Executive Command Center"
-msgstr "التبديل إلى مركز القيادة التنفيذي"
-
-#: business/templates/business/base.html:315
-#: business/templates/business/base.html:355
-#, fuzzy
-#| msgid "Managed Mode"
-msgid "Managed"
-msgstr "الوضع الإداري"
-
-#: business/templates/business/base.html:319
-msgid "Switch to Classic Django Admin"
-msgstr "التبديل إلى لوحة إدارة دجانغو التقليدية"
-
-#: business/templates/business/base.html:320
-#: business/templates/business/base.html:355
-#, fuzzy
-#| msgid "Normal Mode"
-msgid "Normal"
-msgstr "الوضع العادي"
-
-#: business/templates/business/base.html:325
-#, fuzzy
-#| msgid "Open Admin"
-msgid "Open Admin Panel"
-msgstr "فتح لوحة التحكم"
-
-#: business/templates/business/base.html:326
-msgid "Open Admin"
-msgstr "فتح لوحة التحكم"
-
-#: business/templates/business/base.html:339
-msgid "Search products..."
-msgstr "ابحث عن المنتجات..."
-
-#: business/templates/business/base.html:346
-msgid "Search"
-msgstr "بحث"
-
-#: business/templates/business/base.html:353
-msgid "Switch Admin Mode"
-msgstr "تبديل وضع الإدارة"
-
-#: business/templates/business/base.html:358
-#: business/templates/business/base.html:429
-#: business/templates/business/base.html:431
-#: business/templates/business/base.html:459
-msgid "Home"
-msgstr "الرئيسية"
-
-#: business/templates/business/base.html:360
-#: business/templates/business/base.html:469
-#: business/templates/business/base.html:476
-#: business/templates/business/item_detail.html:169
-#: business/templates/business/item_detail.html:171
-#: business/templates/business/item_detail.html:297
-#: business/templates/business/item_detail.html:299
-#: business/templates/business/item_detail.html:320
-#: business/templates/business/item_detail.html:322
-msgid "Chat"
-msgstr "المحادثة"
-
-#: business/templates/business/base.html:361
-msgid "Alerts"
-msgstr "التنبيهات"
-
-#: business/templates/business/base.html:366
-#: business/templates/business/base.html:480
-msgid "Cart"
-msgstr "السلة"
-
-#: business/templates/business/base.html:372
-msgid "Select Language"
-msgstr "اختر اللغة"
-
-#: business/templates/business/base.html:392
-#: business/templates/business/base.html:424
-msgid "Toggle Theme (Dark/Light)"
-msgstr "تبديل المظهر (داكن/فاتح)"
-
-#: business/templates/business/base.html:392
-msgid "Toggle Theme"
+#: business/templates/business/base.html:309
+#: business/templates/business/base.html:432
+#: business/templates/business/base.html:497
+msgid "Toggle Sidebar"
 msgstr "تبديل المظهر"
 
-#: business/templates/business/base.html:399
-#: business/templates/business/base.html:407
-#: business/templates/business/base.html:484
-msgid "Account"
-msgstr "الحساب"
+#: business/templates/business/base.html:313
+msgid "Close Menu"
+msgstr "إغلاق القائمة"
 
-#: business/templates/business/base.html:413
+#: business/templates/business/base.html:321
 msgid "Language"
 msgstr "اللغة"
 
-#: business/templates/business/base.html:434
+#: business/templates/business/base.html:330
+#: business/templates/business/base.html:557
+msgid "Toggle Theme"
+msgstr "تبديل المظهر"
+
+#: business/templates/business/base.html:338
+#: business/templates/business/base.html:340
+#: business/templates/business/base.html:523
+#: business/templates/business/base.html:580
+#: business/templates/business/documentation.html:14
+#: business/templates/business/documentation.html:118
+msgid "Home"
+msgstr "الرئيسية"
+
+#: business/templates/business/base.html:346
+#: business/templates/business/base.html:348
 msgid "New"
 msgstr "الجديد"
 
-#: business/templates/business/base.html:435
+#: business/templates/business/base.html:355
+#: business/templates/business/base.html:357
 msgid "Featured"
 msgstr "المميزة"
 
-#: business/templates/business/base.html:436
-#: business/templates/business/base.html:462
-#: business/templates/business/base.html:515
+#: business/templates/business/base.html:363
+#: business/templates/business/base.html:365
+#: business/templates/business/base.html:583
+#: business/templates/business/base.html:636
+#: business/templates/business/documentation.html:124
 #: business/templates/business/home.html:6
 msgid "Shop"
 msgstr "المتجر"
 
-#: business/templates/business/base.html:437
+#: business/templates/business/base.html:371
+#: business/templates/business/base.html:373
 msgid "About"
 msgstr "من نحن"
 
-#: business/templates/business/base.html:438
-#: business/templates/business/base.html:508
+#: business/templates/business/base.html:379
+#: business/templates/business/base.html:381
+#: business/templates/business/base.html:629
 msgid "Contact"
 msgstr "اتصل بنا"
 
-#: business/templates/business/base.html:439
+#: business/templates/business/base.html:387
+#: business/templates/business/base.html:389
 msgid "Help / Docs"
 msgstr "المساعدة / الدليل"
 
-#: business/templates/business/base.html:441
+#: business/templates/business/base.html:396
+#: business/templates/business/base.html:398
+#: business/templates/business/base.html:403
+#: business/templates/business/base.html:405
 msgid "Dashboard"
 msgstr "لوحة التحكم"
 
-#: business/templates/business/base.html:443
-#: business/templates/business/base.html:466
-#: business/templates/business/base.html:473
+#: business/templates/business/base.html:409
+#: business/templates/business/base.html:411
+#: business/templates/business/base.html:587
+#: business/templates/business/base.html:594
 msgid "Sell"
 msgstr "بيع"
 
-#: business/templates/business/base.html:449
-#, fuzzy
-#| msgid "Staff Mode"
+#: business/templates/business/base.html:419
+msgid "Switch Mode"
+msgstr "وضع الإدارة"
+
+#: business/templates/business/base.html:422
 msgid "Switch Mode:"
 msgstr "وضع الإدارة"
 
-#: business/templates/business/base.html:505
+#: business/templates/business/base.html:422
+#: business/templates/business/base.html:453
+msgid "Managed Mode"
+msgstr "الوضع الإداري"
+
+#: business/templates/business/base.html:422
+#: business/templates/business/base.html:451
+msgid "Normal Mode"
+msgstr "الوضع العادي"
+
+#: business/templates/business/base.html:432
+msgid "Collapse / Expand Sidebar"
+msgstr "طي / توسيع القائمة"
+
+#: business/templates/business/base.html:434
+msgid "Collapse Sidebar"
+msgstr "طي الشريط الجانبي"
+
+#: business/templates/business/base.html:447
+msgid "Staff Mode"
+msgstr "وضع الإدارة"
+
+#: business/templates/business/base.html:448
+msgid "Current mode:"
+msgstr "الوضع الحالي:"
+
+#: business/templates/business/base.html:451
+msgid "Classic Admin"
+msgstr "الإدارة التقليدية"
+
+#: business/templates/business/base.html:453
+msgid "Executive Hub"
+msgstr "مركز الإدارة التنفيذي"
+
+#: business/templates/business/base.html:458
+msgid "Admin Mode Toggle"
+msgstr "تبديل وضع الإدارة"
+
+#: business/templates/business/base.html:461
+msgid "Switch to Executive Command Center"
+msgstr "التبديل إلى مركز القيادة التنفيذي"
+
+#: business/templates/business/base.html:462
+#: business/templates/business/base.html:520
+msgid "Managed"
+msgstr "الوضع الإداري"
+
+#: business/templates/business/base.html:466
+msgid "Switch to Classic Django Admin"
+msgstr "التبديل إلى لوحة إدارة دجانغو التقليدية"
+
+#: business/templates/business/base.html:467
+#: business/templates/business/base.html:520
+msgid "Normal"
+msgstr "الوضع العادي"
+
+#: business/templates/business/base.html:472
+msgid "Open Admin Panel"
+msgstr "فتح لوحة التحكم"
+
+#: business/templates/business/base.html:473
+msgid "Open Admin"
+msgstr "فتح لوحة التحكم"
+
+#: business/templates/business/base.html:481
+msgid "New commits detected on GitHub! Click to sync and update cPanel live."
+msgstr "تم اكتشاف تحديثات جديدة على GitHub! انقر للمزامنة وتحديث cPanel مباشرة."
+
+#: business/templates/business/base.html:483
+msgid "Sync cPanel"
+msgstr "مزامنة cPanel"
+
+#: business/templates/business/base.html:504
+msgid "Search products..."
+msgstr "ابحث عن المنتجات..."
+
+#: business/templates/business/base.html:511
+#: business/templates/business/post_item.html:830
+#: business/templates/business/post_item.html:1239
+#: business/templates/business/post_item.html:1256
+msgid "Search"
+msgstr "بحث"
+
+#: business/templates/business/base.html:518
+msgid "Switch Admin Mode"
+msgstr "تبديل وضع الإدارة"
+
+#: business/templates/business/base.html:525
+#: business/templates/business/base.html:590
+#: business/templates/business/base.html:597
+#: business/templates/business/item_detail.html:179
+#: business/templates/business/item_detail.html:181
+#: business/templates/business/item_detail.html:368
+#: business/templates/business/item_detail.html:370
+#: business/templates/business/item_detail.html:391
+#: business/templates/business/item_detail.html:393
+msgid "Chat"
+msgstr "المحادثة"
+
+#: business/templates/business/base.html:526
+msgid "Alerts"
+msgstr "التنبيهات"
+
+#: business/templates/business/base.html:531
+#: business/templates/business/base.html:601
+msgid "Cart"
+msgstr "السلة"
+
+#: business/templates/business/base.html:537
+msgid "Select Language"
+msgstr "اختر اللغة"
+
+#: business/templates/business/base.html:557
+msgid "Toggle Theme (Dark/Light)"
+msgstr "تبديل المظهر (داكن/فاتح)"
+
+#: business/templates/business/base.html:564
+#: business/templates/business/base.html:572
+#: business/templates/business/base.html:605
+msgid "Account"
+msgstr "الحساب"
+
+#: business/templates/business/base.html:626
 msgid "Company"
 msgstr "الشركة"
 
-#: business/templates/business/base.html:507
+#: business/templates/business/base.html:628
 msgid "About Us"
 msgstr "من نحن"
 
-#: business/templates/business/base.html:509
+#: business/templates/business/base.html:630
+#: business/templates/business/documentation.html:15
 msgid "Documentation"
 msgstr "الدليل والتوثيق"
 
-#: business/templates/business/base.html:513
+#: business/templates/business/base.html:634
 msgid "Useful Links"
 msgstr "روابط مفيدة"
 
-#: business/templates/business/base.html:516
+#: business/templates/business/base.html:637
 msgid "New Arrivals"
 msgstr "وصل حديثاً"
 
-#: business/templates/business/base.html:517
+#: business/templates/business/base.html:638
 msgid "Best Sellers"
 msgstr "الأكثر مبيعاً"
 
-#: business/templates/business/base.html:518
+#: business/templates/business/base.html:639
+#: business/templates/business/post_item.html:700
 msgid "On Sale"
 msgstr "تخفيضات"
 
-#: business/templates/business/base.html:522
+#: business/templates/business/base.html:643
 msgid "Customer Care"
 msgstr "خدمة العملاء"
 
-#: business/templates/business/base.html:524
+#: business/templates/business/base.html:645
 msgid "My Orders"
 msgstr "طلباتي"
 
-#: business/templates/business/base.html:525
+#: business/templates/business/base.html:646
 msgid "Saved items"
 msgstr "العناصر المحفوظة"
 
-#: business/templates/business/base.html:526
+#: business/templates/business/base.html:647
 msgid "My Account"
 msgstr "حسابي"
 
-#: business/templates/business/base.html:530
+#: business/templates/business/base.html:651
 msgid "Newsletter"
 msgstr "النشرة البريدية"
 
-#: business/templates/business/base.html:531
+#: business/templates/business/base.html:652
 msgid "Get campus deals and new listings in your inbox."
 msgstr "احصل على أفضل عروض الحرم الجامعي والقوائم الجديدة في بريدك."
 
-#: business/templates/business/base.html:533
+#: business/templates/business/base.html:654
 msgid "Your email"
 msgstr "بريدك الإلكتروني"
 
-#: business/templates/business/base.html:534
+#: business/templates/business/base.html:655
 msgid "Subscribe"
 msgstr "اشتراك"
 
-#: business/templates/business/base.html:545
+#: business/templates/business/base.html:666
 msgid "All rights reserved."
 msgstr "جميع الحقوق محفوظة."
 
-#: business/templates/business/base.html:546
+#: business/templates/business/base.html:667
 msgid "Campus marketplace"
 msgstr "سوق الحرم الجامعي"
+
+#: business/templates/business/documentation.html:5
+msgid "Documentation & Help"
+msgstr "الدليل والتوثيق"
+
+#: business/templates/business/documentation.html:20
+msgid "Documentation & User Guide"
+msgstr "الدليل والتوثيق"
+
+#: business/templates/business/documentation.html:21
+msgid "Everything you need to know about how U-Connect works."
+msgstr "كل ما تحتاج لمعرفته حول كيفية عمل منصة U-Connect."
+
+#: business/templates/business/documentation.html:25
+msgid "Ask for Live Support"
+msgstr "طلب الدعم المباشر"
+
+#: business/templates/business/documentation.html:37
+msgid "Table of Contents"
+msgstr "جدول المحتويات"
+
+#: business/templates/business/documentation.html:38
+msgid "Menu"
+msgstr "القائمة"
+
+#: business/templates/business/documentation.html:42
+msgid "Introduction"
+msgstr "حالة المنتج"
+
+#: business/templates/business/documentation.html:43
+msgid "User Roles"
+msgstr "أدوار المستخدمين"
+
+#: business/templates/business/documentation.html:44
+msgid "Navigation Guide"
+msgstr "دليل التنقل"
+
+#: business/templates/business/documentation.html:45
+msgid "Getting Started"
+msgstr "البدء"
+
+#: business/templates/business/documentation.html:46
+msgid "Buying Guide"
+msgstr "دليل الشراء"
+
+#: business/templates/business/documentation.html:47
+msgid "Selling & Companies"
+msgstr "سعر البيع"
+
+#: business/templates/business/documentation.html:48
+msgid "Messaging System"
+msgstr "نظام المراسلة"
+
+#: business/templates/business/documentation.html:49
+#: business/templates/business/documentation.html:142
+msgid "Admin Portal"
+msgstr "فتح لوحة التحكم"
+
+#: business/templates/business/documentation.html:50
+msgid "Frequently Asked Questions (FAQ)"
+msgstr "الأسئلة الشائعة"
+
+#: business/templates/business/documentation.html:60
+msgid "U-Connect Campus Marketplace"
+msgstr "سوق الحرم الجامعي"
+
+#: business/templates/business/documentation.html:61
+msgid ""
+"Welcome to the official U-Connect user guide. This platform is specially "
+"crafted to empower students and the university community to trade safely, "
+"easily, and quickly without middlemen."
+msgstr ""
+
+#: business/templates/business/documentation.html:63
+msgid ""
+"Whether you are looking for textbooks, electronics, hostel services, or "
+"launching your campus business, U-Connect gives you all the tools at your "
+"fingertips."
+msgstr ""
+
+#: business/templates/business/documentation.html:68
+msgid "1. User Roles"
+msgstr "1. أدوار المستخدمين"
+
+#: business/templates/business/documentation.html:75
+msgid "Personal Seller"
+msgstr "اتصل بنا"
+
+#: business/templates/business/documentation.html:76
+msgid ""
+"Students selling their used items (phones, books, room appliances) "
+"occasionally without needing a registered business."
+msgstr ""
+
+#: business/templates/business/documentation.html:84
+msgid "Company Owner"
+msgstr "الشركة"
+
+#: business/templates/business/documentation.html:85
+msgid ""
+"Entrepreneurs and official shops with a business brand, logo, and wide "
+"product catalog (e.g., Food, Fashion, Tech gear)."
+msgstr ""
+
+#: business/templates/business/documentation.html:93
+msgid "Administrator"
+msgstr "المشرف (Administrator)"
+
+#: business/templates/business/documentation.html:94
+msgid ""
+"Platform administrators who verify accounts, prevent fraudulent activity, "
+"and oversee system health via the Executive Command Center."
+msgstr ""
+
+#: business/templates/business/documentation.html:102
+msgid "2. Navigation Guide"
+msgstr "2. دليل التنقل"
+
+#: business/templates/business/documentation.html:103
+msgid ""
+"The top and bottom navigation bars give you full control over your "
+"marketplace activities:"
+msgstr ""
+
+#: business/templates/business/documentation.html:110
+msgid "Link"
+msgstr "الرابط"
+
+#: business/templates/business/documentation.html:111
+msgid "Icon"
+msgstr "الأيقونة"
+
+#: business/templates/business/documentation.html:112
+msgid "Function & Description"
+msgstr "الوصف"
+
+#: business/templates/business/documentation.html:113
+msgid "Audience"
+msgstr "الجمهور المستهدف"
+
+#: business/templates/business/documentation.html:120
+msgid ""
+"Marketplace homepage displaying featured, trending, and latest listings "
+"across campuses."
+msgstr ""
+
+#: business/templates/business/documentation.html:121
+#: business/templates/business/documentation.html:127
+msgid "Everyone"
+msgstr "الجميع"
+
+#: business/templates/business/documentation.html:126
+msgid ""
+"Full marketplace catalog with filters for category, price range, condition, "
+"and campus location."
+msgstr ""
+
+#: business/templates/business/documentation.html:130
+msgid "Chat (Inbox)"
+msgstr "الدردشة (صندوق الرسائل)"
+
+#: business/templates/business/documentation.html:132
+msgid ""
+"Private real-time encrypted messaging between buyers and sellers with image "
+"sharing."
+msgstr ""
+
+#: business/templates/business/documentation.html:133
+#: business/templates/business/documentation.html:139
+msgid "Signed-in Users"
+msgstr "المستخدمون المسجلون"
+
+#: business/templates/business/documentation.html:136
+msgid "Sell Item"
+msgstr "بيع"
+
+#: business/templates/business/documentation.html:138
+msgid ""
+"Product upload studio with multi-photo upload, technical specifications, and "
+"live listing preview."
+msgstr ""
+
+#: business/templates/business/documentation.html:144
+msgid ""
+"Executive Command Center to manage users, listings, system audits, and "
+"customer support."
+msgstr ""
+
+#: business/templates/business/documentation.html:145
+msgid "Admin Only"
+msgstr "فتح لوحة التحكم"
+
+#: business/templates/business/documentation.html:155
+msgid "3. Getting Started"
+msgstr "3. كيفية البدء"
+
+#: business/templates/business/documentation.html:160
+msgid "Register an Account"
+msgstr "تسجيل حساب جديد"
+
+#: business/templates/business/documentation.html:162
+msgid "Click the Register button in the top or bottom menu."
+msgstr "انقر على زر التسجيل في القائمة العلوية أو السفلية."
+
+#: business/templates/business/documentation.html:163
+msgid ""
+"Fill in your username, university or personal email, phone number, and a "
+"secure password."
+msgstr ""
+
+#: business/templates/business/documentation.html:164
+msgid "Enter the 6-digit OTP code sent to your email to verify your identity."
+msgstr "أدخل رمز OTP المكون من 6 أرقام المرسل إلى بريدك للتحقق من هويتك."
+
+#: business/templates/business/documentation.html:165
+msgid "You can immediately start browsing, buying, and listing items!"
+msgstr "يمكنك فوراً البدء في التصفح والشراء وعرض المنتجات!"
+
+#: business/templates/business/documentation.html:171
+msgid "Install on Mobile (PWA)"
+msgstr "التثبيت على الهاتف (PWA)"
+
+#: business/templates/business/documentation.html:172
+msgid ""
+"U-Connect is a Progressive Web App, meaning you can install it directly on "
+"your phone:"
+msgstr ""
+
+#: business/templates/business/documentation.html:174
+msgid ""
+"Open Chrome, tap the 3 dots menu and select 'Install app' or 'Add to Home "
+"screen'."
+msgstr ""
+
+#: business/templates/business/documentation.html:175
+msgid "Open Safari, tap Share and select 'Add to Home Screen'."
+msgstr "افتح Safari، وانقر على زر المشاركة واختر 'إضافة إلى الشاشة الرئيسية'."
+
+#: business/templates/business/documentation.html:184
+msgid "4. Buying Guide"
+msgstr "4. دليل الشراء"
+
+#: business/templates/business/documentation.html:188
+msgid "Searching & Filtering"
+msgstr "البحث والتصفية"
+
+#: business/templates/business/documentation.html:190
+msgid ""
+"Use the top search bar to type the name of the product you are looking for."
+msgstr ""
+
+#: business/templates/business/documentation.html:191
+msgid ""
+"Choose a category (such as Phones, Laptops, Books) to get more accurate "
+"results."
+msgstr ""
+
+#: business/templates/business/documentation.html:192
+msgid "Check discounted prices and badges like 'Discount' or 'New'."
+msgstr "تحقق من الأسعار المخفضة والشارات مثل 'خصم' أو 'جديد'."
+
+#: business/templates/business/documentation.html:198
+msgid "Safe Buying on Campus"
+msgstr "الشراء الآمن في الحرم الجامعي"
+
+#: business/templates/business/documentation.html:200
+msgid ""
+"Meet the seller in open campus areas (such as the library, cafeteria, or "
+"main gate)."
+msgstr ""
+
+#: business/templates/business/documentation.html:201
+msgid "Inspect the product and verify it works properly before making payment."
+msgstr "افحص المنتج وتأكد من أنه يعمل بشكل سليم قبل إتمام الدفع."
+
+#: business/templates/business/documentation.html:202
+msgid ""
+"Use the in-app Chat to communicate safely without giving out your personal "
+"phone number."
+msgstr ""
+
+#: business/templates/business/documentation.html:211
+msgid "5. Selling Guide"
+msgstr "سعر البيع"
+
+#: business/templates/business/documentation.html:214
+msgid "Tip:"
+msgstr "نصيحة:"
+
+#: business/templates/business/documentation.html:214
+msgid ""
+"Take clear, well-lit photos and write an honest description of your "
+"product's condition to sell faster!"
+msgstr ""
+
+#: business/templates/business/documentation.html:218
+msgid "Steps to Upload a Product"
+msgstr "خطوات رفع المنتج"
+
+#: business/templates/business/documentation.html:220
+msgid "Click the Sell button in the menu."
+msgstr "انقر على زر البيع في القائمة."
+
+#: business/templates/business/documentation.html:221
+msgid "Select the correct Category for your product (e.g. Phones & Tablets)."
+msgstr "اختر الفئة الصحيحة لمنتجك (مثل الهواتف والأجهزة اللوحية)."
+
+#: business/templates/business/documentation.html:222
+msgid "Upload up to 3 clean photos showing front and back views."
+msgstr "ارفع حتى 3 صور واضحة توضح المظهر الأمامي والخلفي."
+
+#: business/templates/business/documentation.html:223
+msgid ""
+"Fill in technical specifications with accurate metrics (such as mAh for "
+"battery, GB for RAM and storage, Megapixels for camera)."
+msgstr ""
+
+#: business/templates/business/documentation.html:224
+msgid "Preview your product card on the right, then click Publish Listing."
+msgstr "عاين بطاقة منتجك على اليمين ثم انقر فوق نشر الإعلان."
+
+#: business/templates/business/documentation.html:231
+msgid "6. Messaging System (Chat)"
+msgstr "6. نظام المراسلة (الدردشة)"
+
+#: business/templates/business/documentation.html:236
+msgid "Real-Time Chat"
+msgstr "دردشة فورية ومباشرة"
+
+#: business/templates/business/documentation.html:237
+msgid "Messages arrive instantly without requiring page refreshes."
+msgstr "تصل الرسائل فوراً دون الحاجة إلى إعادة تحميل الصفحة."
+
+#: business/templates/business/documentation.html:243
+msgid "Send Photos"
+msgstr "إرسال الصور"
+
+#: business/templates/business/documentation.html:244
+msgid "Send extra photos of products directly in chat before making a deal."
+msgstr "أرسل صوراً إضافية للمنتج مباشرة في الدردشة قبل الاتفاق."
+
+#: business/templates/business/documentation.html:250
+msgid "Message Notifications"
+msgstr "إشعارات الرسائل"
+
+#: business/templates/business/documentation.html:251
+msgid "Get instant sound and visual alerts when new messages arrive."
+msgstr "احصل على تنبيهات صوتية ومرئية فور وصول رسائل جديدة."
+
+#: business/templates/business/documentation.html:259
+msgid "7. Admin Panel & Moderation"
+msgstr "7. لوحة الإدارة والتحكم"
+
+#: business/templates/business/documentation.html:261
+msgid ""
+"U-Connect administrators have dedicated tools to oversee platform operations:"
+msgstr ""
+
+#: business/templates/business/documentation.html:265
+msgid "Managed Mode (Executive Command Center):"
+msgstr "التبديل إلى مركز القيادة التنفيذي"
+
+#: business/templates/business/documentation.html:265
+msgid ""
+"Modern dashboard with analytics graphs, user management, email broadcasts, "
+"and CRM support."
+msgstr ""
+
+#: business/templates/business/documentation.html:269
+msgid "Normal Mode (Classic Django Admin):"
+msgstr "التبديل إلى لوحة إدارة دجانغو التقليدية"
+
+#: business/templates/business/documentation.html:269
+msgid ""
+"Direct administrative interface for raw database records and rapid "
+"adjustments."
+msgstr ""
+
+#: business/templates/business/documentation.html:277
+msgid "8. Frequently Asked Questions (FAQ)"
+msgstr "8. الأسئلة المتكررة (FAQ)"
+
+#: business/templates/business/documentation.html:282
+msgid "I cannot upload photos of my product, what should I do?"
+msgstr "أواجه مشكلة في رفع صور منتجي، ماذا أفعل؟"
+
+#: business/templates/business/documentation.html:287
+msgid ""
+"Ensure your photos are in JPG or PNG format and smaller than 5MB each. You "
+"can also click the camera icon in the U-Connect Support Drawer to send a "
+"screenshot of the error directly to us!"
+msgstr ""
+
+#: business/templates/business/documentation.html:294
+msgid "The seller is not replying to my chat messages?"
+msgstr "البائع لا يرد على رسائلي في الدردشة؟"
+
+#: business/templates/business/documentation.html:299
+msgid ""
+"Check the seller's profile to see their last active status. If they have "
+"been offline for a while, you can check similar listings from another active "
+"seller on campus."
+msgstr ""
+
+#: business/templates/business/documentation.html:306
+msgid "What if I notice a suspicious listing or fraudulent seller?"
+msgstr "ماذا أفعل إذا لاحظت إعلاناً مشبوهاً أو بائعاً محتالاً؟"
+
+#: business/templates/business/documentation.html:311
+msgid ""
+"Please open our Support & AI drawer in the bottom right corner and tap 'Take "
+"Screenshot'. The capture is sent straight to our moderation team to remove "
+"the listing and take appropriate action."
+msgstr ""
+
+#: business/templates/business/documentation.html:320
+msgid "Still need assistance or have questions?"
+msgstr "هل ما زلت بحاجة إلى مساعدة أو لديك استفسارات؟"
+
+#: business/templates/business/documentation.html:321
+msgid ""
+"We're here 24/7 to help you. Chat with our support team in real-time or send "
+"us a message."
+msgstr ""
+
+#: business/templates/business/documentation.html:324
+msgid "Open Support Chat"
+msgstr "فتح المحادثة بملء الشاشة"
+
+#: business/templates/business/documentation.html:327
+msgid "Contact Us Page"
+msgstr "اتصل بنا"
 
 #: business/templates/business/home.html:18
 msgid "Hot picks for you"
@@ -301,8 +777,6 @@ msgid "Clear search"
 msgstr "مسح البحث"
 
 #: business/templates/business/item_detail.html:92
-#, fuzzy
-#| msgid "No picks yet."
 msgid "No ratings yet"
 msgstr "لا توجد مختارات بعد."
 
@@ -324,6 +798,7 @@ msgid "Condition"
 msgstr "الحالة"
 
 #: business/templates/business/item_detail.html:118
+#: business/templates/business/manage_items.html:42
 msgid "Stock"
 msgstr "المخزون"
 
@@ -332,239 +807,788 @@ msgid "available"
 msgstr "متوفر"
 
 #: business/templates/business/item_detail.html:120
-#, fuzzy
-#| msgid "My Orders"
 msgid "Min. order"
 msgstr "طلباتي"
 
-#: business/templates/business/item_detail.html:123
-#, fuzzy
-#| msgid "Documentation"
-msgid "Location"
-msgstr "الدليل والتوثيق"
+#: business/templates/business/item_detail.html:124
+msgid "Meetup Location"
+msgstr "مكان اللقاء..."
 
-#: business/templates/business/item_detail.html:126
+#: business/templates/business/item_detail.html:136
 msgid "Weight"
 msgstr "الوزن"
 
-#: business/templates/business/item_detail.html:129
+#: business/templates/business/item_detail.html:139
 msgid "Dimensions"
 msgstr "الأبعاد"
 
-#: business/templates/business/item_detail.html:132
-#, fuzzy
-#| msgid "Contact"
+#: business/templates/business/item_detail.html:142
 msgid "Contact via"
 msgstr "اتصل بنا"
 
-#: business/templates/business/item_detail.html:145
+#: business/templates/business/item_detail.html:155
 msgid "Quantity"
 msgstr "الكمية"
 
-#: business/templates/business/item_detail.html:146
+#: business/templates/business/item_detail.html:156
 msgid "left"
 msgstr "متبقي"
 
-#: business/templates/business/item_detail.html:158
-#: business/templates/business/item_detail.html:284
+#: business/templates/business/item_detail.html:168
+#: business/templates/business/item_detail.html:355
 msgid ""
 "Never pay shipping or transport fees before receiving package. Pay only upon "
 "inspection (Cash on Delivery)."
 msgstr ""
 
-#: business/templates/business/item_detail.html:161
-#: business/templates/business/item_detail.html:289
-#, fuzzy
-#| msgid "Contact"
+#: business/templates/business/item_detail.html:171
+#: business/templates/business/item_detail.html:360
 msgid "Contact Seller"
 msgstr "اتصل بنا"
 
-#: business/templates/business/item_detail.html:165
-#: business/templates/business/item_detail.html:293
+#: business/templates/business/item_detail.html:175
+#: business/templates/business/item_detail.html:364
 msgid "No phone provided — use chat"
 msgstr "لم يتم توفير رقم هاتف — استخدم المحادثة"
 
-#: business/templates/business/item_detail.html:169
-#: business/templates/business/item_detail.html:171
-#: business/templates/business/item_detail.html:297
-#: business/templates/business/item_detail.html:299
+#: business/templates/business/item_detail.html:179
+#: business/templates/business/item_detail.html:181
+#: business/templates/business/item_detail.html:368
+#: business/templates/business/item_detail.html:370
 msgid "Chat with seller"
 msgstr "تحدث مع البائع"
 
-#: business/templates/business/item_detail.html:174
-#: business/templates/business/item_detail.html:302
-#: business/templates/business/item_detail.html:325
+#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:373
+#: business/templates/business/item_detail.html:396
 msgid "Call"
 msgstr "اتصال"
 
-#: business/templates/business/item_detail.html:174
-#: business/templates/business/item_detail.html:302
-#, fuzzy
-#| msgid "Best sellers"
+#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:373
 msgid "Call seller"
 msgstr "الأكثر مبيعاً"
 
-#: business/templates/business/item_detail.html:176
-#: business/templates/business/item_detail.html:304
+#: business/templates/business/item_detail.html:186
+#: business/templates/business/item_detail.html:375
 msgid "No phone"
 msgstr "لا يوجد هاتف"
 
-#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:200
+msgid "Meetup & Pickup Location"
+msgstr "مكان اللقاء والاستلام"
+
+#: business/templates/business/item_detail.html:201
+msgid "Agreed pickup and inspection point for this product"
+msgstr "نقطة اللقاء والمعاينة المتفق عليها لهذا المنتج"
+
+#: business/templates/business/item_detail.html:208
+msgid "General Area"
+msgstr "المنطقة العامة"
+
+#: business/templates/business/item_detail.html:215
+msgid "Specific Spot"
+msgstr "النقطة المحددة"
+
+#: business/templates/business/item_detail.html:220
+msgid "Location"
+msgstr "الدليل والتوثيق"
+
+#: business/templates/business/item_detail.html:228
+msgid "View on Google Maps"
+msgstr "عرض على خرائط جوجل"
+
+#: business/templates/business/item_detail.html:237
+msgid "Check Distance from My Location"
+msgstr "حساب المسافة من موقعي"
+
+#: business/templates/business/item_detail.html:247
 msgid "Description"
 msgstr "الوصف"
 
-#: business/templates/business/item_detail.html:190
-#, fuzzy
-#| msgid "Customer Care"
+#: business/templates/business/item_detail.html:253
 msgid "Customer Reviews"
 msgstr "خدمة العملاء"
 
-#: business/templates/business/item_detail.html:211
+#: business/templates/business/item_detail.html:274
 msgid "No ratings yet — be the first to review."
 msgstr "لا توجد تقييمات بعد — كن أول من يكتب تقييماً."
 
-#: business/templates/business/item_detail.html:222
-#, fuzzy
-#| msgid "No picks yet."
+#: business/templates/business/item_detail.html:285
 msgid "No comments yet."
 msgstr "لا توجد مختارات بعد."
 
-#: business/templates/business/item_detail.html:228
+#: business/templates/business/item_detail.html:291
 msgid "Post comment"
 msgstr "نشر التعليق"
 
-#: business/templates/business/item_detail.html:235
+#: business/templates/business/item_detail.html:298
 msgid "You may also like"
 msgstr "قد يعجبك أيضاً"
 
-#: business/templates/business/item_detail.html:276
-#, fuzzy
-#| msgid "Campus marketplace"
+#: business/templates/business/item_detail.html:339
 msgid "Campus meetup / delivery"
 msgstr "سوق الحرم الجامعي"
 
-#: business/templates/business/item_detail.html:277
+#: business/templates/business/item_detail.html:342
 msgid "Campus pickup"
 msgstr "استلام من الحرم الجامعي"
 
-#: business/templates/business/item_detail.html:278
+#: business/templates/business/item_detail.html:344
+msgid "Open in Google Maps"
+msgstr "فتح في خرائط جوجل"
+
+#: business/templates/business/item_detail.html:349
 msgid "Cash on Delivery"
 msgstr "الدفع عند الاستلام"
 
-#: business/templates/business/item_detail.html:279
+#: business/templates/business/item_detail.html:350
 msgid "Buyer protection"
 msgstr "حماية المشتري"
 
-#: business/templates/business/item_detail.html:310
-#: business/templates/business/item_detail.html:329
+#: business/templates/business/item_detail.html:381
+#: business/templates/business/item_detail.html:400
 msgid "Out of stock"
 msgstr "نفد من المخزون"
 
-#: business/templates/business/partials/_support_drawer.html:4
+#: business/templates/business/item_detail.html:769
+msgid "Recalculate Distance"
+msgstr "إعادة حساب المسافة"
+
+#: business/templates/business/item_detail.html:793
+msgid "Distance"
+msgstr "المسافة"
+
+#: business/templates/business/item_detail.html:793
+msgid "You are approximately"
+msgstr "أنت تبعد تقريباً"
+
+#: business/templates/business/item_detail.html:793
+msgid "away from this meetup location"
+msgstr "عن موقع اللقاء هذا"
+
+#: business/templates/business/item_detail.html:796
+msgid "Get Directions on Google Maps"
+msgstr "عرض الاتجاهات على خرائط جوجل"
+
+#: business/templates/business/item_detail.html:799
+msgid ""
+"Your location detected! Open Google Maps to view exact driving or walking "
+"route"
+msgstr "تم تحديد موقعك! افتح خرائط جوجل لعرض مسار القيادة أو المشي الدقيق"
+
+#: business/templates/business/item_detail.html:801
+msgid "View Route & Distance on Google Maps"
+msgstr "عرض المسار والمسافة على خرائط جوجل"
+
+#: business/templates/business/item_detail.html:806
+msgid "Check Distance"
+msgstr "المسافة"
+
+#: business/templates/business/item_detail.html:809
+msgid ""
+"Could not access GPS location. You can view directions directly in Google "
+"Maps:"
+msgstr ""
+"تعذر الوصول إلى نظام تحديد المواقع. يمكنك عرض الاتجاهات مباشرة على خرائط "
+"جوجل:"
+
+#: business/templates/business/item_detail.html:811
+msgid "Open Directions in Google Maps"
+msgstr "فتح الاتجاهات في خرائط جوجل"
+
+#: business/templates/business/manage_items.html:6
+msgid "My Products"
+msgstr "منتجاتي"
+
+#: business/templates/business/manage_items.html:14
+msgid "My products"
+msgstr "منتجاتي"
+
+#: business/templates/business/manage_items.html:15
+msgid "listing"
+msgstr "إعلان"
+
+#: business/templates/business/manage_items.html:15
+msgid "No listings yet"
+msgstr "لا توجد إعلانات بعد"
+
+#: business/templates/business/manage_items.html:19
+msgid "Add product"
+msgstr "إضافة منتج"
+
+#: business/templates/business/manage_items.html:27
+msgid "View"
+msgstr "عرض المزيد"
+
+#: business/templates/business/manage_items.html:43
+msgid "view"
+msgstr "مشاهدة"
+
+#: business/templates/business/manage_items.html:51
+msgid "Edit"
+msgstr "تعديل"
+
+#: business/templates/business/manage_items.html:53
+msgid "Delete this product?"
+msgstr "هل تريد حذف هذا المنتج؟"
+
+#: business/templates/business/manage_items.html:54
+msgid "Delete"
+msgstr "حذف"
+
+#: business/templates/business/manage_items.html:63
+msgid "No products yet"
+msgstr "لا توجد منتجات بعد"
+
+#: business/templates/business/manage_items.html:64
+msgid "Upload your first listing and start selling on campus."
+msgstr "أضف منتجك الأول وابدأ البيع في الحرم الجامعي."
+
+#: business/templates/business/manage_items.html:67
+msgid "Start selling"
+msgstr "ابدأ البيع"
+
+#: business/templates/business/partials/_support_drawer.html:5
 msgid "Help & Support / AI Assistant"
 msgstr "المساعدة والدعم / مساعد الذكاء الاصطناعي"
 
-#: business/templates/business/partials/_support_drawer.html:8
+#: business/templates/business/partials/_support_drawer.html:9
 msgid "Support & AI"
 msgstr "الدعم والذكاء الاصطناعي"
 
-#: business/templates/business/partials/_support_drawer.html:26
+#: business/templates/business/partials/_support_drawer.html:28
 msgid "U-Connect Support & AI"
 msgstr "دعم U-Connect والذكاء الاصطناعي"
 
-#: business/templates/business/partials/_support_drawer.html:29
+#: business/templates/business/partials/_support_drawer.html:31
 msgid "Support agents are online (Active)"
 msgstr "فريق الدعم متاح الآن (نشط)"
 
-#: business/templates/business/partials/_support_drawer.html:34
+#: business/templates/business/partials/_support_drawer.html:37
 msgid "Open Full Page Chat"
 msgstr "فتح المحادثة بملء الشاشة"
 
-#: business/templates/business/partials/_support_drawer.html:37
+#: business/templates/business/partials/_support_drawer.html:41
 msgid "Close Support Drawer"
 msgstr "إغلاق نافذة الدعم"
 
-#: business/templates/business/partials/_support_drawer.html:43
+#: business/templates/business/partials/_support_drawer.html:47
 msgid "💡 How do I buy products on campus?"
 msgstr "💡 كيف أشتري المنتجات في الحرم الجامعي؟"
 
-#: business/templates/business/partials/_support_drawer.html:43
+#: business/templates/business/partials/_support_drawer.html:47
 msgid "💡 How to buy"
 msgstr "💡 كيفية الشراء"
 
-#: business/templates/business/partials/_support_drawer.html:44
+#: business/templates/business/partials/_support_drawer.html:48
 msgid "📦 How do I post an item or start selling?"
 msgstr "📦 كيف أعرض منتجاً أو أبدأ البيع؟"
 
-#: business/templates/business/partials/_support_drawer.html:44
+#: business/templates/business/partials/_support_drawer.html:48
 msgid "📦 How to sell"
 msgstr "📦 كيفية البيع"
 
-#: business/templates/business/partials/_support_drawer.html:45
+#: business/templates/business/partials/_support_drawer.html:49
 msgid "⚠️ I encountered an error or problem on this page."
 msgstr "⚠️ واجهت خطأً أو مشكلة في هذه الصفحة."
 
-#: business/templates/business/partials/_support_drawer.html:45
+#: business/templates/business/partials/_support_drawer.html:49
 msgid "⚠️ Report issue"
 msgstr "⚠️ الإبلاغ عن مشكلة"
 
-#: business/templates/business/partials/_support_drawer.html:46
+#: business/templates/business/partials/_support_drawer.html:51
 msgid "Take Screenshot"
 msgstr "التقاط صورة للشاشة"
 
-#: business/templates/business/partials/_support_drawer.html:55
+#: business/templates/business/partials/_support_drawer.html:60
 msgid "Welcome to U-Connect Support!"
 msgstr "مرحباً بك في دعم U-Connect!"
 
-#: business/templates/business/partials/_support_drawer.html:57
+#: business/templates/business/partials/_support_drawer.html:62
 msgid ""
 "Have a question, need assistance or noticed an issue? Write here or take a "
 "screenshot so our team can resolve it quickly!"
 msgstr ""
 
-#: business/templates/business/partials/_support_drawer.html:67
+#: business/templates/business/partials/_support_drawer.html:72
 msgid "Support agent is typing..."
 msgstr "فريق الدعم يكتب الآن..."
 
-#: business/templates/business/partials/_support_drawer.html:76
+#: business/templates/business/partials/_support_drawer.html:81
 msgid "Screenshot Captured!"
 msgstr "تم التقاط صورة الشاشة!"
 
-#: business/templates/business/partials/_support_drawer.html:80
+#: business/templates/business/partials/_support_drawer.html:86
 msgid "Remove screenshot"
 msgstr "إزالة صورة الشاشة"
 
-#: business/templates/business/partials/_support_drawer.html:88
+#: business/templates/business/partials/_support_drawer.html:95
 msgid "Capture page screenshot for support team"
 msgstr "التقاط صورة للصفحة لفريق الدعم"
 
-#: business/templates/business/partials/_support_drawer.html:90
-#: business/templates/business/partials/_support_drawer.html:704
+#: business/templates/business/partials/_support_drawer.html:97
+#: business/templates/business/partials/_support_drawer.html:794
 msgid "Capture Page Screenshot"
 msgstr "التقاط صورة الصفحة"
 
-#: business/templates/business/partials/_support_drawer.html:92
+#: business/templates/business/partials/_support_drawer.html:100
 #, python-format
 msgid "100%% Secure"
 msgstr "آمن 100%%"
 
-#: business/templates/business/partials/_support_drawer.html:95
+#: business/templates/business/partials/_support_drawer.html:104
 msgid "Describe your issue or ask anything here..."
 msgstr "صف مشكلتك أو اسأل أي شيء هنا..."
 
-#: business/templates/business/partials/_support_drawer.html:96
+#: business/templates/business/partials/_support_drawer.html:106
 msgid "Send message"
 msgstr "إرسال الرسالة"
 
-#: business/templates/business/partials/_support_drawer.html:693
+#: business/templates/business/partials/_support_drawer.html:783
 msgid "I noticed an issue / feedback on this page: "
 msgstr "لاحظت مشكلة / ملاحظة في هذه الصفحة: "
 
-#: business/templates/business/partials/_support_drawer.html:697
+#: business/templates/business/partials/_support_drawer.html:787
 msgid ""
 "Could not capture screenshot directly. Please describe your issue in the "
 "message box."
 msgstr ""
+
+#: business/templates/business/post_item.html:5
+msgid "Post Product - U-Connect"
+msgstr "إضافة منتج - يو-كونكت"
+
+#: business/templates/business/post_item.html:305
+msgid "U-Connect Marketplace • Post Product"
+msgstr "سوق يو-كونكت • نشر منتج"
+
+#: business/templates/business/post_item.html:309
+msgid "Post New Product"
+msgstr "نشر منتج جديد"
+
+#: business/templates/business/post_item.html:321
+msgid "Change Category"
+msgstr "تغيير الفئة"
+
+#: business/templates/business/post_item.html:349
+msgid "Product Media (Photos & Video)"
+msgstr "وسائط المنتج (صور وفيديو)"
+
+#: business/templates/business/post_item.html:350
+#, fuzzy, python-format
+#| msgid ""
+#| "High-quality photos increase buyer trust by 70%. The first photo is your "
+#| "main cover photo."
+msgid ""
+"High-quality photos increase buyer trust by 70%%. The first photo is your "
+"main cover photo."
+msgstr ""
+"الصور الواضحة تزيد ثقة المشتري بنسبة 70%. الصورة الأولى هي الغلاف الرئيسي."
+
+#: business/templates/business/post_item.html:356
+msgid ""
+"Add at least 1 clear photo (up to 6 photos and 1 short 30-second video)."
+msgstr "أضف صورة واحدة واضحة على الأقل (حتى 6 صور وفيديو قصير لمدة 30 ثانية)."
+
+#: business/templates/business/post_item.html:369
+msgid "Basic Product Information"
+msgstr "المعلومات الأساسية للمنتج"
+
+#: business/templates/business/post_item.html:370
+msgid "Write a clear, attractive title and specify the item condition."
+msgstr "اكتب عنواناً جذاباً وحدد حالة المنتج."
+
+#: business/templates/business/post_item.html:376
+msgid "Product Title"
+msgstr "عنوان المنتج"
+
+#: business/templates/business/post_item.html:381
+msgid ""
+"Tip: Mention Brand, Model, and key specs (e.g. Samsung Galaxy S22 Ultra "
+"256GB)."
+msgstr "نصيحة: اذكر الماركة والموديل والمواصفات الأساسية."
+
+#: business/templates/business/post_item.html:389
+msgid "Item Condition"
+msgstr "حالة المنتج"
+
+#: business/templates/business/post_item.html:397
+#: business/templates/business/post_item.html:498
+msgid "Optional"
+msgstr "اختياري"
+
+#: business/templates/business/post_item.html:400
+msgid "If left blank, a code will be generated automatically."
+msgstr "إذا تُرك فارغاً، سيتم إنشاء الرمز تلقائياً."
+
+#: business/templates/business/post_item.html:413
+msgid "Specifications for"
+msgstr "مواصفات"
+
+#: business/templates/business/post_item.html:414
+msgid "Choose from suggestions or type your custom value."
+msgstr "اختر من الاقتراحات أو اكتب القيمة الخاصة بك."
+
+#: business/templates/business/post_item.html:477
+msgid "Pricing & Inventory"
+msgstr "التسعير والمخزون"
+
+#: business/templates/business/post_item.html:478
+msgid "Set the exact selling price in TZS. Competitive prices sell faster."
+msgstr "حدد سعر البيع بالشلن التنزاني (TZS). الأسعار المنافسة تباع أسرع."
+
+#: business/templates/business/post_item.html:485
+msgid "Selling Price"
+msgstr "سعر البيع"
+
+#: business/templates/business/post_item.html:492
+msgid "Exact amount buyer will pay."
+msgstr "المبلغ الفعلي الذي سيدفعه المشتري."
+
+#: business/templates/business/post_item.html:498
+msgid "Compare-at Price"
+msgstr "السعر السابق (للمقارنة)"
+
+#: business/templates/business/post_item.html:505
+msgid "If higher than current price, will show crossed out as a discount."
+msgstr "إذا كان أعلى من السعر الحالي، سيظهر مشطوباً كخصم."
+
+#: business/templates/business/post_item.html:511
+msgid "Stock Quantity"
+msgstr "الكمية المتوفرة"
+
+#: business/templates/business/post_item.html:519
+msgid "Shipping Weight"
+msgstr "وزن الشحنة"
+
+#: business/templates/business/post_item.html:531
+msgid "Box Dimensions (L x W x H)"
+msgstr "أبعاد الصندوق (طول × عرض × ارتفاع)"
+
+#: business/templates/business/post_item.html:544
+msgid "Meetup Location & Seller Contact"
+msgstr "مكان اللقاء ومعلومات الاتصال"
+
+#: business/templates/business/post_item.html:545
+msgid ""
+"Set the general area and specific spot for handing over goods and Cash on "
+"Delivery."
+msgstr "حدد المنطقة العامة والنقطة الدقيقة لتسليم المنتج والدفع عند الاستلام."
+
+#: business/templates/business/post_item.html:554
+msgid "Saved Meetup Locations"
+msgstr "المواقع المحفوظة للقاء"
+
+#: business/templates/business/post_item.html:556
+msgid "Click to fill"
+msgstr "انقر للتعبئة"
+
+#: business/templates/business/post_item.html:567
+msgid "Default Meetup Location"
+msgstr "الموقع الافتراضي للقاء"
+
+#: business/templates/business/post_item.html:567
+msgid "Click to use this location"
+msgstr "انقر لاستخدام هذا الموقع"
+
+#: business/templates/business/post_item.html:571
+#: business/templates/business/post_item.html:1070
+msgid "Default"
+msgstr "افتراضي"
+
+#: business/templates/business/post_item.html:583
+msgid "General Location (Area / City / Region)"
+msgstr "الموقع العام (المنطقة / المدينة / المحافظة)"
+
+#: business/templates/business/post_item.html:587
+msgid "Detect GPS Location"
+msgstr "تحديد الموقع عبر GPS"
+
+#: business/templates/business/post_item.html:588
+msgid "GPS"
+msgstr "GPS"
+
+#: business/templates/business/post_item.html:590
+msgid "Pick on Map"
+msgstr "تحديد على الخريطة"
+
+#: business/templates/business/post_item.html:591
+msgid "Map"
+msgstr "الخريطة"
+
+#: business/templates/business/post_item.html:594
+msgid "e.g. Chukwani, Zanzibar or Mwenge, Dar es Salaam."
+msgstr "مثال: تشكواني، زنجبار أو موينجي، دار السلام."
+
+#: business/templates/business/post_item.html:600
+msgid "Specific Meetup Spot (Exact point)"
+msgstr "نقطة اللقاء المحددة (داخل المنطقة)"
+
+#: business/templates/business/post_item.html:603
+msgid "e.g. SUMAIT University Main Gate, CoICT Library, or Block B."
+msgstr "مثال: بوابة جامعة سوميت الرئيسية، أو مكتبة الجامعة."
+
+#: business/templates/business/post_item.html:618
+msgid "Remember this location for my future listings"
+msgstr "تذكر هذا الموقع لإعلاناتي القادمة"
+
+#: business/templates/business/post_item.html:626
+msgid "Set as my default meetup location"
+msgstr "تعيين كموقع لقاء افتراضي لي"
+
+#: business/templates/business/post_item.html:635
+msgid "Preferred Contact Method"
+msgstr "وسيلة الاتصال المفضلة"
+
+#: business/templates/business/post_item.html:643
+msgid "Phone / WhatsApp"
+msgstr "الهاتف / واتساب"
+
+#: business/templates/business/post_item.html:645
+msgid "Auto-fill your registered phone number"
+msgstr "تعبئة رقمك المسجل تلقائياً"
+
+#: business/templates/business/post_item.html:646
+#: business/templates/business/post_item.html:660
+#: business/templates/business/post_item.html:897
+#: business/templates/business/post_item.html:915
+msgid "Use Mine"
+msgstr "استخدم رقمي"
+
+#: business/templates/business/post_item.html:651
+msgid "Number buyer will call or message on WhatsApp."
+msgstr "الرقم الذي سيتصل به المشتري أو يراسلك عبر واتساب."
+
+#: business/templates/business/post_item.html:657
+msgid "Contact Email"
+msgstr "البريد الإلكتروني للتواصل"
+
+#: business/templates/business/post_item.html:659
+msgid "Auto-fill your registered email"
+msgstr "تعبئة بريدك الإلكتروني المسجل"
+
+#: business/templates/business/post_item.html:665
+msgid "Campus or personal email address."
+msgstr "البريد الإلكتروني الجامعي أو الشخصي."
+
+#: business/templates/business/post_item.html:676
+msgid "Detailed Product Description"
+msgstr "وصف المنتج التفصيلي"
+
+#: business/templates/business/post_item.html:677
+msgid ""
+"Describe included accessories, condition details, usage duration, and "
+"reasons for selling."
+msgstr "اذكر الملحقات المتضمنة، وتفاصيل الحالة، ومدة الاستخدام، وسبب البيع."
+
+#: business/templates/business/post_item.html:697
+msgid "Live Buyer Preview"
+msgstr "معاينة المشتري المباشرة"
+
+#: business/templates/business/post_item.html:717
+#: business/templates/business/post_item.html:925
+msgid "Product title will appear here..."
+msgstr "سيظهر عنوان المنتج هنا..."
+
+#: business/templates/business/post_item.html:727
+#: business/templates/business/post_item.html:991
+msgid "Meetup Location..."
+msgstr "مكان اللقاء..."
+
+#: business/templates/business/post_item.html:736
+msgid "Seller Checklist"
+msgstr "قائمة إرشادات البائع"
+
+#: business/templates/business/post_item.html:741
+msgid "Upload at least 1 clear photo with good lighting."
+msgstr "أضف صورة واحدة واضحة على الأقل بإضاءة جيدة."
+
+#: business/templates/business/post_item.html:746
+msgid "Title mentions brand and model accurately."
+msgstr "العنوان يذكر الماركة والموديل بدقة."
+
+#: business/templates/business/post_item.html:751
+msgid "Specified fair student price in TZS."
+msgstr "تم تحديد سعر مناسب للطلاب بالشلن التنزاني."
+
+#: business/templates/business/post_item.html:756
+msgid "Specified meetup location."
+msgstr "تم تحديد موقع اللقاء."
+
+#: business/templates/business/post_item.html:763
+msgid "Your listing is protected under the U-Connect platform."
+msgstr "إعلانك محمي تحت منصة يو-كونكت للطلاب."
+
+#: business/templates/business/post_item.html:775
+#: business/templates/business/post_item.html:843
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: business/templates/business/post_item.html:781
+msgid "Publish Product Now"
+msgstr "انشر المنتج الآن"
+
+#: business/templates/business/post_item.html:794
+msgid "Set as Default Location?"
+msgstr "تعيين كموقع افتراضي؟"
+
+#: business/templates/business/post_item.html:799
+msgid "Would you like to set this meetup location as your default?"
+msgstr "هل ترغب في تعيين موقع اللقاء هذا كموقعك الافتراضي؟"
+
+#: business/templates/business/post_item.html:803
+msgid ""
+"When set as default, it will automatically pre-fill on every future product "
+"listing so you won't be asked again."
+msgstr ""
+"عند تعيينه كافتراضي، سيتم تعبئته تلقائياً في كل إعلان قادم دون الحاجة لإعادة "
+"اختياره."
+
+#: business/templates/business/post_item.html:806
+msgid "Use for this listing only"
+msgstr "استخدم لهذا الإعلان فقط"
+
+#: business/templates/business/post_item.html:808
+#: business/templates/business/post_item.html:1056
+#: business/templates/business/post_item.html:1079
+msgid "Set as Default"
+msgstr "تعيين كافتراضي"
+
+#: business/templates/business/post_item.html:821
+msgid "Select Meetup Location on Map"
+msgstr "حدد موقع اللقاء على الخريطة"
+
+#: business/templates/business/post_item.html:829
+msgid "Search place (e.g. Chukwani, Zanzibar)..."
+msgstr "ابحث عن مكان (مثال: تشكواني، زنجبار)..."
+
+#: business/templates/business/post_item.html:832
+msgid "Center on my GPS"
+msgstr "التركيز على موقعي الحالي"
+
+#: business/templates/business/post_item.html:838
+msgid "Selected Location:"
+msgstr "الموقع المحدد:"
+
+#: business/templates/business/post_item.html:839
+msgid "Click anywhere on the map or drag the pin."
+msgstr "انقر في أي مكان على الخريطة أو اسحب الدبوس."
+
+#: business/templates/business/post_item.html:845
+msgid "Confirm Location"
+msgstr "تأكيد الموقع"
+
+#: business/templates/business/post_item.html:893
+#: business/templates/business/post_item.html:911
+msgid "Filled!"
+msgstr "تم التعبئة!"
+
+#: business/templates/business/post_item.html:1090
+msgid "Geolocation is not supported by your browser."
+msgstr "المتصفح لا يدعم تحديد الموقع الجغرافي."
+
+#: business/templates/business/post_item.html:1136
+msgid ""
+"Could not access your location. Please check your browser location "
+"permissions."
+msgstr ""
+
+#: business/templates/business/post_item.html:1251
+msgid ""
+"Place not found. Try searching with city name (e.g. Chukwani, Zanzibar)."
+msgstr "ابحث عن مكان (مثال: تشكواني، زنجبار)..."
+
+#: business/templates/business/post_item.html:1330
+msgid "Publishing product..."
+msgstr "جارٍ نشر المنتج..."
+
+#: business/templates/business/select_category.html:5
+msgid "Select Product Category"
+msgstr "اختر فئة المنتج"
+
+#: business/templates/business/select_category.html:75
+msgid "Step 1 of Selling"
+msgstr "الخطوة الأولى للبيع"
+
+#: business/templates/business/select_category.html:77
+msgid "What are you selling today?"
+msgstr "ماذا تود أن تبيع اليوم؟"
+
+#: business/templates/business/select_category.html:79
+msgid "Choose a subcategory in"
+msgstr "اختر فئة فرعية في"
+
+#: business/templates/business/select_category.html:81
+msgid "Back"
+msgstr "رجوع"
+
+#: business/templates/business/select_category.html:84
+msgid ""
+"Choose a category for your product to get the right specifications, units, "
+"and form fields."
+msgstr "اختر فئة لمنتجك للحصول على المواصفات والوحدات والحقول المناسبة."
+
+#: business/templates/business/select_category.html:91
+msgid "Search category (e.g. Phone, Laptop, Clothing, Food)..."
+msgstr "ابحث عن فئة (مثال: هاتف، لابتوب، ملابس، طعام)..."
+
+#: business/templates/business/select_category.html:108
+msgid "View Subcategories"
+msgstr "عرض الفئات الفرعية"
+
+#: business/templates/business/select_category.html:111
+msgid "Post Directly"
+msgstr "نشر مباشر"
+
+#: business/templates/business/select_category.html:119
+msgid "No categories found."
+msgstr "لم يتم العثور على فئات."
+
+#: management/templates/management/partials/_git_sync_modal.html:17
+msgid "cPanel Git Live Synchronization"
+msgstr "مزامنة Git المباشرة مع cPanel"
+
+#: management/templates/management/partials/_git_sync_modal.html:20
+msgid "Pull latest GitHub commits directly into cPanel & reload Python app"
+msgstr "سحب أحدث التحديثات من GitHub مباشرة إلى cPanel وإعادة تحميل تطبيق بايثون"
+
+#: management/templates/management/partials/_git_sync_modal.html:24
+#: management/templates/management/partials/_git_sync_modal.html:88
+msgid "Close"
+msgstr "إغلاق"
+
+#: management/templates/management/partials/_git_sync_modal.html:36
+msgid "Local cPanel Commit"
+msgstr "تحديث cPanel الحالي"
+
+#: management/templates/management/partials/_git_sync_modal.html:40
+msgid "Loading commit details..."
+msgstr "تفاصيل المنتج"
+
+#: management/templates/management/partials/_git_sync_modal.html:48
+msgid "Latest on GitHub"
+msgstr "الأحدث على GitHub"
+
+#: management/templates/management/partials/_git_sync_modal.html:56
+msgid "Checking repository..."
+msgstr "جارٍ فحص المستودع..."
+
+#: management/templates/management/partials/_git_sync_modal.html:65
+msgid "Deployment Agent Execution Log"
+msgstr "سجل تنفيذ وكيل النشر"
+
+#: management/templates/management/partials/_git_sync_modal.html:68
+msgid "Re-check GitHub"
+msgstr "إعادة التحقق من GitHub"
+
+#: management/templates/management/partials/_git_sync_modal.html:84
+msgid "Touches tmp/restart.txt to reload Passenger"
+msgstr "تحديث tmp/restart.txt لإعادة تشغيل Passenger"
+
+#: management/templates/management/partials/_git_sync_modal.html:92
+msgid "Execute Sync to cPanel"
+msgstr "تنفيذ المزامنة إلى cPanel"
 
 #: u_connect/settings.py:158
 msgid "English"
@@ -578,8 +1602,235 @@ msgstr "السواحيلية"
 msgid "Arabic"
 msgstr "العربية"
 
-#~ msgid "Add to Cart"
-#~ msgstr "أضف إلى السلة"
+#: users/templates/users/login.html:5 users/templates/users/register.html:316
+msgid "Sign In (Login)"
+msgstr "تسجيل الدخول"
 
-#~ msgid "Buy Now"
-#~ msgstr "اشتر الآن"
+#: users/templates/users/login.html:27
+msgid "Welcome Back to"
+msgstr "مرحباً بك مجدداً في"
+
+#: users/templates/users/login.html:31
+msgid "Connect, Buy, and Transform Your Campus Lifestyle."
+msgstr "تواصل، اشترِ، وغيّر أسلوب حياتك الجامعية."
+
+#: users/templates/users/login.html:42
+msgid "Quality Products"
+msgstr "منتجاتي"
+
+#: users/templates/users/login.html:43
+msgid "Verified quality and inspected goods."
+msgstr "جودة معتمدة وبضائع مفحوصة."
+
+#: users/templates/users/login.html:53
+msgid "Secure Payments"
+msgstr "دفع آمن"
+
+#: users/templates/users/login.html:54
+msgid "Pay with maximum escrow protection."
+msgstr "ادفع بأقصى درجات الحماية والضمان."
+
+#: users/templates/users/login.html:64
+msgid "Fast Delivery"
+msgstr "الدفع عند الاستلام"
+
+#: users/templates/users/login.html:65
+msgid "On time, every time across campus."
+msgstr "في الوقت المحدد، دائماً عبر الحرم الجامعي."
+
+#: users/templates/users/login.html:123
+msgid "Sign In to Your Account"
+msgstr "تسجيل الدخول إلى حسابك"
+
+#: users/templates/users/login.html:126
+msgid "Enter your credentials to access your U-Connect account"
+msgstr "أدخل بياناتك للوصول إلى حسابك في U-Connect"
+
+#: users/templates/users/login.html:134
+msgid "Login Error"
+msgstr "خطأ في تسجيل الدخول"
+
+#: users/templates/users/login.html:140
+msgid "Forgot Password? Reset Here"
+msgstr "نسيت كلمة المرور؟ أعد التعيين هنا"
+
+#: users/templates/users/login.html:155
+msgid "Username or Email"
+msgstr "اسم المستخدم أو البريد الإلكتروني"
+
+#: users/templates/users/login.html:161
+msgid "Enter username or email..."
+msgstr "أدخل اسم المستخدم أو البريد الإلكتروني..."
+
+#: users/templates/users/login.html:180 users/templates/users/register.html:222
+msgid "Password"
+msgstr "كلمة المرور"
+
+#: users/templates/users/login.html:182
+msgid "Click here if you forgot your password"
+msgstr "انقر هنا إذا نسيت كلمة المرور"
+
+#: users/templates/users/login.html:184
+msgid "Forgot password?"
+msgstr "نسيت كلمة المرور؟"
+
+#: users/templates/users/login.html:192
+msgid "Enter your password..."
+msgstr "أدخل كلمة المرور..."
+
+#: users/templates/users/login.html:198 users/templates/users/register.html:235
+#: users/templates/users/register.html:264
+msgid "Toggle password visibility"
+msgstr "تبديل رؤية كلمة المرور"
+
+#: users/templates/users/login.html:199 users/templates/users/register.html:236
+#: users/templates/users/register.html:265
+msgid "Show / Hide password"
+msgstr "إظهار / إخفاء كلمة المرور"
+
+#: users/templates/users/login.html:217
+msgid "SIGN IN (LOGIN)"
+msgstr "تسجيل الدخول"
+
+#: users/templates/users/login.html:229
+msgid "Forgot Password?"
+msgstr "نسيت كلمة المرور؟"
+
+#: users/templates/users/login.html:230
+msgid "Reset account via OTP sent to your email."
+msgstr "أعد تعيين الحساب عبر رمز OTP المرسل إلى بريدك."
+
+#: users/templates/users/login.html:234
+msgid "Reset Password"
+msgstr "إعادة تعيين كلمة المرور"
+
+#: users/templates/users/login.html:243
+msgid "Need Help Signing In?"
+msgstr "هل تحتاج مساعدة في الدخول؟"
+
+#: users/templates/users/login.html:244 users/templates/users/register.html:303
+msgid "Chat with our support team in real-time."
+msgstr "تحدث مع فريق الدعم الفني مباشرة عبر الدردشة الفورية."
+
+#: users/templates/users/login.html:248 users/templates/users/register.html:307
+msgid "Live Chat"
+msgstr "المحادثة"
+
+#: users/templates/users/login.html:256
+msgid "Don't have an account yet?"
+msgstr "ليس لديك حساب بعد؟"
+
+#: users/templates/users/login.html:257
+msgid "Join U-Connect (Register)"
+msgstr "انضم إلى U-Connect (تسجيل جديد)"
+
+#: users/templates/users/register.html:5
+#: users/templates/users/register.html:123
+msgid "Create an Account"
+msgstr "إنشاء حساب جديد"
+
+#: users/templates/users/register.html:27
+msgid "Start Your Journey on"
+msgstr "ابدأ رحلتك على"
+
+#: users/templates/users/register.html:31
+msgid ""
+"Join thousands of students buying, selling, and connecting securely across "
+"campus."
+msgstr ""
+
+#: users/templates/users/register.html:42
+msgid "Free Registration"
+msgstr "تسجيل مجاني"
+
+#: users/templates/users/register.html:43
+msgid "Set up your student account in under a minute."
+msgstr "أنشئ حسابك الطلابي في أقل من دقيقة."
+
+#: users/templates/users/register.html:53
+msgid "Verified Campus Community"
+msgstr "مجتمع جامعي موثوق"
+
+#: users/templates/users/register.html:54
+msgid "Safe transactions with student emails & OTP verification."
+msgstr "معاملات آمنة عبر البريد الإلكتروني والتحقق برمز OTP."
+
+#: users/templates/users/register.html:64
+msgid "Direct WhatsApp & Escrow"
+msgstr "واتساب مباشر ونظام ضمان آمن"
+
+#: users/templates/users/register.html:65
+msgid "Connect directly with buyers and sellers effortlessly."
+msgstr "تواصل مباشرة مع المشترين والبائعين بكل سهولة."
+
+#: users/templates/users/register.html:126
+msgid "Fill in your details below to join the U-Connect campus network."
+msgstr "املأ بياناتك أدناه للانضمام إلى شبكة U-Connect الجامعية."
+
+#: users/templates/users/register.html:134
+msgid "Registration Error"
+msgstr "خطأ في التسجيل"
+
+#: users/templates/users/register.html:150
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: users/templates/users/register.html:156
+msgid "Choose a username (e.g. johndoe)"
+msgstr "اختر اسم مستخدم (مثال: johndoe)"
+
+#: users/templates/users/register.html:174
+msgid "Email Address"
+msgstr "البريد الإلكتروني"
+
+#: users/templates/users/register.html:180
+msgid "Enter your university or personal email"
+msgstr "أدخل بريدك الجامعي أو الشخصي"
+
+#: users/templates/users/register.html:185
+msgid "Required — a 6-digit OTP will be sent here to verify."
+msgstr "مطلوب — سيتم إرسال رمز OTP من 6 أرقام للتحقق."
+
+#: users/templates/users/register.html:198
+msgid "Phone / WhatsApp Number"
+msgstr "الهاتف / واتساب"
+
+#: users/templates/users/register.html:204
+msgid "e.g. 0712345678"
+msgstr "مثال: 0712345678"
+
+#: users/templates/users/register.html:209
+msgid "Required — buyers & sellers reach you via this number."
+msgstr "مطلوب — سيتواصل معك المشترون والبائعون عبر هذا الرقم."
+
+#: users/templates/users/register.html:229
+msgid "Create a strong password..."
+msgstr "أنشئ كلمة مرور قوية..."
+
+#: users/templates/users/register.html:251
+msgid "Confirm Password"
+msgstr "تأكيد الموقع"
+
+#: users/templates/users/register.html:258
+msgid "Repeat password for confirmation..."
+msgstr "أعد إدخال كلمة المرور للتأكيد..."
+
+#: users/templates/users/register.html:279
+msgid "REGISTER & RECEIVE OTP"
+msgstr "سجل واستلم رمز التحقق"
+
+#: users/templates/users/register.html:291
+msgid "Safe & Verified"
+msgstr "آمن وموثوق"
+
+#: users/templates/users/register.html:292
+msgid "We will email you a 6-digit OTP code to verify your account."
+msgstr "سنرسل إليك رمز OTP مكوناً من 6 أرقام للتحقق من حسابك."
+
+#: users/templates/users/register.html:302
+msgid "Questions or Inquiries?"
+msgstr "هل لديك استفسارات؟"
+
+#: users/templates/users/register.html:315
+msgid "Already have an account?"
+msgstr "هل لديك حساب بالفعل؟"

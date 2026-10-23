@@ -18,7 +18,7 @@
 {% block body_class %}pd-flow{% endblock %}
 {% block main_class %}shop-full{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=20">
+<link rel="stylesheet" href="{% static 'css/product-detail.css' %}?v=21">
 {% endblock %}
 
 {% block content %}
@@ -119,8 +119,18 @@
                 {% if item.minimum_order_quantity and item.minimum_order_quantity > 1 %}
                 <div><dt>{% trans "Min. order" %}</dt><dd>{{ item.minimum_order_quantity }}</dd></div>
                 {% endif %}
-                {% if item.campus_location %}
-                <div><dt>{% trans "Location" %}</dt><dd>{{ item.campus_location }}</dd></div>
+                {% if item.get_full_location %}
+                <div>
+                    <dt>{% trans "Meetup Location" %}</dt>
+                    <dd>
+                        {% if item.general_location %}
+                            <strong>{{ item.general_location }}</strong>
+                            {% if item.specific_location %}<span class="text-muted"> — {{ item.specific_location }}</span>{% endif %}
+                        {% else %}
+                            {{ item.campus_location }}
+                        {% endif %}
+                    </dd>
+                </div>
                 {% endif %}
                 {% if item.shipping_weight %}
                 <div><dt>{% trans "Weight" %}</dt><dd>{{ item.shipping_weight }} kg</dd></div>
@@ -179,6 +189,59 @@
             </div>
             {% endif %}
         </div>
+
+        {% if item.get_full_location %}
+        <section class="pdx-location-card" id="pdxLocationCard">
+            <div class="pdx-loc-head">
+                <div class="pdx-loc-icon">
+                    <i class="bi bi-geo-alt-fill"></i>
+                </div>
+                <div>
+                    <h3 class="pdx-loc-title">{% trans "Meetup & Pickup Location" %}</h3>
+                    <p class="pdx-loc-sub">{% trans "Agreed pickup and inspection point for this product" %}</p>
+                </div>
+            </div>
+
+            <div class="pdx-loc-body">
+                {% if item.general_location %}
+                <div class="pdx-loc-row">
+                    <span class="pdx-loc-label">{% trans "General Area" %}:</span>
+                    <strong class="pdx-loc-val"><i class="bi bi-pin-map-fill text-danger me-1"></i>{{ item.general_location }}</strong>
+                </div>
+                {% endif %}
+
+                {% if item.specific_location %}
+                <div class="pdx-loc-row">
+                    <span class="pdx-loc-label">{% trans "Specific Spot" %}:</span>
+                    <span class="pdx-loc-val"><i class="bi bi-building text-primary me-1"></i>{{ item.specific_location }}</span>
+                </div>
+                {% elif item.campus_location and not item.general_location %}
+                <div class="pdx-loc-row">
+                    <span class="pdx-loc-label">{% trans "Location" %}:</span>
+                    <span class="pdx-loc-val">{{ item.campus_location }}</span>
+                </div>
+                {% endif %}
+
+                <div class="pdx-loc-actions">
+                    {% if item.get_google_maps_url %}
+                    <a href="{{ item.get_google_maps_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-danger pdx-btn-gmaps">
+                        <i class="bi bi-geo-alt-fill me-1"></i>{% trans "View on Google Maps" %}
+                    </a>
+                    {% endif %}
+
+                    <button type="button" class="btn btn-sm btn-primary pdx-btn-calc-dist" id="btnCalcDistance"
+                        data-lat="{{ item.location_latitude|default:'' }}"
+                        data-lng="{{ item.location_longitude|default:'' }}"
+                        data-dest="{{ item.get_full_location|escapejs }}"
+                        data-gmaps-dir="{{ item.get_google_maps_directions_url|escapejs }}">
+                        <i class="bi bi-compass-fill me-1"></i>{% trans "Check Distance from My Location" %}
+                    </button>
+                </div>
+
+                <div id="pdxDistanceResult" class="pdx-dist-result" style="display: none;"></div>
+            </div>
+        </section>
+        {% endif %}
 
         <section class="pdx-desc-block">
             <h2 class="pdx-h">{% trans "Description" %}</h2>
@@ -274,7 +337,15 @@
 
             <ul class="pdx-ship">
                 <li><i class="bi bi-truck"></i> {% trans "Campus meetup / delivery" %}</li>
-                <li><i class="bi bi-geo-alt"></i> {{ item.campus_location|default:_("Campus pickup") }}</li>
+                <li>
+                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                    <span>{{ item.get_full_location|default:_("Campus pickup") }}</span>
+                    {% if item.get_google_maps_url %}
+                    <a href="{{ item.get_google_maps_url }}" target="_blank" rel="noopener" class="pdx-maps-chip" title="{% trans 'Open in Google Maps' %}">
+                        <i class="bi bi-box-arrow-up-right"></i> Maps
+                    </a>
+                    {% endif %}
+                </li>
                 <li><i class="bi bi-cash-stack"></i> {% trans "Cash on Delivery" %}</li>
                 <li><i class="bi bi-shield-check"></i> {% trans "Buyer protection" %}</li>
             </ul>
@@ -672,6 +743,75 @@
       var on = localStorage.getItem(key) !== '1';
       if (on) localStorage.setItem(key, '1'); else localStorage.removeItem(key);
       paint(on);
+    });
+  }
+
+  // Live Meetup Distance Calculator
+  var calcBtn = document.getElementById('btnCalcDistance');
+  var distResult = document.getElementById('pdxDistanceResult');
+  if (calcBtn && distResult) {
+    calcBtn.addEventListener('click', function () {
+      if (!navigator.geolocation) {
+        distResult.style.display = 'block';
+        distResult.innerHTML = '<div class="text-danger mb-2"><i class="bi bi-exclamation-circle me-1"></i> Geolocation is not supported by your browser.</div>' +
+          '<a href="' + calcBtn.dataset.gmapsDir + '" target="_blank" rel="noopener" class="btn btn-sm btn-outline-danger"><i class="bi bi-google me-1"></i> Google Maps</a>';
+        return;
+      }
+
+      calcBtn.disabled = true;
+      calcBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Inapima...';
+      distResult.style.display = 'block';
+      distResult.innerHTML = '<div class="text-muted"><i class="bi bi-arrow-repeat spin me-1"></i> Inasoma eneo ulipo...</div>';
+
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          calcBtn.disabled = false;
+          calcBtn.innerHTML = '<i class="bi bi-compass-fill me-1"></i> {% trans "Recalculate Distance" %}';
+
+          var userLat = pos.coords.latitude;
+          var userLng = pos.coords.longitude;
+          var destLat = parseFloat(calcBtn.dataset.lat);
+          var destLng = parseFloat(calcBtn.dataset.lng);
+          var destName = calcBtn.dataset.dest || 'Meetup Spot';
+
+          var gmapsUrl = 'https://www.google.com/maps/dir/?api=1&origin=' + userLat + ',' + userLng + '&destination=';
+          if (!isNaN(destLat) && !isNaN(destLng)) {
+            gmapsUrl += destLat + ',' + destLng;
+
+            // Haversine formula (km)
+            var R = 6371;
+            var dLat = (destLat - userLat) * Math.PI / 180;
+            var dLon = (destLng - userLng) * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(userLat * Math.PI / 180) * Math.cos(destLat * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var distanceKm = (R * c).toFixed(1);
+
+            distResult.innerHTML = '<div class="d-flex align-items-center gap-2 mb-2">' +
+              '<i class="bi bi-geo-alt-fill text-danger fs-5"></i>' +
+              '<div><strong>{% trans "Distance" %}:</strong> {% trans "You are approximately" %} <strong>' + distanceKm + ' km</strong> {% trans "away from this meetup location" %}.</div>' +
+              '</div>' +
+              '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn btn-sm btn-success">' +
+              '<i class="bi bi-arrow-up-right-square-fill me-1"></i> {% trans "Get Directions on Google Maps" %}</a>';
+          } else {
+            gmapsUrl += encodeURIComponent(destName);
+            distResult.innerHTML = '<div class="mb-2"><i class="bi bi-check-circle-fill text-success me-1"></i> {% trans "Your location detected! Open Google Maps to view exact driving or walking route" %}:</div>' +
+              '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn btn-sm btn-success">' +
+              '<i class="bi bi-arrow-up-right-square-fill me-1"></i> {% trans "View Route & Distance on Google Maps" %}</a>';
+          }
+        },
+        function (err) {
+          calcBtn.disabled = false;
+          calcBtn.innerHTML = '<i class="bi bi-compass-fill me-1"></i> {% trans "Check Distance" %}';
+          var destName = calcBtn.dataset.dest || '';
+          var fallbackUrl = calcBtn.dataset.gmapsDir || ('https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(destName));
+          distResult.innerHTML = '<div class="text-warning mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> {% trans "Could not access GPS location. You can view directions directly in Google Maps:" %}</div>' +
+            '<a href="' + fallbackUrl + '" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">' +
+            '<i class="bi bi-google me-1"></i> {% trans "Open Directions in Google Maps" %}</a>';
+        },
+        { enableHighAccuracy: true, timeout: 9000 }
+      );
     });
   }
 })();

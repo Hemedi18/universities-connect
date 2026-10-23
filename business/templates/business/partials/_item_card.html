@@ -24,6 +24,12 @@
         <h3 class="ae-card-title{% if compact %} ae-mini-title{% endif %}">
             <a href="{% url 'customer:item_detail' item.id %}" class="js-rec-click" data-item-id="{{ item.id }}">{% if compact %}{{ item.title|truncatechars:36 }}{% else %}{{ item.title|truncatechars:48 }}{% endif %}</a>
         </h3>
+        {% if item.get_general_location %}
+        <div class="ae-card-location" title="{{ item.get_general_location }}">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>{{ item.get_general_location }}</span>
+        </div>
+        {% endif %}
         <div class="ae-card-meta">
             {% if item.avg_rating %}
             <span class="ae-rating"><i class="bi bi-star-fill"></i> {{ item.avg_rating|floatformat:1 }}</span>

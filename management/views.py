@@ -19,6 +19,7 @@ from customer.models import Order
 from users.models import Profile, SupportMessage, SupportSession
 from .models import AdminEmailTemplate, SentEmailLog, SystemErrorLog
 from .utils_mail import CPANEL_ACCOUNTS, fetch_account_emails, send_cpanel_email
+from .git_sync import get_git_status, perform_git_sync
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +135,7 @@ def dashboard_view(request):
         "recent_tickets": recent_tickets,
         "live_domain": "uconnect.edusphere.co.tz",
         "current_admin_mode": "managed",
+        "git_status": get_git_status(),
     }
 
     response = render(request, "management/dashboard.html", context)
@@ -544,3 +546,41 @@ def api_resolve_all_logs(request):
         is_resolved=True, resolved_by=request.user
     )
     return JsonResponse({"status": "success", "message": f"Kumbukumbu {count} zimewekwa alama ya kutatuliwa."})
+
+
+# --------------------------------------------------------------------------
+# 5. GIT DEPLOYMENT & CPANEL SYNC APIS
+# --------------------------------------------------------------------------
+
+@staff_member_required(login_url="/users/login/")
+@require_http_methods(["GET"])
+def api_git_status(request):
+    """Checks local commit against remote repository and returns diff status."""
+    force = request.GET.get("force") == "1"
+    status_data = get_git_status(force_refresh=force)
+    return JsonResponse(status_data)
+
+
+@require_http_methods(["POST"])
+def api_git_sync(request):
+    """
+    Triggers automated cPanel Git synchronization: pulls latest commits,
+    applies migrations, collects static files, and reloads Passenger.
+    Accessible to authenticated staff OR via secure webhook token.
+    """
+    webhook_token = request.GET.get("token") or request.POST.get("token")
+    expected_token = getattr(settings, "CPANEL_DEPLOY_SECRET_KEY", "uconnect-deploy-cpanel-secret-2026")
+
+    is_authorized = False
+    if request.user.is_authenticated and request.user.is_staff:
+        is_authorized = True
+    elif webhook_token and webhook_token == expected_token:
+        is_authorized = True
+
+    if not is_authorized:
+        return JsonResponse({"status": "error", "message": "Unauthorized. Staff access required."}, status=403)
+
+    user = request.user if request.user.is_authenticated else None
+    result = perform_git_sync(user=user)
+    status_code = 200 if result.get("success") else 500
+    return JsonResponse(result, status=status_code)

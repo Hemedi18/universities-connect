@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: U-Connect 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 14:06+0000\n"
+"POT-Creation-Date: 2026-10-23 16:34+0000\n"
 "PO-Revision-Date: 2026-10-23 16:30+0300\n"
 "Last-Translator: Antigravity\n"
 "Language-Team: Swahili\n"
@@ -30,242 +30,718 @@ msgstr "Imekamilika (Success)"
 msgid "Taarifa (Notice)"
 msgstr "Taarifa (Notice)"
 
-#: business/templates/business/base.html:300
-msgid "Staff Mode"
-msgstr "Njia ya Msimamizi"
-
 #: business/templates/business/base.html:301
-msgid "Current mode:"
-msgstr "Uko kwenye:"
+msgid "Main Navigation"
+msgstr "Menyu Kuu"
 
-#: business/templates/business/base.html:304
-#: business/templates/business/base.html:449
-msgid "Normal Mode"
-msgstr "Njia ya Kawaida"
-
-#: business/templates/business/base.html:304
-msgid "Classic Admin"
-msgstr "Utawala wa Kawaida"
-
-#: business/templates/business/base.html:306
-#: business/templates/business/base.html:449
-msgid "Managed Mode"
-msgstr "Njia ya Usimamizi"
-
-#: business/templates/business/base.html:306
-msgid "Executive Hub"
-msgstr "Kituo Kikuu cha Usimamizi"
-
-#: business/templates/business/base.html:311
-msgid "Admin Mode Toggle"
-msgstr "Badili Njia ya Usimamizi"
-
-#: business/templates/business/base.html:314
-msgid "Switch to Executive Command Center"
-msgstr "Badili kwenda Kituo cha Usimamizi"
-
-#: business/templates/business/base.html:315
-#: business/templates/business/base.html:355
-#, fuzzy
-#| msgid "Managed Mode"
-msgid "Managed"
-msgstr "Njia ya Usimamizi"
-
-#: business/templates/business/base.html:319
-msgid "Switch to Classic Django Admin"
-msgstr "Badili kwenda Utawala wa Kawaida"
-
-#: business/templates/business/base.html:320
-#: business/templates/business/base.html:355
-#, fuzzy
-#| msgid "Normal Mode"
-msgid "Normal"
-msgstr "Njia ya Kawaida"
-
-#: business/templates/business/base.html:325
-#, fuzzy
-#| msgid "Open Admin"
-msgid "Open Admin Panel"
-msgstr "Fungua Utawala"
-
-#: business/templates/business/base.html:326
-msgid "Open Admin"
-msgstr "Fungua Utawala"
-
-#: business/templates/business/base.html:339
-msgid "Search products..."
-msgstr "Tafuta bidhaa..."
-
-#: business/templates/business/base.html:346
-msgid "Search"
-msgstr "Tafuta"
-
-#: business/templates/business/base.html:353
-msgid "Switch Admin Mode"
-msgstr "Badili Njia ya Usimamizi"
-
-#: business/templates/business/base.html:358
-#: business/templates/business/base.html:429
-#: business/templates/business/base.html:431
-#: business/templates/business/base.html:459
-msgid "Home"
-msgstr "Nyumbani"
-
-#: business/templates/business/base.html:360
-#: business/templates/business/base.html:469
-#: business/templates/business/base.html:476
-#: business/templates/business/item_detail.html:169
-#: business/templates/business/item_detail.html:171
-#: business/templates/business/item_detail.html:297
-#: business/templates/business/item_detail.html:299
-#: business/templates/business/item_detail.html:320
-#: business/templates/business/item_detail.html:322
-msgid "Chat"
-msgstr "Ujumbe"
-
-#: business/templates/business/base.html:361
-msgid "Alerts"
-msgstr "Taarifa"
-
-#: business/templates/business/base.html:366
-#: business/templates/business/base.html:480
-msgid "Cart"
-msgstr "Riksho"
-
-#: business/templates/business/base.html:372
-msgid "Select Language"
-msgstr "Chagua Lugha"
-
-#: business/templates/business/base.html:392
-#: business/templates/business/base.html:424
-msgid "Toggle Theme (Dark/Light)"
-msgstr "Badili Mandhari (Giza/Mwanga)"
-
-#: business/templates/business/base.html:392
-msgid "Toggle Theme"
+#: business/templates/business/base.html:309
+#: business/templates/business/base.html:432
+#: business/templates/business/base.html:497
+msgid "Toggle Sidebar"
 msgstr "Badili Mandhari"
 
-#: business/templates/business/base.html:399
-#: business/templates/business/base.html:407
-#: business/templates/business/base.html:484
-msgid "Account"
-msgstr "Akaunti"
+#: business/templates/business/base.html:313
+msgid "Close Menu"
+msgstr "Funga Menyu"
 
-#: business/templates/business/base.html:413
+#: business/templates/business/base.html:321
 msgid "Language"
 msgstr "Lugha"
 
-#: business/templates/business/base.html:434
+#: business/templates/business/base.html:330
+#: business/templates/business/base.html:557
+msgid "Toggle Theme"
+msgstr "Badili Mandhari"
+
+#: business/templates/business/base.html:338
+#: business/templates/business/base.html:340
+#: business/templates/business/base.html:523
+#: business/templates/business/base.html:580
+#: business/templates/business/documentation.html:14
+#: business/templates/business/documentation.html:118
+msgid "Home"
+msgstr "Nyumbani"
+
+#: business/templates/business/base.html:346
+#: business/templates/business/base.html:348
 msgid "New"
 msgstr "Vipya"
 
-#: business/templates/business/base.html:435
+#: business/templates/business/base.html:355
+#: business/templates/business/base.html:357
 msgid "Featured"
 msgstr "Vilivyoangaziwa"
 
-#: business/templates/business/base.html:436
-#: business/templates/business/base.html:462
-#: business/templates/business/base.html:515
+#: business/templates/business/base.html:363
+#: business/templates/business/base.html:365
+#: business/templates/business/base.html:583
+#: business/templates/business/base.html:636
+#: business/templates/business/documentation.html:124
 #: business/templates/business/home.html:6
 msgid "Shop"
 msgstr "Duka"
 
-#: business/templates/business/base.html:437
+#: business/templates/business/base.html:371
+#: business/templates/business/base.html:373
 msgid "About"
 msgstr "Kuhusu"
 
-#: business/templates/business/base.html:438
-#: business/templates/business/base.html:508
+#: business/templates/business/base.html:379
+#: business/templates/business/base.html:381
+#: business/templates/business/base.html:629
 msgid "Contact"
 msgstr "Mawasiliano"
 
-#: business/templates/business/base.html:439
+#: business/templates/business/base.html:387
+#: business/templates/business/base.html:389
 msgid "Help / Docs"
 msgstr "Msaada / Mwongozo"
 
-#: business/templates/business/base.html:441
+#: business/templates/business/base.html:396
+#: business/templates/business/base.html:398
+#: business/templates/business/base.html:403
+#: business/templates/business/base.html:405
 msgid "Dashboard"
 msgstr "Dashibodi"
 
-#: business/templates/business/base.html:443
-#: business/templates/business/base.html:466
-#: business/templates/business/base.html:473
+#: business/templates/business/base.html:409
+#: business/templates/business/base.html:411
+#: business/templates/business/base.html:587
+#: business/templates/business/base.html:594
 msgid "Sell"
 msgstr "Uza"
 
-#: business/templates/business/base.html:449
-#, fuzzy
-#| msgid "Staff Mode"
+#: business/templates/business/base.html:419
+msgid "Switch Mode"
+msgstr "Njia ya Msimamizi"
+
+#: business/templates/business/base.html:422
 msgid "Switch Mode:"
 msgstr "Njia ya Msimamizi"
 
-#: business/templates/business/base.html:505
+#: business/templates/business/base.html:422
+#: business/templates/business/base.html:453
+msgid "Managed Mode"
+msgstr "Njia ya Usimamizi"
+
+#: business/templates/business/base.html:422
+#: business/templates/business/base.html:451
+msgid "Normal Mode"
+msgstr "Njia ya Kawaida"
+
+#: business/templates/business/base.html:432
+msgid "Collapse / Expand Sidebar"
+msgstr "Kunja / Panua Menyu"
+
+#: business/templates/business/base.html:434
+msgid "Collapse Sidebar"
+msgstr "Kunja Menyu"
+
+#: business/templates/business/base.html:447
+msgid "Staff Mode"
+msgstr "Njia ya Msimamizi"
+
+#: business/templates/business/base.html:448
+msgid "Current mode:"
+msgstr "Uko kwenye:"
+
+#: business/templates/business/base.html:451
+msgid "Classic Admin"
+msgstr "Utawala wa Kawaida"
+
+#: business/templates/business/base.html:453
+msgid "Executive Hub"
+msgstr "Kituo Kikuu cha Usimamizi"
+
+#: business/templates/business/base.html:458
+msgid "Admin Mode Toggle"
+msgstr "Badili Njia ya Usimamizi"
+
+#: business/templates/business/base.html:461
+msgid "Switch to Executive Command Center"
+msgstr "Badili kwenda Kituo cha Usimamizi"
+
+#: business/templates/business/base.html:462
+#: business/templates/business/base.html:520
+msgid "Managed"
+msgstr "Njia ya Usimamizi"
+
+#: business/templates/business/base.html:466
+msgid "Switch to Classic Django Admin"
+msgstr "Badili kwenda Utawala wa Kawaida"
+
+#: business/templates/business/base.html:467
+#: business/templates/business/base.html:520
+msgid "Normal"
+msgstr "Njia ya Kawaida"
+
+#: business/templates/business/base.html:472
+msgid "Open Admin Panel"
+msgstr "Fungua Utawala"
+
+#: business/templates/business/base.html:473
+msgid "Open Admin"
+msgstr "Fungua Utawala"
+
+#: business/templates/business/base.html:481
+msgid "New commits detected on GitHub! Click to sync and update cPanel live."
+msgstr "Mabadiliko mapya yamepatikana GitHub! Bofya ili kusawazisha na kusasisha cPanel moja kwa moja."
+
+#: business/templates/business/base.html:483
+msgid "Sync cPanel"
+msgstr "Sawazisha cPanel"
+
+#: business/templates/business/base.html:504
+msgid "Search products..."
+msgstr "Tafuta bidhaa..."
+
+#: business/templates/business/base.html:511
+#: business/templates/business/post_item.html:830
+#: business/templates/business/post_item.html:1239
+#: business/templates/business/post_item.html:1256
+msgid "Search"
+msgstr "Tafuta"
+
+#: business/templates/business/base.html:518
+msgid "Switch Admin Mode"
+msgstr "Badili Njia ya Usimamizi"
+
+#: business/templates/business/base.html:525
+#: business/templates/business/base.html:590
+#: business/templates/business/base.html:597
+#: business/templates/business/item_detail.html:179
+#: business/templates/business/item_detail.html:181
+#: business/templates/business/item_detail.html:368
+#: business/templates/business/item_detail.html:370
+#: business/templates/business/item_detail.html:391
+#: business/templates/business/item_detail.html:393
+msgid "Chat"
+msgstr "Ujumbe"
+
+#: business/templates/business/base.html:526
+msgid "Alerts"
+msgstr "Taarifa"
+
+#: business/templates/business/base.html:531
+#: business/templates/business/base.html:601
+msgid "Cart"
+msgstr "Riksho"
+
+#: business/templates/business/base.html:537
+msgid "Select Language"
+msgstr "Chagua Lugha"
+
+#: business/templates/business/base.html:557
+msgid "Toggle Theme (Dark/Light)"
+msgstr "Badili Mandhari (Giza/Mwanga)"
+
+#: business/templates/business/base.html:564
+#: business/templates/business/base.html:572
+#: business/templates/business/base.html:605
+msgid "Account"
+msgstr "Akaunti"
+
+#: business/templates/business/base.html:626
 msgid "Company"
 msgstr "Kampuni"
 
-#: business/templates/business/base.html:507
+#: business/templates/business/base.html:628
 msgid "About Us"
 msgstr "Kuhusu Sisi"
 
-#: business/templates/business/base.html:509
+#: business/templates/business/base.html:630
+#: business/templates/business/documentation.html:15
 msgid "Documentation"
 msgstr "Mwongozo na Nyaraka"
 
-#: business/templates/business/base.html:513
+#: business/templates/business/base.html:634
 msgid "Useful Links"
 msgstr "Viungo Muhimu"
 
-#: business/templates/business/base.html:516
+#: business/templates/business/base.html:637
 msgid "New Arrivals"
 msgstr "Mizigo Mipya"
 
-#: business/templates/business/base.html:517
+#: business/templates/business/base.html:638
 msgid "Best Sellers"
 msgstr "Zinazouzika Sana"
 
-#: business/templates/business/base.html:518
+#: business/templates/business/base.html:639
+#: business/templates/business/post_item.html:700
 msgid "On Sale"
 msgstr "Punguzo la Bei"
 
-#: business/templates/business/base.html:522
+#: business/templates/business/base.html:643
 msgid "Customer Care"
 msgstr "Huduma kwa Wateja"
 
-#: business/templates/business/base.html:524
+#: business/templates/business/base.html:645
 msgid "My Orders"
 msgstr "Oda Zangu"
 
-#: business/templates/business/base.html:525
+#: business/templates/business/base.html:646
 msgid "Saved items"
 msgstr "Vitu Vilivyohifadhiwa"
 
-#: business/templates/business/base.html:526
+#: business/templates/business/base.html:647
 msgid "My Account"
 msgstr "Akaunti Yangu"
 
-#: business/templates/business/base.html:530
+#: business/templates/business/base.html:651
 msgid "Newsletter"
 msgstr "Jarida Letu"
 
-#: business/templates/business/base.html:531
+#: business/templates/business/base.html:652
 msgid "Get campus deals and new listings in your inbox."
 msgstr "Pata ofa bora za chuo na bidhaa mpya kwenye barua pepe yako."
 
-#: business/templates/business/base.html:533
+#: business/templates/business/base.html:654
 msgid "Your email"
 msgstr "Barua pepe yako"
 
-#: business/templates/business/base.html:534
+#: business/templates/business/base.html:655
 msgid "Subscribe"
 msgstr "Jiunge"
 
-#: business/templates/business/base.html:545
+#: business/templates/business/base.html:666
 msgid "All rights reserved."
 msgstr "Haki zote zimehifadhiwa."
 
-#: business/templates/business/base.html:546
+#: business/templates/business/base.html:667
 msgid "Campus marketplace"
 msgstr "Soko huru la chuo"
+
+#: business/templates/business/documentation.html:5
+msgid "Documentation & Help"
+msgstr "Mwongozo na Nyaraka"
+
+#: business/templates/business/documentation.html:20
+msgid "Documentation & User Guide"
+msgstr "Mwongozo na Nyaraka"
+
+#: business/templates/business/documentation.html:21
+msgid "Everything you need to know about how U-Connect works."
+msgstr "Kila kitu unachohitaji kujua kuhusu jinsi U-Connect inavyofanya kazi."
+
+#: business/templates/business/documentation.html:25
+msgid "Ask for Live Support"
+msgstr "Uliza Msaada Moja kwa Moja"
+
+#: business/templates/business/documentation.html:37
+msgid "Table of Contents"
+msgstr "Yaliyomo (Contents)"
+
+#: business/templates/business/documentation.html:38
+msgid "Menu"
+msgstr "Menyu"
+
+#: business/templates/business/documentation.html:42
+msgid "Introduction"
+msgstr "Hali ya Bidhaa"
+
+#: business/templates/business/documentation.html:43
+msgid "User Roles"
+msgstr "Aina za Watumiaji (Roles)"
+
+#: business/templates/business/documentation.html:44
+msgid "Navigation Guide"
+msgstr "Mwongozo wa Menyu"
+
+#: business/templates/business/documentation.html:45
+msgid "Getting Started"
+msgstr "Kuanza (Getting Started)"
+
+#: business/templates/business/documentation.html:46
+msgid "Buying Guide"
+msgstr "Mwongozo wa Kununua"
+
+#: business/templates/business/documentation.html:47
+msgid "Selling & Companies"
+msgstr "Bei ya Kuuza"
+
+#: business/templates/business/documentation.html:48
+msgid "Messaging System"
+msgstr "Mfumo wa Ujumbe"
+
+#: business/templates/business/documentation.html:49
+#: business/templates/business/documentation.html:142
+msgid "Admin Portal"
+msgstr "Fungua Utawala"
+
+#: business/templates/business/documentation.html:50
+msgid "Frequently Asked Questions (FAQ)"
+msgstr "Maswali Yanayoulizwa Mara kwa Mara (FAQ)"
+
+#: business/templates/business/documentation.html:60
+msgid "U-Connect Campus Marketplace"
+msgstr "Soko huru la chuo"
+
+#: business/templates/business/documentation.html:61
+msgid ""
+"Welcome to the official U-Connect user guide. This platform is specially "
+"crafted to empower students and the university community to trade safely, "
+"easily, and quickly without middlemen."
+msgstr ""
+
+#: business/templates/business/documentation.html:63
+msgid ""
+"Whether you are looking for textbooks, electronics, hostel services, or "
+"launching your campus business, U-Connect gives you all the tools at your "
+"fingertips."
+msgstr ""
+
+#: business/templates/business/documentation.html:68
+msgid "1. User Roles"
+msgstr "1. Aina za Watumiaji (User Roles)"
+
+#: business/templates/business/documentation.html:75
+msgid "Personal Seller"
+msgstr "Mawasiliano"
+
+#: business/templates/business/documentation.html:76
+msgid ""
+"Students selling their used items (phones, books, room appliances) "
+"occasionally without needing a registered business."
+msgstr ""
+
+#: business/templates/business/documentation.html:84
+msgid "Company Owner"
+msgstr "Kampuni"
+
+#: business/templates/business/documentation.html:85
+msgid ""
+"Entrepreneurs and official shops with a business brand, logo, and wide "
+"product catalog (e.g., Food, Fashion, Tech gear)."
+msgstr ""
+
+#: business/templates/business/documentation.html:93
+msgid "Administrator"
+msgstr "Msimamizi (Administrator)"
+
+#: business/templates/business/documentation.html:94
+msgid ""
+"Platform administrators who verify accounts, prevent fraudulent activity, "
+"and oversee system health via the Executive Command Center."
+msgstr ""
+
+#: business/templates/business/documentation.html:102
+msgid "2. Navigation Guide"
+msgstr "2. Mwongozo wa Menyu (Navigation Guide)"
+
+#: business/templates/business/documentation.html:103
+msgid ""
+"The top and bottom navigation bars give you full control over your "
+"marketplace activities:"
+msgstr ""
+
+#: business/templates/business/documentation.html:110
+msgid "Link"
+msgstr "Kiungo (Link)"
+
+#: business/templates/business/documentation.html:111
+msgid "Icon"
+msgstr "Ikoni"
+
+#: business/templates/business/documentation.html:112
+msgid "Function & Description"
+msgstr "Maelezo"
+
+#: business/templates/business/documentation.html:113
+msgid "Audience"
+msgstr "Hadhira"
+
+#: business/templates/business/documentation.html:120
+msgid ""
+"Marketplace homepage displaying featured, trending, and latest listings "
+"across campuses."
+msgstr ""
+
+#: business/templates/business/documentation.html:121
+#: business/templates/business/documentation.html:127
+msgid "Everyone"
+msgstr "Kila mtu"
+
+#: business/templates/business/documentation.html:126
+msgid ""
+"Full marketplace catalog with filters for category, price range, condition, "
+"and campus location."
+msgstr ""
+
+#: business/templates/business/documentation.html:130
+msgid "Chat (Inbox)"
+msgstr "Chat (Inbox)"
+
+#: business/templates/business/documentation.html:132
+msgid ""
+"Private real-time encrypted messaging between buyers and sellers with image "
+"sharing."
+msgstr ""
+
+#: business/templates/business/documentation.html:133
+#: business/templates/business/documentation.html:139
+msgid "Signed-in Users"
+msgstr "Waliopo ndani"
+
+#: business/templates/business/documentation.html:136
+msgid "Sell Item"
+msgstr "Uza"
+
+#: business/templates/business/documentation.html:138
+msgid ""
+"Product upload studio with multi-photo upload, technical specifications, and "
+"live listing preview."
+msgstr ""
+
+#: business/templates/business/documentation.html:144
+msgid ""
+"Executive Command Center to manage users, listings, system audits, and "
+"customer support."
+msgstr ""
+
+#: business/templates/business/documentation.html:145
+msgid "Admin Only"
+msgstr "Fungua Utawala"
+
+#: business/templates/business/documentation.html:155
+msgid "3. Getting Started"
+msgstr "3. Jinsi ya Kuanza (Getting Started)"
+
+#: business/templates/business/documentation.html:160
+msgid "Register an Account"
+msgstr "Kusajili Akaunti"
+
+#: business/templates/business/documentation.html:162
+msgid "Click the Register button in the top or bottom menu."
+msgstr "Bonyeza kitufe cha Register kwenye menyu ya juu au ya chini."
+
+#: business/templates/business/documentation.html:163
+msgid ""
+"Fill in your username, university or personal email, phone number, and a "
+"secure password."
+msgstr ""
+
+#: business/templates/business/documentation.html:164
+msgid "Enter the 6-digit OTP code sent to your email to verify your identity."
+msgstr "Weka nambari ya OTP ya tarakimu 6 inayotumwa kwenye barua pepe yako ili kuthibitisha utambulisho wako."
+
+#: business/templates/business/documentation.html:165
+msgid "You can immediately start browsing, buying, and listing items!"
+msgstr "Baada ya hapo unaweza kuanza kutazama, kununua na kuuza mara moja!"
+
+#: business/templates/business/documentation.html:171
+msgid "Install on Mobile (PWA)"
+msgstr "Kuweka kwenye Simu (PWA)"
+
+#: business/templates/business/documentation.html:172
+msgid ""
+"U-Connect is a Progressive Web App, meaning you can install it directly on "
+"your phone:"
+msgstr ""
+
+#: business/templates/business/documentation.html:174
+msgid ""
+"Open Chrome, tap the 3 dots menu and select 'Install app' or 'Add to Home "
+"screen'."
+msgstr ""
+
+#: business/templates/business/documentation.html:175
+msgid "Open Safari, tap Share and select 'Add to Home Screen'."
+msgstr "Fungua Safari, gusa kitufe cha Share na uchague 'Add to Home Screen'."
+
+#: business/templates/business/documentation.html:184
+msgid "4. Buying Guide"
+msgstr "4. Mwongozo wa Kununua (Buying Guide)"
+
+#: business/templates/business/documentation.html:188
+msgid "Searching & Filtering"
+msgstr "Kutafuta na Kuchuja"
+
+#: business/templates/business/documentation.html:190
+msgid ""
+"Use the top search bar to type the name of the product you are looking for."
+msgstr ""
+
+#: business/templates/business/documentation.html:191
+msgid ""
+"Choose a category (such as Phones, Laptops, Books) to get more accurate "
+"results."
+msgstr ""
+
+#: business/templates/business/documentation.html:192
+msgid "Check discounted prices and badges like 'Discount' or 'New'."
+msgstr "Angalia bei iliyopunguzwa na beji za 'Discount' au 'New'."
+
+#: business/templates/business/documentation.html:198
+msgid "Safe Buying on Campus"
+msgstr "Usalama Wakati wa Kununua Chuoni"
+
+#: business/templates/business/documentation.html:200
+msgid ""
+"Meet the seller in open campus areas (such as the library, cafeteria, or "
+"main gate)."
+msgstr ""
+
+#: business/templates/business/documentation.html:201
+msgid "Inspect the product and verify it works properly before making payment."
+msgstr "Kagua bidhaa na thibitisha inafanya kazi vizuri kabla ya kutoa pesa."
+
+#: business/templates/business/documentation.html:202
+msgid ""
+"Use the in-app Chat to communicate safely without giving out your personal "
+"phone number."
+msgstr ""
+
+#: business/templates/business/documentation.html:211
+msgid "5. Selling Guide"
+msgstr "Bei ya Kuuza"
+
+#: business/templates/business/documentation.html:214
+msgid "Tip:"
+msgstr "Ushauri:"
+
+#: business/templates/business/documentation.html:214
+msgid ""
+"Take clear, well-lit photos and write an honest description of your "
+"product's condition to sell faster!"
+msgstr ""
+
+#: business/templates/business/documentation.html:218
+msgid "Steps to Upload a Product"
+msgstr "Hatua za Kupakia Bidhaa"
+
+#: business/templates/business/documentation.html:220
+msgid "Click the Sell button in the menu."
+msgstr "Bonyeza kitufe cha Sell kwenye menyu."
+
+#: business/templates/business/documentation.html:221
+msgid "Select the correct Category for your product (e.g. Phones & Tablets)."
+msgstr "Chagua Kategoria sahihi ya bidhaa yako (mfano Phones & Tablets)."
+
+#: business/templates/business/documentation.html:222
+msgid "Upload up to 3 clean photos showing front and back views."
+msgstr "Weka picha hadi 3 zenye muonekano safi wa mbele na nyuma."
+
+#: business/templates/business/documentation.html:223
+msgid ""
+"Fill in technical specifications with accurate metrics (such as mAh for "
+"battery, GB for RAM and storage, Megapixels for camera)."
+msgstr ""
+
+#: business/templates/business/documentation.html:224
+msgid "Preview your product card on the right, then click Publish Listing."
+msgstr "Hakiki muonekano wa kadi ya bidhaa yako upande wa kulia kisha bonyeza Chapisha Tangazo."
+
+#: business/templates/business/documentation.html:231
+msgid "6. Messaging System (Chat)"
+msgstr "6. Mfumo wa Mawasiliano (Chat)"
+
+#: business/templates/business/documentation.html:236
+msgid "Real-Time Chat"
+msgstr "Gumzo la Moja kwa Moja"
+
+#: business/templates/business/documentation.html:237
+msgid "Messages arrive instantly without requiring page refreshes."
+msgstr "Meseji zinafika bila kuhitaji kurudisha au kurefresh ukurasa."
+
+#: business/templates/business/documentation.html:243
+msgid "Send Photos"
+msgstr "Kutuma Picha"
+
+#: business/templates/business/documentation.html:244
+msgid "Send extra photos of products directly in chat before making a deal."
+msgstr "Tuma picha za ziada za bidhaa moja kwa moja kwenye chat kabla ya kuamua."
+
+#: business/templates/business/documentation.html:250
+msgid "Message Notifications"
+msgstr "Arifa za Meseji"
+
+#: business/templates/business/documentation.html:251
+msgid "Get instant sound and visual alerts when new messages arrive."
+msgstr "Pokea arifa za sauti na muonekano za ujumbe mpya mara moja ukiwa mtandaoni."
+
+#: business/templates/business/documentation.html:259
+msgid "7. Admin Panel & Moderation"
+msgstr "7. Mfumo wa Wasimamizi (Admin Panel)"
+
+#: business/templates/business/documentation.html:261
+msgid ""
+"U-Connect administrators have dedicated tools to oversee platform operations:"
+msgstr ""
+
+#: business/templates/business/documentation.html:265
+msgid "Managed Mode (Executive Command Center):"
+msgstr "Badili kwenda Kituo cha Usimamizi"
+
+#: business/templates/business/documentation.html:265
+msgid ""
+"Modern dashboard with analytics graphs, user management, email broadcasts, "
+"and CRM support."
+msgstr ""
+
+#: business/templates/business/documentation.html:269
+msgid "Normal Mode (Classic Django Admin):"
+msgstr "Badili kwenda Utawala wa Kawaida"
+
+#: business/templates/business/documentation.html:269
+msgid ""
+"Direct administrative interface for raw database records and rapid "
+"adjustments."
+msgstr ""
+
+#: business/templates/business/documentation.html:277
+msgid "8. Frequently Asked Questions (FAQ)"
+msgstr "8. Maswali Yanayoulizwa Mara kwa Mara (FAQ)"
+
+#: business/templates/business/documentation.html:282
+msgid "I cannot upload photos of my product, what should I do?"
+msgstr "Nashindwa kupakia picha za bidhaa yangu, nifanyeje?"
+
+#: business/templates/business/documentation.html:287
+msgid ""
+"Ensure your photos are in JPG or PNG format and smaller than 5MB each. You "
+"can also click the camera icon in the U-Connect Support Drawer to send a "
+"screenshot of the error directly to us!"
+msgstr ""
+
+#: business/templates/business/documentation.html:294
+msgid "The seller is not replying to my chat messages?"
+msgstr "Muuzaji hajibu meseji zangu kwenye chat?"
+
+#: business/templates/business/documentation.html:299
+msgid ""
+"Check the seller's profile to see their last active status. If they have "
+"been offline for a while, you can check similar listings from another active "
+"seller on campus."
+msgstr ""
+
+#: business/templates/business/documentation.html:306
+msgid "What if I notice a suspicious listing or fraudulent seller?"
+msgstr "Nifanyeje nikigundua tangazo la udanganyifu au bidhaa yenye matatizo?"
+
+#: business/templates/business/documentation.html:311
+msgid ""
+"Please open our Support & AI drawer in the bottom right corner and tap 'Take "
+"Screenshot'. The capture is sent straight to our moderation team to remove "
+"the listing and take appropriate action."
+msgstr ""
+
+#: business/templates/business/documentation.html:320
+msgid "Still need assistance or have questions?"
+msgstr "Bado unahitaji usaidizi au una maswali?"
+
+#: business/templates/business/documentation.html:321
+msgid ""
+"We're here 24/7 to help you. Chat with our support team in real-time or send "
+"us a message."
+msgstr ""
+
+#: business/templates/business/documentation.html:324
+msgid "Open Support Chat"
+msgstr "Fungua Chat ya Ukurasa Mzima"
+
+#: business/templates/business/documentation.html:327
+msgid "Contact Us Page"
+msgstr "Mawasiliano"
 
 #: business/templates/business/home.html:18
 msgid "Hot picks for you"
@@ -300,8 +776,6 @@ msgid "Clear search"
 msgstr "Futa utafutaji"
 
 #: business/templates/business/item_detail.html:92
-#, fuzzy
-#| msgid "No picks yet."
 msgid "No ratings yet"
 msgstr "Hakuna machaguo bado."
 
@@ -323,6 +797,7 @@ msgid "Condition"
 msgstr "Hali"
 
 #: business/templates/business/item_detail.html:118
+#: business/templates/business/manage_items.html:42
 msgid "Stock"
 msgstr "Idadi iliyopo"
 
@@ -331,239 +806,806 @@ msgid "available"
 msgstr "inapatikana"
 
 #: business/templates/business/item_detail.html:120
-#, fuzzy
-#| msgid "My Orders"
 msgid "Min. order"
 msgstr "Oda Zangu"
 
-#: business/templates/business/item_detail.html:123
-#, fuzzy
-#| msgid "Documentation"
-msgid "Location"
-msgstr "Mwongozo na Nyaraka"
+#: business/templates/business/item_detail.html:124
+msgid "Meetup Location"
+msgstr "Eneo la Kukutana..."
 
-#: business/templates/business/item_detail.html:126
+#: business/templates/business/item_detail.html:136
 msgid "Weight"
 msgstr "Uzito"
 
-#: business/templates/business/item_detail.html:129
+#: business/templates/business/item_detail.html:139
 msgid "Dimensions"
 msgstr "Vipimo"
 
-#: business/templates/business/item_detail.html:132
-#, fuzzy
-#| msgid "Contact"
+#: business/templates/business/item_detail.html:142
 msgid "Contact via"
 msgstr "Mawasiliano"
 
-#: business/templates/business/item_detail.html:145
+#: business/templates/business/item_detail.html:155
 msgid "Quantity"
 msgstr "Kiasi"
 
-#: business/templates/business/item_detail.html:146
+#: business/templates/business/item_detail.html:156
 msgid "left"
 msgstr "zimebaki"
 
-#: business/templates/business/item_detail.html:158
-#: business/templates/business/item_detail.html:284
+#: business/templates/business/item_detail.html:168
+#: business/templates/business/item_detail.html:355
 msgid ""
 "Never pay shipping or transport fees before receiving package. Pay only upon "
 "inspection (Cash on Delivery)."
 msgstr ""
 
-#: business/templates/business/item_detail.html:161
-#: business/templates/business/item_detail.html:289
-#, fuzzy
-#| msgid "Contact"
+#: business/templates/business/item_detail.html:171
+#: business/templates/business/item_detail.html:360
 msgid "Contact Seller"
 msgstr "Mawasiliano"
 
-#: business/templates/business/item_detail.html:165
-#: business/templates/business/item_detail.html:293
+#: business/templates/business/item_detail.html:175
+#: business/templates/business/item_detail.html:364
 msgid "No phone provided — use chat"
 msgstr "Namba haijawekwa — tumia chat"
 
-#: business/templates/business/item_detail.html:169
-#: business/templates/business/item_detail.html:171
-#: business/templates/business/item_detail.html:297
-#: business/templates/business/item_detail.html:299
+#: business/templates/business/item_detail.html:179
+#: business/templates/business/item_detail.html:181
+#: business/templates/business/item_detail.html:368
+#: business/templates/business/item_detail.html:370
 msgid "Chat with seller"
 msgstr "Ongea na muuzaji"
 
-#: business/templates/business/item_detail.html:174
-#: business/templates/business/item_detail.html:302
-#: business/templates/business/item_detail.html:325
+#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:373
+#: business/templates/business/item_detail.html:396
 msgid "Call"
 msgstr "Piga simu"
 
-#: business/templates/business/item_detail.html:174
-#: business/templates/business/item_detail.html:302
-#, fuzzy
-#| msgid "Best sellers"
+#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:373
 msgid "Call seller"
 msgstr "Zinazouzika Sana"
 
-#: business/templates/business/item_detail.html:176
-#: business/templates/business/item_detail.html:304
+#: business/templates/business/item_detail.html:186
+#: business/templates/business/item_detail.html:375
 msgid "No phone"
 msgstr "Hakuna simu"
 
-#: business/templates/business/item_detail.html:184
+#: business/templates/business/item_detail.html:200
+msgid "Meetup & Pickup Location"
+msgstr "Eneo la Kukutana & Kuchukulia Bidhaa"
+
+#: business/templates/business/item_detail.html:201
+msgid "Agreed pickup and inspection point for this product"
+msgstr "Sehemu ya makubaliano ya kukutana, kukagua na kukabidhiana bidhaa hii"
+
+#: business/templates/business/item_detail.html:208
+msgid "General Area"
+msgstr "Eneo la Jumla"
+
+#: business/templates/business/item_detail.html:215
+msgid "Specific Spot"
+msgstr "Sehemu Maalum"
+
+#: business/templates/business/item_detail.html:220
+msgid "Location"
+msgstr "Mwongozo na Nyaraka"
+
+#: business/templates/business/item_detail.html:228
+msgid "View on Google Maps"
+msgstr "Onyesha kwenye Google Maps"
+
+#: business/templates/business/item_detail.html:237
+msgid "Check Distance from My Location"
+msgstr "Pima Umbali kutoka Ulipo"
+
+#: business/templates/business/item_detail.html:247
 msgid "Description"
 msgstr "Maelezo"
 
-#: business/templates/business/item_detail.html:190
-#, fuzzy
-#| msgid "Customer Care"
+#: business/templates/business/item_detail.html:253
 msgid "Customer Reviews"
 msgstr "Huduma kwa Wateja"
 
-#: business/templates/business/item_detail.html:211
+#: business/templates/business/item_detail.html:274
 msgid "No ratings yet — be the first to review."
 msgstr "Hakuna ratings bado — kuwa wa kwanza kutoa maoni."
 
-#: business/templates/business/item_detail.html:222
-#, fuzzy
-#| msgid "No picks yet."
+#: business/templates/business/item_detail.html:285
 msgid "No comments yet."
 msgstr "Hakuna machaguo bado."
 
-#: business/templates/business/item_detail.html:228
+#: business/templates/business/item_detail.html:291
 msgid "Post comment"
 msgstr "Tuma maoni"
 
-#: business/templates/business/item_detail.html:235
+#: business/templates/business/item_detail.html:298
 msgid "You may also like"
 msgstr "Huenda ukapenda pia"
 
-#: business/templates/business/item_detail.html:276
-#, fuzzy
-#| msgid "Campus marketplace"
+#: business/templates/business/item_detail.html:339
 msgid "Campus meetup / delivery"
 msgstr "Soko huru la chuo"
 
-#: business/templates/business/item_detail.html:277
+#: business/templates/business/item_detail.html:342
 msgid "Campus pickup"
 msgstr "Kuchukua chuoni"
 
-#: business/templates/business/item_detail.html:278
+#: business/templates/business/item_detail.html:344
+msgid "Open in Google Maps"
+msgstr "Fungua kwenye Google Maps"
+
+#: business/templates/business/item_detail.html:349
 msgid "Cash on Delivery"
 msgstr "Lipa Baada ya Kupokea"
 
-#: business/templates/business/item_detail.html:279
+#: business/templates/business/item_detail.html:350
 msgid "Buyer protection"
 msgstr "Ulinzi wa mnunuzi"
 
-#: business/templates/business/item_detail.html:310
-#: business/templates/business/item_detail.html:329
+#: business/templates/business/item_detail.html:381
+#: business/templates/business/item_detail.html:400
 msgid "Out of stock"
 msgstr "Imeisha stoo"
 
-#: business/templates/business/partials/_support_drawer.html:4
+#: business/templates/business/item_detail.html:769
+msgid "Recalculate Distance"
+msgstr "Pima Umbali Tena"
+
+#: business/templates/business/item_detail.html:793
+msgid "Distance"
+msgstr "Umbali"
+
+#: business/templates/business/item_detail.html:793
+msgid "You are approximately"
+msgstr "Wewe uko takriban"
+
+#: business/templates/business/item_detail.html:793
+msgid "away from this meetup location"
+msgstr "kutoka eneo hili la kukutana"
+
+#: business/templates/business/item_detail.html:796
+msgid "Get Directions on Google Maps"
+msgstr "Fungua Ramani & Maelekezo (Google Maps)"
+
+#: business/templates/business/item_detail.html:799
+msgid ""
+"Your location detected! Open Google Maps to view exact driving or walking "
+"route"
+msgstr ""
+"Eneo lako limetambuliwa! Bonyeza hapa chini kuona njia na umbali halisi "
+"kwenye Google Maps"
+
+#: business/templates/business/item_detail.html:801
+msgid "View Route & Distance on Google Maps"
+msgstr "Tazama Njia & Umbali kwenye Google Maps"
+
+#: business/templates/business/item_detail.html:806
+msgid "Check Distance"
+msgstr "Umbali"
+
+#: business/templates/business/item_detail.html:809
+msgid ""
+"Could not access GPS location. You can view directions directly in Google "
+"Maps:"
+msgstr ""
+"Haijawezekana kusoma eneo lako la GPS. Unaweza kuona njia moja kwa moja "
+"kwenye Google Maps:"
+
+#: business/templates/business/item_detail.html:811
+msgid "Open Directions in Google Maps"
+msgstr "Fungua Maelekezo kwenye Google Maps"
+
+#: business/templates/business/manage_items.html:6
+msgid "My Products"
+msgstr "Bidhaa Zangu"
+
+#: business/templates/business/manage_items.html:14
+msgid "My products"
+msgstr "Bidhaa Zangu"
+
+#: business/templates/business/manage_items.html:15
+msgid "listing"
+msgstr "tangazo"
+
+#: business/templates/business/manage_items.html:15
+msgid "No listings yet"
+msgstr "Bado huna matangazo"
+
+#: business/templates/business/manage_items.html:19
+msgid "Add product"
+msgstr "Weka Bidhaa"
+
+#: business/templates/business/manage_items.html:27
+msgid "View"
+msgstr "Tazama zaidi"
+
+#: business/templates/business/manage_items.html:43
+msgid "view"
+msgstr "mtazamaji"
+
+#: business/templates/business/manage_items.html:51
+msgid "Edit"
+msgstr "Hariri"
+
+#: business/templates/business/manage_items.html:53
+msgid "Delete this product?"
+msgstr "Una uhakika unataka kufuta bidhaa hii?"
+
+#: business/templates/business/manage_items.html:54
+msgid "Delete"
+msgstr "Futa"
+
+#: business/templates/business/manage_items.html:63
+msgid "No products yet"
+msgstr "Bado huna bidhaa"
+
+#: business/templates/business/manage_items.html:64
+msgid "Upload your first listing and start selling on campus."
+msgstr "Pakia bidhaa yako ya kwanza na anza kuuza chuoni."
+
+#: business/templates/business/manage_items.html:67
+msgid "Start selling"
+msgstr "Anza Kuuza"
+
+#: business/templates/business/partials/_support_drawer.html:5
 msgid "Help & Support / AI Assistant"
 msgstr "Msaada & AI Msaidizi"
 
-#: business/templates/business/partials/_support_drawer.html:8
+#: business/templates/business/partials/_support_drawer.html:9
 msgid "Support & AI"
 msgstr "Msaada & AI"
 
-#: business/templates/business/partials/_support_drawer.html:26
+#: business/templates/business/partials/_support_drawer.html:28
 msgid "U-Connect Support & AI"
 msgstr "U-Connect Msaada & AI"
 
-#: business/templates/business/partials/_support_drawer.html:29
+#: business/templates/business/partials/_support_drawer.html:31
 msgid "Support agents are online (Active)"
 msgstr "Wasimamizi wako tayari (Active)"
 
-#: business/templates/business/partials/_support_drawer.html:34
+#: business/templates/business/partials/_support_drawer.html:37
 msgid "Open Full Page Chat"
 msgstr "Fungua Chat ya Ukurasa Mzima"
 
-#: business/templates/business/partials/_support_drawer.html:37
+#: business/templates/business/partials/_support_drawer.html:41
 msgid "Close Support Drawer"
 msgstr "Funga Dirisha la Msaada"
 
-#: business/templates/business/partials/_support_drawer.html:43
+#: business/templates/business/partials/_support_drawer.html:47
 msgid "💡 How do I buy products on campus?"
 msgstr "💡 Ninawezaje kununua bidhaa chuoni?"
 
-#: business/templates/business/partials/_support_drawer.html:43
+#: business/templates/business/partials/_support_drawer.html:47
 msgid "💡 How to buy"
 msgstr "💡 Jinsi ya kununua"
 
-#: business/templates/business/partials/_support_drawer.html:44
+#: business/templates/business/partials/_support_drawer.html:48
 msgid "📦 How do I post an item or start selling?"
 msgstr "📦 Ninawezaje kupakia bidhaa au kuanza kuuza?"
 
-#: business/templates/business/partials/_support_drawer.html:44
+#: business/templates/business/partials/_support_drawer.html:48
 msgid "📦 How to sell"
 msgstr "📦 Kuuza bidhaa"
 
-#: business/templates/business/partials/_support_drawer.html:45
+#: business/templates/business/partials/_support_drawer.html:49
 msgid "⚠️ I encountered an error or problem on this page."
 msgstr "⚠️ Nimekutana na hitilafu au tatizo kwenye ukurasa huu."
 
-#: business/templates/business/partials/_support_drawer.html:45
+#: business/templates/business/partials/_support_drawer.html:49
 msgid "⚠️ Report issue"
 msgstr "⚠️ Ripoti hitilafu"
 
-#: business/templates/business/partials/_support_drawer.html:46
+#: business/templates/business/partials/_support_drawer.html:51
 msgid "Take Screenshot"
 msgstr "Piga picha (Screenshot)"
 
-#: business/templates/business/partials/_support_drawer.html:55
+#: business/templates/business/partials/_support_drawer.html:60
 msgid "Welcome to U-Connect Support!"
 msgstr "Karibu kwenye U-Connect Support!"
 
-#: business/templates/business/partials/_support_drawer.html:57
+#: business/templates/business/partials/_support_drawer.html:62
 msgid ""
 "Have a question, need assistance or noticed an issue? Write here or take a "
 "screenshot so our team can resolve it quickly!"
 msgstr ""
 
-#: business/templates/business/partials/_support_drawer.html:67
+#: business/templates/business/partials/_support_drawer.html:72
 msgid "Support agent is typing..."
 msgstr "Msimamizi anaandika..."
 
-#: business/templates/business/partials/_support_drawer.html:76
+#: business/templates/business/partials/_support_drawer.html:81
 msgid "Screenshot Captured!"
 msgstr "Picha Imepigwa!"
 
-#: business/templates/business/partials/_support_drawer.html:80
+#: business/templates/business/partials/_support_drawer.html:86
 msgid "Remove screenshot"
 msgstr "Ondoa picha"
 
-#: business/templates/business/partials/_support_drawer.html:88
+#: business/templates/business/partials/_support_drawer.html:95
 msgid "Capture page screenshot for support team"
 msgstr "Piga picha ya ukurasa kwa ajili ya msaada"
 
-#: business/templates/business/partials/_support_drawer.html:90
-#: business/templates/business/partials/_support_drawer.html:704
+#: business/templates/business/partials/_support_drawer.html:97
+#: business/templates/business/partials/_support_drawer.html:794
 msgid "Capture Page Screenshot"
 msgstr "Piga Picha ya Ukurasa"
 
-#: business/templates/business/partials/_support_drawer.html:92
+#: business/templates/business/partials/_support_drawer.html:100
 #, python-format
 msgid "100%% Secure"
 msgstr "Salama 100%%"
 
-#: business/templates/business/partials/_support_drawer.html:95
+#: business/templates/business/partials/_support_drawer.html:104
 msgid "Describe your issue or ask anything here..."
 msgstr "Eleza changamoto yako au uliza chochote hapa..."
 
-#: business/templates/business/partials/_support_drawer.html:96
+#: business/templates/business/partials/_support_drawer.html:106
 msgid "Send message"
 msgstr "Tuma ujumbe"
 
-#: business/templates/business/partials/_support_drawer.html:693
+#: business/templates/business/partials/_support_drawer.html:783
 msgid "I noticed an issue / feedback on this page: "
 msgstr "Nimegundua hitilafu / maoni kwenye ukurasa huu: "
 
-#: business/templates/business/partials/_support_drawer.html:697
+#: business/templates/business/partials/_support_drawer.html:787
 msgid ""
 "Could not capture screenshot directly. Please describe your issue in the "
 "message box."
 msgstr ""
+
+#: business/templates/business/post_item.html:5
+msgid "Post Product - U-Connect"
+msgstr "Weka Bidhaa Sokoni - U-Connect"
+
+#: business/templates/business/post_item.html:305
+msgid "U-Connect Marketplace • Post Product"
+msgstr "U-Connect Marketplace • Weka Bidhaa Sokoni"
+
+#: business/templates/business/post_item.html:309
+msgid "Post New Product"
+msgstr "Uza Bidhaa Mpya"
+
+#: business/templates/business/post_item.html:321
+msgid "Change Category"
+msgstr "Badili Kategoria"
+
+#: business/templates/business/post_item.html:349
+msgid "Product Media (Photos & Video)"
+msgstr "Picha & Video za Bidhaa"
+
+#: business/templates/business/post_item.html:350
+#, fuzzy, python-format
+#| msgid ""
+#| "High-quality photos increase buyer trust by 70%. The first photo is your "
+#| "main cover photo."
+msgid ""
+"High-quality photos increase buyer trust by 70%%. The first photo is your "
+"main cover photo."
+msgstr ""
+"Picha nzuri huongeza nafasi ya mwanafunzi kununua kwa 70%. Picha ya kwanza "
+"ndiyo 'Main Cover Photo'."
+
+#: business/templates/business/post_item.html:356
+msgid ""
+"Add at least 1 clear photo (up to 6 photos and 1 short 30-second video)."
+msgstr ""
+"Weka picha angalau 1 iliyo wazi (unaweza kuweka hadi picha 6 na video 1 fupi "
+"ya sekunde 30)."
+
+#: business/templates/business/post_item.html:369
+msgid "Basic Product Information"
+msgstr "Taarifa Kuu za Bidhaa"
+
+#: business/templates/business/post_item.html:370
+msgid "Write a clear, attractive title and specify the item condition."
+msgstr "Andika kichwa kinachovutia na taja hali halisi ya bidhaa yako."
+
+#: business/templates/business/post_item.html:376
+msgid "Product Title"
+msgstr "Jina / Kichwa cha Bidhaa"
+
+#: business/templates/business/post_item.html:381
+msgid ""
+"Tip: Mention Brand, Model, and key specs (e.g. Samsung Galaxy S22 Ultra "
+"256GB)."
+msgstr ""
+"Ushauri: Taja Brand, Model, na sifa kuu (mfano: Samsung Galaxy S22 Ultra "
+"256GB)."
+
+#: business/templates/business/post_item.html:389
+msgid "Item Condition"
+msgstr "Hali ya Bidhaa"
+
+#: business/templates/business/post_item.html:397
+#: business/templates/business/post_item.html:498
+msgid "Optional"
+msgstr "Hiari"
+
+#: business/templates/business/post_item.html:400
+msgid "If left blank, a code will be generated automatically."
+msgstr "Ikiachwa wazi, mfumo utatengeneza nambari kiotomatiki."
+
+#: business/templates/business/post_item.html:413
+msgid "Specifications for"
+msgstr "Sifa & Vipimo vya"
+
+#: business/templates/business/post_item.html:414
+msgid "Choose from suggestions or type your custom value."
+msgstr ""
+"Chagua kwenye orodha au andika mwenyewe kama una ukubwa au sifa maalum."
+
+#: business/templates/business/post_item.html:477
+msgid "Pricing & Inventory"
+msgstr "Bei & Idadi ya Bidhaa"
+
+#: business/templates/business/post_item.html:478
+msgid "Set the exact selling price in TZS. Competitive prices sell faster."
+msgstr ""
+"Weka bei halisi ya sarafu ya Tanzania (TZS). Bei nafuu huvutia wanachuo "
+"haraka zaidi."
+
+#: business/templates/business/post_item.html:485
+msgid "Selling Price"
+msgstr "Bei ya Kuuza"
+
+#: business/templates/business/post_item.html:492
+msgid "Exact amount buyer will pay."
+msgstr "Kiasi kamili ambacho mnunuzi atalipia."
+
+#: business/templates/business/post_item.html:498
+msgid "Compare-at Price"
+msgstr "Bei ya Awali (Compare-at)"
+
+#: business/templates/business/post_item.html:505
+msgid "If higher than current price, will show crossed out as a discount."
+msgstr ""
+"Ikiwa ipo juu ya bei ya sasa, itaonyeshwa ikiwa imekatwa mstari kuonyesha "
+"ofa."
+
+#: business/templates/business/post_item.html:511
+msgid "Stock Quantity"
+msgstr "Idadi Iliyopo"
+
+#: business/templates/business/post_item.html:519
+msgid "Shipping Weight"
+msgstr "Uzito wa Mzigo"
+
+#: business/templates/business/post_item.html:531
+msgid "Box Dimensions (L x W x H)"
+msgstr "Vipimo vya Boksi (L x W x H)"
+
+#: business/templates/business/post_item.html:544
+msgid "Meetup Location & Seller Contact"
+msgstr "Eneo la Kukutana & Mawasiliano ya Muuzaji"
+
+#: business/templates/business/post_item.html:545
+msgid ""
+"Set the general area and specific spot for handing over goods and Cash on "
+"Delivery."
+msgstr ""
+"Weka eneo la jumla na sehemu maalum ya kukutana na kukabidhiana bidhaa."
+
+#: business/templates/business/post_item.html:554
+msgid "Saved Meetup Locations"
+msgstr "Maeneo Yako Uliyohifadhi"
+
+#: business/templates/business/post_item.html:556
+msgid "Click to fill"
+msgstr "Bonyeza kujaza"
+
+#: business/templates/business/post_item.html:567
+msgid "Default Meetup Location"
+msgstr "Eneo la Kawaida la Kukutana"
+
+#: business/templates/business/post_item.html:567
+msgid "Click to use this location"
+msgstr "Bonyeza kutumia eneo hili"
+
+#: business/templates/business/post_item.html:571
+#: business/templates/business/post_item.html:1070
+msgid "Default"
+msgstr "Chaguo-msingi"
+
+#: business/templates/business/post_item.html:583
+msgid "General Location (Area / City / Region)"
+msgstr "Eneo la Jumla (Mtaa / Mji / Mkoa)"
+
+#: business/templates/business/post_item.html:587
+msgid "Detect GPS Location"
+msgstr "Soma Eneo Nilipo (GPS)"
+
+#: business/templates/business/post_item.html:588
+msgid "GPS"
+msgstr "GPS"
+
+#: business/templates/business/post_item.html:590
+msgid "Pick on Map"
+msgstr "Chagua kwenye Ramani"
+
+#: business/templates/business/post_item.html:591
+msgid "Map"
+msgstr "Ramani"
+
+#: business/templates/business/post_item.html:594
+msgid "e.g. Chukwani, Zanzibar or Mwenge, Dar es Salaam."
+msgstr "mfano: Chukwani, Zanzibar au Mwenge, Dar es Salaam."
+
+#: business/templates/business/post_item.html:600
+msgid "Specific Meetup Spot (Exact point)"
+msgstr "Sehemu Maalum ya Kukutana (Baada ya kufika eneo hilo)"
+
+#: business/templates/business/post_item.html:603
+msgid "e.g. SUMAIT University Main Gate, CoICT Library, or Block B."
+msgstr "mfano: SUMAIT University Lango Kuu, Maktaba ya CoICT, au Block B."
+
+#: business/templates/business/post_item.html:618
+msgid "Remember this location for my future listings"
+msgstr "Kumbuka eneo hili kwa ajili ya mauzo yangu yajayo"
+
+#: business/templates/business/post_item.html:626
+msgid "Set as my default meetup location"
+msgstr "Weka kama eneo langu kuu la kawaida (default)"
+
+#: business/templates/business/post_item.html:635
+msgid "Preferred Contact Method"
+msgstr "Njia ya Mawasiliano"
+
+#: business/templates/business/post_item.html:643
+msgid "Phone / WhatsApp"
+msgstr "Simu / WhatsApp"
+
+#: business/templates/business/post_item.html:645
+msgid "Auto-fill your registered phone number"
+msgstr "Jaza namba yako iliyosajiliwa kiotomatiki"
+
+#: business/templates/business/post_item.html:646
+#: business/templates/business/post_item.html:660
+#: business/templates/business/post_item.html:897
+#: business/templates/business/post_item.html:915
+msgid "Use Mine"
+msgstr "Tumia Yangu"
+
+#: business/templates/business/post_item.html:651
+msgid "Number buyer will call or message on WhatsApp."
+msgstr "Namba mnunuzi atakayokupigia au kutuma ujumbe WhatsApp."
+
+#: business/templates/business/post_item.html:657
+msgid "Contact Email"
+msgstr "Barua Pepe ya Mawasiliano"
+
+#: business/templates/business/post_item.html:659
+msgid "Auto-fill your registered email"
+msgstr "Jaza barua pepe yako iliyosajiliwa"
+
+#: business/templates/business/post_item.html:665
+msgid "Campus or personal email address."
+msgstr "Barua pepe ya chuo au binafsi."
+
+#: business/templates/business/post_item.html:676
+msgid "Detailed Product Description"
+msgstr "Maelezo Kamili ya Bidhaa"
+
+#: business/templates/business/post_item.html:677
+msgid ""
+"Describe included accessories, condition details, usage duration, and "
+"reasons for selling."
+msgstr ""
+"Eleza vifaa vilivyopo (chaja, boksi, risiti), muda uliotumika, na sababu ya "
+"kuuza."
+
+#: business/templates/business/post_item.html:697
+msgid "Live Buyer Preview"
+msgstr "Muonekano wa Mnunuzi"
+
+#: business/templates/business/post_item.html:717
+#: business/templates/business/post_item.html:925
+msgid "Product title will appear here..."
+msgstr "Jina la bidhaa litaonekana hapa..."
+
+#: business/templates/business/post_item.html:727
+#: business/templates/business/post_item.html:991
+msgid "Meetup Location..."
+msgstr "Eneo la Kukutana..."
+
+#: business/templates/business/post_item.html:736
+msgid "Seller Checklist"
+msgstr "Vidokezo vya Kuuza Haraka (Checklist)"
+
+#: business/templates/business/post_item.html:741
+msgid "Upload at least 1 clear photo with good lighting."
+msgstr "Weka picha angalau 1 iliyo wazi na yenye mwanga mzuri."
+
+#: business/templates/business/post_item.html:746
+msgid "Title mentions brand and model accurately."
+msgstr "Kichwa cha bidhaa kimetaja Brand na Model kwa usahihi."
+
+#: business/templates/business/post_item.html:751
+msgid "Specified fair student price in TZS."
+msgstr "Umebainisha bei ya mwanafunzi (TZS)."
+
+#: business/templates/business/post_item.html:756
+msgid "Specified meetup location."
+msgstr "Umebainisha eneo maalum la kukutana."
+
+#: business/templates/business/post_item.html:763
+msgid "Your listing is protected under the U-Connect platform."
+msgstr ""
+"Tangazo lako litalindwa chini ya mfumo rasmi wa wanafunzi wa U-Connect."
+
+#: business/templates/business/post_item.html:775
+#: business/templates/business/post_item.html:843
+msgid "Cancel"
+msgstr "Ghairi"
+
+#: business/templates/business/post_item.html:781
+msgid "Publish Product Now"
+msgstr "Weka Bidhaa Sokoni Sasa"
+
+#: business/templates/business/post_item.html:794
+msgid "Set as Default Location?"
+msgstr "Weka liwe Eneo la Kawaida (Default)?"
+
+#: business/templates/business/post_item.html:799
+msgid "Would you like to set this meetup location as your default?"
+msgstr "Ungependa kuweka eneo hili liwe chaguo lako la kawaida (default)?"
+
+#: business/templates/business/post_item.html:803
+msgid ""
+"When set as default, it will automatically pre-fill on every future product "
+"listing so you won't be asked again."
+msgstr ""
+"Likiwekwa kama chaguo-msingi, litajaza kiotomatiki wakati ujao unapotangaza "
+"bidhaa bila kuulizwa tena."
+
+#: business/templates/business/post_item.html:806
+msgid "Use for this listing only"
+msgstr "Tumia kwa tangazo hili tu"
+
+#: business/templates/business/post_item.html:808
+#: business/templates/business/post_item.html:1056
+#: business/templates/business/post_item.html:1079
+msgid "Set as Default"
+msgstr "Weka kama Chaguo-msingi"
+
+#: business/templates/business/post_item.html:821
+msgid "Select Meetup Location on Map"
+msgstr "Chagua Eneo la Kukutana kwenye Ramani"
+
+#: business/templates/business/post_item.html:829
+msgid "Search place (e.g. Chukwani, Zanzibar)..."
+msgstr "Tafuta sehemu (mfano: Chukwani, Zanzibar)..."
+
+#: business/templates/business/post_item.html:832
+msgid "Center on my GPS"
+msgstr "Elekeza kwenye GPS yangu"
+
+#: business/templates/business/post_item.html:838
+msgid "Selected Location:"
+msgstr "Eneo Lililochaguliwa:"
+
+#: business/templates/business/post_item.html:839
+msgid "Click anywhere on the map or drag the pin."
+msgstr "Bonyeza popote kwenye ramani au sogeza pini."
+
+#: business/templates/business/post_item.html:845
+msgid "Confirm Location"
+msgstr "Thibitisha Eneo"
+
+#: business/templates/business/post_item.html:893
+#: business/templates/business/post_item.html:911
+msgid "Filled!"
+msgstr "Imewekwa!"
+
+#: business/templates/business/post_item.html:1090
+msgid "Geolocation is not supported by your browser."
+msgstr "Kifaa chako hakiruhusu kusoma eneo la GPS."
+
+#: business/templates/business/post_item.html:1136
+msgid ""
+"Could not access your location. Please check your browser location "
+"permissions."
+msgstr ""
+
+#: business/templates/business/post_item.html:1251
+msgid ""
+"Place not found. Try searching with city name (e.g. Chukwani, Zanzibar)."
+msgstr "Tafuta sehemu (mfano: Chukwani, Zanzibar)..."
+
+#: business/templates/business/post_item.html:1330
+msgid "Publishing product..."
+msgstr "Inapakia bidhaa sokoni..."
+
+#: business/templates/business/select_category.html:5
+msgid "Select Product Category"
+msgstr "Chagua Kategoria ya Bidhaa"
+
+#: business/templates/business/select_category.html:75
+msgid "Step 1 of Selling"
+msgstr "Hatua ya 1 ya Uuzaji"
+
+#: business/templates/business/select_category.html:77
+msgid "What are you selling today?"
+msgstr "Unauza nini leo?"
+
+#: business/templates/business/select_category.html:79
+msgid "Choose a subcategory in"
+msgstr "Chagua kundi dogo ndani ya"
+
+#: business/templates/business/select_category.html:81
+msgid "Back"
+msgstr "Rudi Nyuma"
+
+#: business/templates/business/select_category.html:84
+msgid ""
+"Choose a category for your product to get the right specifications, units, "
+"and form fields."
+msgstr ""
+"Chagua kategoria ya bidhaa yako ili mfumo ukupe sifa, vipimo (units), na "
+"fomu sahihi."
+
+#: business/templates/business/select_category.html:91
+msgid "Search category (e.g. Phone, Laptop, Clothing, Food)..."
+msgstr "Tafuta kategoria (mfano: Simu, Laptop, Nguo, Vyakula)..."
+
+#: business/templates/business/select_category.html:108
+msgid "View Subcategories"
+msgstr "Tazama Makundi"
+
+#: business/templates/business/select_category.html:111
+msgid "Post Directly"
+msgstr "Weka Tangazo Moja kwa Moja"
+
+#: business/templates/business/select_category.html:119
+msgid "No categories found."
+msgstr "Hakuna kategoria zilizopatikana."
+
+#: management/templates/management/partials/_git_sync_modal.html:17
+msgid "cPanel Git Live Synchronization"
+msgstr "Usawazishaji wa Moja kwa Moja wa Git na cPanel"
+
+#: management/templates/management/partials/_git_sync_modal.html:20
+msgid "Pull latest GitHub commits directly into cPanel & reload Python app"
+msgstr "Vuta mabadiliko ya hivi karibuni kutoka GitHub kwenda cPanel na uanzishe upya programu ya Python"
+
+#: management/templates/management/partials/_git_sync_modal.html:24
+#: management/templates/management/partials/_git_sync_modal.html:88
+msgid "Close"
+msgstr "Funga"
+
+#: management/templates/management/partials/_git_sync_modal.html:36
+msgid "Local cPanel Commit"
+msgstr "Commit ya Sasa kwenye cPanel"
+
+#: management/templates/management/partials/_git_sync_modal.html:40
+msgid "Loading commit details..."
+msgstr "Maelezo ya bidhaa"
+
+#: management/templates/management/partials/_git_sync_modal.html:48
+msgid "Latest on GitHub"
+msgstr "Ya Hivi Karibuni GitHub"
+
+#: management/templates/management/partials/_git_sync_modal.html:56
+msgid "Checking repository..."
+msgstr "Inakagua hazina ya kodi..."
+
+#: management/templates/management/partials/_git_sync_modal.html:65
+msgid "Deployment Agent Execution Log"
+msgstr "Kumbukumbu ya Utekelezaji wa Deployment"
+
+#: management/templates/management/partials/_git_sync_modal.html:68
+msgid "Re-check GitHub"
+msgstr "Kagua Tena GitHub"
+
+#: management/templates/management/partials/_git_sync_modal.html:84
+msgid "Touches tmp/restart.txt to reload Passenger"
+msgstr "Inagusa tmp/restart.txt ili kuanzisha upya Passenger"
+
+#: management/templates/management/partials/_git_sync_modal.html:92
+msgid "Execute Sync to cPanel"
+msgstr "Tekeleza Usawazishaji kwenye cPanel"
 
 #: u_connect/settings.py:158
 msgid "English"
@@ -577,8 +1619,235 @@ msgstr "Kiswahili"
 msgid "Arabic"
 msgstr "Kiarabu"
 
-#~ msgid "Add to Cart"
-#~ msgstr "Weka Kwenye Riksho"
+#: users/templates/users/login.html:5 users/templates/users/register.html:316
+msgid "Sign In (Login)"
+msgstr "Ingia (Login)"
 
-#~ msgid "Buy Now"
-#~ msgstr "Nunua Sasa"
+#: users/templates/users/login.html:27
+msgid "Welcome Back to"
+msgstr "Karibu Tena"
+
+#: users/templates/users/login.html:31
+msgid "Connect, Buy, and Transform Your Campus Lifestyle."
+msgstr "Unganisha, Nunua, na Ubadilishe Mtindo Wako wa Maisha."
+
+#: users/templates/users/login.html:42
+msgid "Quality Products"
+msgstr "Bidhaa Zangu"
+
+#: users/templates/users/login.html:43
+msgid "Verified quality and inspected goods."
+msgstr "Ubora wa kuhakikishwa."
+
+#: users/templates/users/login.html:53
+msgid "Secure Payments"
+msgstr "Malipo Salama"
+
+#: users/templates/users/login.html:54
+msgid "Pay with maximum escrow protection."
+msgstr "Lipa kwa usalama zaidi."
+
+#: users/templates/users/login.html:64
+msgid "Fast Delivery"
+msgstr "Lipa Baada ya Kupokea"
+
+#: users/templates/users/login.html:65
+msgid "On time, every time across campus."
+msgstr "Kwa wakati, kila wakati chuoni."
+
+#: users/templates/users/login.html:123
+msgid "Sign In to Your Account"
+msgstr "Ingia kwenye Akaunti"
+
+#: users/templates/users/login.html:126
+msgid "Enter your credentials to access your U-Connect account"
+msgstr "Weka taarifa zako kuingia kwenye mfumo wa U-Connect"
+
+#: users/templates/users/login.html:134
+msgid "Login Error"
+msgstr "Hitilafu ya Kuingia"
+
+#: users/templates/users/login.html:140
+msgid "Forgot Password? Reset Here"
+msgstr "Umesahau Nenosiri? Rejesha Hapa"
+
+#: users/templates/users/login.html:155
+msgid "Username or Email"
+msgstr "Username au Barua Pepe (Email)"
+
+#: users/templates/users/login.html:161
+msgid "Enter username or email..."
+msgstr "Weka username au barua pepe..."
+
+#: users/templates/users/login.html:180 users/templates/users/register.html:222
+msgid "Password"
+msgstr "Nenosiri (Password)"
+
+#: users/templates/users/login.html:182
+msgid "Click here if you forgot your password"
+msgstr "Bofya hapa kama umesahau nenosiri lako"
+
+#: users/templates/users/login.html:184
+msgid "Forgot password?"
+msgstr "Umesahau nenosiri?"
+
+#: users/templates/users/login.html:192
+msgid "Enter your password..."
+msgstr "Weka nenosiri lako..."
+
+#: users/templates/users/login.html:198 users/templates/users/register.html:235
+#: users/templates/users/register.html:264
+msgid "Toggle password visibility"
+msgstr "Badilisha muonekano wa nenosiri"
+
+#: users/templates/users/login.html:199 users/templates/users/register.html:236
+#: users/templates/users/register.html:265
+msgid "Show / Hide password"
+msgstr "Onyesha / Ficha nenosiri"
+
+#: users/templates/users/login.html:217
+msgid "SIGN IN (LOGIN)"
+msgstr "INGIA (LOGIN)"
+
+#: users/templates/users/login.html:229
+msgid "Forgot Password?"
+msgstr "Umesahau Nenosiri?"
+
+#: users/templates/users/login.html:230
+msgid "Reset account via OTP sent to your email."
+msgstr "Rejesha akaunti kwa nambari ya OTP kupitia email yako."
+
+#: users/templates/users/login.html:234
+msgid "Reset Password"
+msgstr "Rejesha Nenosiri"
+
+#: users/templates/users/login.html:243
+msgid "Need Help Signing In?"
+msgstr "Unashindwa Kuingia?"
+
+#: users/templates/users/login.html:244 users/templates/users/register.html:303
+msgid "Chat with our support team in real-time."
+msgstr "Ongea na kitengo cha msaada kwa mubashara kupitia Live Chat."
+
+#: users/templates/users/login.html:248 users/templates/users/register.html:307
+msgid "Live Chat"
+msgstr "Ujumbe"
+
+#: users/templates/users/login.html:256
+msgid "Don't have an account yet?"
+msgstr "Huna akaunti bado?"
+
+#: users/templates/users/login.html:257
+msgid "Join U-Connect (Register)"
+msgstr "Jiunge na U-Connect (Register)"
+
+#: users/templates/users/register.html:5
+#: users/templates/users/register.html:123
+msgid "Create an Account"
+msgstr "Fungua Akaunti Mpya"
+
+#: users/templates/users/register.html:27
+msgid "Start Your Journey on"
+msgstr "Anza Safari Yako kwenye"
+
+#: users/templates/users/register.html:31
+msgid ""
+"Join thousands of students buying, selling, and connecting securely across "
+"campus."
+msgstr ""
+
+#: users/templates/users/register.html:42
+msgid "Free Registration"
+msgstr "Usajili wa Bure"
+
+#: users/templates/users/register.html:43
+msgid "Set up your student account in under a minute."
+msgstr "Fungua akaunti yako ya mwanafunzi chini ya dakika moja."
+
+#: users/templates/users/register.html:53
+msgid "Verified Campus Community"
+msgstr "Jamii Iliyothibitishwa ya Chuo"
+
+#: users/templates/users/register.html:54
+msgid "Safe transactions with student emails & OTP verification."
+msgstr "Miamala salama kupitia barua pepe za chuo na uthibitisho wa OTP."
+
+#: users/templates/users/register.html:64
+msgid "Direct WhatsApp & Escrow"
+msgstr "Mawasiliano ya WhatsApp & Malipo Salama"
+
+#: users/templates/users/register.html:65
+msgid "Connect directly with buyers and sellers effortlessly."
+msgstr "Wasiliana moja kwa moja na wanunuzi na wauzaji bila usumbufu."
+
+#: users/templates/users/register.html:126
+msgid "Fill in your details below to join the U-Connect campus network."
+msgstr "Jaza taarifa zako hapa chini kujiunga na mtandao wa chuo wa U-Connect."
+
+#: users/templates/users/register.html:134
+msgid "Registration Error"
+msgstr "Hitilafu ya Usajili"
+
+#: users/templates/users/register.html:150
+msgid "Username"
+msgstr "Jina la Mtumiaji (Username)"
+
+#: users/templates/users/register.html:156
+msgid "Choose a username (e.g. johndoe)"
+msgstr "Chagua username (mfano johndoe)"
+
+#: users/templates/users/register.html:174
+msgid "Email Address"
+msgstr "Barua Pepe (Email)"
+
+#: users/templates/users/register.html:180
+msgid "Enter your university or personal email"
+msgstr "Weka barua pepe ya chuo au binafsi"
+
+#: users/templates/users/register.html:185
+msgid "Required — a 6-digit OTP will be sent here to verify."
+msgstr "Lazima — tutakutumia tarakimu 6 za OTP kuthibitisha."
+
+#: users/templates/users/register.html:198
+msgid "Phone / WhatsApp Number"
+msgstr "Simu / WhatsApp"
+
+#: users/templates/users/register.html:204
+msgid "e.g. 0712345678"
+msgstr "mfano 0712345678"
+
+#: users/templates/users/register.html:209
+msgid "Required — buyers & sellers reach you via this number."
+msgstr "Lazima — wanunuzi na wauzaji watakutafuta kupitia namba hii."
+
+#: users/templates/users/register.html:229
+msgid "Create a strong password..."
+msgstr "Weka nenosiri imara..."
+
+#: users/templates/users/register.html:251
+msgid "Confirm Password"
+msgstr "Thibitisha Eneo"
+
+#: users/templates/users/register.html:258
+msgid "Repeat password for confirmation..."
+msgstr "Rudia nenosiri kuthibitisha..."
+
+#: users/templates/users/register.html:279
+msgid "REGISTER & RECEIVE OTP"
+msgstr "SAJILI & POKEA OTP"
+
+#: users/templates/users/register.html:291
+msgid "Safe & Verified"
+msgstr "Salama na Yenye Uhakika"
+
+#: users/templates/users/register.html:292
+msgid "We will email you a 6-digit OTP code to verify your account."
+msgstr "Tutakutumia tarakimu 6 za OTP kwenye barua pepe yako ili kuthibitisha akaunti."
+
+#: users/templates/users/register.html:302
+msgid "Questions or Inquiries?"
+msgstr "Una Maswali au Shida?"
+
+#: users/templates/users/register.html:315
+msgid "Already have an account?"
+msgstr "Tayari una akaunti?"

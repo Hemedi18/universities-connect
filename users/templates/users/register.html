@@ -1,39 +1,350 @@
 {% extends 'business/base.html' %}
+{% load static %}
+{% load i18n %}
 
-{% block title %}Register - U-Connect{% endblock %}
+{% block title %}{% trans "Create an Account" %} · U-Connect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth-split.css' %}?v=2">
+{% endblock %}
+
+{% block body_class %} auth-page{% endblock %}
 
 {% block content %}
-<div class="uc-page">
-    <div class="uc-auth">
-        <h2>Join U-Connect</h2>
-        <p class="text-muted small mb-3">Jiunge na soko la chuo. Weka barua pepe na namba ya WhatsApp — utapokea nambari ya OTP kuthibitisha akaunti yako.</p>
-        <form method="post" class="uc-form">
-            {% csrf_token %}
+<div class="uc-auth-split-wrapper">
+    <div class="uc-auth-card">
+        
+        <!-- ============================================================== -->
+        <!-- LEFT BRAND BANNER & VALUE PROPOSITIONS                        -->
+        <!-- ============================================================== -->
+        <div class="uc-auth-banner">
+            <div>
+                <!-- Brand Logo -->
+                <a href="{% url 'customer:home' %}" class="uc-auth-brand-logo" title="U-Connect">
+                    U-<span class="brand-accent">Connect</span>
+                </a>
+
+                <!-- Big Welcoming Heading -->
+                <h1 class="uc-auth-banner-title">
+                    {% trans "Start Your Journey on" %}
+                    <span class="highlight-green">U-Connect</span>
+                </h1>
+                <p class="uc-auth-banner-sub">
+                    {% trans "Join thousands of students buying, selling, and connecting securely across campus." %}
+                </p>
+
+                <!-- Value Props List -->
+                <div class="uc-auth-perks-list">
+                    <!-- Perk 1: Free Registration -->
+                    <div class="uc-auth-perk-item">
+                        <div class="uc-auth-perk-icon">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        <div class="uc-auth-perk-text">
+                            <h6>{% trans "Free Registration" %}</h6>
+                            <p>{% trans "Set up your student account in under a minute." %}</p>
+                        </div>
+                    </div>
+
+                    <!-- Perk 2: Verified Community -->
+                    <div class="uc-auth-perk-item">
+                        <div class="uc-auth-perk-icon">
+                            <i class="bi bi-patch-check-fill"></i>
+                        </div>
+                        <div class="uc-auth-perk-text">
+                            <h6>{% trans "Verified Campus Community" %}</h6>
+                            <p>{% trans "Safe transactions with student emails & OTP verification." %}</p>
+                        </div>
+                    </div>
+
+                    <!-- Perk 3: Direct WhatsApp & Escrow -->
+                    <div class="uc-auth-perk-item">
+                        <div class="uc-auth-perk-icon">
+                            <i class="bi bi-whatsapp"></i>
+                        </div>
+                        <div class="uc-auth-perk-text">
+                            <h6>{% trans "Direct WhatsApp & Escrow" %}</h6>
+                            <p>{% trans "Connect directly with buyers and sellers effortlessly." %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stylized Floating Shopping Bag Graphic -->
+            <div class="uc-auth-banner-graphic">
+                <svg viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="waveGlowReg" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#00c875" stop-opacity="0.6"/>
+                            <stop offset="100%" stop-color="#022013" stop-opacity="0"/>
+                        </radialGradient>
+                        <linearGradient id="bagGradReg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#052c1e"/>
+                            <stop offset="50%" stop-color="#0a4d35"/>
+                            <stop offset="100%" stop-color="#042016"/>
+                        </linearGradient>
+                        <linearGradient id="bagFrontReg" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#0f5a40"/>
+                            <stop offset="100%" stop-color="#062e20"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Silk wave ambient -->
+                    <ellipse cx="120" cy="155" rx="100" ry="25" fill="url(#waveGlowReg)" />
+                    <path d="M10,165 Q60,135 120,150 T230,140 Q210,175 120,175 T10,165 Z" fill="#03251a" opacity="0.8"/>
+                    
+                    <!-- Back Bag -->
+                    <g transform="translate(60, 50) rotate(-6)">
+                        <rect x="0" y="20" width="80" height="90" rx="14" fill="url(#bagGradReg)" stroke="rgba(0, 200, 117, 0.4)" stroke-width="2"/>
+                        <path d="M25,20 C25,5 55,5 55,20" stroke="#00c875" stroke-width="4" stroke-linecap="round" fill="none"/>
+                    </g>
+
+                    <!-- Front Floating Bag with U-Connect branding -->
+                    <g transform="translate(95, 42) rotate(6)">
+                        <rect x="0" y="20" width="85" height="95" rx="14" fill="url(#bagFrontReg)" stroke="#00c875" stroke-width="2.5"/>
+                        <!-- Handles -->
+                        <path d="M26,20 C26,0 60,0 60,20" stroke="#22c55e" stroke-width="5" stroke-linecap="round" fill="none"/>
+                        <!-- White U and Red Arrow Logo on Bag -->
+                        <path d="M32,55 C32,70 52,70 52,55" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+                        <path d="M47,52 L57,42 M57,42 L50,42 M57,42 L57,49" stroke="#ef4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- RIGHT FORM & ACTIONS SECTION                                   -->
+        <!-- ============================================================== -->
+        <div class="uc-auth-form-side">
+            
+            <!-- Icon Badge Header -->
+            <div class="uc-auth-badge-icon">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+            
+            <h2 class="uc-auth-form-title">
+                {% trans "Create an Account" %}
+            </h2>
+            <p class="uc-auth-form-subtitle">
+                {% trans "Fill in your details below to join the U-Connect campus network." %}
+            </p>
+
+            <!-- Error Banner -->
             {% if form.non_field_errors %}
-            <div class="alert alert-danger p-2 mb-3 small rounded-3" role="alert">
-                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+            <div class="alert alert-danger d-flex align-items-start p-3 mb-3 rounded-3 border-danger border-opacity-25" role="alert" style="background-color: #2b0c10; color: #fca5a5;">
+                <i class="bi bi-exclamation-octagon-fill text-danger fs-5 me-2 flex-shrink-0 mt-1"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-bold text-danger small">{% trans "Registration Error" %}</div>
+                    {% for error in form.non_field_errors %}
+                        <div class="small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
-            {% for field in form %}
-            <div class="form-group mb-3">
-                <label for="{{ field.id_for_label }}" class="fw-semibold small">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}<small class="form-text text-muted d-block mt-1">{{ field.help_text }}</small>{% endif %}
-                {% if field.errors %}
-                <div class="text-danger small mt-1">
-                    {% for error in field.errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
+
+            <!-- Register Form -->
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="bi bi-person-fill label-icon"></i>
+                        <span>{% trans "Username" %}</span>
+                    </label>
+                    <input type="text" 
+                           name="username" 
+                           id="id_username" 
+                           class="form-control" 
+                           placeholder="{% trans 'Choose a username (e.g. johndoe)' %}" 
+                           value="{{ form.username.value|default:'' }}" 
+                           autofocus 
+                           autocapitalize="none" 
+                           autocomplete="username" 
+                           maxlength="150" 
+                           required>
+                    {% if form.username.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for err in form.username.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="id_email" class="form-label">
+                        <i class="bi bi-envelope-fill label-icon"></i>
+                        <span>{% trans "Email Address" %}</span>
+                    </label>
+                    <input type="email" 
+                           name="email" 
+                           id="id_email" 
+                           class="form-control" 
+                           placeholder="{% trans 'Enter your university or personal email' %}" 
+                           value="{{ form.email.value|default:'' }}" 
+                           autocomplete="email" 
+                           required>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.76rem; color: #94a3b8 !important;">
+                        {% trans "Required — a 6-digit OTP will be sent here to verify." %}
+                    </small>
+                    {% if form.email.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for err in form.email.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Phone / WhatsApp Field -->
+                <div class="form-group">
+                    <label for="id_phone_number" class="form-label">
+                        <i class="bi bi-whatsapp label-icon"></i>
+                        <span>{% trans "Phone / WhatsApp Number" %}</span>
+                    </label>
+                    <input type="tel" 
+                           name="phone_number" 
+                           id="id_phone_number" 
+                           class="form-control" 
+                           placeholder="{% trans 'e.g. 0712345678' %}" 
+                           value="{{ form.phone_number.value|default:'' }}" 
+                           autocomplete="tel" 
+                           required>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.76rem; color: #94a3b8 !important;">
+                        {% trans "Required — buyers & sellers reach you via this number." %}
+                    </small>
+                    {% if form.phone_number.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for err in form.phone_number.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password 1 Field -->
+                <div class="form-group">
+                    <label for="id_password1" class="form-label">
+                        <i class="bi bi-lock-fill label-icon"></i>
+                        <span>{% trans "Password" %}</span>
+                    </label>
+                    <div class="uc-password-wrap">
+                        <input type="password" 
+                               name="password1" 
+                               id="id_password1" 
+                               class="form-control" 
+                               placeholder="{% trans 'Create a strong password...' %}" 
+                               autocomplete="new-password" 
+                               required>
+                        <button type="button" 
+                                id="btn-toggle-pw1" 
+                                class="btn-toggle-eye" 
+                                aria-label="{% trans 'Toggle password visibility' %}"
+                                title="{% trans 'Show / Hide password' %}">
+                            <i class="bi bi-eye" id="toggle-pw1-icon"></i>
+                        </button>
+                    </div>
+                    {% if form.password1.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for err in form.password1.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password 2 Field (Confirm) -->
+                <div class="form-group">
+                    <label for="id_password2" class="form-label">
+                        <i class="bi bi-shield-lock-fill label-icon"></i>
+                        <span>{% trans "Confirm Password" %}</span>
+                    </label>
+                    <div class="uc-password-wrap">
+                        <input type="password" 
+                               name="password2" 
+                               id="id_password2" 
+                               class="form-control" 
+                               placeholder="{% trans 'Repeat password for confirmation...' %}" 
+                               autocomplete="new-password" 
+                               required>
+                        <button type="button" 
+                                id="btn-toggle-pw2" 
+                                class="btn-toggle-eye" 
+                                aria-label="{% trans 'Toggle password visibility' %}"
+                                title="{% trans 'Show / Hide password' %}">
+                            <i class="bi bi-eye" id="toggle-pw2-icon"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for err in form.password2.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Primary Action Button -->
+                <button type="submit" class="btn-auth-submit">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span>{% trans "REGISTER & RECEIVE OTP" %}</span>
+                </button>
+            </form>
+
+            <!-- Support & Info Helper Cards -->
+            <div class="uc-auth-helper-cards">
+                
+                <!-- Helper 1: OTP Info -->
+                <div class="uc-auth-helper-box">
+                    <div class="uc-auth-helper-info">
+                        <i class="bi bi-shield-check text-success helper-icon"></i>
+                        <div>
+                            <div class="uc-auth-helper-title">{% trans "Safe & Verified" %}</div>
+                            <div class="uc-auth-helper-desc">{% trans "We will email you a 6-digit OTP code to verify your account." %}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Helper 2: Live Support Chat -->
+                <div class="uc-auth-helper-box">
+                    <div class="uc-auth-helper-info">
+                        <i class="bi bi-headset text-success helper-icon"></i>
+                        <div>
+                            <div class="uc-auth-helper-title">{% trans "Questions or Inquiries?" %}</div>
+                            <div class="uc-auth-helper-desc">{% trans "Chat with our support team in real-time." %}</div>
+                        </div>
+                    </div>
+                    <a href="javascript:void(0)" onclick="if(window.openSupportDrawer){window.openSupportDrawer();}else{location.href='{% url 'guest_chat' %}';}" class="btn-auth-helper-action">
+                        {% trans "Live Chat" %}
+                    </a>
+                </div>
+
             </div>
-            {% endfor %}
-            <button type="submit" class="btn-submit">Sajili & Pokea OTP</button>
-            <p class="text-muted small text-center mt-2 mb-0">
-                <i class="bi bi-shield-check text-success me-1"></i>Tutakutumia nambari ya OTP (tarakimu 6) kuthibitisha.
+
+            <!-- Switch to Login Link -->
+            <p class="uc-auth-switch-link">
+                {% trans "Already have an account?" %}
+                <a href="{% url 'users:login' %}">{% trans "Sign In (Login)" %}</a>
             </p>
-        </form>
-        <p class="text-center mt-3 mb-0 text-muted">
-            Already have an account? <a href="{% url 'users:login' %}" class="text-primary fw-semibold">Login</a>
-        </p>
+
+        </div>
+
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function setupPasswordToggle(btnId, inputId, iconId) {
+        var btn = document.getElementById(btnId);
+        var input = document.getElementById(inputId);
+        var icon = document.getElementById(iconId);
+        if (btn && input && icon) {
+            btn.addEventListener('click', function() {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        }
+    }
+    setupPasswordToggle('btn-toggle-pw1', 'id_password1', 'toggle-pw1-icon');
+    setupPasswordToggle('btn-toggle-pw2', 'id_password2', 'toggle-pw2-icon');
+});
+</script>
 {% endblock %}

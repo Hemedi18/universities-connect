@@ -218,6 +218,17 @@ def get_attribute_metadata(attr_name):
 
 
 class ItemForm(forms.ModelForm):
+    remember_location = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Remember this location for my future listings",
+    )
+    set_as_default_location = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Set as my default location (auto-filled every time)",
+    )
+
     class Meta:
         model = Item
         fields = [
@@ -229,6 +240,10 @@ class ItemForm(forms.ModelForm):
             "compare_at_price",
             "stock_quantity",
             "description",
+            "general_location",
+            "specific_location",
+            "location_latitude",
+            "location_longitude",
             "campus_location",
             "shipping_weight",
             "shipping_dimensions",
@@ -266,11 +281,19 @@ class ItemForm(forms.ModelForm):
                 "placeholder": "Describe what is included, cosmetic state, battery health, receipt/warranty, or reason for selling...",
                 "id": "id_product_description",
             }),
-            "campus_location": forms.TextInput(attrs={
-                "placeholder": "e.g. UDSM Main Campus (Hall 5 / Library / CoICT Cafeteria)",
+            "general_location": forms.TextInput(attrs={
+                "placeholder": "e.g. Chukwani, Zanzibar or Mwenge, Dar es Salaam",
                 "class": "form-control",
-                "id": "id_product_location",
+                "id": "id_general_location",
             }),
+            "specific_location": forms.TextInput(attrs={
+                "placeholder": "e.g. SUMAIT University, Block B Entrance",
+                "class": "form-control",
+                "id": "id_specific_location",
+            }),
+            "location_latitude": forms.HiddenInput(attrs={"id": "id_location_latitude"}),
+            "location_longitude": forms.HiddenInput(attrs={"id": "id_location_longitude"}),
+            "campus_location": forms.HiddenInput(attrs={"id": "id_product_location"}),
             "shipping_weight": forms.NumberInput(attrs={"step": "0.01", "class": "form-control", "placeholder": "Weight in kg"}),
             "shipping_dimensions": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. 15 x 8 x 2 cm"}),
             "contact_method": forms.Select(attrs={"class": "form-select"}),

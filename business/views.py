@@ -5,7 +5,9 @@ from django.core.exceptions import ValidationError
 from django.db.models import Sum, Count, Avg
 from django.views.decorators.http import require_POST
 from .forms import ItemForm, MAX_ITEM_MEDIA, save_item_media_files, validate_uploaded_media
-from .models import Item, ItemMedia, Category, Notification, Comment
+from .models import Item, ItemMedia, Category, Notification, Comment, SellerMeetupLocation
+from .analytics import get_user_analytics, get_user_storage_breakdown
+from django.http import JsonResponse
 import json
 
 # Create your views here.
@@ -207,6 +209,22 @@ def post_item(request):
             {"categories": children, "parent_category": category},
         )
 
+    saved_locations = list(
+        SellerMeetupLocation.objects.filter(user=request.user).order_by("-is_default", "-created_at")
+    )
+    default_loc = next((loc for loc in saved_locations if loc.is_default), None)
+    saved_locations_data = [
+        {
+            "id": loc.id,
+            "general_location": loc.general_location,
+            "specific_location": loc.specific_location,
+            "latitude": loc.latitude,
+            "longitude": loc.longitude,
+            "is_default": loc.is_default,
+        }
+        for loc in saved_locations
+    ]
+
     if request.method == "POST":
         form = ItemForm(request.POST, request.FILES, category=category)
         if form.is_valid():
@@ -217,6 +235,35 @@ def post_item(request):
             if not (form.instance.contact_phone or "").strip():
                 form.instance.contact_phone = phone
             item = form.save()
+
+            # Handle remembering location or setting default
+            remember = form.cleaned_data.get("remember_location")
+            set_default = form.cleaned_data.get("set_as_default_location")
+            gen_loc = (item.general_location or "").strip()
+            spec_loc = (item.specific_location or "").strip()
+
+            if (remember or set_default) and (gen_loc or spec_loc):
+                if set_default:
+                    SellerMeetupLocation.objects.filter(user=request.user).update(is_default=False)
+                loc, created = SellerMeetupLocation.objects.get_or_create(
+                    user=request.user,
+                    general_location=gen_loc,
+                    specific_location=spec_loc,
+                    defaults={
+                        "latitude": item.location_latitude,
+                        "longitude": item.location_longitude,
+                        "is_default": bool(set_default),
+                    },
+                )
+                if not created:
+                    if item.location_latitude is not None:
+                        loc.latitude = item.location_latitude
+                    if item.location_longitude is not None:
+                        loc.longitude = item.location_longitude
+                    if set_default:
+                        loc.is_default = True
+                    loc.save()
+
             err = _process_item_media(request, item, require_image=True)
             if err:
                 item.delete()
@@ -227,14 +274,24 @@ def post_item(request):
                     return redirect("company:dashboard")
                 return redirect("business:personal_dashboard")
     else:
-        # Pre-fill registered phone and email by default for seller convenience
+        # Pre-fill registered phone, email, and default location by default for seller convenience
+        initial_data = {
+            "contact_phone": phone,
+            "contact_email": email,
+            "contact_method": "phone",
+        }
+        if default_loc:
+            initial_data.update({
+                "general_location": default_loc.general_location,
+                "specific_location": default_loc.specific_location,
+                "location_latitude": default_loc.latitude,
+                "location_longitude": default_loc.longitude,
+                "remember_location": True,
+                "set_as_default_location": True,
+            })
         form = ItemForm(
             category=category,
-            initial={
-                "contact_phone": phone,
-                "contact_email": email,
-                "contact_method": "phone",
-            },
+            initial=initial_data,
         )
     return render(
         request,
@@ -246,6 +303,9 @@ def post_item(request):
             "max_media": MAX_ITEM_MEDIA,
             "registered_phone": phone,
             "registered_email": email,
+            "saved_locations": saved_locations,
+            "saved_locations_json": json.dumps(saved_locations_data),
+            "default_location": default_loc,
         },
     )
 
@@ -262,10 +322,54 @@ def edit_item(request, item_id):
     if item.seller != request.user:
         return redirect("customer:home")
 
+    saved_locations = list(
+        SellerMeetupLocation.objects.filter(user=request.user).order_by("-is_default", "-created_at")
+    )
+    default_loc = next((loc for loc in saved_locations if loc.is_default), None)
+    saved_locations_data = [
+        {
+            "id": loc.id,
+            "general_location": loc.general_location,
+            "specific_location": loc.specific_location,
+            "latitude": loc.latitude,
+            "longitude": loc.longitude,
+            "is_default": loc.is_default,
+        }
+        for loc in saved_locations
+    ]
+
     if request.method == "POST":
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
+
+            remember = form.cleaned_data.get("remember_location")
+            set_default = form.cleaned_data.get("set_as_default_location")
+            gen_loc = (item.general_location or "").strip()
+            spec_loc = (item.specific_location or "").strip()
+
+            if (remember or set_default) and (gen_loc or spec_loc):
+                if set_default:
+                    SellerMeetupLocation.objects.filter(user=request.user).update(is_default=False)
+                loc, created = SellerMeetupLocation.objects.get_or_create(
+                    user=request.user,
+                    general_location=gen_loc,
+                    specific_location=spec_loc,
+                    defaults={
+                        "latitude": item.location_latitude,
+                        "longitude": item.location_longitude,
+                        "is_default": bool(set_default),
+                    },
+                )
+                if not created:
+                    if item.location_latitude is not None:
+                        loc.latitude = item.location_latitude
+                    if item.location_longitude is not None:
+                        loc.longitude = item.location_longitude
+                    if set_default:
+                        loc.is_default = True
+                    loc.save()
+
             err = _process_item_media(request, item, require_image=True)
             if err:
                 messages.error(request, err)
@@ -289,8 +393,40 @@ def edit_item(request, item_id):
             "item": item,
             "registered_phone": phone,
             "registered_email": email,
+            "saved_locations": saved_locations,
+            "saved_locations_json": json.dumps(saved_locations_data),
+            "default_location": default_loc,
         },
     )
+
+
+@login_required
+@require_POST
+def set_default_location(request, location_id):
+    loc = get_object_or_404(SellerMeetupLocation, id=location_id, user=request.user)
+    SellerMeetupLocation.objects.filter(user=request.user).exclude(id=loc.id).update(is_default=False)
+    loc.is_default = True
+    loc.save(update_fields=["is_default"])
+    return JsonResponse({
+        "success": True,
+        "message": "Location set as default.",
+        "location": {
+            "id": loc.id,
+            "general_location": loc.general_location,
+            "specific_location": loc.specific_location,
+            "latitude": loc.latitude,
+            "longitude": loc.longitude,
+            "is_default": True,
+        },
+    })
+
+
+@login_required
+@require_POST
+def delete_saved_location(request, location_id):
+    loc = get_object_or_404(SellerMeetupLocation, id=location_id, user=request.user)
+    loc.delete()
+    return JsonResponse({"success": True, "message": "Saved location removed."})
 
 
 @login_required
@@ -393,64 +529,96 @@ def company_dashboard(request):
 
 @login_required
 def personal_dashboard(request):
-    # Filter items sold by the user (excluding those assigned to a company profile if any,
-    # or just all items by this user if you want a unified view)
+    analytics = get_user_analytics(request.user)
     items = Item.objects.filter(seller=request.user).order_by("-created_at")
 
-    # Overview Stats
-    total_products = items.count()
-    total_views = items.aggregate(Sum("views"))["views__sum"] or 0
+    total_products = analytics.get("total_listings", items.count())
+    total_views = analytics.get("total_views", 0)
+    total_clicks = analytics.get("total_clicks", 0)
+    click_through_rate = analytics.get("click_through_rate", 0.0)
+    total_read_chats = analytics.get("total_read_chats", 0)
+    total_buyers = analytics.get("total_buyers", 0)
+    storage = analytics.get("storage", {})
+    categories_data = analytics.get("categories", [])
 
     # Comments on User's Products
     recent_comments = Comment.objects.filter(item__seller=request.user).order_by(
         "-created_at"
     )[:20]
 
-    # Graph 1: Views per Category
-    views_per_category = (
-        items.values("category_obj__name")
-        .annotate(total_views=Sum("views"))
-        .order_by("-total_views")
-    )
-    cat_labels = [
-        x["category_obj__name"] or "Uncategorized" for x in views_per_category
-    ]
-    cat_data = [x["total_views"] for x in views_per_category]
-
-    # Graph 2: Items Status
+    # Product status counts
     status_counts = items.values("status").annotate(count=Count("id"))
     status_labels = [x["status"].title() for x in status_counts]
     status_data = [x["count"] for x in status_counts]
 
     # Trending (Top Viewed)
-    trending_items = items.order_by("-views")[:5]
+    trending_items = items.order_by("-views")[:6]
 
     watchlist_count = 0
     if hasattr(request.user, "profile"):
         watchlist_count = request.user.profile.watchlist.count()
 
-    # Dummy data for spending/orders (until Order model is implemented)
-    spending_labels = ["Electronics", "Food", "Fashion"]
-    spending_data = [0, 0, 0]
-    recent_orders = []
-
     context = {
         "items": items,
         "total_products": total_products,
+        "active_listings": analytics.get("active_listings", 0),
+        "sold_listings": analytics.get("sold_listings", 0),
         "total_views": total_views,
-        "cat_labels": json.dumps(cat_labels),
-        "cat_data": json.dumps(cat_data),
-        "status_labels": json.dumps(status_labels),
-        "status_data": json.dumps(status_data),
+        "total_clicks": total_clicks,
+        "click_through_rate": click_through_rate,
+        "total_read_chats": total_read_chats,
+        "total_buyers": total_buyers,
+        "storage": storage,
+        "categories_data": categories_data,
         "trending_items": trending_items,
         "recent_comments": recent_comments,
-        "spending_labels": json.dumps(spending_labels),
-        "spending_data": json.dumps(spending_data),
-        "recent_orders": recent_orders,
         "watchlist_count": watchlist_count,
+        "status_labels": json.dumps(status_labels),
+        "status_data": json.dumps(status_data),
+        # Chart.js JSON datasets
+        "chart_categories_json": analytics.get("chart_categories_json", "[]"),
+        "chart_views_json": analytics.get("chart_views_json", "[]"),
+        "chart_clicks_json": analytics.get("chart_clicks_json", "[]"),
+        "chart_chats_json": analytics.get("chart_chats_json", "[]"),
+        "chart_buyers_json": analytics.get("chart_buyers_json", "[]"),
+        "chart_storage_mb_json": analytics.get("chart_storage_mb_json", "[]"),
+        # Legacy compatibility
+        "cat_labels": analytics.get("chart_categories_json", "[]"),
+        "cat_data": analytics.get("chart_views_json", "[]"),
     }
 
     return render(request, "business/personal_dashboard.html", context)
+
+
+@login_required
+@require_POST
+def upgrade_storage_plan(request):
+    """
+    Handle upgrade storage tier request.
+    Prepared cleanly for billing/payment gateway integration (M-Pesa, Tigo Pesa, TanCoin).
+    """
+    plan = request.POST.get("plan_code") or request.POST.get("plan") or "pro"
+    PLAN_QUOTAS = {
+        "free": 100,
+        "pro": 1000,
+        "business": 5000,
+    }
+    if plan not in PLAN_QUOTAS:
+        messages.error(request, "Invalid storage plan selected.")
+        return redirect("business:personal_dashboard")
+
+    profile = getattr(request.user, "profile", None)
+    if profile:
+        profile.storage_plan = plan
+        profile.storage_quota_mb = PLAN_QUOTAS[plan]
+        profile.save(update_fields=["storage_plan", "storage_quota_mb"])
+        messages.success(
+            request,
+            f"Storage plan updated to {profile.get_storage_plan_display()} ({profile.storage_quota_mb} MB)!",
+        )
+    else:
+        messages.error(request, "User profile not found.")
+    return redirect("business:personal_dashboard")
 
 
 @login_required

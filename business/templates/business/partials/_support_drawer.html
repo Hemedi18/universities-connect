@@ -1,7 +1,8 @@
 {% load static %}
 {% load i18n %}
 <!-- U-Connect Floating AI / Live Support Launcher -->
-<div id="uc-ai-help-bubble" class="uc-ai-help-bubble" role="button" aria-label="{% trans 'Help & Support / AI Assistant' %}" title="{% trans 'Help & Support / AI Assistant' %}">
+<div id="uc-ai-help-bubble" class="uc-ai-help-bubble" role="button"
+    aria-label="{% trans 'Help & Support / AI Assistant' %}" title="{% trans 'Help & Support / AI Assistant' %}">
     <div class="uc-ai-bubble-inner">
         <i class="bi bi-stars uc-sparkle-glow"></i>
         <i class="bi bi-chat-heart-fill uc-chat-icon"></i>
@@ -14,7 +15,8 @@
 <div id="uc-support-backdrop" class="uc-support-backdrop"></div>
 
 <!-- ChatGPT-Style Sliding Sidebar Drawer -->
-<aside id="uc-support-sidebar" class="uc-support-sidebar" role="dialog" aria-modal="true" aria-labelledby="ucDrawerTitle">
+<aside id="uc-support-sidebar" class="uc-support-sidebar" role="dialog" aria-modal="true"
+    aria-labelledby="ucDrawerTitle">
     <!-- Header -->
     <div class="uc-drawer-header">
         <div class="d-flex align-items-center gap-2">
@@ -31,19 +33,22 @@
             </div>
         </div>
         <div class="d-flex align-items-center gap-1">
-            <a href="{% url 'guest_chat' %}" class="btn btn-sm btn-outline-light py-0 px-2 small" title="{% trans 'Open Full Page Chat' %}" style="font-size: 0.72rem;">
+            <a href="{% url 'guest_chat' %}" class="btn btn-sm btn-outline-light py-0 px-2 small"
+                title="{% trans 'Open Full Page Chat' %}" style="font-size: 0.72rem;">
                 <i class="bi bi-arrows-fullscreen"></i> Full
             </a>
-            <button type="button" class="uc-drawer-close" id="ucDrawerClose" aria-label="{% trans 'Close Support Drawer' %}">&times;</button>
+            <button type="button" class="uc-drawer-close" id="ucDrawerClose"
+                aria-label="{% trans 'Close Support Drawer' %}">&times;</button>
         </div>
     </div>
 
     <!-- Quick Question Chips -->
     <div class="uc-drawer-chips">
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "💡 How do I buy products on campus?" %}{% endfilter %}')">{% trans "💡 How to buy" %}</button>
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "📦 How do I post an item or start selling?" %}{% endfilter %}')">{% trans "📦 How to sell" %}</button>
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "⚠️ I encountered an error or problem on this page." %}{% endfilter %}')">{% trans "⚠️ Report issue" %}</button>
-        <button type="button" class="uc-chip uc-chip-camera" onclick="triggerPageCapture()"><i class="bi bi-camera-fill me-1"></i>{% trans "Take Screenshot" %}</button>
+        <button type="button" class="uc-chip" data-prompt="{% trans '💡 How do I buy products on campus?' %}">{% trans "💡 How to buy" %}</button>
+        <button type="button" class="uc-chip" data-prompt="{% trans '📦 How do I post an item or start selling?' %}">{% trans "📦 How to sell" %}</button>
+        <button type="button" class="uc-chip" data-prompt="{% trans '⚠️ I encountered an error or problem on this page.' %}">{% trans "⚠️ Report issue" %}</button>
+        <button type="button" class="uc-chip uc-chip-camera" onclick="triggerPageCapture()"><i
+                class="bi bi-camera-fill me-1"></i>{% trans "Take Screenshot" %}</button>
     </div>
 
     <!-- Chat & Feedback Feed -->
@@ -77,7 +82,8 @@
                 <div class="uc-screenshot-url text-truncate" id="ucScreenshotUrl"></div>
             </div>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="ucRemoveScreenshotBtn" title="{% trans 'Remove screenshot' %}">
+        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="ucRemoveScreenshotBtn"
+            title="{% trans 'Remove screenshot' %}">
             <i class="bi bi-x-lg"></i>
         </button>
     </div>
@@ -85,15 +91,19 @@
     <!-- Composer Footer -->
     <div class="uc-drawer-footer">
         <div class="d-flex align-items-center justify-content-between mb-2">
-            <button type="button" class="btn btn-sm btn-outline-primary uc-camera-btn" id="ucCapturePageBtn" title="{% trans 'Capture page screenshot for support team' %}">
+            <button type="button" class="btn btn-sm btn-outline-primary uc-camera-btn" id="ucCapturePageBtn"
+                title="{% trans 'Capture page screenshot for support team' %}">
                 <i class="bi bi-camera-fill me-1"></i>
                 <span id="ucCaptureBtnText">{% trans "Capture Page Screenshot" %}</span>
             </button>
-            <span class="small text-muted" style="font-size: 0.72rem;"><i class="bi bi-shield-check text-success me-1"></i>{% trans "100% Secure" %}</span>
+            <span class="small text-muted" style="font-size: 0.72rem;"><i
+                    class="bi bi-shield-check text-success me-1"></i>{% trans "100% Secure" %}</span>
         </div>
         <div class="uc-drawer-input-row">
-            <textarea id="ucDrawerInput" rows="2" class="uc-drawer-textarea" placeholder="{% trans 'Describe your issue or ask anything here...' %}" maxlength="2500"></textarea>
-            <button type="button" class="uc-drawer-send-btn" id="ucDrawerSendBtn" aria-label="{% trans 'Send message' %}">
+            <textarea id="ucDrawerInput" rows="2" class="uc-drawer-textarea"
+                placeholder="{% trans 'Describe your issue or ask anything here...' %}" maxlength="2500"></textarea>
+            <button type="button" class="uc-drawer-send-btn" id="ucDrawerSendBtn"
+                aria-label="{% trans 'Send message' %}">
                 <i class="bi bi-send-fill"></i>
             </button>
         </div>
@@ -104,779 +114,859 @@
 <div id="ucScreenshotLightbox" class="uc-screenshot-lightbox" onclick="this.classList.remove('is-open')">
     <div class="uc-lightbox-dialog" onclick="event.stopPropagation()">
         <img id="ucLightboxImg" src="" alt="Full Screenshot" />
-        <button type="button" class="uc-lightbox-close" onclick="document.getElementById('ucScreenshotLightbox').classList.remove('is-open')">&times;</button>
+        <button type="button" class="uc-lightbox-close"
+            onclick="document.getElementById('ucScreenshotLightbox').classList.remove('is-open')">&times;</button>
     </div>
 </div>
 
 <style>
-/* Floating Help Launcher */
-.uc-ai-help-bubble {
-    position: fixed;
-    bottom: 82px;
-    right: 20px;
-    z-index: 1045;
-    cursor: pointer;
-    user-select: none;
-    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-@media (min-width: 768px) {
+    /* Floating Help Launcher */
     .uc-ai-help-bubble {
-        bottom: 28px;
-        right: 28px;
+        position: fixed;
+        bottom: 82px;
+        right: 20px;
+        z-index: 1045;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-}
-.uc-ai-help-bubble:hover {
-    transform: translateY(-4px) scale(1.04);
-}
-.uc-ai-bubble-inner {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    color: #ffffff;
-    padding: 10px 16px;
-    border-radius: 999px;
-    box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
-    font-size: 0.88rem;
-    font-weight: 700;
-    position: relative;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-.uc-sparkle-glow {
-    font-size: 1.1rem;
-    color: #fde047;
-    animation: ucSparklePulse 2s infinite ease-in-out;
-}
-.uc-chat-icon {
-    font-size: 1.05rem;
-}
-.uc-unread-dot {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ef4444;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 8px #ef4444;
-}
-@keyframes ucSparklePulse {
-    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    50% { transform: scale(1.25) rotate(15deg); opacity: 0.8; }
-}
 
-/* Backdrop */
-.uc-support-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1048;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-.uc-support-backdrop.is-open {
-    opacity: 1;
-    pointer-events: auto;
-}
+    @media (min-width: 768px) {
+        .uc-ai-help-bubble {
+            bottom: 28px;
+            right: 28px;
+        }
+    }
 
-/* Sliding Drawer Sidebar */
-.uc-support-sidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 420px;
-    max-width: 100vw;
-    background: var(--uc-surface, #ffffff);
-    color: var(--uc-ink, #0f172a);
-    box-shadow: -12px 0 35px rgba(0, 0, 0, 0.25);
-    z-index: 1050;
-    display: flex;
-    flex-direction: column;
-    transform: translateX(100%);
-    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.uc-support-sidebar.is-open {
-    transform: translateX(0);
-}
+    .uc-ai-help-bubble:hover {
+        transform: translateY(-4px) scale(1.04);
+    }
 
-/* Drawer Header */
-.uc-drawer-header {
-    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.uc-agent-avatar {
-    position: relative;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: #ffffff;
-    display: grid;
-    place-items: center;
-    font-size: 1.15rem;
-    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
-}
-.uc-agent-pulse {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #10b981;
-    border: 2px solid #1e1b4b;
-}
-.uc-online-indicator {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #10b981;
-    margin-right: 4px;
-}
-.uc-drawer-close {
-    background: transparent;
-    border: 0;
-    color: #ffffff;
-    font-size: 1.5rem;
-    line-height: 1;
-    padding: 0 4px;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.15s ease;
-}
-.uc-drawer-close:hover {
-    opacity: 1;
-}
+    .uc-ai-bubble-inner {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: #ffffff;
+        padding: 10px 16px;
+        border-radius: 999px;
+        box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+        font-size: 0.88rem;
+        font-weight: 700;
+        position: relative;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
 
-/* Quick Question Chips */
-.uc-drawer-chips {
-    display: flex;
-    gap: 6px;
-    padding: 10px 14px;
-    overflow-x: auto;
-    background: var(--uc-soft, #f8fafc);
-    border-bottom: 1px solid var(--uc-line, #e2e8f0);
-    flex-shrink: 0;
-    -webkit-overflow-scrolling: touch;
-}
-.uc-drawer-chips::-webkit-scrollbar {
-    display: none;
-}
-.uc-chip {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    font-size: 0.76rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-.uc-chip:hover {
-    background: #4f46e5;
-    color: #ffffff;
-    border-color: #4f46e5;
-}
-.uc-chip-camera {
-    background: #ecfdf5;
-    border-color: #a7f3d0;
-    color: #065f46;
-}
-.uc-chip-camera:hover {
-    background: #059669;
-    border-color: #059669;
-    color: #ffffff;
-}
+    .uc-sparkle-glow {
+        font-size: 1.1rem;
+        color: #fde047;
+        animation: ucSparklePulse 2s infinite ease-in-out;
+    }
 
-/* Drawer Body */
-.uc-drawer-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: var(--uc-surface, #ffffff);
-    -webkit-overflow-scrolling: touch;
-}
-.uc-drawer-welcome {
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(124, 58, 237, 0.04) 100%);
-    border: 1px solid rgba(79, 70, 229, 0.15);
-    border-radius: 12px;
-    padding: 14px;
-    text-align: center;
-}
-.uc-welcome-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: #4f46e5;
-    color: #ffffff;
-    display: grid;
-    place-items: center;
-    font-size: 1.25rem;
-    margin: 0 auto 8px;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-}
+    .uc-chat-icon {
+        font-size: 1.05rem;
+    }
 
-/* Chat Bubbles */
-.uc-drawer-messages {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.uc-chat-msg-row {
-    display: flex;
-    flex-direction: column;
-    max-width: 88%;
-    animation: ucMsgFadeIn 0.25s ease forwards;
-}
-@keyframes ucMsgFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.uc-chat-msg-row.from-admin {
-    align-self: flex-start;
-}
-.uc-chat-msg-row.from-user {
-    align-self: flex-end;
-}
-.uc-chat-msg-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    margin-bottom: 2px;
-    padding: 0 4px;
-}
-.from-admin .uc-chat-msg-label {
-    color: #4f46e5;
-}
-.from-user .uc-chat-msg-label {
-    color: #64748b;
-    text-align: right;
-}
-.uc-chat-bubble {
-    padding: 9px 13px;
-    border-radius: 14px;
-    font-size: 0.88rem;
-    line-height: 1.45;
-    word-break: break-word;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-.from-admin .uc-chat-bubble {
-    background: #f1f5f9;
-    color: #0f172a;
-    border-bottom-left-radius: 3px;
-    border: 1px solid #e2e8f0;
-}
-.from-user .uc-chat-bubble {
-    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-    color: #ffffff;
-    border-bottom-right-radius: 3px;
-}
-.uc-chat-bubble-time {
-    font-size: 0.65rem;
-    margin-top: 3px;
-    opacity: 0.75;
-    text-align: right;
-}
-.uc-chat-screenshot-link {
-    display: block;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 6px;
-    border: 1px solid rgba(0,0,0,0.1);
-    cursor: zoom-in;
-}
-.uc-chat-screenshot-link img {
-    width: 100%;
-    max-height: 180px;
-    object-fit: cover;
-    display: block;
-    background: #000;
-}
-.uc-chat-page-badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.1);
-    margin-bottom: 4px;
-    word-break: break-all;
-}
+    .uc-unread-dot {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ef4444;
+        border: 2px solid #ffffff;
+        box-shadow: 0 0 8px #ef4444;
+    }
 
-/* Screenshot Preview Bar */
-.uc-screenshot-preview-bar {
-    background: #f0fdf4;
-    border-top: 1px solid #bbf7d0;
-    border-bottom: 1px solid #bbf7d0;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-shrink: 0;
-}
-.uc-screenshot-thumb {
-    width: 52px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #86efac;
-}
-.uc-screenshot-url {
-    font-size: 0.72rem;
-    color: #15803d;
-}
+    @keyframes ucSparklePulse {
 
-/* Drawer Footer */
-.uc-drawer-footer {
-    padding: 12px 14px;
-    background: var(--uc-soft, #f8fafc);
-    border-top: 1px solid var(--uc-line, #e2e8f0);
-    flex-shrink: 0;
-}
-.uc-camera-btn {
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-}
-.uc-drawer-input-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-}
-.uc-drawer-textarea {
-    flex: 1;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    padding: 8px 12px;
-    font-size: 0.88rem;
-    line-height: 1.4;
-    resize: none;
-    outline: none;
-    background: #ffffff;
-    color: #0f172a;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.uc-drawer-textarea:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-}
-.uc-drawer-send-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #4f46e5;
-    color: #ffffff;
-    border: 0;
-    display: grid;
-    place-items: center;
-    font-size: 1.1rem;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s ease, transform 0.1s ease;
-}
-.uc-drawer-send-btn:hover {
-    background: #4338ca;
-}
-.uc-drawer-send-btn:active {
-    transform: scale(0.92);
-}
+        0%,
+        100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
 
-/* Lightbox */
-.uc-screenshot-lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 1060;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-.uc-screenshot-lightbox.is-open {
-    display: flex;
-}
-.uc-lightbox-dialog {
-    position: relative;
-    max-width: 95vw;
-    max-height: 90vh;
-}
-.uc-lightbox-dialog img {
-    max-width: 100%;
-    max-height: 90vh;
-    border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    display: block;
-}
-.uc-lightbox-close {
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #ffffff;
-    color: #000;
-    border: 0;
-    font-size: 1.3rem;
-    line-height: 1;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
+        50% {
+            transform: scale(1.25) rotate(15deg);
+            opacity: 0.8;
+        }
+    }
 
-/* Dark mode adjustments */
-body.dark-mode .uc-support-sidebar {
-    background: #0f172a;
-    color: #f1f5f9;
-}
-body.dark-mode .uc-drawer-chips,
-body.dark-mode .uc-drawer-footer {
-    background: #1e293b;
-    border-color: #334155;
-}
-body.dark-mode .uc-chip {
-    background: #1e293b;
-    color: #cbd5e1;
-    border-color: #475569;
-}
-body.dark-mode .uc-drawer-body {
-    background: #0f172a;
-}
-body.dark-mode .from-admin .uc-chat-bubble {
-    background: #1e293b;
-    color: #f1f5f9;
-    border-color: #334155;
-}
-body.dark-mode .uc-drawer-textarea {
-    background: #1e293b;
-    color: #f1f5f9;
-    border-color: #475569;
-}
+    /* Backdrop */
+    .uc-support-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1048;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .uc-support-backdrop.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Sliding Drawer Sidebar */
+    .uc-support-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 420px;
+        max-width: 100vw;
+        background: var(--uc-surface, #ffffff);
+        color: var(--uc-ink, #0f172a);
+        box-shadow: -12px 0 35px rgba(0, 0, 0, 0.25);
+        z-index: 1050;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .uc-support-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    /* Drawer Header */
+    .uc-drawer-header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .uc-agent-avatar {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+    }
+
+    .uc-agent-pulse {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #10b981;
+        border: 2px solid #1e1b4b;
+    }
+
+    .uc-online-indicator {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #10b981;
+        margin-right: 4px;
+    }
+
+    .uc-drawer-close {
+        background: transparent;
+        border: 0;
+        color: #ffffff;
+        font-size: 1.5rem;
+        line-height: 1;
+        padding: 0 4px;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.15s ease;
+    }
+
+    .uc-drawer-close:hover {
+        opacity: 1;
+    }
+
+    /* Quick Question Chips */
+    .uc-drawer-chips {
+        display: flex;
+        gap: 6px;
+        padding: 10px 14px;
+        overflow-x: auto;
+        background: var(--uc-soft, #f8fafc);
+        border-bottom: 1px solid var(--uc-line, #e2e8f0);
+        flex-shrink: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .uc-drawer-chips::-webkit-scrollbar {
+        display: none;
+    }
+
+    .uc-chip {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 0.76rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .uc-chip:hover {
+        background: #4f46e5;
+        color: #ffffff;
+        border-color: #4f46e5;
+    }
+
+    .uc-chip-camera {
+        background: #ecfdf5;
+        border-color: #a7f3d0;
+        color: #065f46;
+    }
+
+    .uc-chip-camera:hover {
+        background: #059669;
+        border-color: #059669;
+        color: #ffffff;
+    }
+
+    /* Drawer Body */
+    .uc-drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: var(--uc-surface, #ffffff);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .uc-drawer-welcome {
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(124, 58, 237, 0.04) 100%);
+        border: 1px solid rgba(79, 70, 229, 0.15);
+        border-radius: 12px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .uc-welcome-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #4f46e5;
+        color: #ffffff;
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        margin: 0 auto 8px;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Chat Bubbles */
+    .uc-drawer-messages {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .uc-chat-msg-row {
+        display: flex;
+        flex-direction: column;
+        max-width: 88%;
+        animation: ucMsgFadeIn 0.25s ease forwards;
+    }
+
+    @keyframes ucMsgFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .uc-chat-msg-row.from-admin {
+        align-self: flex-start;
+    }
+
+    .uc-chat-msg-row.from-user {
+        align-self: flex-end;
+    }
+
+    .uc-chat-msg-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+        padding: 0 4px;
+    }
+
+    .from-admin .uc-chat-msg-label {
+        color: #4f46e5;
+    }
+
+    .from-user .uc-chat-msg-label {
+        color: #64748b;
+        text-align: right;
+    }
+
+    .uc-chat-bubble {
+        padding: 9px 13px;
+        border-radius: 14px;
+        font-size: 0.88rem;
+        line-height: 1.45;
+        word-break: break-word;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .from-admin .uc-chat-bubble {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-bottom-left-radius: 3px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .from-user .uc-chat-bubble {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        color: #ffffff;
+        border-bottom-right-radius: 3px;
+    }
+
+    .uc-chat-bubble-time {
+        font-size: 0.65rem;
+        margin-top: 3px;
+        opacity: 0.75;
+        text-align: right;
+    }
+
+    .uc-chat-screenshot-link {
+        display: block;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        cursor: zoom-in;
+    }
+
+    .uc-chat-screenshot-link img {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        display: block;
+        background: #000;
+    }
+
+    .uc-chat-page-badge {
+        display: inline-block;
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.1);
+        margin-bottom: 4px;
+        word-break: break-all;
+    }
+
+    /* Screenshot Preview Bar */
+    .uc-screenshot-preview-bar {
+        background: #f0fdf4;
+        border-top: 1px solid #bbf7d0;
+        border-bottom: 1px solid #bbf7d0;
+        padding: 8px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .uc-screenshot-thumb {
+        width: 52px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #86efac;
+    }
+
+    .uc-screenshot-url {
+        font-size: 0.72rem;
+        color: #15803d;
+    }
+
+    /* Drawer Footer */
+    .uc-drawer-footer {
+        padding: 12px 14px;
+        background: var(--uc-soft, #f8fafc);
+        border-top: 1px solid var(--uc-line, #e2e8f0);
+        flex-shrink: 0;
+    }
+
+    .uc-camera-btn {
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+
+    .uc-drawer-input-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .uc-drawer-textarea {
+        flex: 1;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 8px 12px;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        resize: none;
+        outline: none;
+        background: #ffffff;
+        color: #0f172a;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .uc-drawer-textarea:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .uc-drawer-send-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #4f46e5;
+        color: #ffffff;
+        border: 0;
+        display: grid;
+        place-items: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .uc-drawer-send-btn:hover {
+        background: #4338ca;
+    }
+
+    .uc-drawer-send-btn:active {
+        transform: scale(0.92);
+    }
+
+    /* Lightbox */
+    .uc-screenshot-lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 1060;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .uc-screenshot-lightbox.is-open {
+        display: flex;
+    }
+
+    .uc-lightbox-dialog {
+        position: relative;
+        max-width: 95vw;
+        max-height: 90vh;
+    }
+
+    .uc-lightbox-dialog img {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        display: block;
+    }
+
+    .uc-lightbox-close {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #000;
+        border: 0;
+        font-size: 1.3rem;
+        line-height: 1;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Dark mode adjustments */
+    body.dark-mode .uc-support-sidebar {
+        background: #0f172a;
+        color: #f1f5f9;
+    }
+
+    body.dark-mode .uc-drawer-chips,
+    body.dark-mode .uc-drawer-footer {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    body.dark-mode .uc-chip {
+        background: #1e293b;
+        color: #cbd5e1;
+        border-color: #475569;
+    }
+
+    body.dark-mode .uc-drawer-body {
+        background: #0f172a;
+    }
+
+    body.dark-mode .from-admin .uc-chat-bubble {
+        background: #1e293b;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+
+    body.dark-mode .uc-drawer-textarea {
+        background: #1e293b;
+        color: #f1f5f9;
+        border-color: #475569;
+    }
 </style>
 
 <!-- Load html2canvas asynchronously for high-fidelity screenshot capturing -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
-(function() {
-    let supportSessionId = null;
-    let supportSessionKey = localStorage.getItem('uc_support_session_key') || '';
-    let lastMsgId = 0;
-    let pollTimer = null;
-    let activeScreenshotData = null;
+    (function () {
+        let supportSessionId = null;
+        let supportSessionKey = localStorage.getItem('uc_support_session_key') || '';
+        let lastMsgId = 0;
+        let pollTimer = null;
+        let activeScreenshotData = null;
 
-    const bubble = document.getElementById('uc-ai-help-bubble');
-    const sidebar = document.getElementById('uc-support-sidebar');
-    const backdrop = document.getElementById('uc-support-backdrop');
-    const closeBtn = document.getElementById('ucDrawerClose');
-    const sendBtn = document.getElementById('ucDrawerSendBtn');
-    const input = document.getElementById('ucDrawerInput');
-    const captureBtn = document.getElementById('ucCapturePageBtn');
-    const captureBtnText = document.getElementById('ucCaptureBtnText');
-    const previewBar = document.getElementById('ucScreenshotPreviewBar');
-    const thumbImg = document.getElementById('ucScreenshotThumb');
-    const urlLabel = document.getElementById('ucScreenshotUrl');
-    const removeScreenshotBtn = document.getElementById('ucRemoveScreenshotBtn');
-    const messagesContainer = document.getElementById('ucDrawerMessages');
-    const streamBody = document.getElementById('ucDrawerBody');
-    const unreadDot = document.getElementById('uc-help-unread-badge');
+        const bubble = document.getElementById('uc-ai-help-bubble');
+        const sidebar = document.getElementById('uc-support-sidebar');
+        const backdrop = document.getElementById('uc-support-backdrop');
+        const closeBtn = document.getElementById('ucDrawerClose');
+        const sendBtn = document.getElementById('ucDrawerSendBtn');
+        const input = document.getElementById('ucDrawerInput');
+        const captureBtn = document.getElementById('ucCapturePageBtn');
+        const captureBtnText = document.getElementById('ucCaptureBtnText');
+        const previewBar = document.getElementById('ucScreenshotPreviewBar');
+        const thumbImg = document.getElementById('ucScreenshotThumb');
+        const urlLabel = document.getElementById('ucScreenshotUrl');
+        const removeScreenshotBtn = document.getElementById('ucRemoveScreenshotBtn');
+        const messagesContainer = document.getElementById('ucDrawerMessages');
+        const streamBody = document.getElementById('ucDrawerBody');
+        const unreadDot = document.getElementById('uc-help-unread-badge');
 
-    // Lightbox elements
-    const lightbox = document.getElementById('ucScreenshotLightbox');
-    const lightboxImg = document.getElementById('ucLightboxImg');
+        // Lightbox elements
+        const lightbox = document.getElementById('ucScreenshotLightbox');
+        const lightboxImg = document.getElementById('ucLightboxImg');
 
-    function openDrawer() {
-        if (!sidebar) return;
-        sidebar.classList.add('is-open');
-        backdrop.classList.add('is-open');
-        if (unreadDot) unreadDot.classList.add('d-none');
-        fetchMessages(true);
-        if (!pollTimer) {
-            pollTimer = setInterval(() => fetchMessages(false), 3500);
-        }
-        setTimeout(() => { if (input) input.focus(); }, 350);
-    }
-
-    function closeDrawer() {
-        if (!sidebar) return;
-        sidebar.classList.remove('is-open');
-        backdrop.classList.remove('is-open');
-        if (pollTimer) {
-            clearInterval(pollTimer);
-            pollTimer = null;
-        }
-    }
-
-    window.openSupportDrawer = openDrawer;
-    window.closeSupportDrawer = closeDrawer;
-
-    if (bubble) bubble.addEventListener('click', openDrawer);
-    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-    if (backdrop) backdrop.addEventListener('click', closeDrawer);
-
-    window.applyHelpPrompt = function(promptText) {
-        if (!input) return;
-        input.value = promptText;
-        input.focus();
-    };
-
-    function openLightbox(url) {
-        if (!lightbox || !lightboxImg) return;
-        lightboxImg.src = url;
-        lightbox.classList.add('is-open');
-    }
-    window.openUcLightbox = openLightbox;
-
-    // Screenshot Capture Functionality
-    async function captureCurrentPage() {
-        if (typeof html2canvas === 'undefined') {
-            alert('Mfumo wa picha unajiandaa, tafadhali subiri sekunde 2 kisha jaribu tena.');
-            return;
-        }
-
-        if (captureBtnText) captureBtnText.textContent = 'Inapiga picha...';
-        if (captureBtn) captureBtn.disabled = true;
-
-        // Temporarily hide the sidebar, backdrop and launcher bubble so they are not captured
-        const prevSidebarDisplay = sidebar.style.display;
-        const prevBackdropDisplay = backdrop.style.display;
-        const prevBubbleDisplay = bubble.style.display;
-
-        sidebar.style.display = 'none';
-        backdrop.style.display = 'none';
-        bubble.style.display = 'none';
-
-        try {
-            await new Promise(r => setTimeout(r, 120)); // Brief paint delay
-
-            const canvas = await html2canvas(document.body, {
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                scale: window.devicePixelRatio > 1.5 ? 1.5 : 1,
-                windowWidth: document.documentElement.clientWidth,
-                windowHeight: document.documentElement.clientHeight
-            });
-
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            activeScreenshotData = dataUrl;
-
-            // Show preview bar
-            if (thumbImg) thumbImg.src = dataUrl;
-            if (urlLabel) urlLabel.textContent = window.location.pathname + window.location.search;
-            if (previewBar) previewBar.classList.remove('d-none');
-
-            // Prompt in input if empty
-            if (input && !input.value.trim()) {
-                input.value = "{% filter escapejs %}{% trans 'I noticed an issue / feedback on this page: ' %}{% endfilter %}";
+        function openDrawer() {
+            if (!sidebar) return;
+            sidebar.classList.add('is-open');
+            backdrop.classList.add('is-open');
+            if (unreadDot) unreadDot.classList.add('d-none');
+            fetchMessages(true);
+            if (!pollTimer) {
+                pollTimer = setInterval(() => fetchMessages(false), 3500);
             }
-        } catch (err) {
-            console.error('Screenshot capture failed:', err);
-            alert("{% filter escapejs %}{% trans 'Could not capture screenshot directly. Please describe your issue in the message box.' %}{% endfilter %}");
-        } finally {
-            // Restore visibility
-            sidebar.style.display = prevSidebarDisplay;
-            backdrop.style.display = prevBackdropDisplay;
-            bubble.style.display = prevBubbleDisplay;
-
-            if (captureBtnText) captureBtnText.textContent = "{% filter escapejs %}{% trans 'Capture Page Screenshot' %}{% endfilter %}";
-            if (captureBtn) captureBtn.disabled = false;
-            if (input) input.focus();
-        }
-    }
-
-    window.triggerPageCapture = captureCurrentPage;
-    if (captureBtn) captureBtn.addEventListener('click', captureCurrentPage);
-
-    if (removeScreenshotBtn) {
-        removeScreenshotBtn.addEventListener('click', function() {
-            activeScreenshotData = null;
-            if (thumbImg) thumbImg.src = '';
-            if (previewBar) previewBar.classList.add('d-none');
-        });
-    }
-
-    // Helper: Escape HTML
-    function escapeHtml(text) {
-        if (!text) return '';
-        const d = document.createElement('div');
-        d.textContent = text;
-        return d.innerHTML;
-    }
-
-    // Append a single message bubble into feed
-    function appendDrawerMsg(msg, isInitial) {
-        if (!messagesContainer) return;
-        const isAdmin = (msg.sender_type === 'admin');
-        const row = document.createElement('div');
-        row.className = 'uc-chat-msg-row ' + (isAdmin ? 'from-admin' : 'from-user');
-        row.setAttribute('data-id', msg.id);
-
-        let html = '';
-        html += '<div class="uc-chat-msg-label">';
-        if (isAdmin) {
-            html += '<i class="bi bi-shield-check me-1"></i>' + escapeHtml(msg.sender_name || 'U-Connect Support');
-        } else {
-            html += escapeHtml(msg.sender_name || 'Wewe (You)');
-        }
-        html += '</div>';
-
-        html += '<div class="uc-chat-bubble">';
-
-        if (msg.image_url) {
-            html += `<a href="javascript:void(0)" class="uc-chat-screenshot-link" onclick="openUcLightbox('${encodeURI(msg.image_url)}')">
-                <img src="${encodeURI(msg.image_url)}" alt="Picha ya Skrini" />
-            </a>`;
+            setTimeout(() => { if (input) input.focus(); }, 350);
         }
 
-        if (msg.page_url) {
-            html += `<div class="uc-chat-page-badge"><i class="bi bi-link-45deg me-1"></i>${escapeHtml(msg.page_url.replace(window.location.origin, ''))}</div>`;
-        }
-
-        html += '<div>' + escapeHtml(msg.text) + '</div>';
-        html += '<div class="uc-chat-bubble-time">' + escapeHtml(msg.time || '') + '</div>';
-        html += '</div>';
-
-        row.innerHTML = html;
-        messagesContainer.appendChild(row);
-
-        if (streamBody) {
-            streamBody.scrollTop = streamBody.scrollHeight;
-        }
-
-        if (!isInitial && isAdmin && !sidebar.classList.contains('is-open')) {
-            if (unreadDot) unreadDot.classList.remove('d-none');
-        }
-    }
-
-    // Fetch messages from backend
-    async function fetchMessages(forceScroll) {
-        try {
-            const queryParams = new URLSearchParams({
-                after_id: lastMsgId,
-                session_key: supportSessionKey,
-                _t: Date.now()
-            });
-            if (supportSessionId) queryParams.set('session_id', supportSessionId);
-
-            const res = await fetch('/support-chat/api/messages/?' + queryParams.toString(), {
-                cache: 'no-store'
-            });
-            if (!res.ok) return;
-
-            const data = await res.json();
-            if (data.status === 'success') {
-                if (data.session_id) supportSessionId = data.session_id;
-
-                if (data.messages && data.messages.length > 0) {
-                    data.messages.forEach(msg => {
-                        if (msg.id > lastMsgId) {
-                            lastMsgId = msg.id;
-                            appendDrawerMsg(msg, forceScroll);
-                        }
-                    });
-                }
+        function closeDrawer() {
+            if (!sidebar) return;
+            sidebar.classList.remove('is-open');
+            backdrop.classList.remove('is-open');
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
             }
-        } catch (e) {
-            console.warn('Support messages fetch failed:', e);
         }
-    }
 
-    // CSRF helper
-    function getCsrfToken() {
-        const match = document.cookie.match(/csrftoken=([^;]+)/);
-        return match ? match[1] : '';
-    }
+        window.openSupportDrawer = openDrawer;
+        window.closeSupportDrawer = closeDrawer;
 
-    // Send support message
-    async function sendSupportMessage() {
-        const text = input.value.trim();
-        const screenshot = activeScreenshotData;
+        if (bubble) bubble.addEventListener('click', openDrawer);
+        if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+        if (backdrop) backdrop.addEventListener('click', closeDrawer);
 
-        if (!text && !screenshot) {
+        window.applyHelpPrompt = function (promptText) {
+            if (!input) return;
+            input.value = promptText;
             input.focus();
-            input.classList.add('border-danger');
-            setTimeout(() => input.classList.remove('border-danger'), 1500);
-            return;
-        }
-
-        const payload = {
-            text: text,
-            screenshot: screenshot,
-            page_url: window.location.href,
-            session_key: supportSessionKey,
-            session_id: supportSessionId
         };
 
-        if (sendBtn) sendBtn.disabled = true;
-
-        try {
-            const res = await fetch('/support-chat/api/send/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken()
-                },
-                body: JSON.stringify(payload)
+        const chipsContainer = document.querySelector('.uc-drawer-chips');
+        if (chipsContainer) {
+            chipsContainer.addEventListener('click', function (e) {
+                const chip = e.target.closest('.uc-chip[data-prompt]');
+                if (chip && chip.dataset.prompt) {
+                    window.applyHelpPrompt(chip.dataset.prompt);
+                }
             });
+        }
 
-            const data = await res.json();
-            if (data.status === 'success' && data.message) {
-                lastMsgId = Math.max(lastMsgId, data.message.id);
-                appendDrawerMsg(data.message, false);
+        function openLightbox(url) {
+            if (!lightbox || !lightboxImg) return;
+            lightboxImg.src = url;
+            lightbox.classList.add('is-open');
+        }
+        window.openUcLightbox = openLightbox;
 
-                // Reset composer
-                input.value = '';
+        // Screenshot Capture Functionality
+        async function captureCurrentPage() {
+            if (typeof html2canvas === 'undefined') {
+                alert('Mfumo wa picha unajiandaa, tafadhali subiri sekunde 2 kisha jaribu tena.');
+                return;
+            }
+
+            if (captureBtnText) captureBtnText.textContent = 'Inapiga picha...';
+            if (captureBtn) captureBtn.disabled = true;
+
+            // Temporarily hide the sidebar, backdrop and launcher bubble so they are not captured
+            const prevSidebarDisplay = sidebar.style.display;
+            const prevBackdropDisplay = backdrop.style.display;
+            const prevBubbleDisplay = bubble.style.display;
+
+            sidebar.style.display = 'none';
+            backdrop.style.display = 'none';
+            bubble.style.display = 'none';
+
+            try {
+                await new Promise(r => setTimeout(r, 120)); // Brief paint delay
+
+                const canvas = await html2canvas(document.body, {
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    scale: window.devicePixelRatio > 1.5 ? 1.5 : 1,
+                    windowWidth: document.documentElement.clientWidth,
+                    windowHeight: document.documentElement.clientHeight
+                });
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                activeScreenshotData = dataUrl;
+
+                // Show preview bar
+                if (thumbImg) thumbImg.src = dataUrl;
+                if (urlLabel) urlLabel.textContent = window.location.pathname + window.location.search;
+                if (previewBar) previewBar.classList.remove('d-none');
+
+                // Prompt in input if empty
+                if (input && !input.value.trim()) {
+                    input.value = "{% filter escapejs %}{% trans 'I noticed an issue / feedback on this page: ' %}{% endfilter %}";
+                }
+            } catch (err) {
+                console.error('Screenshot capture failed:', err);
+                alert("{% filter escapejs %}{% trans 'Could not capture screenshot directly. Please describe your issue in the message box.' %}{% endfilter %}");
+            } finally {
+                // Restore visibility
+                sidebar.style.display = prevSidebarDisplay;
+                backdrop.style.display = prevBackdropDisplay;
+                bubble.style.display = prevBubbleDisplay;
+
+                if (captureBtnText) captureBtnText.textContent = "{% filter escapejs %}{% trans 'Capture Page Screenshot' %}{% endfilter %}";
+                if (captureBtn) captureBtn.disabled = false;
+                if (input) input.focus();
+            }
+        }
+
+        window.triggerPageCapture = captureCurrentPage;
+        if (captureBtn) captureBtn.addEventListener('click', captureCurrentPage);
+
+        if (removeScreenshotBtn) {
+            removeScreenshotBtn.addEventListener('click', function () {
                 activeScreenshotData = null;
                 if (thumbImg) thumbImg.src = '';
                 if (previewBar) previewBar.classList.add('d-none');
-            } else {
-                alert(data.message || 'Hitilafu ilitokea wakati wa kutuma ujumbe.');
-            }
-        } catch (err) {
-            console.error('Error sending message:', err);
-            alert('Hitilafu ya mtandao. Tafadhali jaribu tena.');
-        } finally {
-            if (sendBtn) sendBtn.disabled = false;
-            input.focus();
+            });
         }
-    }
 
-    if (sendBtn) sendBtn.addEventListener('click', sendSupportMessage);
-    if (input) {
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendSupportMessage();
+        // Helper: Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        // Append a single message bubble into feed
+        function appendDrawerMsg(msg, isInitial) {
+            if (!messagesContainer) return;
+            const isAdmin = (msg.sender_type === 'admin');
+            const row = document.createElement('div');
+            row.className = 'uc-chat-msg-row ' + (isAdmin ? 'from-admin' : 'from-user');
+            row.setAttribute('data-id', msg.id);
+
+            let html = '';
+            html += '<div class="uc-chat-msg-label">';
+            if (isAdmin) {
+                html += '<i class="bi bi-shield-check me-1"></i>' + escapeHtml(msg.sender_name || 'U-Connect Support');
+            } else {
+                html += escapeHtml(msg.sender_name || 'Wewe (You)');
             }
-        });
-    }
+            html += '</div>';
 
-    // Initial check for unread replies on page load
-    setTimeout(() => {
-        fetchMessages(false);
-    }, 2000);
-})();
+            html += '<div class="uc-chat-bubble">';
+
+            if (msg.image_url) {
+                html += `<a href="javascript:void(0)" class="uc-chat-screenshot-link" onclick="openUcLightbox('${encodeURI(msg.image_url)}')">
+                <img src="${encodeURI(msg.image_url)}" alt="Picha ya Skrini" />
+            </a>`;
+            }
+
+            if (msg.page_url) {
+                html += `<div class="uc-chat-page-badge"><i class="bi bi-link-45deg me-1"></i>${escapeHtml(msg.page_url.replace(window.location.origin, ''))}</div>`;
+            }
+
+            html += '<div>' + escapeHtml(msg.text) + '</div>';
+            html += '<div class="uc-chat-bubble-time">' + escapeHtml(msg.time || '') + '</div>';
+            html += '</div>';
+
+            row.innerHTML = html;
+            messagesContainer.appendChild(row);
+
+            if (streamBody) {
+                streamBody.scrollTop = streamBody.scrollHeight;
+            }
+
+            if (!isInitial && isAdmin && !sidebar.classList.contains('is-open')) {
+                if (unreadDot) unreadDot.classList.remove('d-none');
+            }
+        }
+
+        // Fetch messages from backend
+        async function fetchMessages(forceScroll) {
+            try {
+                const queryParams = new URLSearchParams({
+                    after_id: lastMsgId,
+                    session_key: supportSessionKey,
+                    _t: Date.now()
+                });
+                if (supportSessionId) queryParams.set('session_id', supportSessionId);
+
+                const res = await fetch('/support-chat/api/messages/?' + queryParams.toString(), {
+                    cache: 'no-store'
+                });
+                if (!res.ok) return;
+
+                const data = await res.json();
+                if (data.status === 'success') {
+                    if (data.session_id) supportSessionId = data.session_id;
+
+                    if (data.messages && data.messages.length > 0) {
+                        data.messages.forEach(msg => {
+                            if (msg.id > lastMsgId) {
+                                lastMsgId = msg.id;
+                                appendDrawerMsg(msg, forceScroll);
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn('Support messages fetch failed:', e);
+            }
+        }
+
+        // CSRF helper
+        function getCsrfToken() {
+            const match = document.cookie.match(/csrftoken=([^;]+)/);
+            return match ? match[1] : '';
+        }
+
+        // Send support message
+        async function sendSupportMessage() {
+            const text = input.value.trim();
+            const screenshot = activeScreenshotData;
+
+            if (!text && !screenshot) {
+                input.focus();
+                input.classList.add('border-danger');
+                setTimeout(() => input.classList.remove('border-danger'), 1500);
+                return;
+            }
+
+            const payload = {
+                text: text,
+                screenshot: screenshot,
+                page_url: window.location.href,
+                session_key: supportSessionKey,
+                session_id: supportSessionId
+            };
+
+            if (sendBtn) sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/support-chat/api/send/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (data.status === 'success' && data.message) {
+                    lastMsgId = Math.max(lastMsgId, data.message.id);
+                    appendDrawerMsg(data.message, false);
+
+                    // Reset composer
+                    input.value = '';
+                    activeScreenshotData = null;
+                    if (thumbImg) thumbImg.src = '';
+                    if (previewBar) previewBar.classList.add('d-none');
+                } else {
+                    alert(data.message || 'Hitilafu ilitokea wakati wa kutuma ujumbe.');
+                }
+            } catch (err) {
+                console.error('Error sending message:', err);
+                alert('Hitilafu ya mtandao. Tafadhali jaribu tena.');
+            } finally {
+                if (sendBtn) sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        if (sendBtn) sendBtn.addEventListener('click', sendSupportMessage);
+        if (input) {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendSupportMessage();
+                }
+            });
+        }
+
+        // Initial check for unread replies on page load
+        setTimeout(() => {
+            fetchMessages(false);
+        }, 2000);
+    })();
 </script>

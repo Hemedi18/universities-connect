@@ -34,6 +34,11 @@ urlpatterns = [
     path(
         "dashboard/", views.personal_dashboard, name="personal_dashboard"
     ),  # For individual sellers
+    path(
+        "dashboard/storage/upgrade/",
+        views.upgrade_storage_plan,
+        name="upgrade_storage_plan",
+    ),
     path("notifications/", views.notifications_view, name="user_notifications"),
     path(
         "notifications/read/all/",
@@ -46,4 +51,14 @@ urlpatterns = [
         name="mark_notification_read",
     ),
     path("item/pin/<int:item_id>/", views.toggle_pin_item, name="toggle_pin_item"),
+    path(
+        "locations/<int:location_id>/set-default/",
+        views.set_default_location,
+        name="set_default_location",
+    ),
+    path(
+        "locations/<int:location_id>/delete/",
+        views.delete_saved_location,
+        name="delete_saved_location",
+    ),
 ]

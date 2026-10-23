@@ -10,7 +10,7 @@
 <div class="pdash-shell">
     <header class="pdash-top">
         <div class="pdash-top-text">
-            <p class="pdash-kicker">Seller dashboard</p>
+            <p class="pdash-kicker">Seller Dashboard</p>
             <h1>Hi, {{ user.first_name|default:user.username }}</h1>
         </div>
         <div class="pdash-top-actions">
@@ -19,44 +19,117 @@
         </div>
     </header>
 
+    <!-- Navigation Tabs -->
     <nav class="pdash-tabs" aria-label="Dashboard sections">
-        <button type="button" class="pdash-tab is-active" data-tab="overview">Overview</button>
-        <button type="button" class="pdash-tab" data-tab="products">Products</button>
-        <button type="button" class="pdash-tab" data-tab="orders">Orders</button>
-        <a class="pdash-tab" href="{% url 'users:edit_profile' %}">Settings</a>
+        <button type="button" class="pdash-tab is-active" data-tab="overview">
+            <i class="bi bi-grid-1x2"></i> Overview
+        </button>
+        <button type="button" class="pdash-tab" data-tab="analytics">
+            <i class="bi bi-graph-up"></i> Analytics &amp; Categories
+        </button>
+        <button type="button" class="pdash-tab" data-tab="storage">
+            <i class="bi bi-hdd-network"></i> Disk Storage &amp; Plans
+            {% if storage.is_near_limit or storage.is_exceeded %}
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#ef4444; margin-left:4px;" title="Storage Alert"></span>
+            {% endif %}
+        </button>
+        <button type="button" class="pdash-tab" data-tab="products">
+            <i class="bi bi-box-seam"></i> Products
+        </button>
+        <button type="button" class="pdash-tab" data-tab="orders">
+            <i class="bi bi-receipt"></i> Orders
+        </button>
+        <a class="pdash-tab" href="{% url 'users:edit_profile' %}">
+            <i class="bi bi-gear"></i> Settings
+        </a>
     </nav>
 
+    <!-- =========================================================================
+         PANEL 1: OVERVIEW
+         ========================================================================= -->
     <section id="overview" class="pdash-panel is-active">
-        <div class="pdash-stats">
+        <!-- 5 Key Analytics KPI Cards -->
+        <div class="pdash-stats-5">
             <div class="pdash-stat">
-                <span class="pdash-stat-label">Listings</span>
-                <strong>{{ total_products }}</strong>
+                <div class="pdash-stat-header">
+                    <span class="pdash-stat-label">Total Views</span>
+                    <span class="pdash-stat-icon icon-views"><i class="bi bi-eye"></i></span>
+                </div>
+                <strong>{{ total_views|default:0 }}</strong>
+                <span class="pdash-stat-sub">{{ click_through_rate }}% CTR</span>
             </div>
             <div class="pdash-stat">
-                <span class="pdash-stat-label">Views</span>
-                <strong>{{ total_views }}</strong>
+                <div class="pdash-stat-header">
+                    <span class="pdash-stat-label">Total Clicks</span>
+                    <span class="pdash-stat-icon icon-clicks"><i class="bi bi-cursor"></i></span>
+                </div>
+                <strong>{{ total_clicks|default:0 }}</strong>
+                <span class="pdash-stat-sub">Item interactions</span>
             </div>
             <div class="pdash-stat">
-                <span class="pdash-stat-label">Watchlist</span>
-                <strong>{{ watchlist_count|default:0 }}</strong>
+                <div class="pdash-stat-header">
+                    <span class="pdash-stat-label">Read Chats</span>
+                    <span class="pdash-stat-icon icon-chats"><i class="bi bi-chat-check"></i></span>
+                </div>
+                <strong>{{ total_read_chats|default:0 }}</strong>
+                <span class="pdash-stat-sub">Active discussions</span>
             </div>
             <div class="pdash-stat">
-                <span class="pdash-stat-label">Alerts</span>
-                <strong>{{ unread_notifications_count|default:0 }}</strong>
+                <div class="pdash-stat-header">
+                    <span class="pdash-stat-label">Buyers</span>
+                    <span class="pdash-stat-icon icon-buyers"><i class="bi bi-people"></i></span>
+                </div>
+                <strong>{{ total_buyers|default:0 }}</strong>
+                <span class="pdash-stat-sub">{{ total_sales_count|default:0 }} closed deals</span>
+            </div>
+            <div class="pdash-stat">
+                <div class="pdash-stat-header">
+                    <span class="pdash-stat-label">Disk Storage</span>
+                    <span class="pdash-stat-icon icon-storage"><i class="bi bi-hdd-network"></i></span>
+                </div>
+                <strong>{{ storage.used_formatted }}</strong>
+                <span class="pdash-stat-sub">{{ storage.percent }}% of {{ storage.quota_formatted }}</span>
             </div>
         </div>
 
+        <!-- Disk Storage Summary Bar with Upgrade CTA -->
+        <div class="pdash-storage-summary">
+            <div class="pdash-storage-summary-top">
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="badge" style="background: rgba(225, 29, 46, 0.12); color: var(--primary-color); font-weight: 800; font-size: 0.75rem; border-radius: 999px; padding: 0.35rem 0.65rem;">
+                        <i class="bi bi-hdd"></i> {{ storage.plan_name }}
+                    </span>
+                    <strong style="color: var(--text-main); font-size: 0.88rem;">{{ storage.used_formatted }} used</strong>
+                    <span style="color: var(--text-muted); font-size: 0.82rem;"> · {{ storage.free_formatted }} free ({{ storage.percent }}% used)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    {% if storage.is_exceeded or storage.is_near_limit %}
+                    <span class="badge" style="background: #ef4444; color: #fff; font-size: 0.72rem; padding: 0.25rem 0.5rem; border-radius: 6px;">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Storage Alert
+                    </span>
+                    {% endif %}
+                    <button type="button" class="pdash-btn pdash-btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.76rem;" onclick="activateTab('storage');">
+                        <i class="bi bi-arrow-up-circle"></i> Upgrade / Manage
+                    </button>
+                </div>
+            </div>
+            <div class="pdash-meter-track" title="{{ storage.percent }}% of storage quota used">
+                <div class="pdash-meter-bar status-{{ storage.status_class }}" style="width: {{ storage.percent }}%;"></div>
+            </div>
+        </div>
+
+        <!-- Top Products -->
         <div class="pdash-block">
             <div class="pdash-block-head">
-                <h2>Top products</h2>
-                <a href="{% url 'business:manage_items' %}">Manage</a>
+                <h2>Top Products</h2>
+                <a href="{% url 'business:manage_items' %}">Manage All</a>
             </div>
             <div class="pdash-products">
                 {% for item in trending_items %}
                 <a class="pdash-product" href="{% url 'customer:item_detail' item.id %}">
                     <span class="pdash-product-thumb">
                         {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="" loading="lazy" width="56" height="56">
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="56" height="56">
                         {% else %}
                         <i class="bi bi-image"></i>
                         {% endif %}
@@ -65,7 +138,7 @@
                         <strong>{{ item.title|truncatechars:40 }}</strong>
                         <em>{{ item.views }} views · {{ item.status|title }}</em>
                     </span>
-                    <span class="pdash-product-price">{{ item.price|floatformat:0 }}</span>
+                    <span class="pdash-product-price">TSh {{ item.price|floatformat:0 }}</span>
                 </a>
                 {% empty %}
                 <div class="pdash-empty">
@@ -76,12 +149,16 @@
             </div>
         </div>
 
+        <!-- Views by Category Doughnut -->
         <div class="pdash-block">
             <div class="pdash-block-head">
-                <h2>Views by category</h2>
+                <h2>Views by Category</h2>
+                <button type="button" class="pdash-btn pdash-btn-ghost" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="activateTab('analytics');">
+                    Full Analytics <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
-            <div class="pdash-chart-wrap">
-                <canvas id="viewsChart" height="220"></canvas>
+            <div class="pdash-chart-wrap" style="height: 220px;">
+                <canvas id="viewsChart"></canvas>
             </div>
         </div>
 
@@ -92,27 +169,335 @@
         </div>
     </section>
 
+    <!-- =========================================================================
+         PANEL 2: DETAILED ANALYTICS & CATEGORY BREAKDOWN
+         ========================================================================= -->
+    <section id="analytics" class="pdash-panel">
+        <div class="pdash-block">
+            <div class="pdash-block-head" style="flex-direction: column; align-items: flex-start; gap: 0.65rem;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <h2>Category Performance Analytics</h2>
+                        <p class="pdash-muted" style="margin: 0; font-size: 0.8rem;">
+                            Track views, clicks, read chats, unique buyers, and disk space used per each product category.
+                        </p>
+                    </div>
+                    <!-- Metric Switcher -->
+                    <div class="pdash-metric-switcher" id="categoryMetricSwitcher">
+                        <button type="button" class="pdash-metric-btn is-active" data-metric="views">
+                            <i class="bi bi-eye"></i> Views
+                        </button>
+                        <button type="button" class="pdash-metric-btn" data-metric="clicks">
+                            <i class="bi bi-cursor"></i> Clicks
+                        </button>
+                        <button type="button" class="pdash-metric-btn" data-metric="chats">
+                            <i class="bi bi-chat-check"></i> Read Chats
+                        </button>
+                        <button type="button" class="pdash-metric-btn" data-metric="buyers">
+                            <i class="bi bi-people"></i> Buyers
+                        </button>
+                        <button type="button" class="pdash-metric-btn" data-metric="storage">
+                            <i class="bi bi-hdd"></i> Storage (MB)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Category Bar Chart -->
+            <div class="pdash-chart-wrap" style="height: 280px; position: relative;">
+                <canvas id="categoryAnalyticsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Category Metrics Breakdown Table -->
+        <div class="pdash-block">
+            <div class="pdash-block-head">
+                <h2>Category Metrics Breakdown</h2>
+                <span class="pdash-muted" style="font-size: 0.8rem;">{{ categories_data|length }} categories</span>
+            </div>
+
+            <div class="pdash-table-wrap">
+                <table class="pdash-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th style="text-align: right;">Listings</th>
+                            <th style="text-align: right;">Views</th>
+                            <th style="text-align: right;">Clicks</th>
+                            <th style="text-align: right;">CTR</th>
+                            <th style="text-align: right;">Read Chats</th>
+                            <th style="text-align: right;">Buyers</th>
+                            <th style="text-align: right;">Disk Space</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in categories_data %}
+                        <tr>
+                            <td>
+                                <span class="pdash-cat-badge">
+                                    <i class="bi {{ cat.icon }}"></i>
+                                    <span>{{ cat.name }}</span>
+                                </span>
+                            </td>
+                            <td style="text-align: right; font-weight: 600;">{{ cat.item_count }}</td>
+                            <td style="text-align: right; font-weight: 700; color: #3b82f6;">{{ cat.views }}</td>
+                            <td style="text-align: right; font-weight: 700; color: #10b981;">{{ cat.clicks }}</td>
+                            <td style="text-align: right; color: var(--text-muted);">{{ cat.ctr }}%</td>
+                            <td style="text-align: right; font-weight: 700; color: #f59e0b;">{{ cat.read_chats }}</td>
+                            <td style="text-align: right; font-weight: 700; color: #8b5cf6;">{{ cat.buyers }}</td>
+                            <td style="text-align: right; font-weight: 700; color: var(--text-main);">{{ cat.storage_formatted }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                No category data yet. Once you add items, views, clicks, chats, buyers, and disk space will be tracked here.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if categories_data %}
+                    <tfoot>
+                        <tr style="background: rgba(125,125,125,0.05); font-weight: 800;">
+                            <td>Total / Combined</td>
+                            <td style="text-align: right;">{{ total_products }}</td>
+                            <td style="text-align: right; color: #3b82f6;">{{ total_views }}</td>
+                            <td style="text-align: right; color: #10b981;">{{ total_clicks }}</td>
+                            <td style="text-align: right;">{{ click_through_rate }}%</td>
+                            <td style="text-align: right; color: #f59e0b;">{{ total_read_chats }}</td>
+                            <td style="text-align: right; color: #8b5cf6;">{{ total_buyers }}</td>
+                            <td style="text-align: right;">{{ storage.used_formatted }}</td>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         PANEL 3: DISK STORAGE USAGE & PREMIUM PLANS
+         ========================================================================= -->
+    <section id="storage" class="pdash-panel">
+        <div class="pdash-block">
+            <div class="pdash-block-head">
+                <div>
+                    <h2>Disk Storage Usage</h2>
+                    <p class="pdash-muted" style="margin: 0; font-size: 0.8rem;">
+                        Real-time tracking of file storage used across product media, chats, and profile assets.
+                    </p>
+                </div>
+                <div>
+                    <span class="badge" style="background: rgba(225, 29, 46, 0.12); color: var(--primary-color); font-weight: 800; padding: 0.45rem 0.85rem; border-radius: 999px; font-size: 0.78rem;">
+                        Plan: {{ storage.plan_name }}
+                    </span>
+                </div>
+            </div>
+
+            {% if storage.is_exceeded %}
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="bi bi-exclamation-octagon-fill" style="color: #ef4444; font-size: 1.4rem;"></i>
+                <div style="font-size: 0.85rem; color: var(--text-main);">
+                    <strong>Storage Quota Exceeded!</strong> You have used {{ storage.used_formatted }} of your {{ storage.quota_formatted }} limit. Please delete unused media or upgrade your plan below to upload new listings.
+                </div>
+            </div>
+            {% elif storage.is_near_limit %}
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid #f59e0b; border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="bi bi-exclamation-triangle-fill" style="color: #f59e0b; font-size: 1.4rem;"></i>
+                <div style="font-size: 0.85rem; color: var(--text-main);">
+                    <strong>Storage Warning:</strong> You have reached {{ storage.percent }}% of your disk space. Upgrade your plan to prevent listing interruption.
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Main Storage Gauge Card -->
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 800;">Total Used Space</span>
+                        <div style="font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; color: var(--text-main); line-height: 1.1;">
+                            {{ storage.used_formatted }}
+                            <small style="font-size: 0.95rem; font-weight: 600; color: var(--text-muted);">/ {{ storage.quota_formatted }}</small>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">{{ storage.free_formatted }} Free</span>
+                        <div style="font-size: 1.35rem; font-weight: 900; color: var(--primary-color);">{{ storage.percent }}% Used</div>
+                    </div>
+                </div>
+
+                <div class="pdash-meter-track" style="height: 12px;">
+                    <div class="pdash-meter-bar status-{{ storage.status_class }}" style="width: {{ storage.percent }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Assets breakdown grid -->
+            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 0.65rem; color: var(--text-main);">Storage by Asset Type</h3>
+            <div class="pdash-asset-grid">
+                <div class="pdash-asset-card">
+                    <div class="pdash-asset-icon"><i class="bi bi-images"></i></div>
+                    <div class="pdash-asset-info">
+                        <strong>{{ storage.breakdown.item_images_formatted }}</strong>
+                        <small>Product Photos ({{ storage.breakdown.item_images_count }})</small>
+                    </div>
+                </div>
+                <div class="pdash-asset-card">
+                    <div class="pdash-asset-icon"><i class="bi bi-camera-video"></i></div>
+                    <div class="pdash-asset-info">
+                        <strong>{{ storage.breakdown.item_videos_formatted }}</strong>
+                        <small>Product Videos ({{ storage.breakdown.item_videos_count }})</small>
+                    </div>
+                </div>
+                <div class="pdash-asset-card">
+                    <div class="pdash-asset-icon"><i class="bi bi-chat-square-text"></i></div>
+                    <div class="pdash-asset-info">
+                        <strong>{{ storage.breakdown.chat_media_formatted }}</strong>
+                        <small>Chat Media ({{ storage.breakdown.chat_media_count }})</small>
+                    </div>
+                </div>
+                <div class="pdash-asset-card">
+                    <div class="pdash-asset-icon"><i class="bi bi-person-badge"></i></div>
+                    <div class="pdash-asset-info">
+                        <strong>{{ storage.breakdown.profile_media_formatted }}</strong>
+                        <small>Profile Media</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Storage Plans / Tiers -->
+        <div class="pdash-block">
+            <div class="pdash-block-head" style="flex-direction: column; align-items: flex-start;">
+                <h2>Choose Your Storage Tier</h2>
+                <p class="pdash-muted" style="margin: 0; font-size: 0.8rem;">
+                    Pay based on the disk space you need. Upgrade seamlessly to support more HD product photos and demo videos.
+                </p>
+            </div>
+
+            <div class="pdash-plans-grid">
+                <!-- Free Plan -->
+                <div class="pdash-plan-card {% if storage.plan == 'free' %}is-current{% endif %}">
+                    {% if storage.plan == 'free' %}
+                    <span class="pdash-plan-badge">Active Plan</span>
+                    {% endif %}
+                    <div class="pdash-plan-head">
+                        <h3>Free Tier</h3>
+                        <div class="pdash-plan-price">TSh 0 <small>/ month</small></div>
+                        <p class="pdash-muted" style="font-size: 0.78rem; margin: 0;">Perfect for casual campus sellers.</p>
+                    </div>
+                    <ul class="pdash-plan-features">
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>100 MB</strong> Disk Space</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Up to 15 active listings</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Standard image compression</li>
+                        <li><i class="bi bi-check-circle-fill"></i> In-app customer chat</li>
+                    </ul>
+                    <div class="pdash-plan-action">
+                        {% if storage.plan == 'free' %}
+                        <button type="button" class="pdash-btn pdash-btn-ghost" style="width: 100%;" disabled>Current Tier</button>
+                        {% else %}
+                        <form method="post" action="{% url 'business:upgrade_storage_plan' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_code" value="free">
+                            <button type="submit" class="pdash-btn pdash-btn-ghost" style="width: 100%;">Switch to Free</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Pro Seller Plan -->
+                <div class="pdash-plan-card {% if storage.plan == 'pro' %}is-current{% endif %}">
+                    {% if storage.plan == 'pro' %}
+                    <span class="pdash-plan-badge">Active Plan</span>
+                    {% else %}
+                    <span class="pdash-plan-badge" style="background: #10b981;">Recommended</span>
+                    {% endif %}
+                    <div class="pdash-plan-head">
+                        <h3>Pro Seller</h3>
+                        <div class="pdash-plan-price">TSh 5,000 <small>/ month</small></div>
+                        <p class="pdash-muted" style="font-size: 0.78rem; margin: 0;">For active campus merchants & shops.</p>
+                    </div>
+                    <ul class="pdash-plan-features">
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>1,000 MB (1 GB)</strong> Disk Space</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Unlimited product listings</li>
+                        <li><i class="bi bi-check-circle-fill"></i> HD product photos & video demos</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Priority search ranking</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Fast seller support</li>
+                    </ul>
+                    <div class="pdash-plan-action">
+                        {% if storage.plan == 'pro' %}
+                        <button type="button" class="pdash-btn pdash-btn-ghost" style="width: 100%;" disabled>Current Tier</button>
+                        {% else %}
+                        <form method="post" action="{% url 'business:upgrade_storage_plan' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_code" value="pro">
+                            <button type="submit" class="pdash-btn pdash-btn-primary" style="width: 100%;">
+                                <i class="bi bi-lightning-charge"></i> Upgrade to Pro (1GB)
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Campus Business Plan -->
+                <div class="pdash-plan-card {% if storage.plan == 'business' %}is-current{% endif %}">
+                    {% if storage.plan == 'business' %}
+                    <span class="pdash-plan-badge">Active Plan</span>
+                    {% else %}
+                    <span class="pdash-plan-badge" style="background: #8b5cf6;">Best Value</span>
+                    {% endif %}
+                    <div class="pdash-plan-head">
+                        <h3>Campus Business</h3>
+                        <div class="pdash-plan-price">TSh 15,000 <small>/ month</small></div>
+                        <p class="pdash-muted" style="font-size: 0.78rem; margin: 0;">For large inventories, brands & retailers.</p>
+                    </div>
+                    <ul class="pdash-plan-features">
+                        <li><i class="bi bi-check-circle-fill"></i> <strong>5,000 MB (5 GB)</strong> Disk Space</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Unlimited 4K media & video reels</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Verified seller badge</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Advanced conversion analytics</li>
+                        <li><i class="bi bi-check-circle-fill"></i> 24/7 VIP assistance</li>
+                    </ul>
+                    <div class="pdash-plan-action">
+                        {% if storage.plan == 'business' %}
+                        <button type="button" class="pdash-btn pdash-btn-ghost" style="width: 100%;" disabled>Current Tier</button>
+                        {% else %}
+                        <form method="post" action="{% url 'business:upgrade_storage_plan' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="plan_code" value="business">
+                            <button type="submit" class="pdash-btn pdash-btn-primary" style="width: 100%;">
+                                <i class="bi bi-rocket-takeoff"></i> Upgrade to Business (5GB)
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================================================================
+         PANEL 4: PRODUCTS
+         ========================================================================= -->
     <section id="products" class="pdash-panel">
         <div class="pdash-block">
             <div class="pdash-block-head">
-                <h2>Your listings</h2>
-                <a href="{% url 'business:post_item' %}">Add new</a>
+                <h2>Your Listings</h2>
+                <a href="{% url 'business:post_item' %}">Add New</a>
             </div>
             <div class="pdash-products">
                 {% for item in items %}
                 <a class="pdash-product" href="{% url 'business:edit_item' item.id %}">
                     <span class="pdash-product-thumb">
                         {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="" loading="lazy" width="56" height="56">
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="56" height="56">
                         {% else %}
                         <i class="bi bi-image"></i>
                         {% endif %}
                     </span>
                     <span class="pdash-product-body">
                         <strong>{{ item.title|truncatechars:40 }}</strong>
-                        <em>Stock {{ item.stock_quantity }} · {{ item.views }} views</em>
+                        <em>Stock: {{ item.stock_quantity }} · {{ item.views }} views</em>
                     </span>
-                    <span class="pdash-product-price">{{ item.price|floatformat:0 }}</span>
+                    <span class="pdash-product-price">TSh {{ item.price|floatformat:0 }}</span>
                 </a>
                 {% empty %}
                 <div class="pdash-empty">
@@ -124,13 +509,16 @@
         </div>
     </section>
 
+    <!-- =========================================================================
+         PANEL 5: ORDERS
+         ========================================================================= -->
     <section id="orders" class="pdash-panel">
         <div class="pdash-block">
-            <h2 class="pdash-alone-title">Orders hub</h2>
-            <p class="pdash-muted">Track purchases and sales from one place.</p>
+            <h2 class="pdash-alone-title">Orders Hub</h2>
+            <p class="pdash-muted">Track purchases and sales from one central place.</p>
             <div class="pdash-order-actions">
-                <a href="{% url 'customer:my_orders' %}" class="pdash-btn pdash-btn-primary">My purchases</a>
-                <a href="{% url 'customer:seller_orders' %}" class="pdash-btn pdash-btn-ghost">Sales orders</a>
+                <a href="{% url 'customer:my_orders' %}" class="pdash-btn pdash-btn-primary">My Purchases</a>
+                <a href="{% url 'customer:seller_orders' %}" class="pdash-btn pdash-btn-ghost">Sales Orders</a>
             </div>
         </div>
     </section>
@@ -140,9 +528,19 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Helper function to switch tabs programmatically
+function activateTab(tabId) {
+  var targetTab = document.querySelector('.pdash-tab[data-tab="' + tabId + '"]');
+  if (targetTab) {
+    targetTab.click();
+  }
+}
+
 (function () {
+  // 1. Tab Switching Logic
   var tabs = document.querySelectorAll('.pdash-tab[data-tab]');
   var panels = document.querySelectorAll('.pdash-panel');
+
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
       var id = tab.getAttribute('data-tab');
@@ -151,33 +549,170 @@
       panels.forEach(function (p) {
         p.classList.toggle('is-active', p.id === id);
       });
+      if (history.replaceState) {
+        history.replaceState(null, null, '#' + id);
+      }
     });
   });
 
-  var canvas = document.getElementById('viewsChart');
-  if (!canvas || typeof Chart === 'undefined') return;
-  var labels = {{ cat_labels|safe|default:"[]" }};
-  var data = {{ cat_data|safe|default:"[]" }};
-  if (!labels.length) {
-    labels = ['No data'];
-    data = [1];
-  }
-  new Chart(canvas.getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: data,
-        backgroundColor: ['#e11d2e', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+  // Activate tab from URL hash if provided
+  if (window.location.hash) {
+    var hash = window.location.hash.substring(1);
+    var matchedTab = document.querySelector('.pdash-tab[data-tab="' + hash + '"]');
+    if (matchedTab) {
+      matchedTab.click();
     }
-  });
+  }
+
+  // 2. Chart.js: Overview Doughnut Chart (Views by Category)
+  var viewsCanvas = document.getElementById('viewsChart');
+  if (viewsCanvas && typeof Chart !== 'undefined') {
+    var overviewLabels = {{ chart_categories_json|safe }};
+    var overviewData = {{ chart_views_json|safe }};
+    if (!overviewLabels.length) {
+      overviewLabels = ['No Data Yet'];
+      overviewData = [1];
+    }
+    new Chart(viewsCanvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: overviewLabels,
+        datasets: [{
+          data: overviewData,
+          backgroundColor: ['#e11d2e', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#06b6d4', '#ec4899'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, font: { size: 11 }, padding: 12 }
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Chart.js: Detailed Category Analytics Chart with Metric Switcher
+  var catAnalyticsCanvas = document.getElementById('categoryAnalyticsChart');
+  if (catAnalyticsCanvas && typeof Chart !== 'undefined') {
+    var catLabels = {{ chart_categories_json|safe }};
+    var metricDatasets = {
+      views: {
+        label: 'Views per Category',
+        data: {{ chart_views_json|safe }},
+        color: '#3b82f6',
+        bg: 'rgba(59, 130, 246, 0.75)'
+      },
+      clicks: {
+        label: 'Clicks per Category',
+        data: {{ chart_clicks_json|safe }},
+        color: '#10b981',
+        bg: 'rgba(16, 185, 129, 0.75)'
+      },
+      chats: {
+        label: 'Read Chats per Category',
+        data: {{ chart_chats_json|safe }},
+        color: '#f59e0b',
+        bg: 'rgba(245, 158, 11, 0.75)'
+      },
+      buyers: {
+        label: 'Buyers per Category',
+        data: {{ chart_buyers_json|safe }},
+        color: '#8b5cf6',
+        bg: 'rgba(139, 92, 246, 0.75)'
+      },
+      storage: {
+        label: 'Disk Space (MB) per Category',
+        data: {{ chart_storage_mb_json|safe }},
+        color: '#e11d2e',
+        bg: 'rgba(225, 29, 46, 0.75)'
+      }
+    };
+
+    if (!catLabels.length) {
+      catLabels = ['No Categories'];
+      metricDatasets.views.data = [0];
+      metricDatasets.clicks.data = [0];
+      metricDatasets.chats.data = [0];
+      metricDatasets.buyers.data = [0];
+      metricDatasets.storage.data = [0];
+    }
+
+    var currentMetric = 'views';
+    var activeConfig = metricDatasets[currentMetric];
+
+    var analyticsChart = new Chart(catAnalyticsCanvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: catLabels,
+        datasets: [{
+          label: activeConfig.label,
+          data: activeConfig.data,
+          backgroundColor: activeConfig.bg,
+          borderColor: activeConfig.color,
+          borderWidth: 1.5,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { font: { size: 12, weight: '600' }, boxWidth: 14 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var val = ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.raw;
+                if (currentMetric === 'storage') {
+                  return ' ' + val + ' MB';
+                }
+                return ' ' + val;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11, weight: '600' } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(125, 125, 125, 0.1)' },
+            ticks: { font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+    // Wire up Metric Switcher Buttons
+    var switcherBtns = document.querySelectorAll('#categoryMetricSwitcher .pdash-metric-btn');
+    switcherBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var metric = btn.getAttribute('data-metric');
+        if (!metricDatasets[metric]) return;
+
+        switcherBtns.forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+
+        currentMetric = metric;
+        var newSet = metricDatasets[metric];
+        analyticsChart.data.datasets[0].label = newSet.label;
+        analyticsChart.data.datasets[0].data = newSet.data;
+        analyticsChart.data.datasets[0].backgroundColor = newSet.bg;
+        analyticsChart.data.datasets[0].borderColor = newSet.color;
+        analyticsChart.update();
+      });
+    });
+  }
 })();
 </script>
 {% endblock %}

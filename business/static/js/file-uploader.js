@@ -57,15 +57,24 @@
             return getExistingCount() + stagedFiles.length + stagedUrls.length;
         }
 
+        // Isolated picker input that does not conflict with Django form input
+        const filePicker = document.createElement("input");
+        filePicker.type = "file";
+        filePicker.multiple = true;
+        filePicker.accept = "image/*,video/*";
+        filePicker.style.display = "none";
+        document.body.appendChild(filePicker);
+
         function syncInputFiles() {
             if (!fileInput) return;
-            const dt = new DataTransfer();
-            stagedFiles.forEach(f => dt.items.add(f));
-            fileInput.files = dt.files;
-            
-            // Trigger change on fileInput so live product preview card updates
-            const ev = new Event("change", { bubbles: true });
-            fileInput.dispatchEvent(ev);
+            try {
+                const dt = new DataTransfer();
+                stagedFiles.forEach(f => dt.items.add(f));
+                fileInput.files = dt.files;
+            } catch (e) {
+                console.error("DataTransfer error:", e);
+            }
+            updateBuyerPreview();
         }
 
         function syncUrlInputs() {
@@ -88,6 +97,8 @@
             const firstImg = cardsGrid ? cardsGrid.querySelector(".fu-media-thumb img") : null;
             if (firstImg && firstImg.src) {
                 previewImg.src = firstImg.src;
+            } else {
+                previewImg.src = "/static/images/default-item.png";
             }
         }
 
@@ -134,6 +145,12 @@
                 const isImg = file.type.startsWith("image/");
                 const isVid = file.type.startsWith("video/");
                 if (!isImg && !isVid) continue;
+
+                // Deduplicate: avoid re-adding identical files
+                const isDuplicate = stagedFiles.some(
+                    sf => sf.name === file.name && sf.size === file.size && sf.lastModified === file.lastModified
+                );
+                if (isDuplicate) continue;
 
                 stagedFiles.push(file);
                 countAdded++;
@@ -284,20 +301,23 @@
             renderState();
         };
 
-        // File picker listener
-        if (fileInput) {
-            fileInput.addEventListener("change", function () {
-                if (this.files && this.files.length) {
-                    addFiles(this.files);
-                }
-            });
-        }
+        // File picker listener on dedicated filePicker element
+        filePicker.addEventListener("change", function () {
+            if (this.files && this.files.length) {
+                addFiles(this.files);
+                try { this.value = ""; } catch (err) {}
+            }
+        });
 
-        // Buttons trigger
-        pickDeviceBtn && pickDeviceBtn.addEventListener("click", () => fileInput && fileInput.click());
+        // Trigger picker dialog
+        pickDeviceBtn && pickDeviceBtn.addEventListener("click", () => {
+            try { filePicker.value = ""; } catch (err) {}
+            filePicker.click();
+        });
         choiceDeviceBtn && choiceDeviceBtn.addEventListener("click", () => {
             choiceModal.classList.add("d-none");
-            fileInput && fileInput.click();
+            try { filePicker.value = ""; } catch (err) {}
+            filePicker.click();
         });
 
         // Open URL modal

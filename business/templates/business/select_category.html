@@ -1,7 +1,8 @@
 {% extends 'business/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Chagua Kategoria ya Bidhaa - U-Connect{% endblock %}
+{% block title %}{% trans "Select Product Category" %} - U-Connect{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -71,23 +72,23 @@
     <!-- HERO HEADER -->
     <div class="cat-hero-card">
         <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50 px-3 py-1 rounded-pill mb-2">
-            <i class="bi bi-tag-fill me-1"></i>Hatua ya 1 ya Uuzaji
+            <i class="bi bi-tag-fill me-1"></i>{% trans "Step 1 of Selling" %}
         </span>
-        <h2 class="fw-bold mb-2">Unauza nini leo? (What are you selling?)</h2>
+        <h2 class="fw-bold mb-2">{% trans "What are you selling today?" %}</h2>
         {% if parent_category %}
-            <p class="text-muted mb-3">Chagua kundi dogo (Subcategory) ndani ya <strong>{{ parent_category.name }}</strong></p>
+            <p class="text-muted mb-3">{% trans "Choose a subcategory in" %} <strong>{{ parent_category.name }}</strong></p>
             <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                <i class="bi bi-arrow-left me-1"></i>Rudi Nyuma (Back)
+                <i class="bi bi-arrow-left me-1"></i>{% trans "Back" %}
             </a>
         {% else %}
-            <p class="text-muted mb-3">Chagua kategoria ya bidhaa yako ili mfumo ukupe sifa, vipimo (units), na fomu sahihi.</p>
+            <p class="text-muted mb-3">{% trans "Choose a category for your product to get the right specifications, units, and form fields." %}</p>
         {% endif %}
 
         <!-- Quick Search -->
         <div class="cat-search-box">
             <div class="input-group">
                 <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: 12px 0 0 12px;"><i class="bi bi-search"></i></span>
-                <input type="text" id="catFilterInput" class="form-control border-start-0 py-2" placeholder="Tafuta kategoria (mfano: Simu, Laptop, Nguo, Vyakula...)" onkeyup="filterCategories()" style="border-radius: 0 12px 12px 0;">
+                <input type="text" id="catFilterInput" class="form-control border-start-0 py-2" placeholder="{% trans 'Search category (e.g. Phone, Laptop, Clothing, Food)...' %}" onkeyup="filterCategories()" style="border-radius: 0 12px 12px 0;">
             </div>
         </div>
     </div>
@@ -104,10 +105,10 @@
                     <div class="fw-bold fs-6">{{ cat.name }}</div>
                     {% if cat.children.exists %}
                     <small class="text-primary fw-semibold" style="font-size: 0.74rem;">
-                        Tazama Makundi <i class="bi bi-arrow-right"></i>
+                        {% trans "View Subcategories" %} <i class="bi bi-arrow-right"></i>
                     </small>
                     {% else %}
-                    <small class="text-muted" style="font-size: 0.74rem;">Weka Tangazo Moja kwa Moja</small>
+                    <small class="text-muted" style="font-size: 0.74rem;">{% trans "Post Directly" %}</small>
                     {% endif %}
                 </div>
             </div>
@@ -115,7 +116,7 @@
         </a>
         {% empty %}
         <div class="text-center py-5 text-muted col-12">
-            Hakuna kategoria zilizopatikana.
+            {% trans "No categories found." %}
         </div>
         {% endfor %}
     </div>

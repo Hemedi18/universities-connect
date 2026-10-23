@@ -1,8 +1,9 @@
 {% extends 'business/base.html' %}
 {% load static %}
+{% load i18n %}
 {% load tancoin_tags %}
 
-{% block title %}My Products · U-Connect{% endblock %}
+{% block title %}{% trans "My Products" %} · U-Connect{% endblock %}
 {% block body_class %}mg-page{% endblock %}
 {% block main_class %}shop-full{% endblock %}
 
@@ -10,12 +11,12 @@
 <div class="mg-shell">
     <header class="mg-top">
         <div class="mg-top-text">
-            <h1>My products</h1>
-            <p>{% if items %}{{ items|length }} listing{{ items|length|pluralize }}{% else %}No listings yet{% endif %}</p>
+            <h1>{% trans "My products" %}</h1>
+            <p>{% if items %}{{ items|length }} {% trans "listing" %}{{ items|length|pluralize }}{% else %}{% trans "No listings yet" %}{% endif %}</p>
         </div>
         <a href="{% url 'business:post_item' %}" class="mg-add">
             <i class="bi bi-plus-lg"></i>
-            <span>Add product</span>
+            <span>{% trans "Add product" %}</span>
         </a>
     </header>
 
@@ -23,7 +24,7 @@
     <div class="mg-list">
         {% for item in items %}
         <article class="mg-row">
-            <a class="mg-thumb" href="{% url 'customer:item_detail' item.id %}" aria-label="View {{ item.title }}">
+            <a class="mg-thumb" href="{% url 'customer:item_detail' item.id %}" aria-label="{% trans 'View' %} {{ item.title }}">
                 {% if item.image %}
                 <img src="{{ item.image.url }}" alt="" loading="lazy" width="96" height="96">
                 {% else %}
@@ -38,8 +39,8 @@
                 </div>
                 <div class="mg-price">{{ item.price|floatformat:0 }}</div>
                 <ul class="mg-meta">
-                    <li><i class="bi bi-box-seam"></i> Stock {{ item.stock_quantity }}</li>
-                    <li><i class="bi bi-eye"></i> {{ item.views }} view{{ item.views|pluralize }}</li>
+                    <li><i class="bi bi-box-seam"></i> {% trans "Stock" %} {{ item.stock_quantity }}</li>
+                    <li><i class="bi bi-eye"></i> {{ item.views }} {% trans "view" %}{{ item.views|pluralize }}</li>
                     {% if item.condition %}<li>{{ item.get_condition_display }}</li>{% endif %}
                     <li>{{ item.created_at|date:"M d, Y" }}</li>
                 </ul>
@@ -47,10 +48,10 @@
 
             <div class="mg-actions">
                 <a href="{% url 'business:edit_item' item.id %}" class="mg-btn mg-btn-edit">
-                    <i class="bi bi-pencil-square"></i> Edit
+                    <i class="bi bi-pencil-square"></i> {% trans "Edit" %}
                 </a>
-                <a href="{% url 'business:delete_item' item.id %}" class="mg-btn mg-btn-delete delete-item-btn" data-confirm="Delete this product?">
-                    <i class="bi bi-trash3"></i> Delete
+                <a href="{% url 'business:delete_item' item.id %}" class="mg-btn mg-btn-delete delete-item-btn" data-confirm="{% trans 'Delete this product?' %}">
+                    <i class="bi bi-trash3"></i> {% trans "Delete" %}
                 </a>
             </div>
         </article>
@@ -59,11 +60,11 @@
     {% else %}
     <div class="mg-empty">
         <div class="mg-empty-icon"><i class="bi bi-bag-plus"></i></div>
-        <h2>No products yet</h2>
-        <p>Upload your first listing and start selling on campus.</p>
+        <h2>{% trans "No products yet" %}</h2>
+        <p>{% trans "Upload your first listing and start selling on campus." %}</p>
         <a href="{% url 'business:post_item' %}" class="mg-add mg-add-lg">
             <i class="bi bi-plus-lg"></i>
-            <span>Start selling</span>
+            <span>{% trans "Start selling" %}</span>
         </a>
     </div>
     {% endif %}

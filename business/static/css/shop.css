@@ -2783,3 +2783,502 @@ body.dark-mode .btn-close {
 body:not(.dark-mode) .uc-theme-btn .icon-sun { display: none; }
 body.dark-mode .uc-theme-btn .icon-moon { display: none; }
 
+/* ==========================================================================
+   Collapsible Desktop Sidebar & Unified Navigation Drawer
+   ========================================================================== */
+
+:root {
+    --uc-sidebar-width: 250px;
+    --uc-sidebar-collapsed-width: 70px;
+    --uc-sidebar-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sidebar Container */
+.uc-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--uc-sidebar-width);
+    background: var(--uc-surface, #ffffff);
+    border-right: 1px solid var(--uc-line, #e2e8f0);
+    z-index: 1045;
+    display: flex;
+    flex-direction: column;
+    transition: width var(--uc-sidebar-transition), transform var(--uc-sidebar-transition);
+    overflow: hidden;
+}
+
+/* RTL Support */
+html[dir="rtl"] .uc-sidebar {
+    left: auto;
+    right: 0;
+    border-right: 0;
+    border-left: 1px solid var(--uc-line, #e2e8f0);
+}
+
+/* Sidebar Header */
+.uc-sidebar-header {
+    height: 64px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--uc-line, #e2e8f0);
+    flex-shrink: 0;
+    background: var(--uc-surface, #ffffff);
+}
+
+.uc-sidebar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--uc-ink, #0f172a);
+    font-family: "Outfit", sans-serif;
+    font-weight: 800;
+    font-size: 1.45rem;
+    letter-spacing: -0.03em;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.uc-sidebar-brand span.uc-brand-accent {
+    color: var(--uc-accent, #e11d2e);
+}
+
+.uc-sidebar-logo-icon {
+    display: none;
+    font-weight: 900;
+    font-size: 1.35rem;
+    color: var(--uc-accent, #e11d2e);
+    letter-spacing: -0.05em;
+}
+
+.uc-sidebar-logo-icon b {
+    color: var(--uc-ink, #0f172a);
+}
+
+.uc-sidebar-toggle-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--uc-line, #e2e8f0);
+    background: var(--uc-soft, #f8fafc);
+    color: var(--uc-muted, #64748b);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.uc-sidebar-toggle-btn:hover {
+    background: var(--uc-accent, #e11d2e);
+    color: #ffffff;
+    border-color: var(--uc-accent, #e11d2e);
+}
+
+.uc-sidebar-toggle-btn i {
+    font-size: 0.95rem;
+    transition: transform var(--uc-sidebar-transition);
+}
+
+.uc-sidebar-close-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--uc-line, #e2e8f0);
+    background: var(--uc-soft, #f8fafc);
+    color: var(--uc-muted, #64748b);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Sidebar Navigation Items */
+.uc-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.85rem 0.65rem;
+}
+
+.uc-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+.uc-sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(125, 125, 125, 0.2);
+    border-radius: 4px;
+}
+
+.uc-sidebar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.uc-sidebar-menu li {
+    width: 100%;
+}
+
+.uc-sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--uc-ink, #1e293b);
+    font-family: "Outfit", sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    position: relative;
+}
+
+.uc-sidebar-menu a i {
+    font-size: 1.15rem;
+    line-height: 1;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--uc-muted, #64748b);
+    transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.uc-sidebar-menu a:hover {
+    background: var(--uc-soft, rgba(0, 0, 0, 0.04));
+    color: var(--uc-accent, #e11d2e);
+}
+
+.uc-sidebar-menu a:hover i {
+    color: var(--uc-accent, #e11d2e);
+    transform: scale(1.1);
+}
+
+.uc-sidebar-menu a.is-active {
+    background: rgba(225, 29, 46, 0.09);
+    color: var(--uc-accent, #e11d2e);
+    font-weight: 700;
+}
+
+.uc-sidebar-menu a.is-active i {
+    color: var(--uc-accent, #e11d2e);
+}
+
+.uc-sidebar-label {
+    flex: 1;
+    transition: opacity 0.2s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uc-sidebar-pill {
+    background: var(--uc-accent, #e11d2e);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+}
+
+/* Admin Switch Mode Link Special Styling */
+.uc-sidebar-admin-item a {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+}
+
+.uc-sidebar-admin-item a:hover {
+    background: rgba(245, 158, 11, 0.2);
+    color: #b45309;
+}
+
+.uc-sidebar-admin-item a i {
+    color: #d97706;
+}
+
+/* Sidebar Footer */
+.uc-sidebar-footer {
+    padding: 0.75rem 0.65rem;
+    border-top: 1px solid var(--uc-line, #e2e8f0);
+    flex-shrink: 0;
+    background: var(--uc-surface, #ffffff);
+}
+
+.uc-sidebar-collapse-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--uc-line, #e2e8f0);
+    background: var(--uc-soft, #f8fafc);
+    color: var(--uc-muted, #64748b);
+    font-family: "Outfit", sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.uc-sidebar-collapse-btn:hover {
+    background: var(--uc-accent, #e11d2e);
+    color: #ffffff;
+    border-color: var(--uc-accent, #e11d2e);
+}
+
+.uc-sidebar-collapse-btn i {
+    font-size: 1.05rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: transform var(--uc-sidebar-transition);
+}
+
+/* Masthead Toggle Button for Desktop */
+.uc-sidebar-mast-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--uc-line, #e2e8f0);
+    background: var(--uc-soft, #f8fafc);
+    color: var(--uc-ink, #0f172a);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.15rem;
+    padding: 0;
+    margin-right: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.uc-sidebar-mast-toggle:hover {
+    background: var(--uc-accent, #e11d2e);
+    color: #ffffff;
+    border-color: var(--uc-accent, #e11d2e);
+}
+
+/* ==========================================================================
+   DESKTOP COLLAPSIBLE BEHAVIOR (>= 992px)
+   ========================================================================== */
+@media (min-width: 992px) {
+    /* Hide desktop sidebar on pages that do not have .has-pc-sidebar (non-home pages) */
+    body:not(.has-pc-sidebar) .uc-sidebar,
+    body:not(.has-pc-sidebar) .uc-sidebar-mast-toggle {
+        display: none !important;
+    }
+
+    body.has-pc-sidebar {
+        padding-left: var(--uc-sidebar-width);
+        transition: padding-left var(--uc-sidebar-transition);
+    }
+    
+    html[dir="rtl"] body.has-pc-sidebar {
+        padding-left: 0;
+        padding-right: var(--uc-sidebar-width);
+        transition: padding-right var(--uc-sidebar-transition);
+    }
+
+    /* When Collapsed */
+    body.has-pc-sidebar.uc-sidebar-collapsed {
+        padding-left: var(--uc-sidebar-collapsed-width);
+    }
+
+    html[dir="rtl"] body.has-pc-sidebar.uc-sidebar-collapsed {
+        padding-left: 0;
+        padding-right: var(--uc-sidebar-collapsed-width);
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar {
+        width: var(--uc-sidebar-collapsed-width);
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-header {
+        padding: 0;
+        justify-content: center;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-logo-text,
+    body.uc-sidebar-collapsed .uc-sidebar-label,
+    body.uc-sidebar-collapsed .uc-sidebar-pill,
+    body.uc-sidebar-collapsed .uc-sidebar-collapse-btn span {
+        display: none !important;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-logo-icon {
+        display: inline-block;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-brand {
+        display: flex;
+        justify-content: center;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-toggle-btn {
+        display: none;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-nav {
+        padding: 0.85rem 0.35rem;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-menu a {
+        justify-content: center;
+        padding: 0.75rem 0;
+    }
+
+    body.uc-sidebar-collapsed .uc-sidebar-collapse-btn {
+        justify-content: center;
+        padding: 0.65rem 0;
+    }
+
+    /* Floating tooltip on hover in collapsed mode */
+    body.uc-sidebar-collapsed .uc-sidebar-menu a[data-title]:hover::after,
+    body.uc-sidebar-collapsed .uc-sidebar-collapse-btn:hover::after {
+        content: attr(data-title);
+        position: fixed;
+        left: calc(var(--uc-sidebar-collapsed-width) + 8px);
+        background: #0f172a;
+        color: #ffffff;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        white-space: nowrap;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        pointer-events: none;
+        z-index: 1090;
+        animation: ucTooltipIn 0.15s ease forwards;
+    }
+
+    html[dir="rtl"] body.uc-sidebar-collapsed .uc-sidebar-menu a[data-title]:hover::after,
+    html[dir="rtl"] body.uc-sidebar-collapsed .uc-sidebar-collapse-btn:hover::after {
+        left: auto;
+        right: calc(var(--uc-sidebar-collapsed-width) + 8px);
+    }
+
+    @keyframes ucTooltipIn {
+        from { opacity: 0; transform: translateX(-4px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Flip chevron icon in collapsed mode */
+    body.uc-sidebar-collapsed #ucSidebarToggleIcon,
+    body.uc-sidebar-collapsed .uc-sidebar-collapse-btn i {
+        transform: rotate(180deg);
+    }
+}
+
+/* ==========================================================================
+   MOBILE & TABLET DRAWER STATE (< 992px)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    body.has-pc-sidebar {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .uc-sidebar {
+        width: 285px;
+        max-width: 85vw;
+        transform: translateX(-100%);
+        box-shadow: none;
+        z-index: 1070;
+    }
+
+    html[dir="rtl"] .uc-sidebar {
+        transform: translateX(100%);
+    }
+
+    .uc-sidebar.is-mobile-open {
+        transform: translateX(0);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .uc-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(2px);
+        z-index: 1065;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    .uc-sidebar-backdrop.is-active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .uc-sidebar-footer {
+        display: none; /* Collapse button not needed on mobile drawer */
+    }
+}
+
+/* Dark Mode Overrides for Sidebar */
+.dark-mode .uc-sidebar {
+    background: #0f172a;
+    border-color: #1e293b;
+    color: #f8fafc;
+}
+
+.dark-mode .uc-sidebar-header,
+.dark-mode .uc-sidebar-footer {
+    background: #0f172a;
+    border-color: #1e293b;
+}
+
+.dark-mode .uc-sidebar-brand {
+    color: #f8fafc;
+}
+
+.dark-mode .uc-sidebar-logo-icon b {
+    color: #f8fafc;
+}
+
+.dark-mode .uc-sidebar-toggle-btn,
+.dark-mode .uc-sidebar-close-btn,
+.dark-mode .uc-sidebar-collapse-btn,
+.dark-mode .uc-sidebar-mast-toggle {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+.dark-mode .uc-sidebar-menu a {
+    color: #cbd5e1;
+}
+
+.dark-mode .uc-sidebar-menu a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+.dark-mode .uc-sidebar-menu a.is-active {
+    background: rgba(225, 29, 46, 0.18);
+    color: #ff4d5e;
+}
+
+.dark-mode .uc-sidebar-menu a.is-active i {
+    color: #ff4d5e;
+}
+
+

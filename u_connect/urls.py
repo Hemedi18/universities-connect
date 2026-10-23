@@ -29,11 +29,15 @@ from users import views_support
 from django.shortcuts import render
 
 def service_worker(request):
-    return render(
+    response = render(
         request,
         "pwa/serviceworker.js",
         content_type="application/javascript",
     )
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response
 
 from django.shortcuts import redirect
 from django.views.generic import RedirectView

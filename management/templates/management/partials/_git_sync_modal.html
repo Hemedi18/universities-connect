@@ -1,0 +1,340 @@
+{% load i18n %}
+<!-- =========================================================================
+     cPanel Git Live Synchronization Modal (Admin Only)
+     ========================================================================= -->
+<div class="modal fade" id="gitSyncModal" tabindex="-1" aria-labelledby="gitSyncModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="background: var(--uc-surface, #1e293b); color: var(--uc-text, #f8fafc); border-radius: 1rem; overflow: hidden;">
+            
+            <!-- Modal Header -->
+            <div class="modal-header border-bottom py-3 px-4" style="border-color: rgba(255, 255, 255, 0.1) !important; background: rgba(15, 23, 42, 0.6);">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="p-2 rounded-3 bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-cloud-arrow-down-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0 text-white" id="gitSyncModalLabel">
+                            {% trans "cPanel Git Live Synchronization" %}
+                        </h5>
+                        <small class="text-white-50" style="font-size: 0.78rem;">
+                            {% trans "Pull latest GitHub commits directly into cPanel & reload Python app" %}
+                        </small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}" id="btnGitSyncClose"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body p-4">
+                
+                <!-- Commit Status Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border h-100" style="background: rgba(15, 23, 42, 0.4); border-color: rgba(255,255,255,0.08) !important;">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-white-50 small fw-bold text-uppercase" style="letter-spacing: 0.05em;">
+                                    <i class="bi bi-hdd-network me-1"></i>{% trans "Local cPanel Commit" %}
+                                </span>
+                                <span class="badge bg-secondary font-monospace" id="gitModalLocalHash">—</span>
+                            </div>
+                            <div class="small fw-semibold text-white text-truncate mb-1" id="gitModalLocalMsg">{% trans "Loading commit details..." %}</div>
+                            <div class="text-white-50 small" style="font-size: 0.75rem;" id="gitModalLocalAuthor">—</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 border h-100" style="background: rgba(15, 23, 42, 0.4); border-color: rgba(255,255,255,0.08) !important;">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-white-50 small fw-bold text-uppercase" style="letter-spacing: 0.05em;">
+                                    <i class="bi bi-github me-1"></i>{% trans "Latest on GitHub" %}
+                                </span>
+                                <span class="badge bg-primary font-monospace" id="gitModalRemoteHash">—</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="badge bg-danger rounded-pill" id="gitModalBehindBadge" style="display:none;">0 commits behind</span>
+                                <span class="badge bg-success rounded-pill" id="gitModalUpToDateBadge" style="display:none;">Up to date</span>
+                            </div>
+                            <div class="text-white-50 small" style="font-size: 0.75rem;" id="gitModalStatusText">{% trans "Checking repository..." %}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Execution Terminal Box -->
+                <div class="mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="small fw-bold text-white-50 text-uppercase" style="letter-spacing: 0.05em;">
+                            <i class="bi bi-terminal me-1"></i>{% trans "Deployment Agent Execution Log" %}
+                        </span>
+                        <button type="button" class="btn btn-sm btn-link text-info p-0 text-decoration-none" onclick="fetchGitSyncStatus(true)" id="btnGitRefreshStatus">
+                            <i class="bi bi-arrow-clockwise me-1"></i>{% trans "Re-check GitHub" %}
+                        </button>
+                    </div>
+                    <div id="gitSyncTerminal" class="rounded-3 p-3 font-monospace small" style="background: #090d16; color: #94a3b8; max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); line-height: 1.5; font-size: 0.8rem;">
+                        <div class="text-white-50"># Click 'Execute Sync' to start pulling the latest commit to cPanel...</div>
+                    </div>
+                </div>
+
+                <!-- Alert Result Banner -->
+                <div id="gitSyncResultBanner" class="alert d-none mb-0 py-2 px-3 small rounded-3" role="alert"></div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer border-top py-3 px-4 d-flex justify-content-between align-items-center" style="border-color: rgba(255, 255, 255, 0.1) !important; background: rgba(15, 23, 42, 0.6);">
+                <div class="text-white-50 small" style="font-size: 0.75rem;">
+                    <i class="bi bi-info-circle me-1"></i>{% trans "Touches tmp/restart.txt to reload Passenger" %}
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary text-white" data-bs-dismiss="modal">
+                        {% trans "Close" %}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary fw-bold px-3 d-inline-flex align-items-center gap-1" id="btnRunGitSync" onclick="runGitSyncNow()">
+                        <i class="bi bi-cloud-arrow-down-fill me-1"></i>
+                        <span>{% trans "Execute Sync to cPanel" %}</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+/* Pulsing animation for git sync trigger button when changes are available */
+@keyframes ucGitPulse {
+    0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(14, 165, 233, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+}
+.uc-git-sync-btn-pulse {
+    animation: ucGitPulse 2s infinite !important;
+}
+</style>
+
+<script>
+// =========================================================================
+// Client-side Git Sync Checker & Execution Logic
+// =========================================================================
+(function() {
+    // Check status on admin load
+    window.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('btnGitSyncGlobalTrigger') || document.getElementById('dashboardSyncBadge')) {
+            fetchGitSyncStatus(false);
+        }
+    });
+})();
+
+function fetchGitSyncStatus(force) {
+    var url = '/management/api/git/status/';
+    if (force) url += '?force=1';
+
+    var refreshBtn = document.getElementById('btnGitRefreshStatus');
+    if (refreshBtn) {
+        refreshBtn.classList.add('disabled');
+        refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Checking...';
+    }
+
+    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            updateGitSyncUI(data);
+        })
+        .catch(function(err) {
+            console.warn('Git sync status check failed:', err);
+        })
+        .finally(function() {
+            if (refreshBtn) {
+                refreshBtn.classList.remove('disabled');
+                refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>Re-check GitHub';
+            }
+        });
+}
+
+function updateGitSyncUI(data) {
+    if (!data || data.status !== 'success') return;
+
+    var globalBtn = document.getElementById('btnGitSyncGlobalTrigger');
+    var globalBadge = document.getElementById('gitSyncBadge');
+    var dashboardBadge = document.getElementById('dashboardSyncBadge');
+
+    // 1. Update Global Header Button Visibility
+    if (data.has_changes) {
+        if (globalBtn) {
+            globalBtn.classList.remove('d-none');
+            globalBtn.classList.add('d-inline-flex', 'uc-git-sync-btn-pulse');
+        }
+        var countText = data.behind > 0 ? data.behind : '!';
+        if (globalBadge) globalBadge.textContent = countText;
+        if (dashboardBadge) {
+            dashboardBadge.textContent = countText;
+            dashboardBadge.style.display = 'inline-block';
+        }
+    } else {
+        if (globalBtn) {
+            globalBtn.classList.remove('d-inline-flex', 'uc-git-sync-btn-pulse');
+            globalBtn.classList.add('d-none');
+        }
+        if (dashboardBadge) {
+            dashboardBadge.style.display = 'none';
+        }
+    }
+
+    // 2. Update Modal Fields
+    var localHash = document.getElementById('gitModalLocalHash');
+    var localMsg = document.getElementById('gitModalLocalMsg');
+    var localAuthor = document.getElementById('gitModalLocalAuthor');
+    var remoteHash = document.getElementById('gitModalRemoteHash');
+    var behindBadge = document.getElementById('gitModalBehindBadge');
+    var upToDateBadge = document.getElementById('gitModalUpToDateBadge');
+    var statusText = document.getElementById('gitModalStatusText');
+
+    if (localHash) localHash.textContent = data.local_commit || 'unknown';
+    if (localMsg) localMsg.textContent = data.local_subject || 'No commit details';
+    if (localAuthor) localAuthor.textContent = (data.local_author || '') + (data.local_time ? ' • ' + data.local_time : '');
+    if (remoteHash) remoteHash.textContent = data.remote_commit || 'unknown';
+
+    if (behindBadge && upToDateBadge) {
+        if (data.has_changes) {
+            behindBadge.style.display = 'inline-block';
+            behindBadge.textContent = (data.behind > 0 ? data.behind + ' new commit(s)' : 'Updates available');
+            upToDateBadge.style.display = 'none';
+            if (statusText) statusText.textContent = 'New changes waiting on GitHub (' + data.branch + ')';
+        } else {
+            behindBadge.style.display = 'none';
+            upToDateBadge.style.display = 'inline-block';
+            upToDateBadge.textContent = 'Up to date (' + data.branch + ')';
+            if (statusText) statusText.textContent = 'cPanel is running the latest GitHub commit.';
+        }
+    }
+
+    // Also update any dashboard elements if present
+    var dashLocalHash = document.getElementById('dashGitLocalHash');
+    var dashRemoteHash = document.getElementById('dashGitRemoteHash');
+    var dashBranch = document.getElementById('dashGitBranch');
+    var dashStatus = document.getElementById('dashGitStatusAlert');
+    if (dashLocalHash) dashLocalHash.textContent = data.local_commit || '—';
+    if (dashRemoteHash) dashRemoteHash.textContent = data.remote_commit || '—';
+    if (dashBranch) dashBranch.textContent = data.branch || 'main';
+    if (dashStatus) {
+        if (data.has_changes) {
+            dashStatus.className = 'alert alert-warning py-2 px-3 small d-flex align-items-center justify-content-between mb-3';
+            dashStatus.innerHTML = '<span><i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i><strong>' + (data.behind || '1') + ' new commit(s)</strong> available on GitHub to pull!</span><button class="btn btn-sm btn-primary py-0 px-2 fw-bold" onclick="triggerGitSyncModal()">Sync Now</button>';
+        } else {
+            dashStatus.className = 'alert alert-success py-2 px-3 small d-flex align-items-center mb-3';
+            dashStatus.innerHTML = '<i class="bi bi-check-circle-fill me-2 text-success"></i>cPanel is running the latest commit from GitHub (' + (data.local_commit || '') + ').';
+        }
+    }
+}
+
+function triggerGitSyncModal() {
+    var modalEl = document.getElementById('gitSyncModal');
+    if (!modalEl) return;
+    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+    fetchGitSyncStatus(true);
+}
+
+function getCsrfToken() {
+    var cookieVal = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieVal = decodeURIComponent(cookie.substring(10));
+                break;
+            }
+        }
+    }
+    return cookieVal;
+}
+
+function runGitSyncNow() {
+    var btn = document.getElementById('btnRunGitSync');
+    var closeBtn = document.getElementById('btnGitSyncClose');
+    var term = document.getElementById('gitSyncTerminal');
+    var banner = document.getElementById('gitSyncResultBanner');
+
+    if (!confirm('Are you sure you want to pull the latest commits and restart the cPanel Python app?')) {
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Syncing with cPanel...';
+    }
+    if (closeBtn) closeBtn.disabled = true;
+
+    if (term) {
+        term.innerHTML = '<div class="text-info fw-bold mb-1">[1/5] Initiating cPanel Git Sync Agent...</div>' +
+                         '<div class="text-white-50 small mb-1">> Connecting to local repository & GitHub origin...</div>';
+    }
+    if (banner) banner.className = 'alert d-none';
+
+    fetch('/management/api/git/sync/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(function(res) {
+        return res.json().then(function(data) {
+            return { ok: res.ok, data: data };
+        });
+    })
+    .then(function(resObj) {
+        var data = resObj.data;
+        var isSuccess = resObj.ok && data.success;
+
+        if (term && data.steps) {
+            var lines = [];
+            data.steps.forEach(function(s) {
+                var icon = s.success ? '<span class="text-success">[OK]</span>' : '<span class="text-danger">[ERR]</span>';
+                lines.push('<div>' + icon + ' <strong>' + s.step + '</strong> (' + s.command + ')</div>');
+                if (s.output) {
+                    lines.push('<div class="text-white-50 ps-3 mb-1" style="font-size:0.75rem; white-space:pre-wrap;">' + s.output.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>');
+                }
+            });
+            lines.push('<div class="mt-2 text-info fw-bold">> Total duration: ' + (data.duration_seconds || '0') + 's</div>');
+            term.innerHTML = lines.join('');
+            term.scrollTop = term.scrollHeight;
+        }
+
+        if (banner) {
+            banner.classList.remove('d-none');
+            if (isSuccess) {
+                banner.className = 'alert alert-success py-2 px-3 small rounded-3';
+                banner.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>' + data.message + '</strong> New commit: <code>' + (data.new_commit || '') + '</code>. Reloading page in 3 seconds...';
+                setTimeout(function() {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                banner.className = 'alert alert-danger py-2 px-3 small rounded-3';
+                banner.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i><strong>Sync failed:</strong> ' + (data.message || 'Error occurred during execution.');
+            }
+        }
+
+        if (data.fresh_status) {
+            updateGitSyncUI(data.fresh_status);
+        }
+    })
+    .catch(function(err) {
+        if (term) {
+            term.innerHTML += '<div class="text-danger mt-2 fw-bold">[FAIL] Network/Server Error: ' + err.message + '</div>';
+        }
+        if (banner) {
+            banner.className = 'alert alert-danger py-2 px-3 small rounded-3';
+            banner.classList.remove('d-none');
+            banner.innerHTML = '<i class="bi bi-exclamation-octagon-fill me-2"></i>Request failed: ' + err.message;
+        }
+    })
+    .finally(function() {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-cloud-arrow-down-fill me-1"></i><span>Execute Sync to cPanel</span>';
+        }
+        if (closeBtn) closeBtn.disabled = false;
+    });
+}
+</script>

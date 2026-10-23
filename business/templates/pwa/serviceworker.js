@@ -1,5 +1,5 @@
 /* {% load static %} */
-const staticCacheName = "u-connect-v4";
+const staticCacheName = "u-connect-v5";
 const coreAssets = [
     "/offline/",
     '{% static "css/style.css" %}',
@@ -98,32 +98,30 @@ self.addEventListener("fetch", (event) => {
         event.request.destination === "font";
 
     if (isStaticAsset) {
-        event.respondWith(
-            fetch(event.request)
-                .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        const copy = networkResponse.clone();
-                        caches.open(staticCacheName).then((cache) => cache.put(event.request, copy));
-                    }
-                    return networkResponse;
-                })
-                .catch(async () => {
-                    const cached = await caches.match(event.request, { ignoreSearch: true });
-                    if (cached) return cached;
+        // While online, do NOT hijack static CSS/JS requests.
+        // Let the browser's native network engine handle standard HTTP caching,
+        // ETag revalidation, and HTTP 304 responses natively so CSS never renders empty.
+        if (navigator.onLine) {
+            return;
+        }
 
-                    // Fallback for CSS: NEVER return HTML error pages
-                    if (event.request.destination === "style" || url.pathname.endsWith(".css")) {
-                        return new Response("/* Offline CSS fallback */", {
-                            headers: { "Content-Type": "text/css" },
-                        });
-                    }
-                    if (event.request.destination === "script" || url.pathname.endsWith(".js")) {
-                        return new Response("// Offline JS fallback", {
-                            headers: { "Content-Type": "application/javascript" },
-                        });
-                    }
-                    return new Response("Not found", { status: 404 });
-                })
+        // When offline, serve from pre-cached assets
+        event.respondWith(
+            caches.match(event.request, { ignoreSearch: true }).then((cached) => {
+                if (cached) return cached;
+
+                if (event.request.destination === "style" || url.pathname.endsWith(".css")) {
+                    return new Response("/* Offline CSS */", {
+                        headers: { "Content-Type": "text/css" },
+                    });
+                }
+                if (event.request.destination === "script" || url.pathname.endsWith(".js")) {
+                    return new Response("// Offline JS", {
+                        headers: { "Content-Type": "application/javascript" },
+                    });
+                }
+                return new Response("Not found", { status: 404 });
+            })
         );
         return;
     }

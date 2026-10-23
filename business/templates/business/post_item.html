@@ -1,10 +1,12 @@
 {% extends 'business/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{% if title %}{{ title }}{% else %}Weka Bidhaa Sokoni - U-Connect{% endif %} - U-Connect{% endblock %}
+{% block title %}{% if title %}{{ title }}{% else %}{% trans "Post Product - U-Connect" %}{% endif %} - U-Connect{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/file-uploader.css' %}?v=5">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
     :root {
         --sell-primary: #4f46e5;
@@ -29,8 +31,34 @@
     .sell-page-wrapper {
         max-width: 1240px;
         margin: 0 auto;
-        padding: 2rem 1.25rem 5rem 1.25rem;
+        padding: 1.5rem 1rem 5rem 1rem;
         animation: sellFadeIn 0.35s ease-out;
+    }
+
+    /* Expanded Desktop Form Layout */
+    @media (min-width: 992px) {
+        .sell-page-wrapper {
+            max-width: 1440px;
+            padding: 2.5rem 2.25rem 6rem;
+        }
+        .sell-section-card {
+            padding: 2.5rem 2.25rem;
+            margin-bottom: 2.25rem;
+            border-radius: 22px;
+        }
+        .sell-breadcrumb-bar {
+            padding: 1.5rem 2rem;
+            border-radius: 22px;
+            margin-bottom: 2.25rem;
+        }
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            font-size: 0.98rem;
+            border-radius: 12px;
+        }
+        .sell-section-title {
+            font-size: 1.35rem;
+        }
     }
 
     /* Top Breadcrumb & Category Bar */
@@ -273,22 +301,149 @@
         backdrop-filter: blur(12px);
     }
 
-    /* Input Focus Styles */
-    .form-control:focus, .form-select:focus {
-        border-color: #6366f1 !important;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+    /* Enhanced Button Styles for Both Desktop and Mobile */
+    .btn, button.btn {
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        font-weight: 600;
+    }
+    
+    .btn:active, button.btn:active {
+        transform: scale(0.97) !important;
     }
 
-    /* Fade-in Animation */
-    @keyframes sellFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    /* Primary Action Buttons */
+    .btn-primary, #submitSellBtn {
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important;
+        border: none !important;
+        color: #ffffff !important;
+        border-radius: 9999px !important;
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.32) !important;
+    }
+    .btn-primary:hover, #submitSellBtn:hover {
+        background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%) !important;
+        box-shadow: 0 8px 24px rgba(79, 70, 229, 0.45) !important;
+        transform: translateY(-2px);
+    }
+
+    /* GPS Detection Button */
+    #btnDetectGPS {
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(5, 150, 105, 0.28);
+        padding: 0.5rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    #btnDetectGPS:hover {
+        background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+    }
+
+    /* Map Picker Modal Button */
+    #btnOpenMapModal {
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
+        padding: 0.5rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    #btnOpenMapModal:hover {
+        background: linear-gradient(135deg, #4338ca 0%, #312e81 100%) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Quick Area / Campus Chips */
+    .quick-loc-chips-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+    }
+    .quick-loc-label {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: var(--sell-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+    .btn-loc-chip {
+        font-size: 0.76rem;
+        font-weight: 600;
+        background: var(--sell-primary-light);
+        color: var(--sell-primary);
+        border: 1px solid rgba(99, 102, 241, 0.22);
+        border-radius: 9999px;
+        padding: 3px 12px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-loc-chip:hover, .btn-loc-chip.active {
+        background: linear-gradient(135deg, var(--sell-primary) 0%, var(--sell-primary-dark) 100%);
+        color: #ffffff;
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Saved Location Pills */
+    .saved-loc-pill {
+        border-radius: 9999px !important;
+        padding: 5px 14px !important;
+        font-weight: 600 !important;
+        font-size: 0.82rem !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+        transition: all 0.2s ease !important;
+    }
+    .saved-loc-pill:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+    }
+
+    /* Auto-fill Contact Badges */
+    .btn-fill-contact {
+        border-radius: 9999px !important;
+        font-size: 0.76rem !important;
+        padding: 3px 10px !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(99, 102, 241, 0.35) !important;
+        box-shadow: 0 2px 6px rgba(99, 102, 241, 0.15) !important;
+    }
+    .btn-fill-contact:hover {
+        transform: translateY(-1px) scale(1.04) !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.28) !important;
+    }
+
+    /* Breadcrumb Change Category Pill */
+    .sell-breadcrumb-bar .btn {
+        border-radius: 9999px !important;
+        padding: 0.4rem 1.1rem !important;
+        font-weight: 700 !important;
+        font-size: 0.84rem !important;
+    }
+
+    /* Sticky Footer Buttons */
+    .sell-action-footer .btn {
+        border-radius: 9999px !important;
+        font-weight: 700 !important;
+    }
+    #submitSellBtn {
+        padding: 0.75rem 2rem !important;
+        font-size: 1rem !important;
     }
 </style>
 {% endblock %}
@@ -300,11 +455,11 @@
     <div class="sell-breadcrumb-bar d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
             <div class="text-muted small mb-1">
-                <i class="bi bi-shop me-1 text-primary"></i>U-Connect Marketplace &bull; Weka Bidhaa Sokoni
+                <i class="bi bi-shop me-1 text-primary"></i>{% trans "U-Connect Marketplace • Post Product" %}
             </div>
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 <h4 class="mb-0 fw-bold fs-5" style="color: var(--sell-text-dark);">
-                    {% if title %}{{ title }}{% else %}Uza Bidhaa Mpya (Post Product){% endif %}
+                    {% if title %}{{ title }}{% else %}{% trans "Post New Product" %}{% endif %}
                 </h4>
                 {% if category %}
                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill">
@@ -316,7 +471,7 @@
         <div>
             <a href="{% url 'business:post_item' %}" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 rounded-pill px-3 shadow-sm">
                 <i class="bi bi-arrow-repeat"></i>
-                <span>Badili Kategoria</span>
+                <span>{% trans "Change Category" %}</span>
             </a>
         </div>
     </div>
@@ -344,14 +499,14 @@
                     <div class="sell-section-header">
                         <span class="sell-section-number">1</span>
                         <div>
-                            <h5 class="sell-section-title">Picha &amp; Video za Bidhaa (Product Media)</h5>
-                            <p class="sell-section-subtitle">Picha nzuri huongeza nafasi ya mwanafunzi kununua kwa 70%. Picha ya kwanza ndiyo 'Main Cover Photo'.</p>
+                            <h5 class="sell-section-title">{% trans "Product Media (Photos & Video)" %}</h5>
+                            <p class="sell-section-subtitle">{% trans "High-quality photos increase buyer trust by 70%. The first photo is your main cover photo." %}</p>
                         </div>
                     </div>
 
                     <div class="alert alert-info border-0 rounded-3 py-2 px-3 mb-3 d-flex align-items-center gap-2 small">
                         <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
-                        <span>Weka picha angalau <strong>1</strong> iliyo wazi (unaweza kuweka hadi picha 6 na video 1 fupi ya sekunde 30).</span>
+                        <span>{% trans "Add at least 1 clear photo (up to 6 photos and 1 short 30-second video)." %}</span>
                     </div>
 
                     <!-- Uploader partial with collapsible initial zone and trailing + card -->
@@ -364,19 +519,19 @@
                     <div class="sell-section-header">
                         <span class="sell-section-number">2</span>
                         <div>
-                            <h5 class="sell-section-title">Taarifa Kuu za Bidhaa (Basic Information)</h5>
-                            <p class="sell-section-subtitle">Andika kichwa kinachovutia na taja hali halisi ya bidhaa yako.</p>
+                            <h5 class="sell-section-title">{% trans "Basic Product Information" %}</h5>
+                            <p class="sell-section-subtitle">{% trans "Write a clear, attractive title and specify the item condition." %}</p>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="sell-form-label" for="id_product_title">
-                            <span>Jina / Kichwa cha Bidhaa (Title) <span class="text-danger">*</span></span>
+                            <span>{% trans "Product Title" %} <span class="text-danger">*</span></span>
                             <span class="text-muted small fw-normal" id="titleCharCount">0/100</span>
                         </label>
                         {{ form.title }}
                         <small class="text-muted d-block mt-2" style="font-size: 0.78rem;">
-                            Ushauri: Taja Brand, Model, na sifa kuu (mfano: <em>Samsung Galaxy S22 Ultra 256GB Phantom Black</em>).
+                            {% trans "Tip: Mention Brand, Model, and key specs (e.g. Samsung Galaxy S22 Ultra 256GB)." %}
                         </small>
                         {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors }}</div>{% endif %}
                     </div>
@@ -384,7 +539,7 @@
                     <div class="row g-4">
                         <div class="col-12 col-md-6">
                             <label class="sell-form-label" for="id_product_condition">
-                                <span>Hali ya Bidhaa (Condition) <span class="text-danger">*</span></span>
+                                <span>{% trans "Item Condition" %} <span class="text-danger">*</span></span>
                             </label>
                             {{ form.condition }}
                             {% if form.condition.errors %}<div class="text-danger small mt-1">{{ form.condition.errors }}</div>{% endif %}
@@ -392,10 +547,10 @@
 
                         <div class="col-12 col-md-6">
                             <label class="sell-form-label" for="id_sku">
-                                <span>Product SKU / Barcode <span class="text-muted fw-normal small">(Hiari)</span></span>
+                                <span>SKU / Barcode <span class="text-muted fw-normal small">({% trans "Optional" %})</span></span>
                             </label>
                             {{ form.sku }}
-                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">Ikiachwa wazi, mfumo utatengeneza nambari kiotomatiki.</small>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">{% trans "If left blank, a code will be generated automatically." %}</small>
                             {% if form.sku.errors %}<div class="text-danger small mt-1">{{ form.sku.errors }}</div>{% endif %}
                         </div>
                     </div>
@@ -408,8 +563,8 @@
                     <div class="sell-section-header">
                         <span class="sell-section-number">3</span>
                         <div>
-                            <h5 class="sell-section-title">Sifa &amp; Vipimo vya {{ category.name }} (Specifications)</h5>
-                            <p class="sell-section-subtitle">Chagua kwenye orodha au <strong>andika mwenyewe (custom)</strong> kama una ukubwa maalum au sifa tofauti (mfano: HDD, 500GB, n.k.).</p>
+                            <h5 class="sell-section-title">{% trans "Specifications for" %} {{ category.name }}</h5>
+                            <p class="sell-section-subtitle">{% trans "Choose from suggestions or type your custom value." %}</p>
                         </div>
                     </div>
 
@@ -472,41 +627,41 @@
                     <div class="sell-section-header">
                         <span class="sell-section-number">{% if form.get_attribute_fields %}4{% else %}3{% endif %}</span>
                         <div>
-                            <h5 class="sell-section-title">Bei &amp; Idadi ya Bidhaa (Pricing &amp; Stock)</h5>
-                            <p class="sell-section-subtitle">Weka bei halisi ya sarafu ya Tanzania (TZS). Bei nafuu huvutia wanachuo haraka zaidi.</p>
+                            <h5 class="sell-section-title">{% trans "Pricing & Inventory" %}</h5>
+                            <p class="sell-section-subtitle">{% trans "Set the exact selling price in TZS. Competitive prices sell faster." %}</p>
                         </div>
                     </div>
 
                     <div class="row g-4">
                         <div class="col-12 col-md-6">
                             <label class="sell-form-label" for="id_product_price">
-                                <span>Bei ya Kuuza (Selling Price) <span class="text-danger">*</span></span>
+                                <span>{% trans "Selling Price" %} <span class="text-danger">*</span></span>
                                 <span class="sell-unit-badge">TZS</span>
                             </label>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text fw-bold input-group-text-unit">TSh</span>
                                 {{ form.price }}
                             </div>
-                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">Kiasi kamili ambacho mnunuzi atalipia.</small>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">{% trans "Exact amount buyer will pay." %}</small>
                             {% if form.price.errors %}<div class="text-danger small mt-1">{{ form.price.errors }}</div>{% endif %}
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label class="sell-form-label" for="id_product_compare_price">
-                                <span>Bei ya Awali (Compare-at Price) <span class="text-muted fw-normal small">(Hiari)</span></span>
+                                <span>{% trans "Compare-at Price" %} <span class="text-muted fw-normal small">({% trans "Optional" %})</span></span>
                                 <span class="badge bg-success bg-opacity-10 text-success d-none" id="discountBadge">Discount</span>
                             </label>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text input-group-text-unit">TSh</span>
                                 {{ form.compare_at_price }}
                             </div>
-                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">Ikiwa ipo juu ya bei ya sasa, itaonyeshwa ikiwa imekatwa mstari kuonyesha ofa.</small>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">{% trans "If higher than current price, will show crossed out as a discount." %}</small>
                             {% if form.compare_at_price.errors %}<div class="text-danger small mt-1">{{ form.compare_at_price.errors }}</div>{% endif %}
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_stock_quantity">
-                                <span>Idadi Iliyopo (Stock Quantity)</span>
+                                <span>{% trans "Stock Quantity" %}</span>
                             </label>
                             {{ form.stock_quantity }}
                             {% if form.stock_quantity.errors %}<div class="text-danger small mt-1">{{ form.stock_quantity.errors }}</div>{% endif %}
@@ -514,7 +669,7 @@
 
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_shipping_weight">
-                                <span>Uzito wa Mzigo (Shipping Weight)</span>
+                                <span>{% trans "Shipping Weight" %}</span>
                                 <span class="sell-unit-badge">kg</span>
                             </label>
                             <div class="input-group">
@@ -526,7 +681,7 @@
 
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_shipping_dimensions">
-                                <span>Vipimo vya Boksi (L x W x H)</span>
+                                <span>{% trans "Box Dimensions (L x W x H)" %}</span>
                             </label>
                             {{ form.shipping_dimensions }}
                             {% if form.shipping_dimensions.errors %}<div class="text-danger small mt-1">{{ form.shipping_dimensions.errors }}</div>{% endif %}
@@ -534,29 +689,117 @@
                     </div>
                 </div>
 
-                <!-- SECTION 5: CAMPUS PICKUP & SELLER CONTACT (WITH AUTO-FILL BUTTONS) -->
+                <!-- SECTION 5: MEETUP LOCATION & SELLER CONTACT -->
                 <div class="sell-section-card">
                     <div class="sell-section-header">
                         <span class="sell-section-number">{% if form.get_attribute_fields %}5{% else %}4{% endif %}</span>
                         <div>
-                            <h5 class="sell-section-title">Eneo la Kukutana Chuoni &amp; Mawasiliano (Campus Location)</h5>
-                            <p class="sell-section-subtitle">Wanachuo hupendelea kukutana kwenye maeneo salama ya chuo (Campus Meetup).</p>
+                            <h5 class="sell-section-title">{% trans "Meetup Location & Seller Contact" %}</h5>
+                            <p class="sell-section-subtitle">{% trans "Set the general area and specific spot for handing over goods and Cash on Delivery." %}</p>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="sell-form-label" for="id_product_location">
-                            <span><i class="bi bi-geo-alt-fill text-danger me-1"></i>Eneo la Kukutana Chuoni (Meetup Location)</span>
-                        </label>
-                        {{ form.campus_location }}
-                        <small class="text-muted d-block mt-2" style="font-size: 0.76rem;">Mfano: <em>UDSM Main Campus - Hall 5, Library, au CoICT Cafeteria</em>.</small>
-                        {% if form.campus_location.errors %}<div class="text-danger small mt-1">{{ form.campus_location.errors }}</div>{% endif %}
+                    {% if saved_locations %}
+                    <!-- Saved Meetup Locations Selector -->
+                    <div class="mb-4 p-3 rounded-3" style="background: rgba(79, 70, 229, 0.05); border: 1px dashed var(--sell-border);">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label class="sell-form-label mb-0">
+                                <span><i class="bi bi-clock-history text-primary me-1"></i>{% trans "Saved Meetup Locations" %}</span>
+                            </label>
+                            <span class="small text-muted" style="font-size: 0.74rem;">{% trans "Click to fill" %}</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2" id="savedLocationsContainer">
+                            {% for loc in saved_locations %}
+                            <button type="button" class="btn btn-sm btn-outline-secondary saved-loc-pill{% if loc.is_default %} border-primary text-primary fw-bold bg-white{% endif %}"
+                                data-id="{{ loc.id }}"
+                                data-general="{{ loc.general_location }}"
+                                data-specific="{{ loc.specific_location }}"
+                                data-lat="{{ loc.latitude|default:'' }}"
+                                data-lng="{{ loc.longitude|default:'' }}"
+                                data-is-default="{% if loc.is_default %}1{% else %}0{% endif %}"
+                                title="{% if loc.is_default %}{% trans 'Default Meetup Location' %}{% else %}{% trans 'Click to use this location' %}{% endif %}">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                <span>{{ loc.general_location }}{% if loc.specific_location %} ({{ loc.specific_location }}){% endif %}</span>
+                                {% if loc.is_default %}
+                                <span class="badge bg-primary ms-1 text-white"><i class="bi bi-star-fill"></i> {% trans "Default" %}</span>
+                                {% endif %}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Dual Location Inputs: General + Specific -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_general_location">
+                                <span><i class="bi bi-geo-alt-fill text-danger me-1"></i>{% trans "General Location (Area / City / Region)" %} <strong class="text-danger">*</strong></span>
+                            </label>
+                            <div class="input-group">
+                                {{ form.general_location }}
+                                <button type="button" class="btn btn-outline-primary" id="btnDetectGPS" title="{% trans 'Detect GPS Location' %}">
+                                    <i class="bi bi-crosshair me-1"></i><span class="d-none d-sm-inline">{% trans "GPS" %}</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnOpenMapModal" title="{% trans 'Pick on Map' %}">
+                                    <i class="bi bi-map me-1"></i><span class="d-none d-sm-inline">{% trans "Map" %}</span>
+                                </button>
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.76rem;">{% trans "e.g. Chukwani, Zanzibar or Mwenge, Dar es Salaam." %}</small>
+                            
+                            <!-- Quick Campus & Area Chips -->
+                            <div class="quick-loc-chips-row mt-2">
+                                <span class="quick-loc-label"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{% trans "Quick" %}:</span>
+                                <button type="button" class="btn-loc-chip" data-general="Mbweni, Zanzibar" data-lat="-6.2167" data-lng="39.2167">Mbweni, ZNZ</button>
+                                <button type="button" class="btn-loc-chip" data-general="Chukwani, Zanzibar" data-specific="SUMAIT University" data-lat="-6.2289" data-lng="39.2075">Chukwani (SUMAIT)</button>
+                                <button type="button" class="btn-loc-chip" data-general="Tunguu, Zanzibar" data-specific="SUZA Main Campus" data-lat="-6.2081" data-lng="39.3175">SUZA Tunguu</button>
+                                <button type="button" class="btn-loc-chip" data-general="Stone Town, Zanzibar" data-lat="-6.1622" data-lng="39.1883">Stone Town</button>
+                                <button type="button" class="btn-loc-chip" data-general="UDSM Mlimani, Dar es Salaam" data-lat="-6.7788" data-lng="39.2078">UDSM Mlimani</button>
+                                <button type="button" class="btn-loc-chip" data-general="IFM Posta, Dar es Salaam" data-lat="-6.8143" data-lng="39.2891">IFM Posta</button>
+                                <button type="button" class="btn-loc-chip" data-general="DIT, Dar es Salaam" data-lat="-6.8139" data-lng="39.2797">DIT</button>
+                                <button type="button" class="btn-loc-chip" data-general="CBE, Dar es Salaam" data-lat="-6.8183" data-lng="39.2858">CBE</button>
+                                <button type="button" class="btn-loc-chip" data-general="Mwenge, Dar es Salaam" data-lat="-6.7725" data-lng="39.2190">Mwenge</button>
+                            </div>
+                            {% if form.general_location.errors %}<div class="text-danger small mt-1">{{ form.general_location.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_specific_location">
+                                <span><i class="bi bi-building text-primary me-1"></i>{% trans "Specific Meetup Spot (Exact point)" %}</span>
+                            </label>
+                            {{ form.specific_location }}
+                            <small class="text-muted d-block mt-1" style="font-size: 0.76rem;">{% trans "e.g. SUMAIT University Main Gate, CoICT Library, or Block B." %}</small>
+                            {% if form.specific_location.errors %}<div class="text-danger small mt-1">{{ form.specific_location.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    {{ form.location_latitude }}
+                    {{ form.location_longitude }}
+                    <div style="display: none;">{{ form.campus_location }}</div>
+
+                    <!-- Remember & Set as Default Toggles -->
+                    <div class="row g-2 mb-4 p-2 rounded-3" style="background: rgba(0,0,0,0.015); border: 1px solid var(--sell-border);">
+                        <div class="col-12 col-md-6">
+                            <div class="form-check form-switch pt-1">
+                                {{ form.remember_location }}
+                                <label class="form-check-label small fw-semibold" for="id_remember_location">
+                                    {% trans "Remember this location for my future listings" %}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-check form-switch pt-1">
+                                {{ form.set_as_default_location }}
+                                <label class="form-check-label small fw-semibold" for="id_set_as_default_location">
+                                    {% trans "Set as my default meetup location" %}
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row g-4">
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_contact_method">
-                                <span>Njia ya Mawasiliano</span>
+                                <span>{% trans "Preferred Contact Method" %}</span>
                             </label>
                             {{ form.contact_method }}
                             {% if form.contact_method.errors %}<div class="text-danger small mt-1">{{ form.contact_method.errors }}</div>{% endif %}
@@ -564,29 +807,29 @@
 
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_contact_phone">
-                                <span><i class="bi bi-whatsapp text-success me-1"></i>Simu / WhatsApp</span>
+                                <span><i class="bi bi-whatsapp text-success me-1"></i>{% trans "Phone / WhatsApp" %}</span>
                                 {% if registered_phone %}
-                                <button type="button" class="btn btn-outline-primary btn-fill-contact" id="btnUseRegisteredPhone" title="Jaza namba yako iliyosajiliwa kiotomatiki">
-                                    <i class="bi bi-telephone-fill me-1"></i>Tumia Yangu
+                                <button type="button" class="btn btn-outline-primary btn-fill-contact" id="btnUseRegisteredPhone" title="{% trans 'Auto-fill your registered phone number' %}">
+                                    <i class="bi bi-telephone-fill me-1"></i>{% trans "Use Mine" %}
                                 </button>
                                 {% endif %}
                             </label>
                             {{ form.contact_phone }}
-                            <small class="text-muted d-block mt-1" style="font-size: 0.74rem;">Namba mnunuzi atakayokupigia au kutuma WhatsApp.</small>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.74rem;">{% trans "Number buyer will call or message on WhatsApp." %}</small>
                             {% if form.contact_phone.errors %}<div class="text-danger small mt-1">{{ form.contact_phone.errors }}</div>{% endif %}
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label class="sell-form-label" for="id_contact_email">
-                                <span><i class="bi bi-envelope text-primary me-1"></i>Email ya Mawasiliano</span>
+                                <span><i class="bi bi-envelope text-primary me-1"></i>{% trans "Contact Email" %}</span>
                                 {% if registered_email %}
-                                <button type="button" class="btn btn-outline-secondary btn-fill-contact" id="btnUseRegisteredEmail" title="Jaza barua pepe yako iliyosajiliwa">
-                                    <i class="bi bi-envelope-fill me-1"></i>Tumia Yangu
+                                <button type="button" class="btn btn-outline-secondary btn-fill-contact" id="btnUseRegisteredEmail" title="{% trans 'Auto-fill your registered email' %}">
+                                    <i class="bi bi-envelope-fill me-1"></i>{% trans "Use Mine" %}
                                 </button>
                                 {% endif %}
                             </label>
                             {{ form.contact_email }}
-                            <small class="text-muted d-block mt-1" style="font-size: 0.74rem;">Barua pepe ya chuo au binafsi.</small>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.74rem;">{% trans "Campus or personal email address." %}</small>
                             {% if form.contact_email.errors %}<div class="text-danger small mt-1">{{ form.contact_email.errors }}</div>{% endif %}
                         </div>
                     </div>
@@ -597,8 +840,8 @@
                     <div class="sell-section-header">
                         <span class="sell-section-number">{% if form.get_attribute_fields %}6{% else %}5{% endif %}</span>
                         <div>
-                            <h5 class="sell-section-title">Maelezo Kamili ya Bidhaa (Detailed Description)</h5>
-                            <p class="sell-section-subtitle">Eleza vifaa vilivyopo (accessories, chaja, boksi, risiti), muda uliotumika, na sababu ya kuuza.</p>
+                            <h5 class="sell-section-title">{% trans "Detailed Product Description" %}</h5>
+                            <p class="sell-section-subtitle">{% trans "Describe included accessories, condition details, usage duration, and reasons for selling." %}</p>
                         </div>
                     </div>
 
@@ -618,10 +861,10 @@
                     <div class="mock-product-card mb-4">
                         <div class="p-3 border-bottom d-flex align-items-center justify-content-between" style="border-color: var(--sell-border);">
                             <span class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;">
-                                <i class="bi bi-eye-fill text-primary me-1"></i>Live Buyer Preview
+                                <i class="bi bi-eye-fill text-primary me-1"></i>{% trans "Live Buyer Preview" %}
                             </span>
                             <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50" style="font-size: 0.7rem;">
-                                On Sale
+                                {% trans "On Sale" %}
                             </span>
                         </div>
 
@@ -638,7 +881,7 @@
                             </div>
                             
                             <h6 class="fw-bold mb-2 text-truncate" id="previewTitle" style="color: var(--sell-text-dark);">
-                                Jina la Bidhaa litaonekana hapa...
+                                {% trans "Product title will appear here..." %}
                             </h6>
 
                             <div class="d-flex align-items-baseline gap-2 mb-2">
@@ -648,7 +891,7 @@
 
                             <div class="text-muted small d-flex align-items-center gap-1" id="previewLocation">
                                 <i class="bi bi-geo-alt text-danger"></i>
-                                <span class="text-truncate">Campus Location...</span>
+                                <span class="text-truncate">{% trans "Meetup Location..." %}</span>
                             </div>
                         </div>
                     </div>
@@ -657,34 +900,34 @@
                     <div class="sell-section-card p-4">
                         <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="color: var(--sell-text-dark);">
                             <i class="bi bi-check2-circle text-success fs-5"></i>
-                            <span>Vidokezo vya Kuuza Haraka (Checklist)</span>
+                            <span>{% trans "Seller Checklist" %}</span>
                         </h6>
 
                         <div class="seller-tip-item" id="tipPhoto">
                             <i class="bi bi-circle seller-tip-icon" id="tipPhotoIcon"></i>
-                            <span>Weka picha angalau 1 iliyo wazi na yenye mwanga mzuri.</span>
+                            <span>{% trans "Upload at least 1 clear photo with good lighting." %}</span>
                         </div>
 
                         <div class="seller-tip-item" id="tipTitle">
                             <i class="bi bi-circle seller-tip-icon" id="tipTitleIcon"></i>
-                            <span>Kichwa cha bidhaa kimetaja Brand na Model kwa usahihi.</span>
+                            <span>{% trans "Title mentions brand and model accurately." %}</span>
                         </div>
 
                         <div class="seller-tip-item" id="tipPrice">
                             <i class="bi bi-circle seller-tip-icon" id="tipPriceIcon"></i>
-                            <span>Umebainisha bei ya mwanafunzi (TZS).</span>
+                            <span>{% trans "Specified fair student price in TZS." %}</span>
                         </div>
 
                         <div class="seller-tip-item" id="tipLocation">
                             <i class="bi bi-circle seller-tip-icon" id="tipLocationIcon"></i>
-                            <span>Umebainisha eneo maalum la kukutana chuoni.</span>
+                            <span>{% trans "Specified meetup location." %}</span>
                         </div>
 
                         <hr class="my-3" style="border-color: var(--sell-border);">
 
                         <div class="d-flex align-items-center gap-2 text-muted small">
                             <i class="bi bi-shield-check text-primary fs-5"></i>
-                            <span>Tangazo lako litalindwa chini ya mfumo rasmi wa wanafunzi wa U-Connect.</span>
+                            <span>{% trans "Your listing is protected under the U-Connect platform." %}</span>
                         </div>
                     </div>
 
@@ -696,31 +939,113 @@
         <!-- STICKY ACTION BAR AT BOTTOM -->
         <div class="sell-action-footer">
             <a href="{% url 'business:manage_items' %}" class="btn btn-outline-secondary px-3 rounded-pill">
-                <i class="bi bi-arrow-left me-1"></i>Ghairi (Cancel)
+                <i class="bi bi-arrow-left me-1"></i>{% trans "Cancel" %}
             </a>
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary btn-lg px-4 fw-bold shadow d-flex align-items-center gap-2 rounded-pill" id="submitSellBtn">
                     <i class="bi bi-cloud-arrow-up-fill"></i>
-                    <span>{% if title %}{{ title }}{% else %}Weka Bidhaa Sokoni Sasa (Publish Now){% endif %}</span>
+                    <span>{% if title %}{{ title }}{% else %}{% trans "Publish Product Now" %}{% endif %}</span>
                 </button>
             </div>
         </div>
 
     </form>
 
+    <!-- Modal / Dialog for Setting Default Location -->
+    <div class="modal fade" id="setDefaultLocationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow border-0" style="background: var(--sell-card-bg); color: var(--sell-text-dark);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i class="bi bi-star-fill text-warning me-2"></i>{% trans "Set as Default Location?" %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="text-muted mb-2">{% trans "Would you like to set this meetup location as your default?" %}</p>
+                    <div class="p-3 rounded-3 border mb-3" style="background: rgba(79, 70, 229, 0.05); border-color: var(--sell-border) !important;">
+                        <strong id="modalLocName" class="d-block"></strong>
+                    </div>
+                    <p class="small text-muted mb-0">{% trans "When set as default, it will automatically pre-fill on every future product listing so you won't be asked again." %}</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">{% trans "Use for this listing only" %}</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" id="btnConfirmSetDefault">
+                        <i class="bi bi-check2-circle me-1"></i>{% trans "Set as Default" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Map Picker Modal -->
+    <div class="modal fade" id="mapPickerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow border-0" style="background: var(--sell-card-bg); color: var(--sell-text-dark);">
+                <div class="modal-header border-bottom" style="border-color: var(--sell-border) !important;">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>{% trans "Select Meetup Location on Map" %}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-3 border-bottom d-flex gap-2" style="background: rgba(0,0,0,0.02); border-color: var(--sell-border) !important;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="mapSearchInput" class="form-control border-start-0" placeholder="{% trans 'Search place (e.g. Chukwani, Zanzibar)...' %}">
+                            <button type="button" class="btn btn-primary" id="btnSearchMap">{% trans "Search" %}</button>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" id="btnMapUseGPS" title="{% trans 'Center on my GPS' %}">
+                            <i class="bi bi-crosshair"></i>
+                        </button>
+                    </div>
+                    <!-- Quick Jump Hubs in Map Modal -->
+                    <div class="px-3 py-2 border-bottom d-flex align-items-center gap-1 flex-wrap" style="background: rgba(79, 70, 229, 0.04); font-size: 0.78rem;">
+                        <span class="text-muted fw-bold me-1">{% trans "Jump to" %}:</span>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.2167" data-lng="39.2167" data-name="Mbweni, Zanzibar">Mbweni (ZNZ)</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.2289" data-lng="39.2075" data-name="Chukwani (SUMAIT), Zanzibar">Chukwani (SUMAIT)</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.2081" data-lng="39.3175" data-name="SUZA Tunguu, Zanzibar">SUZA Tunguu</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.1622" data-lng="39.1883" data-name="Stone Town, Zanzibar">Stone Town</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.7788" data-lng="39.2078" data-name="UDSM Mlimani, Dar es Salaam">UDSM</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.8143" data-lng="39.2891" data-name="IFM Posta, Dar es Salaam">IFM</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 map-jump-btn" data-lat="-6.8139" data-lng="39.2797" data-name="DIT, Dar es Salaam">DIT</button>
+                    </div>
+                    <div id="leafletMap" style="height: 380px; width: 100%;"></div>
+                    <div class="p-3 border-top" style="background: rgba(0,0,0,0.02); border-color: var(--sell-border) !important;">
+                        <small class="text-muted d-block mb-1">{% trans "Selected Location:" %}</small>
+                        <div class="fw-bold" id="mapSelectedAddress">{% trans "Click anywhere on the map or drag the pin." %}</div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top" style="border-color: var(--sell-border) !important;">
+                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" id="btnApplyMapLocation">
+                        <i class="bi bi-check-lg me-1"></i>{% trans "Confirm Location" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // Live preview binding & Registered contact autofill
     document.addEventListener('DOMContentLoaded', function() {
         const titleInput = document.getElementById('id_product_title');
         const priceInput = document.getElementById('id_product_price');
         const compareInput = document.getElementById('id_product_compare_price');
         const conditionSelect = document.getElementById('id_product_condition');
-        const locationInput = document.getElementById('id_product_location');
+        const generalLocationInput = document.getElementById('id_general_location');
+        const specificLocationInput = document.getElementById('id_specific_location');
+        const latInput = document.getElementById('id_location_latitude');
+        const lngInput = document.getElementById('id_location_longitude');
+        const legacyLocInput = document.getElementById('id_campus_location');
+        const rememberLocCheck = document.getElementById('id_remember_location');
+        const defaultLocCheck = document.getElementById('id_set_as_default_location');
+
         const phoneInput = document.getElementById('id_contact_phone');
         const emailInput = document.getElementById('id_contact_email');
 
@@ -743,11 +1068,11 @@
                     phoneInput.focus();
                     btnFillPhone.classList.add('btn-success');
                     btnFillPhone.classList.remove('btn-outline-primary');
-                    btnFillPhone.innerHTML = '<i class="bi bi-check2 me-1"></i>Imewekwa!';
+                    btnFillPhone.innerHTML = '<i class="bi bi-check2 me-1"></i>{% trans "Filled!" %}';
                     setTimeout(() => {
                         btnFillPhone.classList.remove('btn-success');
                         btnFillPhone.classList.add('btn-outline-primary');
-                        btnFillPhone.innerHTML = '<i class="bi bi-telephone-fill me-1"></i>Tumia Yangu';
+                        btnFillPhone.innerHTML = '<i class="bi bi-telephone-fill me-1"></i>{% trans "Use Mine" %}';
                     }, 2000);
                 }
             });
@@ -761,11 +1086,11 @@
                     emailInput.focus();
                     btnFillEmail.classList.add('btn-success');
                     btnFillEmail.classList.remove('btn-outline-secondary');
-                    btnFillEmail.innerHTML = '<i class="bi bi-check2 me-1"></i>Imewekwa!';
+                    btnFillEmail.innerHTML = '<i class="bi bi-check2 me-1"></i>{% trans "Filled!" %}';
                     setTimeout(() => {
                         btnFillEmail.classList.remove('btn-success');
                         btnFillEmail.classList.add('btn-outline-secondary');
-                        btnFillEmail.innerHTML = '<i class="bi bi-envelope-fill me-1"></i>Tumia Yangu';
+                        btnFillEmail.innerHTML = '<i class="bi bi-envelope-fill me-1"></i>{% trans "Use Mine" %}';
                     }, 2000);
                 }
             });
@@ -775,7 +1100,7 @@
         if (titleInput) {
             titleInput.addEventListener('input', function() {
                 const val = this.value.trim();
-                prevTitle.innerText = val || 'Jina la Bidhaa litaonekana hapa...';
+                prevTitle.innerText = val || '{% trans "Product title will appear here..." %}';
                 document.getElementById('titleCharCount').innerText = `${this.value.length}/100`;
                 updateChecklist();
             });
@@ -827,21 +1152,396 @@
             }
         }
 
-        // Location update
-        if (locationInput) {
-            locationInput.addEventListener('input', function() {
-                const val = this.value.trim();
-                prevLocation.querySelector('span').innerText = val || 'Campus Location...';
-                updateChecklist();
-            });
-            if (locationInput.value) prevLocation.querySelector('span').innerText = locationInput.value;
+        // Location Updates & Synchronization
+        function updateLocationPreview() {
+            const gen = generalLocationInput ? generalLocationInput.value.trim() : '';
+            const spec = specificLocationInput ? specificLocationInput.value.trim() : '';
+            let full = '';
+            if (gen && spec) {
+                full = `${gen} (${spec})`;
+            } else {
+                full = gen || spec || '';
+            }
+            if (legacyLocInput) {
+                legacyLocInput.value = full;
+            }
+            if (prevLocation) {
+                prevLocation.querySelector('span').innerText = full || '{% trans "Meetup Location..." %}';
+            }
+            updateChecklist();
         }
 
+        if (generalLocationInput) generalLocationInput.addEventListener('input', updateLocationPreview);
+        if (specificLocationInput) specificLocationInput.addEventListener('input', updateLocationPreview);
+        updateLocationPreview();
+
+        // Saved Locations Pills Click & Set as Default Workflow
+        let pendingDefaultLocId = null;
+        let pendingDefaultButton = null;
+        const setDefaultModalEl = document.getElementById('setDefaultLocationModal');
+        const setDefaultModal = setDefaultModalEl ? new bootstrap.Modal(setDefaultModalEl) : null;
+        const modalLocName = document.getElementById('modalLocName');
+        const btnConfirmSetDefault = document.getElementById('btnConfirmSetDefault');
+
+        document.querySelectorAll('.saved-loc-pill').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const locId = this.dataset.id;
+                const gen = this.dataset.general || '';
+                const spec = this.dataset.specific || '';
+                const lat = this.dataset.lat || '';
+                const lng = this.dataset.lng || '';
+                const isDefault = this.dataset.isDefault === '1';
+
+                if (generalLocationInput) generalLocationInput.value = gen;
+                if (specificLocationInput) specificLocationInput.value = spec;
+                if (latInput) latInput.value = lat;
+                if (lngInput) lngInput.value = lng;
+                if (rememberLocCheck) rememberLocCheck.checked = true;
+
+                updateLocationPreview();
+
+                // If not yet default, prompt user if they want to make this default
+                if (!isDefault && setDefaultModal) {
+                    pendingDefaultLocId = locId;
+                    pendingDefaultButton = this;
+                    if (modalLocName) {
+                        modalLocName.innerText = gen + (spec ? ' — ' + spec : '');
+                    }
+                    setDefaultModal.show();
+                } else if (isDefault && defaultLocCheck) {
+                    defaultLocCheck.checked = true;
+                }
+            });
+        });
+
+        if (btnConfirmSetDefault) {
+            btnConfirmSetDefault.addEventListener('click', function() {
+                if (!pendingDefaultLocId) return;
+                btnConfirmSetDefault.disabled = true;
+                btnConfirmSetDefault.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Inahifadhi...';
+
+                const url = "{% url 'business:set_default_location' 0 %}".replace('/0/', '/' + pendingDefaultLocId + '/');
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    btnConfirmSetDefault.disabled = false;
+                    btnConfirmSetDefault.innerHTML = '<i class="bi bi-check2-circle me-1"></i>{% trans "Set as Default" %}';
+                    if (data.success) {
+                        // Update pills visual state
+                        document.querySelectorAll('.saved-loc-pill').forEach(b => {
+                            b.dataset.isDefault = '0';
+                            b.classList.remove('border-primary', 'text-primary', 'fw-bold', 'bg-white');
+                            const bBadge = b.querySelector('.badge');
+                            if (bBadge) bBadge.remove();
+                        });
+                        if (pendingDefaultButton) {
+                            pendingDefaultButton.dataset.isDefault = '1';
+                            pendingDefaultButton.classList.add('border-primary', 'text-primary', 'fw-bold', 'bg-white');
+                            const badge = document.createElement('span');
+                            badge.className = 'badge bg-primary ms-1 text-white';
+                            badge.innerHTML = '<i class="bi bi-star-fill"></i> {% trans "Default" %}';
+                            pendingDefaultButton.appendChild(badge);
+                        }
+                        if (defaultLocCheck) defaultLocCheck.checked = true;
+                        if (setDefaultModal) setDefaultModal.hide();
+                    }
+                })
+                .catch(() => {
+                    btnConfirmSetDefault.disabled = false;
+                    btnConfirmSetDefault.innerHTML = '<i class="bi bi-check2-circle me-1"></i>{% trans "Set as Default" %}';
+                    if (setDefaultModal) setDefaultModal.hide();
+                });
+            });
+        }
+
+        // GPS Location Detection
+        const btnDetectGPS = document.getElementById('btnDetectGPS');
+        if (btnDetectGPS) {
+            btnDetectGPS.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    alert('{% trans "Geolocation is not supported by your browser." %}');
+                    return;
+                }
+                const originalContent = btnDetectGPS.innerHTML;
+                btnDetectGPS.disabled = true;
+                btnDetectGPS.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>{% trans "Detecting..." %}';
+
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        if (latInput) latInput.value = lat;
+                        if (lngInput) lngInput.value = lng;
+
+                        // Geographical bounds check: Unguja & Pemba (Zanzibar)
+                        const isZanzibar = (lat >= -6.55 && lat <= -4.85 && lng >= 39.10 && lng <= 39.90);
+
+                        // Reverse geocoding via Nominatim
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            btnDetectGPS.disabled = false;
+                            btnDetectGPS.innerHTML = originalContent;
+                            if (data && data.address) {
+                                const addr = data.address;
+                                const area = addr.suburb || addr.neighbourhood || addr.village || addr.quarter || addr.city_district || addr.hamlet || addr.town || addr.city || '';
+                                let city = isZanzibar ? 'Zanzibar' : (addr.city || addr.state || addr.region || addr.country || '');
+                                let locStr = area;
+                                if (city && city !== area) {
+                                    locStr = locStr ? `${locStr}, ${city}` : city;
+                                }
+                                if (generalLocationInput) {
+                                    generalLocationInput.value = locStr || (isZanzibar ? 'Zanzibar' : data.display_name.split(',').slice(0, 3).join(','));
+                                }
+                                updateLocationPreview();
+                            }
+                        })
+                        .catch(() => {
+                            btnDetectGPS.disabled = false;
+                            btnDetectGPS.innerHTML = originalContent;
+                            if (generalLocationInput && !generalLocationInput.value) {
+                                generalLocationInput.value = isZanzibar ? 'Zanzibar' : `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                                updateLocationPreview();
+                            }
+                        });
+                    },
+                    function(err) {
+                        btnDetectGPS.disabled = false;
+                        btnDetectGPS.innerHTML = originalContent;
+                        let msg = '{% trans "Could not access accurate GPS. Please choose your area from the Quick buttons below or map." %}';
+                        if (err && err.code === 3) {
+                            msg = '{% trans "GPS search timed out. Tap any of the quick campus/area buttons below." %}';
+                        }
+                        alert(msg);
+                    },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+                );
+            });
+        }
+
+        // Quick Campus / Area chips click listeners
+        document.querySelectorAll('.btn-loc-chip').forEach(function(chip) {
+            chip.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.btn-loc-chip').forEach(function(c) { c.classList.remove('active'); });
+                this.classList.add('active');
+
+                if (generalLocationInput) {
+                    generalLocationInput.value = this.dataset.general || '';
+                }
+                if (specificLocationInput && this.dataset.specific) {
+                    specificLocationInput.value = this.dataset.specific;
+                }
+                if (latInput && this.dataset.lat) {
+                    latInput.value = this.dataset.lat;
+                }
+                if (lngInput && this.dataset.lng) {
+                    lngInput.value = this.dataset.lng;
+                }
+                updateLocationPreview();
+                updateChecklist();
+            });
+        });
+
+        // Leaflet Interactive Map Picker (Using CARTO Voyager basemap to prevent 403 Forbidden tile policy blocks)
+        let leafletMap = null;
+        let mapMarker = null;
+        let pickedLat = null;
+        let pickedLng = null;
+        let pickedAddress = '';
+
+        const mapModalEl = document.getElementById('mapPickerModal');
+        const btnOpenMapModal = document.getElementById('btnOpenMapModal');
+        const mapSearchInput = document.getElementById('mapSearchInput');
+        const btnSearchMap = document.getElementById('btnSearchMap');
+        const btnMapUseGPS = document.getElementById('btnMapUseGPS');
+        const btnApplyMapLocation = document.getElementById('btnApplyMapLocation');
+        const mapSelectedAddress = document.getElementById('mapSelectedAddress');
+
+        // Map Modal Jump-to buttons
+        document.querySelectorAll('.map-jump-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const lat = parseFloat(this.dataset.lat);
+                const lng = parseFloat(this.dataset.lng);
+                const name = this.dataset.name || '';
+                if (leafletMap && !isNaN(lat) && !isNaN(lng)) {
+                    leafletMap.setView([lat, lng], 16);
+                    if (mapMarker) {
+                        mapMarker.setLatLng([lat, lng]);
+                        pickedLat = lat;
+                        pickedLng = lng;
+                        pickedAddress = name;
+                        if (mapSelectedAddress) mapSelectedAddress.innerText = name;
+                    }
+                }
+            });
+        });
+
+        if (btnOpenMapModal && mapModalEl) {
+            btnOpenMapModal.addEventListener('click', function() {
+                const modal = new bootstrap.Modal(mapModalEl);
+                modal.show();
+            });
+
+            mapModalEl.addEventListener('shown.bs.modal', function() {
+                const currentLat = parseFloat(latInput ? latInput.value : null) || -6.1659; // Zanzibar default
+                const currentLng = parseFloat(lngInput ? lngInput.value : null) || 39.2026;
+
+                if (!leafletMap) {
+                    leafletMap = L.map('leafletMap').setView([currentLat, currentLng], 14);
+                    // CARTO Voyager tiles: Fast, reliable, no 403 tile usage block!
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        subdomains: 'abcd',
+                        maxZoom: 20,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    }).addTo(leafletMap);
+
+                    mapMarker = L.marker([currentLat, currentLng], { draggable: true }).addTo(leafletMap);
+
+                    function onPinUpdate(lat, lng) {
+                        pickedLat = lat;
+                        pickedLng = lng;
+                        mapMarker.setLatLng([lat, lng]);
+                        mapSelectedAddress.innerHTML = '<span class="text-muted"><i class="bi bi-arrow-repeat spin me-1"></i> Inatafuta anuani...</span>';
+
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.address) {
+                                const addr = data.address;
+                                const area = addr.suburb || addr.neighbourhood || addr.village || addr.quarter || addr.city_district || addr.town || addr.city || '';
+                                const city = addr.city || addr.state || addr.region || addr.country || '';
+                                let locStr = area;
+                                if (city && city !== area) {
+                                    locStr = locStr ? `${locStr}, ${city}` : city;
+                                }
+                                pickedAddress = locStr || data.display_name.split(',').slice(0, 3).join(',');
+                                mapSelectedAddress.innerText = pickedAddress;
+                            } else {
+                                pickedAddress = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                                mapSelectedAddress.innerText = pickedAddress;
+                            }
+                        })
+                        .catch(() => {
+                            pickedAddress = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                            mapSelectedAddress.innerText = pickedAddress;
+                        });
+                    }
+
+                    mapMarker.on('dragend', function(e) {
+                        const pt = e.target.getLatLng();
+                        onPinUpdate(pt.lat, pt.lng);
+                    });
+
+                    leafletMap.on('click', function(e) {
+                        onPinUpdate(e.latlng.lat, e.latlng.lng);
+                    });
+
+                    onPinUpdate(currentLat, currentLng);
+                } else {
+                    leafletMap.invalidateSize();
+                    if (latInput && latInput.value && lngInput && lngInput.value) {
+                        const lat = parseFloat(latInput.value);
+                        const lng = parseFloat(lngInput.value);
+                        leafletMap.setView([lat, lng], 15);
+                        mapMarker.setLatLng([lat, lng]);
+                    }
+                }
+            });
+
+            // Map search
+            function doMapSearch() {
+                const q = mapSearchInput ? mapSearchInput.value.trim() : '';
+                if (!q) return;
+                btnSearchMap.disabled = true;
+                btnSearchMap.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
+                .then(r => r.json())
+                .then(results => {
+                    btnSearchMap.disabled = false;
+                    btnSearchMap.innerText = '{% trans "Search" %}';
+                    if (results && results.length > 0) {
+                        const item = results[0];
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        leafletMap.setView([lat, lon], 15);
+                        mapMarker.setLatLng([lat, lon]);
+                        pickedLat = lat;
+                        pickedLng = lon;
+                        pickedAddress = item.display_name.split(',').slice(0, 3).join(',');
+                        mapSelectedAddress.innerText = pickedAddress;
+                    } else {
+                        alert('{% trans "Place not found. Try searching with city name (e.g. Chukwani, Zanzibar)." %}');
+                    }
+                })
+                .catch(() => {
+                    btnSearchMap.disabled = false;
+                    btnSearchMap.innerText = '{% trans "Search" %}';
+                });
+            }
+
+            if (btnSearchMap) btnSearchMap.addEventListener('click', doMapSearch);
+            if (mapSearchInput) {
+                mapSearchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        doMapSearch();
+                    }
+                });
+            }
+
+            if (btnMapUseGPS) {
+                btnMapUseGPS.addEventListener('click', function() {
+                    if (!navigator.geolocation) return;
+                    btnMapUseGPS.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                    navigator.geolocation.getCurrentPosition(
+                        function(pos) {
+                            btnMapUseGPS.innerHTML = '<i class="bi bi-crosshair"></i>';
+                            const lat = pos.coords.latitude;
+                            const lng = pos.coords.longitude;
+                            leafletMap.setView([lat, lng], 16);
+                            mapMarker.setLatLng([lat, lng]);
+                            pickedLat = lat;
+                            pickedLng = lng;
+                            mapMarker.fire('dragend');
+                        },
+                        function() {
+                            btnMapUseGPS.innerHTML = '<i class="bi bi-crosshair"></i>';
+                            alert('{% trans "Could not access high-accuracy GPS. Please pick on map or use Jump buttons." %}');
+                        },
+                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+                    );
+                });
+            }
+
+            if (btnApplyMapLocation) {
+                btnApplyMapLocation.addEventListener('click', function() {
+                    if (pickedAddress && generalLocationInput) {
+                        generalLocationInput.value = pickedAddress;
+                    }
+                    if (pickedLat && latInput) latInput.value = pickedLat;
+                    if (pickedLng && lngInput) lngInput.value = pickedLng;
+                    updateLocationPreview();
+                    const modal = bootstrap.Modal.getInstance(mapModalEl);
+                    if (modal) modal.hide();
+                });
+            }
+        }
+
+        // Checklist validation
         function updateChecklist() {
             const hasPhoto = document.querySelectorAll('.fu-media-card').length > 0;
             const hasTitle = titleInput && titleInput.value.trim().length >= 5;
             const hasPrice = priceInput && parseFloat(priceInput.value) > 0;
-            const hasLoc = locationInput && locationInput.value.trim().length >= 3;
+            const hasLoc = generalLocationInput && generalLocationInput.value.trim().length >= 3;
 
             toggleCheck('tipPhotoIcon', hasPhoto);
             toggleCheck('tipTitleIcon', hasTitle);
@@ -867,7 +1567,7 @@
         if (formEl && submitBtn) {
             formEl.addEventListener('submit', function() {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Inapakia bidhaa sokoni...';
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>{% trans "Publishing product..." %}';
             });
         }
     });

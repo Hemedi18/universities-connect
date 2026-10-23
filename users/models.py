@@ -42,6 +42,31 @@ class Profile(models.Model):
     watchlist = models.ManyToManyField(
         "business.Item", blank=True, related_name="watched_by"
     )
+    storage_quota_mb = models.PositiveIntegerField(
+        default=100,
+        verbose_name="Storage Quota (MB)",
+        help_text="Allocated storage limit in megabytes (Free tier: 100MB, Premium: 1000MB+).",
+    )
+    storage_plan = models.CharField(
+        max_length=20,
+        default="free",
+        choices=[
+            ("free", "Free Tier (100 MB)"),
+            ("pro", "Pro Seller (1 GB)"),
+            ("business", "Campus Business (5 GB)"),
+            ("custom", "Custom Enterprise"),
+        ],
+        verbose_name="Storage Plan Tier",
+    )
+
+    def get_storage_usage(self):
+        from business.analytics import get_user_storage_breakdown
+        return get_user_storage_breakdown(self.user, quota_mb=self.storage_quota_mb, plan_name=self.get_storage_plan_display())
+
+    def has_storage_space(self, additional_bytes=0):
+        usage = self.get_storage_usage()
+        quota_bytes = self.storage_quota_mb * 1024 * 1024
+        return (usage["total_bytes"] + additional_bytes) <= quota_bytes
 
     def __str__(self):
         return f"{self.user.username} Profile"
