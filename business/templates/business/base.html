@@ -14,9 +14,9 @@
     {% block extra_head %}{% endblock %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=6">
-    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=11">
     {% block extra_css %}{% endblock %}
     <script>
         (function () {
@@ -31,9 +31,145 @@
     </script>
     <style>
         html.theme-dark body { background: #0f0f0f !important; color: #f2f2f2 !important; }
+
+        /* Global Floating Toast Popup */
+        .uc-toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 440px;
+            width: calc(100% - 40px);
+            pointer-events: none;
+        }
+        @media (max-width: 576px) {
+            .uc-toast-container {
+                top: 14px;
+                left: 14px;
+                right: 14px;
+                width: calc(100% - 28px);
+            }
+        }
+        .uc-toast-popup {
+            pointer-events: auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+            animation: ucToastSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .uc-toast-popup.uc-toast-closing {
+            opacity: 0;
+            transform: translateY(-15px) scale(0.96);
+        }
+        .uc-toast-error, .uc-toast-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            border: 1px solid #f87171;
+        }
+        .uc-toast-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            border: 1px solid #fde047;
+        }
+        .uc-toast-success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border: 1px solid #6ee7b7;
+        }
+        .uc-toast-info {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            border: 1px solid #a5b4fc;
+        }
+        .uc-toast-icon {
+            font-size: 1.35rem;
+            line-height: 1;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+        .uc-toast-body {
+            flex: 1;
+        }
+        .uc-toast-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.92;
+            margin-bottom: 2px;
+        }
+        .uc-toast-msg {
+            font-size: 0.88rem;
+            line-height: 1.45;
+            font-weight: 500;
+            color: #ffffff;
+        }
+        .uc-toast-close {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1.35rem;
+            line-height: 1;
+            opacity: 0.8;
+            cursor: pointer;
+            padding: 0 0 0 6px;
+            margin-top: -2px;
+        }
+        .uc-toast-close:hover {
+            opacity: 1;
+        }
+        @keyframes ucToastSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-24px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
     </style>
 </head>
 <body class="store-theme has-tabbar{% block body_class %}{% endblock %}">
+    <!-- Global Floating Toast Notification Container -->
+    <div id="uc-toast-container" class="uc-toast-container" aria-live="assertive" aria-atomic="true">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="uc-toast-popup uc-toast-{{ message.tags|default:'info' }}" role="alert">
+            <div class="uc-toast-icon">
+                {% if message.tags == 'error' or message.tags == 'danger' %}
+                    <i class="bi bi-x-circle-fill"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                {% elif message.tags == 'success' %}
+                    <i class="bi bi-check-circle-fill"></i>
+                {% else %}
+                    <i class="bi bi-info-circle-fill"></i>
+                {% endif %}
+            </div>
+            <div class="uc-toast-body">
+                <div class="uc-toast-badge">
+                    {% if message.tags == 'error' or message.tags == 'danger' %}
+                        Hitilafu (Error)
+                    {% elif message.tags == 'warning' %}
+                        Tahadhari (Warning)
+                    {% elif message.tags == 'success' %}
+                        Imekamilika (Success)
+                    {% else %}
+                        Taarifa (Notice)
+                    {% endif %}
+                </div>
+                <div class="uc-toast-msg">{{ message }}</div>
+            </div>
+            <button type="button" class="uc-toast-close" onclick="closeToast(this.closest('.uc-toast-popup'))" aria-label="Close">&times;</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
     <script>
         (function () {
             try {
@@ -219,9 +355,25 @@
         }
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/serviceworker.js').catch(() => {});
+                navigator.serviceWorker.register('/serviceworker.js').then((reg) => {
+                    // Check for updates
+                    reg.update().catch(() => {});
+                }).catch(() => {});
             });
         }
+        function closeToast(el) {
+            if (!el) return;
+            el.classList.add('uc-toast-closing');
+            setTimeout(function() { el.remove(); }, 300);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var toasts = document.querySelectorAll('.uc-toast-popup');
+            toasts.forEach(function(toast) {
+                setTimeout(function() {
+                    closeToast(toast);
+                }, 6500);
+            });
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

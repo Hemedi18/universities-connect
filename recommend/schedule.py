@@ -94,7 +94,11 @@ def maybe_rebuild_features(*, force: bool = False, async_mode: bool = True) -> b
 
     # Lock TTL covers a slow rebuild; only one worker rebuilds.
     lock_ttl = max(300, min(rebuild_interval_seconds(), 3600))
-    if not cache.add(REBUILD_LOCK_KEY, "1", timeout=lock_ttl):
+    try:
+        if not cache.add(REBUILD_LOCK_KEY, "1", timeout=lock_ttl):
+            return False
+    except Exception as exc:
+        logger.warning("Recommendation lock acquisition error: %s", exc)
         return False
 
     if async_mode:

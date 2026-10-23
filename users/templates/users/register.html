@@ -6,21 +6,30 @@
 <div class="uc-page">
     <div class="uc-auth">
         <h2>Join U-Connect</h2>
-        <p class="text-muted small mb-3">Namba ya simu / WhatsApp ni lazima — inahitajika ukiuza au buyer akikuhitaji.</p>
+        <p class="text-muted small mb-3">Jiunge na soko la chuo. Weka barua pepe na namba ya WhatsApp — utapokea nambari ya OTP kuthibitisha akaunti yako.</p>
         <form method="post" class="uc-form">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger p-2 mb-3 small rounded-3" role="alert">
+                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+            </div>
+            {% endif %}
             {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <div class="form-group mb-3">
+                <label for="{{ field.id_for_label }}" class="fw-semibold small">{{ field.label }}</label>
                 {{ field }}
+                {% if field.help_text %}<small class="form-text text-muted d-block mt-1">{{ field.help_text }}</small>{% endif %}
                 {% if field.errors %}
-                <div class="text-danger small">
+                <div class="text-danger small mt-1">
                     {% for error in field.errors %}<p class="mb-0">{{ error }}</p>{% endfor %}
                 </div>
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn-submit">Register</button>
+            <button type="submit" class="btn-submit">Sajili & Pokea OTP</button>
+            <p class="text-muted small text-center mt-2 mb-0">
+                <i class="bi bi-shield-check text-success me-1"></i>Tutakutumia nambari ya OTP (tarakimu 6) kuthibitisha.
+            </p>
         </form>
         <p class="text-center mt-3 mb-0 text-muted">
             Already have an account? <a href="{% url 'users:login' %}" class="text-primary fw-semibold">Login</a>

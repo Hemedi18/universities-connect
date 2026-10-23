@@ -10,4 +10,13 @@ media/
 
 # Virtual Environment
 venv/
+.venv/
 .env
+
+# IDE & Editor
+.vscode/
+.idea/
+
+# Collected Static & Distribution
+staticfiles/
+.dist/

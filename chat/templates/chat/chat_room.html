@@ -61,7 +61,7 @@
     </div>
 
     <div class="messages-container" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
-        {% for message in messages %}
+        {% for message in chat_messages %}
         <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}{% if message.image or message.item %} has-media{% endif %}" data-id="{{ message.id }}">
             {% if message.item %}
             <a class="chat-item-card" href="{% url 'customer:item_detail' message.item.id %}">

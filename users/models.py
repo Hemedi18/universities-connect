@@ -45,3 +45,165 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Profile"
+
+
+class EmailOTP(models.Model):
+    PURPOSE_CHOICES = [
+        ("registration", "Registration"),
+        ("password_reset", "Password Reset"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="email_otps",
+    )
+    email = models.EmailField(db_index=True)
+    otp_code = models.CharField(max_length=6)
+    purpose = models.CharField(
+        max_length=20, choices=PURPOSE_CHOICES, default="registration", db_index=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    attempts = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"OTP {self.otp_code} for {self.email} ({self.purpose})"
+
+    @property
+    def is_expired(self):
+        from django.utils import timezone
+        return timezone.now() > self.expires_at
+
+    @classmethod
+    def create_otp(cls, email, purpose="registration", user=None, validity_minutes=10):
+        import secrets
+        from datetime import timedelta
+        from django.utils import timezone
+
+        clean_email = email.strip().lower()
+        # Invalidate any previous active OTPs for this email and purpose
+        cls.objects.filter(email__iexact=clean_email, purpose=purpose, is_used=False).update(is_used=True)
+
+        code = f"{secrets.randbelow(900000) + 100000}"
+        expires_at = timezone.now() + timedelta(minutes=validity_minutes)
+
+        return cls.objects.create(
+            user=user,
+            email=clean_email,
+            otp_code=code,
+            purpose=purpose,
+            expires_at=expires_at,
+        )
+
+    def verify(self, input_code):
+        if self.is_used:
+            return False, "Nambari hii ya OTP tayari imetumika. Tafadhali omba mpya."
+        if self.is_expired:
+            return False, "Nambari hii ya OTP imepitwa na wakati (expired). Tafadhali omba mpya."
+        if self.attempts >= 5:
+            return False, "Majaribio yamezidi kiwango. Tafadhali omba nambari mpya ya OTP."
+
+        if str(self.otp_code).strip() != str(input_code).strip():
+            self.attempts += 1
+            self.save(update_fields=["attempts"])
+            return False, "Nambari ya OTP si sahihi. Tafadhali kagua tena."
+
+        self.is_used = True
+        self.save(update_fields=["is_used"])
+        return True, "Uthibitisho umefaulu."
+
+
+class SupportSession(models.Model):
+    STATUS_CHOICES = [
+        ("open", "Open"),
+        ("in_progress", "In Progress"),
+        ("resolved", "Resolved"),
+        ("closed", "Closed"),
+    ]
+
+    session_key = models.CharField(max_length=100, unique=True, db_index=True)
+    user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="support_sessions",
+    )
+    guest_name = models.CharField(max_length=100, default="Guest")
+    guest_email = models.EmailField(blank=True)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="open", db_index=True
+    )
+    assigned_admin = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="assigned_support_sessions",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        name = self.user.username if self.user else self.guest_name
+        return f"Support #{self.id} ({name}) - {self.get_status_display()}"
+
+    @property
+    def display_name(self):
+        if self.user:
+            return self.user.get_full_name() or self.user.username
+        return self.guest_name or f"Guest #{self.id}"
+
+    @property
+    def unread_count_for_admin(self):
+        return self.messages.filter(sender_type="guest", is_read=False).count()
+
+    @property
+    def unread_count_for_guest(self):
+        return self.messages.filter(sender_type="admin", is_read=False).count()
+
+    @property
+    def latest_message(self):
+        return self.messages.order_by("-timestamp").first()
+
+
+class SupportMessage(models.Model):
+    SENDER_CHOICES = [
+        ("guest", "Guest / User"),
+        ("admin", "Admin / Support"),
+    ]
+
+    session = models.ForeignKey(
+        SupportSession, on_delete=models.CASCADE, related_name="messages"
+    )
+    sender_type = models.CharField(
+        max_length=10, choices=SENDER_CHOICES, default="guest"
+    )
+    sender_user = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="support_messages_sent",
+    )
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["timestamp"]
+
+    def __str__(self):
+        sender = self.sender_user.username if self.sender_user else self.sender_type
+        return f"[{sender}] {self.text[:30]}"
+

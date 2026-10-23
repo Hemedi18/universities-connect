@@ -35,6 +35,11 @@ class Message(models.Model):
     class Meta:
         ordering = ["timestamp"]
 
+    def __str__(self):
+        text = self.content[:35] if self.content else ("[Image]" if self.image else "[Media]")
+        return f"{self.sender.username}: {text}"
+
+
 
 class ItemDeal(models.Model):
     """Track chat-based sale confirmation between buyer and seller for an item."""

@@ -1,0 +1,512 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}Responding to Ticket #{{ session.id }} - U-Connect Support{% endblock %}
+{% block body_class %} no-tabbar page-chat{% endblock %}
+
+{% block extra_css %}
+<style>
+.uc-admin-chat-wrap {
+    max-width: 1320px;
+    margin: 20px auto 40px auto;
+    padding: 0 16px;
+}
+.uc-chat-pane {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    min-height: 600px;
+    overflow: hidden;
+}
+@media (max-width: 768px) {
+    .uc-admin-chat-wrap {
+        padding: 0 8px;
+        margin: 10px auto;
+    }
+    .uc-chat-pane {
+        height: 72vh;
+        min-height: 480px;
+        border-radius: 12px;
+    }
+    #adminReplyInput {
+        font-size: 16px !important;
+    }
+}
+html.theme-dark .uc-chat-pane {
+    background: #18191a;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+.uc-sidebar-pane {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+    height: 80vh;
+    min-height: 600px;
+    overflow-y: auto;
+    padding: 16px;
+}
+html.theme-dark .uc-sidebar-pane {
+    background: #1e1f20;
+}
+.uc-admin-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+html.theme-dark .uc-admin-header {
+    background: #242526;
+    border-bottom-color: #3a3b3c;
+}
+.uc-stream-admin {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+html.theme-dark .uc-stream-admin {
+    background: #121212;
+}
+.uc-admin-bubble-wrap {
+    display: flex;
+    flex-direction: column;
+    max-width: 75%;
+}
+.uc-admin-bubble-wrap.wrap-guest {
+    align-self: flex-start;
+}
+.uc-admin-bubble-wrap.wrap-admin {
+    align-self: flex-end;
+}
+.uc-admin-bubble {
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    word-break: break-word;
+}
+.uc-admin-bubble.bubble-guest {
+    background: #ffffff;
+    color: #212529;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+html.theme-dark .uc-admin-bubble.bubble-guest {
+    background: #2a2b2c;
+    color: #e4e6eb;
+    border-color: #3a3b3c;
+}
+.uc-admin-bubble.bubble-admin {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+}
+.uc-presets {
+    padding: 10px 16px;
+    background: #ffffff;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+html.theme-dark .uc-presets {
+    background: #1e1f20;
+    border-top-color: #2d2e30;
+}
+.uc-preset-chip {
+    font-size: 0.78rem;
+    background: #f1f3f5;
+    color: #495057;
+    padding: 4px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+.uc-preset-chip:hover {
+    background: #e7f1ff;
+    color: #0d6efd;
+    border-color: #b6d4fe;
+}
+html.theme-dark .uc-preset-chip {
+    background: #2b2c2e;
+    color: #adb5bd;
+}
+html.theme-dark .uc-preset-chip:hover {
+    background: #0d6efd30;
+    color: #6ea8fe;
+}
+.uc-recent-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.uc-recent-item:hover {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+}
+html.theme-dark .uc-recent-item:hover {
+    background: #28292a;
+    border-color: #3a3b3c;
+}
+.uc-recent-item.active {
+    background: #e7f1ff;
+    border-color: #b6d4fe;
+}
+html.theme-dark .uc-recent-item.active {
+    background: #0d6efd25;
+    border-color: #0d6efd55;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="uc-admin-chat-wrap">
+    <!-- Breadcrumb -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <a href="{% url 'admin_support_dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> All Support Tickets
+            </a>
+            <h5 class="mb-0 fw-bold">Responding to Ticket #{{ session.id }}</h5>
+            <span class="badge {% if session.status == 'open' %}bg-warning text-dark{% elif session.status == 'in_progress' %}bg-primary{% elif session.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %} rounded-pill">
+                {{ session.get_status_display }}
+            </span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <form method="post" action="{% url 'admin_support_update_status' session.id %}" class="d-inline">
+                {% csrf_token %}
+                {% if session.status != 'resolved' %}
+                <button type="submit" name="status" value="resolved" class="btn btn-success btn-sm rounded-pill px-3">
+                    <i class="bi bi-check-circle-fill me-1"></i> Mark Resolved
+                </button>
+                {% else %}
+                <button type="submit" name="status" value="open" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Reopen Ticket
+                </button>
+                {% endif %}
+            </form>
+            <a href="/admin/users/supportsession/{{ session.id }}/change/" target="_blank" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-gear-fill me-1"></i> Edit in Django Admin
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <!-- Sidebar: Recent Other Sessions -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="uc-sidebar-pane">
+                <h6 class="fw-bold mb-3 d-flex align-items-center justify-content-between">
+                    <span>Recent Tickets</span>
+                    <a href="{% url 'admin_support_dashboard' %}" class="small text-muted text-decoration-none">View All</a>
+                </h6>
+                <div class="uc-recent-item active">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold small">#{{ session.id }} {{ session.display_name }}</span>
+                        <span class="badge bg-primary small">Active</span>
+                    </div>
+                    <div class="text-muted small text-truncate mt-1">
+                        {{ session.latest_message.text|default:"Current ticket" }}
+                    </div>
+                </div>
+                {% for other in recent_sessions %}
+                <a href="{% url 'admin_support_chat' other.id %}" class="uc-recent-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold small">#{{ other.id }} {{ other.display_name }}</span>
+                        {% if other.unread_count_for_admin > 0 %}
+                        <span class="badge bg-danger small">{{ other.unread_count_for_admin }} new</span>
+                        {% else %}
+                        <span class="badge bg-light text-muted small">{{ other.status }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="text-muted small text-truncate mt-1">
+                        {{ other.latest_message.text|default:"No messages" }}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Middle: Live Chat Stream -->
+        <div class="col-lg-6 col-md-8">
+            <div class="uc-chat-pane">
+                <!-- Chat Header -->
+                <div class="uc-admin-header">
+                    <div>
+                        <div class="fw-bold">{{ session.display_name }}</div>
+                        <div class="small text-muted">
+                            {% if session.guest_email %}{{ session.guest_email }} • {% endif %}
+                            Started {{ session.created_at|timesince }} ago
+                        </div>
+                    </div>
+                    <div>
+                        <span class="small text-muted me-1">Responder:</span>
+                        <span class="badge bg-info text-dark rounded-pill">{{ request.user.username }}</span>
+                    </div>
+                </div>
+
+                <!-- Messages Stream -->
+                <div class="uc-stream-admin" id="adminStream">
+                    {% for msg in chat_messages %}
+                    <div class="uc-admin-bubble-wrap {% if msg.sender_type == 'admin' %}wrap-admin{% else %}wrap-guest{% endif %}" data-id="{{ msg.id }}">
+                        <div class="small fw-semibold mb-1 {% if msg.sender_type == 'admin' %}text-primary text-end{% else %}text-muted{% endif %}">
+                            {% if msg.sender_type == 'admin' %}
+                            <i class="bi bi-patch-check-fill text-primary"></i> You ({{ msg.sender_user.username|default:"Admin" }})
+                            {% else %}
+                            <i class="bi bi-person-fill text-secondary"></i> {{ session.display_name }}
+                            {% endif %}
+                        </div>
+                        <div class="uc-admin-bubble {% if msg.sender_type == 'admin' %}bubble-admin{% else %}bubble-guest{% endif %}">
+                            <div>{{ msg.text }}</div>
+                            <div class="small text-end mt-1 {% if msg.sender_type == 'admin' %}text-white-50{% else %}text-muted{% endif %}">
+                                {{ msg.timestamp|date:"g:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Canned Responses / Presets -->
+                <div class="uc-presets">
+                    <span class="small text-muted align-self-center me-1">Quick replies:</span>
+                    {% for preset in preset_answers %}
+                    <div class="uc-preset-chip" onclick="applyPreset('{{ preset|escapejs }}')">
+                        {{ preset|truncatechars:35 }}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Composer -->
+                <div class="p-3 bg-white border-top">
+                    <form id="adminReplyForm" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <input 
+                            type="text" 
+                            id="adminReplyInput" 
+                            class="form-control rounded-pill px-3" 
+                            placeholder="Type response as Support Admin to {{ session.display_name }}..." 
+                            autocomplete="off" 
+                            required
+                        >
+                        <button type="submit" id="adminSendBtn" class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-1">
+                            <span>Reply</span>
+                            <i class="bi bi-send-fill small"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Ticket Details & User Info -->
+        <div class="col-lg-3 col-md-4">
+            <div class="card p-3 border-0 shadow-sm" style="border-radius: 16px;">
+                <h6 class="fw-bold mb-3 border-bottom pb-2">Session Details</h6>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Ticket ID</small>
+                    <span class="fw-semibold">#{{ session.id }}</span>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Session Key</small>
+                    <code class="small">{{ session.session_key|slice:":16" }}...</code>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Contact Name</small>
+                    <span class="fw-semibold">{{ session.display_name }}</span>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Contact Email</small>
+                    <span>{{ session.guest_email|default:"Not provided" }}</span>
+                </div>
+                {% if session.user %}
+                <hr>
+                <h6 class="fw-bold mb-2">Registered User</h6>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Username</small>
+                    <span class="fw-semibold text-primary">@{{ session.user.username }}</span>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Registered Email</small>
+                    <span>{{ session.user.email }}</span>
+                </div>
+                {% if session.user.profile %}
+                <div class="mb-2">
+                    <small class="text-muted d-block">University Verification</small>
+                    {% if session.user.profile.is_email_verified %}
+                    <span class="badge bg-success">Verified Student</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark">Unverified</span>
+                    {% endif %}
+                </div>
+                {% if session.user.profile.phone_number %}
+                <div class="mb-2">
+                    <small class="text-muted d-block">Phone / WhatsApp</small>
+                    <span>{{ session.user.profile.phone_number }}</span>
+                </div>
+                {% endif %}
+                {% endif %}
+                <a href="/admin/auth/user/{{ session.user.id }}/change/" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                    <i class="bi bi-person-fill-gear me-1"></i> Edit User in Admin
+                </a>
+                {% else %}
+                <hr>
+                <div class="alert alert-light border small text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    This guest is not logged in. They reached support via the login page.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const stream = document.getElementById('adminStream');
+    const form = document.getElementById('adminReplyForm');
+    const input = document.getElementById('adminReplyInput');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const sessionId = {{ session.id }};
+
+    let lastId = 0;
+    stream.querySelectorAll('[data-id]').forEach(el => {
+        const id = parseInt(el.getAttribute('data-id'), 10);
+        if (id && id > lastId) lastId = id;
+    });
+
+    function scrollToBottom() {
+        stream.scrollTop = stream.scrollHeight;
+    }
+    scrollToBottom();
+
+    window.applyPreset = function(text) {
+        input.value = text;
+        input.focus();
+    };
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function renderMessage(msg) {
+        const wrap = document.createElement('div');
+        const isAdmin = (msg.sender_type === 'admin');
+        wrap.className = 'uc-admin-bubble-wrap ' + (isAdmin ? 'wrap-admin' : 'wrap-guest');
+        wrap.setAttribute('data-id', msg.id);
+
+        const senderLabel = document.createElement('div');
+        senderLabel.className = 'small fw-semibold mb-1 ' + (isAdmin ? 'text-primary text-end' : 'text-muted');
+        if (isAdmin) {
+            senderLabel.innerHTML = '<i class="bi bi-patch-check-fill text-primary"></i> You (' + escapeHtml(msg.sender_name) + ')';
+        } else {
+            senderLabel.innerHTML = '<i class="bi bi-person-fill text-secondary"></i> ' + escapeHtml(msg.sender_name);
+        }
+
+        const bubble = document.createElement('div');
+        bubble.className = 'uc-admin-bubble ' + (isAdmin ? 'bubble-admin' : 'bubble-guest');
+
+        const textDiv = document.createElement('div');
+        textDiv.textContent = msg.text;
+
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'small text-end mt-1 ' + (isAdmin ? 'text-white-50' : 'text-muted');
+        timeDiv.textContent = msg.time;
+
+        bubble.appendChild(textDiv);
+        bubble.appendChild(timeDiv);
+
+        wrap.appendChild(senderLabel);
+        wrap.appendChild(bubble);
+
+        stream.appendChild(wrap);
+        scrollToBottom();
+    }
+
+    async function pollAdminMessages() {
+        try {
+            const res = await fetch(`{% url 'support_api_messages' %}?session_id=${sessionId}&is_admin=true&after_id=${lastId}&_t=${Date.now()}`, {
+                cache: 'no-store',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.status === 'success' && data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        if (msg.id > lastId) {
+                            lastId = msg.id;
+                            renderMessage(msg);
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn('Admin poll error:', e);
+        }
+    }
+
+    // 1.5 second high-responsiveness polling
+    setInterval(pollAdminMessages, 1500);
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        input.focus();
+
+        try {
+            const res = await fetch(`{% url 'support_api_send' %}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    text: text,
+                    is_admin: true
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.status === 'success' && data.message) {
+                    if (data.message.id > lastId) {
+                        lastId = data.message.id;
+                        renderMessage(data.message);
+                    }
+                }
+            } else {
+                alert('Could not send response. Please try again.');
+            }
+        } catch (err) {
+            console.error('Send error:', err);
+            alert('Network error while sending reply.');
+        }
+    });
+})();
+</script>
+{% endblock %}

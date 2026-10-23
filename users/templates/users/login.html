@@ -1,30 +1,143 @@
 {% extends 'business/base.html' %}
 
-{% block title %}Login - U-Connect{% endblock %}
+{% block title %}Ingia (Login) - U-Connect{% endblock %}
 
 {% block content %}
-<div class="uc-page">
-    <div class="uc-auth">
-        <h2>Welcome back</h2>
-        <form method="post" class="uc-form">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+<div class="uc-page py-4">
+    <div class="uc-auth shadow-sm" style="max-width: 460px; margin: 1.5rem auto 3rem; background: #ffffff; border-radius: 16px; padding: 2rem; border: 1px solid #e2e8f0;">
+        
+        <!-- HEADER -->
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-2" style="width: 58px; height: 58px;">
+                <i class="bi bi-box-arrow-in-right fs-2"></i>
             </div>
-            {% endfor %}
-            <button type="submit" class="btn-submit">Login</button>
+            <h2 class="h4 fw-bold mb-1" style="font-family: 'Outfit', sans-serif;">Ingia Kwenye Akaunti</h2>
+            <p class="text-muted small mb-0">Weka taarifa zako kuingia kwenye mfumo wa U-Connect</p>
+        </div>
+
+        <!-- NON-FIELD ERRORS POPUP / BANNER -->
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger d-flex align-items-start p-3 mb-3 rounded-3 border-danger border-opacity-25" role="alert" style="background-color: #fef2f2;">
+            <i class="bi bi-exclamation-octagon-fill text-danger fs-5 me-2 flex-shrink-0 mt-1"></i>
+            <div class="flex-grow-1">
+                <div class="fw-bold text-danger small">Hitilafu ya Kuingia (Login Error)</div>
+                {% for error in form.non_field_errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+                <div class="mt-2 pt-2 border-top border-danger border-opacity-25">
+                    <a href="{% url 'password_reset_request' %}" class="btn btn-sm btn-danger py-1 px-3 fw-semibold small text-decoration-none">
+                        <i class="bi bi-key-fill me-1"></i>Umesahau Nenosiri? Rejesha Hapa
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- LOGIN FORM -->
+        <form method="post" class="uc-form" novalidate>
+            {% csrf_token %}
+            
+            <!-- USERNAME / EMAIL -->
+            <div class="form-group mb-3">
+                <label for="id_username" class="form-label fw-semibold small d-flex align-items-center">
+                    <i class="bi bi-person-fill text-primary me-1"></i>Username au Barua Pepe (Email)
+                </label>
+                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="form-control" placeholder="Weka username au email yako..." value="{{ form.username.value|default:'' }}">
+                {% if form.username.errors %}
+                <div class="text-danger small mt-1">
+                    {% for err in form.username.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- PASSWORD FIELD WITH INTEGRATED FORGOT PASSWORD LINK -->
+            <div class="form-group mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="id_password" class="form-label fw-semibold small mb-0 d-flex align-items-center">
+                        <i class="bi bi-lock-fill text-primary me-1"></i>Nenosiri (Password)
+                    </label>
+                    <a href="{% url 'password_reset_request' %}" class="small text-primary fw-bold text-decoration-none" title="Bonyeza hapa ikiwa umesahau nenosiri">
+                        <i class="bi bi-key me-1"></i>Umesahau nenosiri?
+                    </a>
+                </div>
+                <div class="position-relative">
+                    <input type="password" name="password" autocomplete="current-password" required id="id_password" class="form-control pe-5" placeholder="Weka nenosiri lako...">
+                    <button type="button" id="btn-toggle-password" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted text-decoration-none pe-3" style="z-index: 5;" aria-label="Onyesha nenosiri">
+                        <i class="bi bi-eye" id="toggle-pw-icon"></i>
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                <div class="text-danger small mt-1">
+                    {% for err in form.password.errors %}<p class="mb-0">{{ err }}</p>{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="btn-submit w-100 py-2 fs-6 fw-bold shadow-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); color: #fff; border: 0; border-radius: 8px;">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Ingia (Login)
+            </button>
         </form>
-        <p class="text-center mt-3 mb-2 text-muted">
-            Don't have an account? <a href="{% url 'users:register' %}" class="text-primary fw-semibold">Register</a>
-        </p>
-        <p class="text-center mb-0">
-            <a href="{% url 'password_reset_request' %}" class="small">Forgot password?</a>
-            ·
-            <a href="{% url 'guest_chat' %}" class="small text-muted">Support chat</a>
+
+        <!-- DEDICATED PASSWORD RECOVERY CALLOUT -->
+        <div class="mt-4 p-3 rounded-3 border" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="me-2">
+                    <div class="fw-bold small text-dark d-flex align-items-center">
+                        <i class="bi bi-shield-lock-fill text-warning me-1 fs-5"></i>Umesahau Nenosiri?
+                    </div>
+                    <div class="text-muted" style="font-size: 0.8rem;">Rejesha akaunti kwa nambari ya OTP kupitia email yako.</div>
+                </div>
+                <a href="{% url 'password_reset_request' %}" class="btn btn-sm btn-outline-primary fw-semibold text-nowrap px-3">
+                    Rejesha Nenosiri
+                </a>
+            </div>
+        </div>
+
+        <!-- LIVE SUPPORT CHAT CALLOUT -->
+        <div class="mt-2 p-3 rounded-3 border" style="background: #f0fdf4; border-color: #bbf7d0 !important;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="me-2">
+                    <div class="fw-bold small text-dark d-flex align-items-center">
+                        <i class="bi bi-headset text-success me-1 fs-5"></i>Unashindwa Kuingia?
+                    </div>
+                    <div class="text-muted" style="font-size: 0.8rem;">Ongea na mhudumu wetu mubashara kupitia Live Chat.</div>
+                </div>
+                <a href="{% url 'guest_chat' %}" class="btn btn-sm btn-success fw-semibold text-nowrap px-3 text-white">
+                    Live Chat
+                </a>
+            </div>
+        </div>
+
+        <!-- REGISTER LINK -->
+        <p class="text-center mt-3 mb-0 text-muted small">
+            Huna akaunti bado? <a href="{% url 'users:register' %}" class="text-primary fw-bold text-decoration-none">Jiunge na U-Connect (Register)</a>
         </p>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var toggleBtn = document.getElementById('btn-toggle-password');
+    var pwInput = document.getElementById('id_password');
+    var pwIcon = document.getElementById('toggle-pw-icon');
+    if (toggleBtn && pwInput && pwIcon) {
+        toggleBtn.addEventListener('click', function() {
+            if (pwInput.type === 'password') {
+                pwInput.type = 'text';
+                pwIcon.classList.remove('bi-eye');
+                pwIcon.classList.add('bi-eye-slash');
+            } else {
+                pwInput.type = 'password';
+                pwIcon.classList.remove('bi-eye-slash');
+                pwIcon.classList.add('bi-eye');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.conf import settings
 
 # Create your models here.
@@ -307,25 +308,43 @@ def send_new_item_notification(sender, instance, created, **kwargs):
         recipient_list = [user.email for user in followers if user.email]
 
         if recipient_list:
-            subject = f"New Product from {instance.company.name}: {instance.title}"
-            # In production, use your actual domain or Django's Site framework
-            item_url = f"http://127.0.0.1:8000/item/{instance.id}/"
+            subject = f"Bidhaa Mpya: {instance.company.name} - {instance.title}"
+            base_url = getattr(settings, "SITE_URL", "https://uconnect.edusphere.co.tz")
+            item_url = f"{base_url}/item/{instance.id}/"
 
-            message = (
-                f"Hello,\n\n"
-                f"{instance.company.name} has just posted a new product: {instance.title}.\n\n"
-                f"Price: {instance.price}\n\n"
-                f"View it here: {item_url}\n\n"
-                f"Best regards,\nU-Connect Team"
+            plain_message = (
+                f"Habari,\n\n"
+                f"{instance.company.name} amechapisha bidhaa mpya: {instance.title}.\n\n"
+                f"Bei: TZS {instance.price}\n\n"
+                f"Tazama bidhaa hapa: {item_url}\n\n"
+                f"U-Connect Marketplace\nhttps://uconnect.edusphere.co.tz"
             )
 
-            send_mail(
-                subject,
-                message,
-                getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@u-connect.com"),
-                recipient_list,
-                fail_silently=True,
-            )
+            from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "U-Connect <updates@uconnect.edusphere.co.tz>")
+
+            try:
+                html_content = render_to_string("emails/new_product_email.html", {
+                    "subject": subject,
+                    "item": instance,
+                    "item_url": item_url,
+                    "site_url": base_url,
+                })
+            except Exception:
+                html_content = None
+
+            for email in recipient_list:
+                try:
+                    msg = EmailMultiAlternatives(
+                        subject=subject,
+                        body=plain_message,
+                        from_email=from_email,
+                        to=[email],
+                    )
+                    if html_content:
+                        msg.attach_alternative(html_content, "text/html")
+                    msg.send(fail_silently=True)
+                except Exception:
+                    pass
 
 
 class Comment(models.Model):

@@ -5,11 +5,11 @@
 {% block title %}Checkout · U-Connect{% endblock %}
 {% block body_class %}cf-flow{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/checkout-flow.css' %}">
+<link rel="stylesheet" href="{% static 'css/checkout-flow.css' %}?v=4">
 {% endblock %}
 
 {% block content %}
-<div class="cf-shell" id="cf-checkout">
+<div class="cf-shell{% if form.errors %} is-editing{% endif %}" id="cf-checkout">
     <header class="cf-top">
         <a href="{% url 'customer:view_cart' %}" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
         <h1>Checkout</h1>
@@ -45,7 +45,7 @@
             <section class="cf-section">
                 <div class="cf-section-head">
                     <h2>Shipping Information</h2>
-                    <button type="button" class="cf-edit-toggle" id="cf-edit-ship">Edit</button>
+                    <button type="button" class="cf-edit-toggle" id="cf-edit-ship">{% if form.errors %}Done{% else %}Edit{% endif %}</button>
                 </div>
 
                 <div class="cf-ship-summary" id="cf-ship-summary">
@@ -133,8 +133,6 @@
   var shell = document.getElementById('cf-checkout');
   var btn = document.getElementById('cf-edit-ship');
   if (!shell || !btn) return;
-  var hasErrors = {{ form.errors|yesno:"true,false" }};
-  if (hasErrors) shell.classList.add('is-editing');
   btn.addEventListener('click', function () {
     shell.classList.toggle('is-editing');
     btn.textContent = shell.classList.contains('is-editing') ? 'Done' : 'Edit';

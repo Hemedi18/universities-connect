@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +32,9 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
     "localhost",
     "127.0.0.1",
+    "testserver",
+    "uconnect.edusphere.co.tz",
+    ".edusphere.co.tz",
     ".pythonanywhere.com",
 ]
 
@@ -40,6 +44,7 @@ if DEBUG:
         ".ngrok-free.app",
         ".ngrok-free.dev",
         ".ngrok.io",
+        "*",
     ]
 
 # Trust the X-Forwarded-Proto header for HTTPS (useful for Ngrok/PythonAnywhere)
@@ -70,13 +75,22 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+]
+
+try:
+    import whitenoise  # noqa: F401
+    MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+except ImportError:
+    pass
+
+MIDDLEWARE.extend([
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
+])
 
 ROOT_URLCONF = "u_connect.urls"
 
@@ -145,8 +159,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Cache Configuration (Used by Recommendation system, locks, and session performance)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "uconnect-cache",
+    }
+}
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -162,6 +184,8 @@ LOGOUT_REDIRECT_URL = "/"
 # CSRF settings for Ngrok (Required for Django 4.0+ over HTTPS)
 CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.app",
+    "https://uconnect.edusphere.co.tz",
+    "https://*.edusphere.co.tz",
 ]
 
 # Default primary key field type
@@ -187,6 +211,7 @@ PWA_APP_ICONS = [
 ]
 PWA_APP_ICONS_APPLE = [{"src": "/static/images/uconnect_192.png", "sizes": "192x192"}]
 PWA_APP_LANG = "en-us"
+PWA_SERVICE_WORKER_PATH = BASE_DIR / "business" / "templates" / "pwa" / "serviceworker.js"
 
 # Jazzmin Admin Settings
 JAZZMIN_SETTINGS = {
@@ -248,11 +273,30 @@ JAZZMIN_UI_TWEAKS = {
     },
 }
 
-# Email Settings (Development)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = "noreply@u-connect.com"
+# Email Settings (Production SMTP with cPanel / SSL)
+EMAIL_BACKEND = os.getenv(
+    "DJANGO_EMAIL_BACKEND",
+    "django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "brandy.hostns.io")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "465"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "otp@uconnect.edusphere.co.tz")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "Otp!Connect2026#Secure")
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "True").lower() in ("true", "1")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False").lower() in ("true", "1")
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "U-Connect Security <otp@uconnect.edusphere.co.tz>"
+)
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-# Recommendations: auto-rebuild feature store when stale (lazy, on request)
-RECOMMEND_REBUILD_ON_REQUEST = True
+# Department Dedicated Contacts
+SUPPORT_EMAIL = "support@uconnect.edusphere.co.tz"
+UPDATES_EMAIL = "updates@uconnect.edusphere.co.tz"
+MARKETING_EMAIL = "marketing@uconnect.edusphere.co.tz"
+
+# Recommendations: auto-rebuild feature store when stale (run via cron/management command)
+RECOMMEND_REBUILD_ON_REQUEST = False
 RECOMMEND_REBUILD_INTERVAL_SECONDS = 6 * 60 * 60  # 6 hours
 

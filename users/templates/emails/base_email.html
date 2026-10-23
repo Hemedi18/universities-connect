@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="sw" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ subject|default:"U-Connect Notification" }}</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td { font-family: Arial, Helvetica, sans-serif !important; }
+  </style>
+  <![endif]-->
+  <style type="text/css">
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background-color: #f1f5f9;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #334155;
+    }
+    table {
+      border-collapse: collapse !important;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+    a {
+      color: #4f46e5;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media only screen and (max-width: 600px) {
+      .uc-container {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .uc-content-card {
+        padding: 24px 18px !important;
+        border-radius: 12px !important;
+      }
+      .uc-otp-display {
+        font-size: 28px !important;
+        letter-spacing: 8px !important;
+        padding: 16px 12px !important;
+      }
+      .uc-btn {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9;">
+
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f5f9; padding: 30px 10px;">
+    <tr>
+      <td align="center">
+        
+        <!-- Main Card Container (580px max) -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="uc-container" style="max-width: 580px; margin: 0 auto;">
+          
+          <!-- BRAND HEADER -->
+          <tr>
+            <td align="center" style="padding-bottom: 20px;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <a href="https://uconnect.edusphere.co.tz" target="_blank" style="text-decoration: none;">
+                      <div style="display: inline-block; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; font-weight: 900; font-size: 22px; letter-spacing: 1px; padding: 10px 22px; border-radius: 12px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);">
+                        🎓 U-CONNECT
+                      </div>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding-top: 8px; font-size: 13px; color: #64748b; font-weight: 500;">
+                    Tanzania's Premier Student Marketplace &amp; Campus Hub
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- WHITE CARD CONTENT -->
+          <tr>
+            <td>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="uc-content-card" style="background-color: #ffffff; border-radius: 16px; padding: 36px 32px; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04); border: 1px solid #e2e8f0;">
+                <tr>
+                  <td>
+                    {% block content %}{% endblock %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="padding-top: 28px; text-align: center;">
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center" style="font-size: 13px; color: #64748b; line-height: 1.6; padding-bottom: 12px;">
+                    Unahitaji msaada wowote? Wasiliana na timu yetu kupitia:<br>
+                    <a href="mailto:support@uconnect.edusphere.co.tz" style="color: #4f46e5; font-weight: 600;">support@uconnect.edusphere.co.tz</a>
+                    &nbsp;|&nbsp;
+                    <a href="https://uconnect.edusphere.co.tz/support-chat/" target="_blank" style="color: #4f46e5; font-weight: 600;">Live Support Chat</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="font-size: 12px; color: #94a3b8; line-height: 1.5; padding-top: 8px; border-top: 1px solid #e2e8f0;">
+                    &copy; 2026 U-Connect (<a href="https://uconnect.edusphere.co.tz" style="color: #94a3b8; text-decoration: underline;">edusphere.co.tz</a>). Haki zote zimehifadhiwa.<br>
+                    Huu ni ujumbe salama uliotumwa moja kwa moja kutoka kwenye mfumo wa U-Connect.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

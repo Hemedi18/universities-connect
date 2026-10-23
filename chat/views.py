@@ -163,7 +163,7 @@ def chat_room(request, conversation_id):
         "chat/chat_room.html",
         {
             "conversation": conversation,
-            "messages": conversation.messages.select_related("item").all(),
+            "chat_messages": conversation.messages.select_related("item").all(),
             "form": form,
             "other_user": other_user,
             "deals": deal_list,

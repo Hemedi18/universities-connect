@@ -1,0 +1,247 @@
+{% extends 'business/base.html' %}
+{% load static %}
+
+{% block title %}Admin Support Console - U-Connect{% endblock %}
+{% block body_class %} no-tabbar{% endblock %}
+
+{% block extra_css %}
+<style>
+.uc-admin-dash {
+    max-width: 1140px;
+    margin: 24px auto 60px auto;
+    padding: 0 16px;
+}
+.uc-stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    border-left: 4px solid #0d6efd;
+    transition: transform 0.2s ease;
+}
+html.theme-dark .uc-stat-card {
+    background: #1e1f20;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+.uc-stat-card:hover {
+    transform: translateY(-2px);
+}
+.uc-stat-card.card-open { border-left-color: #ffc107; }
+.uc-stat-card.card-in-progress { border-left-color: #0d6efd; }
+.uc-stat-card.card-resolved { border-left-color: #198754; }
+.uc-stat-card.card-unread { border-left-color: #dc3545; }
+
+.uc-stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.uc-ticket-table {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+html.theme-dark .uc-ticket-table {
+    background: #1e1f20;
+}
+.uc-ticket-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    border-bottom: 2px solid #e9ecef;
+    padding: 14px 18px;
+}
+html.theme-dark .uc-ticket-table th {
+    background: #252627;
+    border-bottom-color: #343a40;
+    color: #adb5bd;
+}
+.uc-ticket-table td {
+    padding: 16px 18px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f5;
+}
+html.theme-dark .uc-ticket-table td {
+    border-bottom-color: #2a2b2c;
+}
+.uc-unread-badge {
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    animation: pulse 2s infinite;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="uc-admin-dash">
+
+    <!-- Top Bar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                <i class="bi bi-headset text-primary"></i>
+                Admin Support Responder Console
+            </h2>
+            <p class="text-muted mb-0">Manage guest & user live assistance requests from the login page.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/admin/users/supportsession/" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-gear-fill"></i> Django Admin
+            </a>
+            <a href="{% url 'guest_chat' %}" target="_blank" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-box-arrow-up-right"></i> Open Guest View
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="uc-stat-card card-open">
+                <div class="text-muted small fw-semibold">Open Tickets</div>
+                <div class="uc-stat-num text-warning mt-1">{{ metrics.open }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="uc-stat-card card-in-progress">
+                <div class="text-muted small fw-semibold">In Progress</div>
+                <div class="uc-stat-num text-primary mt-1">{{ metrics.in_progress }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="uc-stat-card card-unread">
+                <div class="text-muted small fw-semibold">Unread Messages</div>
+                <div class="uc-stat-num text-danger mt-1">{{ metrics.total_unread }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="uc-stat-card card-resolved">
+                <div class="text-muted small fw-semibold">Resolved</div>
+                <div class="uc-stat-num text-success mt-1">{{ metrics.resolved }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
+        <form method="get" class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="btn-group" role="group">
+                <a href="?status=all{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                    All ({{ metrics.total }})
+                </a>
+                <a href="?status=open{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm {% if status_filter == 'open' %}btn-warning text-dark{% else %}btn-outline-secondary{% endif %}">
+                    Open ({{ metrics.open }})
+                </a>
+                <a href="?status=in_progress{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm {% if status_filter == 'in_progress' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                    In Progress ({{ metrics.in_progress }})
+                </a>
+                <a href="?status=resolved{% if search_query %}&q={{ search_query }}{% endif %}" class="btn btn-sm {% if status_filter == 'resolved' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                    Resolved ({{ metrics.resolved }})
+                </a>
+            </div>
+
+            <div class="input-group" style="max-width: 320px;">
+                <input type="text" name="q" class="form-control form-control-sm" placeholder="Search user, email, message..." value="{{ search_query }}">
+                {% if status_filter != 'all' %}
+                <input type="hidden" name="status" value="{{ status_filter }}">
+                {% endif %}
+                <button class="btn btn-sm btn-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sessions Table -->
+    <div class="uc-ticket-table table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Ticket</th>
+                    <th>User / Guest</th>
+                    <th>Latest Message</th>
+                    <th>Status</th>
+                    <th>Assigned Responder</th>
+                    <th>Updated</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in sessions %}
+                <tr>
+                    <td>
+                        <span class="fw-bold">#{{ s.id }}</span>
+                        {% if s.unread_count_for_admin > 0 %}
+                        <span class="uc-unread-badge">{{ s.unread_count_for_admin }} new</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="fw-semibold">{{ s.display_name }}</div>
+                        {% if s.guest_email %}
+                        <div class="small text-muted">{{ s.guest_email }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="max-width: 280px;">
+                        {% with latest=s.latest_message %}
+                        {% if latest %}
+                        <div class="text-truncate small">
+                            <strong class="text-muted">{% if latest.sender_type == 'admin' %}You:{% else %}Guest:{% endif %}</strong>
+                            {{ latest.text }}
+                        </div>
+                        {% else %}
+                        <span class="text-muted small">No messages yet</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        {% if s.status == 'open' %}
+                        <span class="badge bg-warning text-dark">Open</span>
+                        {% elif s.status == 'in_progress' %}
+                        <span class="badge bg-primary">In Progress</span>
+                        {% elif s.status == 'resolved' %}
+                        <span class="badge bg-success">Resolved</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Closed</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if s.assigned_admin %}
+                        <span class="small fw-semibold text-primary">
+                            <i class="bi bi-person-check-fill me-1"></i>{{ s.assigned_admin.username }}
+                        </span>
+                        {% else %}
+                        <span class="small text-muted">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">
+                        {{ s.updated_at|timesince }} ago
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'admin_support_chat' s.id %}" class="btn btn-sm btn-primary fw-semibold px-3 d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-chat-dots-fill"></i> Respond
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox display-5 opacity-50 mb-2"></i>
+                        <p class="mb-0">No support tickets found matching criteria.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
