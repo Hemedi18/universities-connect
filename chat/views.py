@@ -43,16 +43,13 @@ def _active_deals_for_viewer(conversation, viewer):
     return [deal_svc.deal_payload(d, viewer) for d in qs]
 
 
-@login_required
-def inbox(request):
-    conversations = Conversation.objects.filter(participants=request.user).order_by(
-        "-updated_at"
-    )
+def get_user_conversations(user):
+    conversations = Conversation.objects.filter(participants=user).order_by("-updated_at")
     chats = []
     seen_users = set()
 
     for conv in conversations:
-        other_user = conv.participants.exclude(id=request.user.id).first()
+        other_user = conv.participants.exclude(id=user.id).first()
         if other_user:
             if other_user.id in seen_users:
                 continue
@@ -60,7 +57,7 @@ def inbox(request):
 
             last_message = conv.messages.last()
             unread_count = (
-                conv.messages.filter(is_read=False).exclude(sender=request.user).count()
+                conv.messages.filter(is_read=False).exclude(sender=user).count()
             )
             chats.append(
                 {
@@ -70,6 +67,18 @@ def inbox(request):
                     "unread_count": unread_count,
                 }
             )
+    return chats
+
+
+@login_required
+def inbox(request):
+    chats = get_user_conversations(request.user)
+    user_agent = request.META.get("HTTP_USER_AGENT", "").lower()
+    is_mobile = any(m in user_agent for m in ["mobile", "android", "iphone", "ipad"])
+
+    if not is_mobile and chats:
+        return redirect("chat:chat_room", conversation_id=chats[0]["conversation"].id)
+
     return render(request, "chat/inbox.html", {"chats": chats})
 
 
@@ -157,6 +166,7 @@ def chat_room(request, conversation_id):
         deal_list = _active_deals_for_viewer(conversation, request.user)
 
     rating_deal = next((d for d in deal_list if d.get("rating_requested")), None)
+    all_chats = get_user_conversations(request.user)
 
     return render(
         request,
@@ -168,6 +178,7 @@ def chat_room(request, conversation_id):
             "other_user": other_user,
             "deals": deal_list,
             "rating_deal": rating_deal,
+            "chats": all_chats,
         },
     )
 

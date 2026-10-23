@@ -1291,27 +1291,26 @@ body.pdp-theme {
 }
 
 /* Unified Specifications Box (Matching Reference Mockup) */
-.uc-specs-box {
-    background: #0d1624;
-    border: 1px solid var(--uc-card-border);
-    border-radius: 14px;
-    padding: 14px 18px;
-    margin-bottom: 1.25rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 20px;
+.uc-specs-box,
+body.pdp-theme .uc-specs-box {
+    background: #0d1624 !important;
+    border: 1px solid var(--uc-card-border) !important;
+    border-radius: 14px !important;
+    padding: 14px 18px !important;
+    margin-bottom: 1.25rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.uc-specs-col {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.uc-spec-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.uc-spec-item,
+body.pdp-theme .uc-spec-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-width: 0 !important;
 }
 
 .uc-spec-icon {
@@ -1326,18 +1325,68 @@ body.pdp-theme {
     display: flex;
     flex-direction: column;
     line-height: 1.2;
+    min-width: 0;
 }
 
 .uc-spec-label {
     font-size: 0.72rem;
     color: var(--uc-text-muted);
     margin-bottom: 2px;
+    white-space: nowrap;
 }
 
 .uc-spec-val {
     font-size: 0.84rem;
     font-weight: 700;
     color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Consistent Dark Theme Footer on PDP, Auth and Chat */
+body.pdp-theme .uc-footer,
+body.auth-page .uc-footer,
+body.page-chat .uc-footer,
+body.page-chat-room .uc-footer,
+body:has(.uc-auth-split-wrapper) .uc-footer {
+    background: #070d17 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #94a3b8 !important;
+}
+
+body.pdp-theme .uc-footer h4,
+body.auth-page .uc-footer h4,
+body.page-chat .uc-footer h4,
+body.page-chat-room .uc-footer h4,
+body:has(.uc-auth-split-wrapper) .uc-footer h4 {
+    color: #ffffff !important;
+}
+
+body.pdp-theme .uc-footer a,
+body.auth-page .uc-footer a,
+body.page-chat .uc-footer a,
+body.page-chat-room .uc-footer a,
+body:has(.uc-auth-split-wrapper) .uc-footer a {
+    color: #94a3b8 !important;
+}
+
+body.pdp-theme .uc-footer a:hover,
+body.auth-page .uc-footer a:hover,
+body.page-chat .uc-footer a:hover,
+body.page-chat-room .uc-footer a:hover,
+body:has(.uc-auth-split-wrapper) .uc-footer a:hover {
+    color: #ffffff !important;
+}
+
+body.pdp-theme .uc-footer-bottom,
+body.auth-page .uc-footer-bottom,
+body.page-chat .uc-footer-bottom,
+body.page-chat-room .uc-footer-bottom,
+body:has(.uc-auth-split-wrapper) .uc-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #64748b !important;
+    background: transparent !important;
 }
 
 /* Specs 2-Column Grid (Fallback) */

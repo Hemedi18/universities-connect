@@ -581,7 +581,7 @@
         </div>
     </div>
 
-    <!-- 4-Tab Mobile Bottom Navigation (Matching Mockup) -->
+    <!-- 5-Tab Mobile Bottom Navigation (Matching Official Mockup) -->
     <nav class="uc-tabbar" aria-label="Primary">
         <a href="{% url 'customer:home' %}" class="uc-tab {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' and not request.GET.view %}is-active{% endif %}">
             <i class="bi bi-house-door-fill"></i><span>{% trans "Home" %}</span>
@@ -592,6 +592,10 @@
         <a href="{% url 'customer:view_cart' %}" class="uc-tab {% if request.resolver_match.url_name == 'view_cart' %}is-active{% endif %}">
             <i class="bi bi-cart3"></i><span>{% trans "Cart" %}</span>
             <em class="uc-tab-badge js-cart-badge" {% if not cart_item_count %}style="display:none;"{% endif %}>{{ cart_item_count|default:"0" }}</em>
+        </a>
+        <a href="{% url 'chat:inbox' %}" class="uc-tab {% if request.resolver_match.app_name == 'chat' %}is-active{% endif %}">
+            <i class="bi bi-chat-dots-fill"></i><span>{% trans "Messages" %}</span>
+            {% if unread_messages_count %}<em class="uc-tab-badge">{{ unread_messages_count }}</em>{% endif %}
         </a>
         <a href="{% if user.is_authenticated %}{% url 'users:home' %}{% else %}{% url 'users:login' %}{% endif %}" class="uc-tab {% if request.resolver_match.app_name == 'users' %}is-active{% endif %}">
             <i class="bi bi-person"></i><span>{% trans "Profile" %}</span>

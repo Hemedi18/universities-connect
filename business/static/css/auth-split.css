@@ -18,6 +18,8 @@ body.auth-page .navbar,
 body.auth-page .ae-nav-wrap,
 body.auth-page .footer,
 body.auth-page footer,
+body.auth-page .uc-footer,
+body.auth-page .uc-footer-bottom,
 body.auth-page .bottom-tabbar,
 body.auth-page main,
 body:has(.uc-auth-split-wrapper) .top-bar,
@@ -27,10 +29,32 @@ body:has(.uc-auth-split-wrapper) .navbar,
 body:has(.uc-auth-split-wrapper) .ae-nav-wrap,
 body:has(.uc-auth-split-wrapper) .footer,
 body:has(.uc-auth-split-wrapper) footer,
+body:has(.uc-auth-split-wrapper) .uc-footer,
+body:has(.uc-auth-split-wrapper) .uc-footer-bottom,
 body:has(.uc-auth-split-wrapper) .bottom-tabbar,
 body:has(.uc-auth-split-wrapper) main {
     background-color: #081410 !important;
     border-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+body.auth-page .uc-footer,
+body:has(.uc-auth-split-wrapper) .uc-footer {
+    color: #94a3b8 !important;
+}
+
+body.auth-page .uc-footer h4,
+body:has(.uc-auth-split-wrapper) .uc-footer h4 {
+    color: #ffffff !important;
+}
+
+body.auth-page .uc-footer a,
+body:has(.uc-auth-split-wrapper) .uc-footer a {
+    color: #94a3b8 !important;
+}
+
+body.auth-page .uc-footer a:hover,
+body:has(.uc-auth-split-wrapper) .uc-footer a:hover {
+    color: #10b981 !important;
 }
 
 .uc-auth-split-wrapper {

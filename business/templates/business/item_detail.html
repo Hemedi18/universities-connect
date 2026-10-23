@@ -169,66 +169,62 @@
                 {% endif %}
             </p>
 
-            {# Unified Specifications Card with 2-Column Specs Layout (Matching Mockup) #}
-            <div class="uc-specs-box">
-                <div class="uc-specs-col">
-                    <div class="uc-spec-item">
-                        <i class="bi bi-laptop uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Brand" %}</span>
-                            <span class="uc-spec-val">{% if item.company %}{{ item.company.name }}{% else %}HP{% endif %}</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-cpu uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Processor" %}</span>
-                            <span class="uc-spec-val">Intel Core i5</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-memory uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "RAM" %}</span>
-                            <span class="uc-spec-val">8GB</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-hdd-network uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Storage" %}</span>
-                            <span class="uc-spec-val">256GB SSD</span>
-                        </div>
+            {# Unified Specifications Card with 2-Column Direct Grid Layout (Matching Mockup) #}
+            <div class="uc-specs-box" style="display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px 16px !important; width: 100% !important;">
+                <div class="uc-spec-item">
+                    <i class="bi bi-laptop uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Brand" %}</span>
+                        <span class="uc-spec-val">{% if item.company %}{{ item.company.name }}{% elif item.brand %}{{ item.brand }}{% else %}HP{% endif %}</span>
                     </div>
                 </div>
-                <div class="uc-specs-col">
-                    <div class="uc-spec-item">
-                        <i class="bi bi-display uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Screen Size" %}</span>
-                            <span class="uc-spec-val">14" FHD</span>
-                        </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-display uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Screen Size" %}</span>
+                        <span class="uc-spec-val">14" FHD</span>
                     </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-windows uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Operating System" %}</span>
-                            <span class="uc-spec-val">Windows 11</span>
-                        </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-cpu uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Processor" %}</span>
+                        <span class="uc-spec-val">Intel Core i5</span>
                     </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-patch-check uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Condition" %}</span>
-                            <span class="uc-spec-val">{{ item.condition|default:_("New")|title }}</span>
-                        </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-windows uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Operating System" %}</span>
+                        <span class="uc-spec-val">Windows 11</span>
                     </div>
-                    <div class="uc-spec-item">
-                        <i class="bi bi-shield-check uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Warranty" %}</span>
-                            <span class="uc-spec-val">6 {% trans "Months" %}</span>
-                        </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-memory uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "RAM" %}</span>
+                        <span class="uc-spec-val">8GB</span>
+                    </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-patch-check uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Condition" %}</span>
+                        <span class="uc-spec-val">{{ item.condition|default:_("New")|title }}</span>
+                    </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-hdd-network uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Storage" %}</span>
+                        <span class="uc-spec-val">256GB SSD</span>
+                    </div>
+                </div>
+                <div class="uc-spec-item">
+                    <i class="bi bi-shield-check uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Warranty" %}</span>
+                        <span class="uc-spec-val">6 {% trans "Months" %}</span>
                     </div>
                 </div>
             </div>

@@ -1,123 +1,400 @@
 {% extends 'business/base.html' %}
 {% load static %}
 {% load chat_extras %}
+{% load i18n %}
 
-{% block title %}Chat with {{ other_user.username }} - U-Connect{% endblock %}
-{% block body_class %} no-tabbar page-chat page-chat-room{% endblock %}
+{% block title %}{% trans "Chat with" %} {{ other_user.get_full_name|default:other_user.username }} · U-Connect{% endblock %}
+{% block body_class %} page-chat page-chat-room{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/deal-rating.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'css/chat-cyber-theme.css' %}?v=1">
 {% endblock %}
 
 {% block content %}
 {% with header_deal=deals.0 %}
-<div class="chat-room-container chat-room-container-override chat-room-height-mobile" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
-    <div class="chat-room-header">
-        <a href="{% url 'chat:inbox' %}" class="back-btn" aria-label="Back"><i class="bi bi-arrow-left"></i></a>
-        <div class="chat-user-info">
-            <span class="chat-username" id="chat-username">{{ other_user.first_name|default:other_user.username }}</span>
-            <div id="status-container" class="header-status">
-                <span id="typing-indicator" style="display: none;">typing...</span>
-            </div>
-        </div>
-        {% if header_deal %}
-        <div class="deal-header-slot" id="dealHeaderSlot">
-            <button type="button"
-                class="deal-header-icon status-{{ header_deal.status }}{% if header_deal.is_seller and header_deal.status == 'pending' %} is-action{% endif %}"
-                id="dealHeaderBtn"
-                data-deal-id="{{ header_deal.id }}"
-                data-status="{{ header_deal.status }}"
-                data-is-seller="{{ header_deal.is_seller|yesno:'1,0' }}"
-                data-max="{{ header_deal.max_qty }}"
-                data-stock="{{ header_deal.stock_quantity }}"
-                title="{% if header_deal.status == 'sold' %}Sold{% elif header_deal.status == 'not_sold' %}Not sold{% else %}Pending{% endif %}"
-                aria-label="Deal status">
-                {% if header_deal.status == 'sold' %}
-                <i class="bi bi-check-circle-fill"></i>
-                {% elif header_deal.status == 'not_sold' %}
-                <i class="bi bi-x-circle"></i>
-                {% else %}
-                <i class="bi bi-hourglass-split"></i>
-                {% endif %}
-            </button>
-            {% if header_deal.is_seller and header_deal.status == 'pending' %}
-            <div class="deal-header-menu" id="dealHeaderMenu" hidden>
-                <button type="button" class="js-deal-sold" data-deal-id="{{ header_deal.id }}" data-max="{{ header_deal.max_qty }}">
-                    <i class="bi bi-check2"></i> Sold
-                </button>
-                <button type="button" class="js-deal-not-sold" data-deal-id="{{ header_deal.id }}">
-                    <i class="bi bi-x"></i> Not sold
-                </button>
-            </div>
-            {% elif header_deal.is_seller and header_deal.status == 'sold' %}
-            <div class="deal-header-menu" id="dealHeaderMenu" hidden>
-                <label class="deal-mini-stock">Stock
-                    <input type="number" min="0" class="js-stock-input" value="{{ header_deal.stock_quantity }}">
-                </label>
-                <button type="button" class="js-deal-stock-save" data-deal-id="{{ header_deal.id }}">Save</button>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-    </div>
+<div class="uc-chat-page-wrapper">
+    <div class="uc-chat-card" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
 
-    <div class="messages-container" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
-        {% for message in chat_messages %}
-        <div class="message-bubble {% if message.sender == user %}sent{% else %}received{% endif %}{% if message.image or message.item %} has-media{% endif %}" data-id="{{ message.id }}">
-            {% if message.item %}
-            <a class="chat-item-card" href="{% url 'customer:item_detail' message.item.id %}">
-                {% if message.item.image %}
-                <img src="{{ message.item.image.url }}" alt="">
-                {% endif %}
-                <span>
-                    <strong>{{ message.item.title|truncatechars:42 }}</strong>
-                    <em>Tsh {{ message.item.price|floatformat:0 }}</em>
-                </span>
-            </a>
-            {% endif %}
-            {% if message.image %}
-                <a class="chat-image-link" href="{{ message.image.url }}" target="_blank" rel="noopener">
-                    <img src="{{ message.image.url }}" alt="Image" class="chat-image">
+        {# ================================================================= #}
+        {# COLUMN 1: CONVERSATIONS / MESSAGES LIST (LEFT)                    #}
+        {# ================================================================= #}
+        <aside class="uc-chat-sidebar" aria-label="{% trans 'Conversations' %}">
+            <div class="uc-chat-sidebar-header">
+                <h3 class="uc-chat-sidebar-title">
+                    <i class="bi bi-chat-dots-fill text-primary"></i>
+                    <span>{% trans "Messages" %}</span>
+                </h3>
+                <a href="{% url 'customer:home' %}?view=shop" class="uc-chat-new-btn" title="{% trans 'Start a conversation from a product' %}">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>{% trans "New Conversation" %}</span>
                 </a>
-            {% endif %}
-            {% if message.content %}
-                <div class="message-content">{{ message.content|chat_message }}</div>
-            {% endif %}
-            <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
-        </div>
-        {% empty %}
-        <p class="chat-empty-text">No messages yet. Say hi!</p>
-        {% endfor %}
-    </div>
+            </div>
 
-    <button id="scrollToBottomBtn" class="scroll-bottom-btn" style="display: none;">
-        <i class="bi bi-arrow-down"></i>
-    </button>
+            <div class="uc-chat-sidebar-list">
+                {% if chats %}
+                    {% for c in chats %}
+                    <a href="{% url 'chat:chat_room' c.conversation.id %}" class="uc-chat-item {% if c.conversation.id == conversation.id %}active{% endif %}">
+                        <div class="uc-chat-item-avatar {% if 'support' in c.other_user.username|lower %}uc-avatar-support{% endif %}">
+                            {% if c.other_user.profile.profile_picture %}
+                                <img src="{{ c.other_user.profile.profile_picture.url }}" alt="{{ c.other_user.username }}">
+                            {% elif 'support' in c.other_user.username|lower %}
+                                <span style="color:#ff2d55;font-weight:900;">U</span>
+                            {% else %}
+                                <span>{{ c.other_user.username|first|upper }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="uc-chat-item-content">
+                            <div class="uc-chat-item-top">
+                                <span class="uc-chat-item-name">{{ c.other_user.get_full_name|default:c.other_user.username }}</span>
+                                <span class="uc-chat-item-time">{{ c.last_message.timestamp|date:"H:i" }}</span>
+                            </div>
+                            <div class="uc-chat-item-status">
+                                <i class="bi bi-record-fill" style="font-size:0.55rem;"></i>
+                                <span>{% trans "Online" %}</span>
+                            </div>
+                            <p class="uc-chat-item-preview">
+                                {% if c.last_message %}
+                                    {% if c.last_message.sender == user %}{% trans "You" %}: {% endif %}{{ c.last_message.content|truncatechars:34 }}
+                                {% else %}
+                                    {% trans "No messages yet" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% endif %}
 
-    <div class="chat-input-area">
-        <form method="post" class="chat-input-form" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="chat-image-input" class="chat-file-label">
-                <i class="bi bi-paperclip" style="font-size: 1.5rem;"></i>
-            </label>
-            {{ form.image }}
-            {{ form.content }}
-            <button type="submit" class="btn-send"><i class="bi bi-send-fill"></i></button>
-        </form>
+                {# Fallback sample support threads if user has limited contacts #}
+                <div class="uc-chat-item {% if 'support' in other_user.username|lower %}active{% endif %}">
+                    <div class="uc-chat-item-avatar uc-avatar-support">
+                        <span style="color:#ff2d55;font-weight:900;">U</span>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">U-Connect Support</span>
+                            <span class="uc-chat-item-time">21:53</span>
+                        </div>
+                        <div class="uc-chat-item-status">
+                            <i class="bi bi-record-fill" style="font-size:0.55rem;"></i>
+                            <span>{% trans "Online" %}</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "Hello! How can we help you today?" %}</p>
+                    </div>
+                </div>
+
+                <div class="uc-chat-item">
+                    <div class="uc-chat-item-avatar" style="background:#1e293b;">
+                        <i class="bi bi-headset" style="color:#38bdf8;"></i>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">Tech Support</span>
+                            <span class="uc-chat-item-time">19:24</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "Your request has been received." %}</p>
+                    </div>
+                </div>
+
+                <div class="uc-chat-item">
+                    <div class="uc-chat-item-avatar" style="background:#1e293b;">
+                        <i class="bi bi-person-fill" style="color:#a855f7;"></i>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">Admin</span>
+                            <span class="uc-chat-item-time">17:08</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "Thank you for reaching out!" %}</p>
+                    </div>
+                </div>
+
+                <div class="uc-chat-item">
+                    <div class="uc-chat-item-avatar" style="background:#831843;">
+                        <i class="bi bi-bag-fill" style="color:#f43f5e;"></i>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">Shop Assistant</span>
+                            <span class="uc-chat-item-time">16:42</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "Here are our best deals for you!" %}</p>
+                    </div>
+                </div>
+
+                <div class="uc-chat-item">
+                    <div class="uc-chat-item-avatar" style="background:#0c4a6e;">
+                        <i class="bi bi-truck" style="color:#38bdf8;"></i>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">Delivery Team</span>
+                            <span class="uc-chat-item-time">14:12</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "Your order is on the way." %}</p>
+                    </div>
+                </div>
+
+                <div class="uc-chat-item">
+                    <div class="uc-chat-item-avatar" style="background:#1e293b;">
+                        <i class="bi bi-person-circle" style="color:#94a3b8;"></i>
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">Account Support</span>
+                            <span class="uc-chat-item-time">10:37</span>
+                        </div>
+                        <p class="uc-chat-item-preview">{% trans "We're here to help!" %}</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+
+        {# ================================================================= #}
+        {# COLUMN 2: ACTIVE CHAT ROOM STREAM (MIDDLE)                       #}
+        {# ================================================================= #}
+        <section class="uc-chat-main">
+            <!-- Chat Header -->
+            <div class="uc-chat-main-header">
+                <div class="uc-chat-header-user">
+                    <a href="{% url 'chat:inbox' %}" class="uc-chat-back-btn" title="{% trans 'Back to Inbox' %}">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <div class="uc-chat-header-avatar {% if 'support' in other_user.username|lower %}uc-avatar-support{% endif %}">
+                        {% if other_user.profile.profile_picture %}
+                            <img src="{{ other_user.profile.profile_picture.url }}" alt="{{ other_user.username }}">
+                        {% elif 'support' in other_user.username|lower %}
+                            <span style="color:#ff2d55;font-weight:900;">U</span>
+                        {% else %}
+                            <span>{{ other_user.username|first|upper }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="uc-chat-header-meta">
+                        <h5 id="chat-username">{{ other_user.get_full_name|default:other_user.username }}</h5>
+                        <div class="uc-chat-header-status">
+                            <i class="bi bi-record-fill" style="font-size:0.55rem;"></i>
+                            <span>{% trans "Online" %}</span>
+                            <span id="typing-indicator" style="display:none;margin-left:6px;color:#94a3b8;">typing...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uc-chat-header-actions">
+                    <button type="button" class="uc-chat-action-btn" title="{% trans 'Phone Call' %}" aria-label="Call">
+                        <i class="bi bi-telephone"></i>
+                    </button>
+                    <button type="button" class="uc-chat-action-btn" title="{% trans 'Video Call' %}" aria-label="Video">
+                        <i class="bi bi-camera-video"></i>
+                    </button>
+                    
+                    {% if header_deal %}
+                    <div class="deal-header-slot d-inline-block position-relative" id="dealHeaderSlot">
+                        <button type="button"
+                            class="uc-chat-action-btn status-{{ header_deal.status }}{% if header_deal.is_seller and header_deal.status == 'pending' %} is-action{% endif %}"
+                            id="dealHeaderBtn"
+                            data-deal-id="{{ header_deal.id }}"
+                            data-status="{{ header_deal.status }}"
+                            data-is-seller="{{ header_deal.is_seller|yesno:'1,0' }}"
+                            data-max="{{ header_deal.max_qty }}"
+                            data-stock="{{ header_deal.stock_quantity }}"
+                            title="{% if header_deal.status == 'sold' %}Sold{% elif header_deal.status == 'not_sold' %}Not sold{% else %}Pending{% endif %}">
+                            {% if header_deal.status == 'sold' %}
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            {% elif header_deal.status == 'not_sold' %}
+                            <i class="bi bi-x-circle text-danger"></i>
+                            {% else %}
+                            <i class="bi bi-hourglass-split text-warning"></i>
+                            {% endif %}
+                        </button>
+                        {% if header_deal.is_seller and header_deal.status == 'pending' %}
+                        <div class="deal-header-menu" id="dealHeaderMenu" hidden>
+                            <button type="button" class="js-deal-sold" data-deal-id="{{ header_deal.id }}" data-max="{{ header_deal.max_qty }}">
+                                <i class="bi bi-check2"></i> Sold
+                            </button>
+                            <button type="button" class="js-deal-not-sold" data-deal-id="{{ header_deal.id }}">
+                                <i class="bi bi-x"></i> Not sold
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <button type="button" class="uc-chat-action-btn" title="{% trans 'More' %}" aria-label="More">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Stream Area -->
+            <div class="uc-messages-stream" id="messagesContainer" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}" data-url="{% url 'chat:get_messages' conversation.id %}">
+                {% for message in chat_messages %}
+                <div class="uc-msg-row {% if message.sender == user %}sent{% else %}received{% endif %}" data-id="{{ message.id }}">
+                    {% if message.sender != user %}
+                    <div class="uc-msg-avatar-mini">
+                        {% if 'support' in other_user.username|lower %}
+                        <span style="color:#ff2d55;font-weight:bold;">U</span>
+                        {% else %}
+                        {{ other_user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="uc-msg-avatar-mini">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="uc-msg-bubble">
+                        {% if message.item %}
+                        <a class="chat-item-card" href="{% url 'customer:item_detail' message.item.id %}" style="display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.25);border-radius:10px;padding:8px;margin-bottom:8px;text-decoration:none;color:#fff;">
+                            {% if message.item.image %}
+                            <img src="{{ message.item.image.url }}" alt="" style="width:40px;height:40px;border-radius:6px;object-fit:cover;">
+                            {% endif %}
+                            <div>
+                                <strong style="display:block;font-size:0.8rem;">{{ message.item.title|truncatechars:38 }}</strong>
+                                <em style="font-size:0.75rem;color:#34d399;">Tsh {{ message.item.price|floatformat:0 }}</em>
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        {% if message.image %}
+                        <a class="chat-image-link" href="{{ message.image.url }}" target="_blank" rel="noopener" style="display:block;margin-bottom:6px;">
+                            <img src="{{ message.image.url }}" alt="Image" style="max-width:240px;border-radius:8px;">
+                        </a>
+                        {% endif %}
+
+                        {% if message.content %}
+                        <div class="uc-msg-text">{{ message.content|chat_message }}</div>
+                        {% endif %}
+
+                        <div class="uc-msg-meta">
+                            <span>{{ message.timestamp|date:"H:i" }}</span>
+                            {% if message.sender == user %}
+                            <i class="bi bi-check2-all uc-msg-checks"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center my-auto py-5" style="color:#64748b;">
+                    <i class="bi bi-chat-quote" style="font-size:3rem;color:rgba(16,185,129,0.3);"></i>
+                    <p class="mt-2" style="font-size:0.9rem;">{% trans "Start of conversation. Say hello!" %}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Scroll to bottom button -->
+            <button id="scrollToBottomBtn" class="scroll-bottom-btn" style="display:none;position:absolute;bottom:75px;right:20px;z-index:20;background:#152238;color:#fff;border:1px solid rgba(255,255,255,0.15);width:36px;height:36px;border-radius:50%;align-items:center;justify-content:center;cursor:pointer;">
+                <i class="bi bi-arrow-down"></i>
+            </button>
+
+            <!-- Chat Input Area (Bottom) -->
+            <div class="uc-chat-input-wrapper">
+                <form method="post" class="chat-input-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="uc-chat-input-pill">
+                        <label for="chat-image-input" class="uc-chat-attach-btn" title="{% trans 'Attach image' %}">
+                            <i class="bi bi-paperclip"></i>
+                        </label>
+                        {{ form.image }}
+                        {{ form.content }}
+                        <button type="submit" class="uc-chat-send-btn" title="{% trans 'Send Message' %}" aria-label="Send">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+
+        {# ================================================================= #}
+        {# COLUMN 3: QUICK HELP & NEED HELP SIDEBAR (RIGHT)                  #}
+        {# ================================================================= #}
+        <aside class="uc-chat-help-sidebar" aria-label="{% trans 'Help & Support' %}">
+            <!-- Card 1: Need Help? -->
+            <div class="uc-help-card text-center">
+                <div class="uc-help-icon-circle mx-auto">
+                    <i class="bi bi-headset"></i>
+                </div>
+                <h4 class="uc-help-title">{% trans "Need Help?" %}</h4>
+                <p class="uc-help-desc">
+                    {% trans "Our support team is online and ready to assist you." %}
+                </p>
+                <a href="{% url 'chat:inbox' %}" class="uc-start-chat-btn">
+                    <i class="bi bi-chat-text-fill"></i>
+                    <span>{% trans "Start Live Chat" %}</span>
+                </a>
+                <div class="uc-resp-time-badge justify-content-center">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i>
+                    <span>{% trans "Average response time:" %} <strong>2 {% trans "minutes" %}</strong></span>
+                </div>
+            </div>
+
+            <!-- Card 2: Quick Help -->
+            <div class="uc-help-card">
+                <h5 class="uc-help-title" style="font-size:0.95rem;margin-bottom:12px;">{% trans "Quick Help" %}</h5>
+                <div class="uc-quick-help-list">
+                    <a href="{% url 'customer:my_orders' %}" class="uc-quick-link-item">
+                        <div class="left">
+                            <i class="bi bi-box-seam text-info"></i>
+                            <span>{% trans "Track Your Order" %}</span>
+                        </div>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </a>
+                    <a href="{% url 'customer:documentation' %}" class="uc-quick-link-item">
+                        <div class="left">
+                            <i class="bi bi-arrow-repeat text-warning"></i>
+                            <span>{% trans "Returns & Refunds" %}</span>
+                        </div>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </a>
+                    <a href="{% url 'customer:contact' %}" class="uc-quick-link-item">
+                        <div class="left">
+                            <i class="bi bi-credit-card text-success"></i>
+                            <span>{% trans "Payment Issues" %}</span>
+                        </div>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </a>
+                    <a href="{% url 'users:home' %}" class="uc-quick-link-item">
+                        <div class="left">
+                            <i class="bi bi-person-gear text-primary"></i>
+                            <span>{% trans "Account Settings" %}</span>
+                        </div>
+                        <i class="bi bi-chevron-right chevron"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Priority Satisfaction -->
+            <div class="uc-help-card uc-priority-card">
+                <div class="uc-priority-icon">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </div>
+                <h5 style="font-size:0.92rem;font-weight:800;color:#fff;margin:0 0 4px 0;">{% trans "We're here for you!" %}</h5>
+                <p style="font-size:0.75rem;color:#94a3b8;margin:0;">
+                    {% trans "Your satisfaction is our priority." %}
+                </p>
+            </div>
+        </aside>
+
     </div>
 </div>
 {% endwith %}
 
+{# ================================================================= #}
+{# DEALS & RATING MODALS                                             #}
+{# ================================================================= #}
 <div class="deal-modal" id="soldQtyModal" hidden>
     <div class="deal-modal-backdrop" data-close></div>
     <div class="deal-modal-card" role="dialog" aria-modal="true" aria-labelledby="soldQtyTitle">
-        <h3 id="soldQtyTitle">Thibitisha ununuzi</h3>
-        <p>Weka idadi iliyonunuliwa (stock itapungua).</p>
-        <label class="deal-qty-label">Quantity
+        <h3 id="soldQtyTitle">{% trans "Confirm purchase" %}</h3>
+        <p>{% trans "Enter quantity sold (stock will decrease)." %}</p>
+        <label class="deal-qty-label">{% trans "Quantity" %}
             <input type="number" id="soldQtyInput" min="1" value="1">
         </label>
         <div class="deal-modal-actions">
-            <button type="button" class="deal-btn deal-btn-ghost" data-close>Cancel</button>
-            <button type="button" class="deal-btn deal-btn-sold" id="soldQtyConfirm">Confirm sold</button>
+            <button type="button" class="deal-btn deal-btn-ghost" data-close>{% trans "Cancel" %}</button>
+            <button type="button" class="deal-btn deal-btn-sold" id="soldQtyConfirm">{% trans "Confirm sold" %}</button>
         </div>
     </div>
 </div>
@@ -127,8 +404,8 @@
     <div class="rate-card" role="dialog" aria-modal="true" aria-labelledby="rateTitle">
         <div class="rate-wave" aria-hidden="true"></div>
         <div class="rate-emoji" aria-hidden="true">😆</div>
-        <h2 id="rateTitle">How would you rate this purchase?</h2>
-        <p class="rate-sub" id="rateSub">Je, umeridhika na bidhaa / muuzaji?</p>
+        <h2 id="rateTitle">{% trans "How would you rate this purchase?" %}</h2>
+        <p class="rate-sub" id="rateSub">{% trans "Are you satisfied with the product and seller?" %}</p>
         <div class="rate-stars" id="rateStars" role="radiogroup" aria-label="Star rating">
             <button type="button" class="rate-star" data-v="1" aria-label="1 star"><i class="bi bi-star"></i></button>
             <button type="button" class="rate-star" data-v="2" aria-label="2 stars"><i class="bi bi-star"></i></button>
@@ -136,11 +413,11 @@
             <button type="button" class="rate-star" data-v="4" aria-label="4 stars"><i class="bi bi-star"></i></button>
             <button type="button" class="rate-star" data-v="5" aria-label="5 stars"><i class="bi bi-star"></i></button>
         </div>
-        <label class="rate-label" for="rateComment">Can you tell us more?</label>
-        <textarea id="rateComment" rows="3" placeholder="We'd love to hear more!"></textarea>
+        <label class="rate-label" for="rateComment">{% trans "Can you tell us more?" %}</label>
+        <textarea id="rateComment" rows="3" placeholder="{% trans 'We would love to hear your thoughts!' %}"></textarea>
         <div class="rate-actions">
-            <button type="button" class="rate-btn rate-btn-cancel" data-close-rate>Cancel</button>
-            <button type="button" class="rate-btn rate-btn-submit" id="rateSubmit">Submit</button>
+            <button type="button" class="rate-btn rate-btn-cancel" data-close-rate>{% trans "Cancel" %}</button>
+            <button type="button" class="rate-btn rate-btn-submit" id="rateSubmit">{% trans "Submit" %}</button>
         </div>
     </div>
 </div>
@@ -170,21 +447,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatInput = document.querySelector('input[name="content"]');
     const typingIndicator = document.getElementById('typing-indicator');
     if (chatInput) {
+        chatInput.classList.add('uc-chat-text-input');
         chatInput.addEventListener('input', () => {
             fetch(`/chat/room/${conversationId}/typing/`, {
                 method: 'POST',
                 headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
                 body: JSON.stringify({})
-            });
+            }).catch(() => {});
         });
     }
-    setInterval(() => {
-        fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
-            .then(r => r.json())
-            .then(data => {
-                if (typingIndicator) typingIndicator.style.display = data.is_typing ? 'inline' : 'none';
-            }).catch(() => {});
-    }, 2500);
+
+    if (otherUserId) {
+        setInterval(() => {
+            fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (typingIndicator) typingIndicator.style.display = data.is_typing ? 'inline' : 'none';
+                }).catch(() => {});
+        }, 2500);
+    }
 
     function postJSON(url, body) {
         return fetch(url, {
@@ -226,34 +507,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-close]').forEach(el => {
         el.addEventListener('click', () => { soldModal.hidden = true; pendingSoldDealId = null; });
     });
-    document.getElementById('soldQtyConfirm').addEventListener('click', () => {
-        if (!pendingSoldDealId) return;
-        postJSON(`/chat/deal/${pendingSoldDealId}/sold/`, {
-            quantity: parseInt(soldQtyInput.value || '1', 10)
-        }).then(data => {
-            if (data.error) { alert(data.error); return; }
-            location.reload();
+    const soldQtyConfirm = document.getElementById('soldQtyConfirm');
+    if (soldQtyConfirm) {
+        soldQtyConfirm.addEventListener('click', () => {
+            if (!pendingSoldDealId) return;
+            postJSON(`/chat/deal/${pendingSoldDealId}/sold/`, {
+                quantity: parseInt(soldQtyInput.value || '1', 10)
+            }).then(data => {
+                if (data.error) { alert(data.error); return; }
+                location.reload();
+            });
         });
-    });
+    }
+
     document.querySelectorAll('.js-deal-not-sold').forEach(btn => {
         btn.addEventListener('click', () => {
             postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/not-sold/`, {}).then(data => {
                 if (data.error) { alert(data.error); return; }
                 location.reload();
-            });
-        });
-    });
-    document.querySelectorAll('.js-deal-stock-save').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const input = document.querySelector('.js-stock-input');
-            postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/stock/`, {
-                stock_quantity: parseInt((input && input.value) || '0', 10)
-            }).then(data => {
-                if (data.error) { alert(data.error); return; }
-                if (headerMenu) headerMenu.hidden = true;
-                if (headerBtn && data.deal) {
-                    headerBtn.setAttribute('data-stock', data.deal.stock_quantity);
-                }
             });
         });
     });

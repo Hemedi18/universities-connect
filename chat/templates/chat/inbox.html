@@ -1,43 +1,74 @@
 {% extends 'business/base.html' %}
+{% load static %}
+{% load i18n %}
 
-{% block title %}Messages - U-Connect{% endblock %}
-{% block body_class %} no-tabbar page-chat{% endblock %}
+{% block title %}{% trans "Messages" %} · U-Connect{% endblock %}
+{% block body_class %} page-chat page-inbox{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat-cyber-theme.css' %}?v=1">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="inbox-title">Messages</h1>
-
-    {% if chats %}
-        <div class="chat-list">
-            {% for chat in chats %}
-            <a href="{% url 'chat:chat_room' chat.conversation.id %}" class="chat-item">
-                <div class="chat-avatar">
-                    {% if chat.other_user.profile.profile_picture %}
-                        <img src="{{ chat.other_user.profile.profile_picture.url }}" alt="{{ chat.other_user.username }}">
-                    {% else %}
-                        <div class="avatar-placeholder">{{ chat.other_user.username|first|upper }}</div>
-                    {% endif %}
-                </div>
-                <div class="chat-preview">
-                    <div class="chat-header">
-                        <span class="chat-name">{{ chat.other_user.first_name|default:chat.other_user.username }}</span>
-                        <div class="inbox-time-container">
-                            <span class="chat-time">{{ chat.last_message.timestamp|date:"M d" }}</span>
-                            {% if chat.unread_count > 0 %}<span class="badge rounded-pill bg-danger badge-custom">{{ chat.unread_count }}</span>{% endif %}
-                        </div>
-                    </div>
-                    <p class="chat-message-preview {% if not chat.last_message.is_read and chat.last_message.sender != user %}unread{% endif %}">
-                        {% if chat.last_message.sender == user %}You: {% endif %}{{ chat.last_message.content|truncatechars:40 }}
-                    </p>
-                </div>
+<div class="uc-inbox-wrapper">
+    <div class="uc-inbox-card">
+        <div class="uc-chat-sidebar-header">
+            <h3 class="uc-chat-sidebar-title">
+                <i class="bi bi-chat-dots-fill text-primary"></i>
+                <span>{% trans "Messages" %}</span>
+            </h3>
+            <a href="{% url 'customer:home' %}?view=shop" class="uc-chat-new-btn" title="{% trans 'Start a conversation' %}">
+                <i class="bi bi-pencil-square"></i>
+                <span>{% trans "New Conversation" %}</span>
             </a>
-            {% endfor %}
         </div>
-    {% else %}
-        <div class="inbox-empty-container">
-            <i class="bi bi-chat-square-text inbox-empty-icon"></i>
-            <p>No messages yet. Start a conversation from a product page!</p>
+
+        <div class="uc-chat-sidebar-list uc-inbox-list">
+            {% if chats %}
+                {% for c in chats %}
+                <a href="{% url 'chat:chat_room' c.conversation.id %}" class="uc-chat-item">
+                    <div class="uc-chat-item-avatar {% if 'support' in c.other_user.username|lower %}uc-avatar-support{% endif %}">
+                        {% if c.other_user.profile.profile_picture %}
+                            <img src="{{ c.other_user.profile.profile_picture.url }}" alt="{{ c.other_user.username }}">
+                        {% elif 'support' in c.other_user.username|lower %}
+                            <span style="color:#ff2d55;font-weight:900;">U</span>
+                        {% else %}
+                            <span>{{ c.other_user.username|first|upper }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="uc-chat-item-content">
+                        <div class="uc-chat-item-top">
+                            <span class="uc-chat-item-name">{{ c.other_user.get_full_name|default:c.other_user.username }}</span>
+                            <span class="uc-chat-item-time">{{ c.last_message.timestamp|date:"H:i" }}</span>
+                        </div>
+                        <div class="uc-chat-item-status">
+                            <i class="bi bi-record-fill" style="font-size:0.55rem;"></i>
+                            <span>{% trans "Online" %}</span>
+                            {% if c.unread_count > 0 %}
+                            <span class="badge rounded-pill bg-danger ms-auto" style="font-size:0.65rem;">{{ c.unread_count }}</span>
+                            {% endif %}
+                        </div>
+                        <p class="uc-chat-item-preview">
+                            {% if c.last_message %}
+                                {% if c.last_message.sender == user %}{% trans "You" %}: {% endif %}{{ c.last_message.content|truncatechars:45 }}
+                            {% else %}
+                                {% trans "No messages yet" %}
+                            {% endif %}
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5 px-3" style="color:#64748b;">
+                    <i class="bi bi-chat-square-text" style="font-size:3rem;color:rgba(16,185,129,0.3);margin-bottom:12px;display:inline-block;"></i>
+                    <h5 style="color:#f1f5f9;font-weight:700;">{% trans "No messages yet" %}</h5>
+                    <p style="font-size:0.85rem;max-width:320px;margin:8px auto 16px;">{% trans "Start a conversation directly with a seller from any product page!" %}</p>
+                    <a href="{% url 'customer:home' %}?view=shop" class="btn btn-sm btn-primary rounded-pill px-4">
+                        <i class="bi bi-bag"></i> {% trans "Explore Products" %}
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}
