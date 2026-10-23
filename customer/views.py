@@ -163,6 +163,19 @@ def home(request):
                 )
                 .order_by("-views", "-created_at")[:10]
             )
+        if len(featured_items) < 8:
+            existing_ids = [it.id for it in featured_items]
+            extra = list(
+                Item.objects.filter(status="active")
+                .exclude(id__in=existing_ids)
+                .select_related("category_obj", "company", "seller")
+                .annotate(
+                    avg_rating=Avg("company__reviews__rating"),
+                    review_count=Count("company__reviews", distinct=True),
+                )
+                .order_by("-views", "-created_at")[: (10 - len(featured_items))]
+            )
+            featured_items.extend(extra)
         items_page = list(
             Item.objects.filter(status="active")
             .select_related("category_obj", "company", "seller")
@@ -597,7 +610,10 @@ def whatsapp_share(request, item_id):
     return redirect("customer:item_detail", item_id=item.id)
 
 
-@login_required
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
 def add_to_cart(request, item_id):
     qty = 1
     if request.method == "POST":
@@ -605,10 +621,27 @@ def add_to_cart(request, item_id):
             qty = max(1, int(request.POST.get("quantity", 1)))
         except (TypeError, ValueError):
             qty = 1
+    elif request.method == "GET" and request.GET.get("quantity"):
+        try:
+            qty = max(1, int(request.GET.get("quantity", 1)))
+        except (TypeError, ValueError):
+            qty = 1
+
     ok, err = cart_utils.add_item(request.session, item_id, qty)
+
+    is_ajax = (
+        request.headers.get("x-requested-with") == "XMLHttpRequest"
+        or "application/json" in request.headers.get("Accept", "")
+        or request.POST.get("ajax") == "1"
+        or request.GET.get("ajax") == "1"
+    )
+
     if not ok:
+        if is_ajax:
+            return JsonResponse({"success": False, "error": err or "Could not add item to cart."}, status=400)
         messages.error(request, err or "Could not add item to cart.")
         return redirect("customer:item_detail", item_id=item_id)
+
     try:
         from recommend.events import log_event_from_request
         from recommend.models import InteractionEvent
@@ -621,14 +654,32 @@ def add_to_cart(request, item_id):
         )
     except Exception:
         pass
+
+    count = cart_utils.cart_item_count(request.session)
+    total_qty = sum(cart_utils.get_cart(request.session).values())
+
+    try:
+        item_title = Item.objects.filter(pk=item_id).values_list("title", flat=True).first()
+    except Exception:
+        item_title = None
+
+    if is_ajax:
+        return JsonResponse({
+            "success": True,
+            "message": f"'{item_title or 'Item'}' added to cart!",
+            "cart_count": count,
+            "total_qty": total_qty,
+            "item_id": item_id,
+        })
+
     if request.method == "POST" and request.POST.get("buy_now"):
         messages.success(request, "Ready for checkout.")
         return redirect("customer:checkout")
+
     messages.success(request, "Added to cart.")
     return redirect("customer:view_cart")
 
 
-@login_required
 @require_POST
 def update_cart(request, item_id):
     try:
@@ -641,7 +692,6 @@ def update_cart(request, item_id):
     return redirect("customer:view_cart")
 
 
-@login_required
 @require_POST
 def remove_from_cart(request, item_id):
     cart_utils.remove_item(request.session, item_id)
@@ -649,7 +699,6 @@ def remove_from_cart(request, item_id):
     return redirect("customer:view_cart")
 
 
-@login_required
 @require_POST
 def clear_cart(request):
     cart_utils.clear_cart(request.session)
@@ -657,7 +706,6 @@ def clear_cart(request):
     return redirect("customer:view_cart")
 
 
-@login_required
 def view_cart(request):
     from business.contacts import contact_bundle
 

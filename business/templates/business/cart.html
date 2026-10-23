@@ -117,6 +117,10 @@
                 <span>{{ cart_count }}</span>
             </div>
             <p class="cf-contact-hint">Tumia chat, call, au WhatsApp kwenye kila item — ujumbe una jina la bidhaa kiotomatiki.</p>
+            <a href="{% url 'customer:checkout' %}" class="btn btn-danger w-100 rounded-pill py-2 fw-bold text-white mb-2 d-flex align-items-center justify-content-center gap-2" style="background:var(--uc-crimson, #ff2d55);border-color:var(--uc-crimson, #ff2d55);box-shadow:0 4px 14px rgba(255,45,85,0.35);text-decoration:none;">
+                <i class="bi bi-shield-check"></i>
+                <span>Proceed to Checkout</span>
+            </a>
             <a href="{% url 'customer:home' %}?view=shop" class="cf-continue">Continue shopping</a>
         </aside>
         {% endif %}

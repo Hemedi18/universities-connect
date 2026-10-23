@@ -356,6 +356,10 @@
             </div>
 
             {% if item.stock_quantity > 0 and item.status == 'active' %}
+            <button type="button" class="btn btn-danger w-100 rounded-pill py-2 fw-bold js-add-to-cart mb-3 d-flex align-items-center justify-content-center gap-2" data-item-id="{{ item.id }}" style="background:var(--uc-crimson, #ff2d55);border-color:var(--uc-crimson, #ff2d55);box-shadow:0 4px 14px rgba(255,45,85,0.35);font-size:0.95rem;">
+                <i class="bi bi-cart3"></i>
+                <span>{% trans "Add to Cart" %}</span>
+            </button>
             <div class="pdx-contact">
                 <div class="pdx-contact-label">{% trans "Contact Seller" %}</div>
                 {% if contact_phone %}
@@ -387,6 +391,10 @@
     <div class="pdx-bar pdx-bar-mobile">
         <div class="pdx-bar-inner pdx-bar-contact">
             {% if item.stock_quantity > 0 and item.status == 'active' %}
+            <button type="button" class="btn btn-danger rounded-pill px-3 py-1 fw-bold js-add-to-cart d-flex align-items-center justify-content-center gap-1 flex-grow-1" data-item-id="{{ item.id }}" style="background:var(--uc-crimson, #ff2d55);border-color:var(--uc-crimson, #ff2d55);font-size:0.85rem;">
+                <i class="bi bi-cart3"></i>
+                <span>{% trans "Add to Cart" %}</span>
+            </button>
             {% if user.is_authenticated %}
             <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots-fill"></i></a>
             {% else %}

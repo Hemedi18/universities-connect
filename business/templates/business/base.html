@@ -12,12 +12,16 @@
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/uconnect.ico' %}">
     {% progressive_web_app_meta %}
     <title>{% block title %}U-Connect{% endblock %}</title>
-    {% block extra_head %}{% endblock %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=12">
-    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=12">
-    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=12">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=13">
+    <link rel="stylesheet" href="{% static 'css/shop.css' %}?v=13">
+    <link rel="stylesheet" href="{% static 'css/ae.css' %}?v=13">
+    <link rel="stylesheet" href="{% static 'css/theme-cyber-store.css' %}?v=13">
     {% block extra_css %}{% endblock %}
     <script>
         (function () {
@@ -492,16 +496,21 @@
     <div class="uc-masthead">
         <div class="uc-wrap uc-masthead-inner">
             <div class="uc-mast-top">
-                {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}
-                <!-- PC Sidebar Masthead Toggle Button (Home Page Only) -->
-                <button type="button" class="uc-sidebar-mast-toggle d-none d-lg-inline-flex" id="ucSidebarMastToggle" title="{% trans 'Toggle Sidebar' %}" aria-label="{% trans 'Toggle Sidebar' %}">
-                    <i class="bi bi-layout-sidebar-inset"></i>
-                </button>
-                {% endif %}
-                <a class="uc-logo" href="{% url 'customer:home' %}">U-<span>Connect</span></a>
+                <div class="uc-brand-group">
+                    <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="ucSidebar" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                    {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}
+                    <!-- PC Sidebar Masthead Toggle Button (Home Page Only) -->
+                    <button type="button" class="uc-sidebar-mast-toggle d-none d-lg-inline-flex" id="ucSidebarMastToggle" title="{% trans 'Toggle Sidebar' %}" aria-label="{% trans 'Toggle Sidebar' %}">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                    </button>
+                    {% endif %}
+                    <a class="uc-logo" href="{% url 'customer:home' %}">U-<span>Connect</span></a>
+                </div>
                 <form class="uc-search js-live-search" action="{% url 'customer:home' %}" method="get" data-suggest-url="{% url 'customer:search_suggest' %}" autocomplete="off">
                     <div class="live-search-wrap">
-                        <input type="search" name="q" class="js-live-search-input" placeholder="{% trans 'Search products...' %}" value="{{ request.GET.q|default:'' }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+                        <input type="search" name="q" class="js-live-search-input" placeholder="{% trans 'Search products, brands, categories...' %}" value="{{ request.GET.q|default:'' }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
                         <div class="live-search-dropdown" role="listbox" hidden></div>
                     </div>
                     {% if request.GET.category %}<input type="hidden" name="category" value="{{ request.GET.category }}">{% endif %}
@@ -514,7 +523,7 @@
             <div class="uc-mast-actions">
                 {% if user.is_authenticated and user.is_staff %}
                 <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" 
-                   class="uc-admin-pill-link" 
+                   class="uc-admin-pill-link d-none d-lg-inline-flex" 
                    title="{% trans 'Switch Admin Mode' %}">
                     <i class="bi bi-gear-wide-connected"></i>
                     <span class="d-none d-md-inline">{% if request.COOKIES.admin_mode == 'normal' %}{% trans "Normal" %}{% else %}{% trans "Managed" %}{% endif %}</span>
@@ -523,21 +532,21 @@
                 <a href="{% url 'customer:home' %}" class="d-none d-md-inline-flex" title="{% trans 'Home' %}" aria-label="{% trans 'Home' %}"><i class="bi bi-house-door-fill"></i></a>
                 {% if user.is_authenticated %}
                 <a href="{% url 'chat:inbox' %}" class="d-none d-md-inline-flex" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots"></i></a>
-                <a href="{% url 'business:user_notifications' %}" title="{% trans 'Alerts' %}" aria-label="{% trans 'Alerts' %}">
+                <a href="{% url 'business:user_notifications' %}" class="d-none d-md-inline-flex" title="{% trans 'Alerts' %}" aria-label="{% trans 'Alerts' %}">
                     <i class="bi bi-bell"></i>
                     {% if unread_notifications_count %}<span class="uc-badge">{{ unread_notifications_count }}</span>{% endif %}
                 </a>
                 {% endif %}
-                <a href="{% url 'customer:view_cart' %}" class="d-none d-md-inline-flex" title="{% trans 'Cart' %}" aria-label="{% trans 'Cart' %}">
+                <a href="{% url 'customer:view_cart' %}" class="d-inline-flex position-relative" title="{% trans 'Cart' %}" aria-label="{% trans 'Cart' %}">
                     <i class="bi bi-cart3"></i>
-                    {% if cart_item_count %}<span class="uc-badge">{{ cart_item_count }}</span>{% endif %}
+                    <span class="uc-cart-badge js-cart-badge" id="topNavCartBadge" {% if not cart_item_count %}style="display:none;"{% endif %}>{{ cart_item_count|default:"0" }}</span>
                 </a>
                 <!-- Language Selector Dropdown -->
                 <div class="uc-lang-dropdown" id="ucLangDropdown">
                     <button type="button" class="uc-lang-btn" id="ucLangToggleBtn" onclick="toggleLangMenu(event)" title="{% trans 'Select Language' %}" aria-expanded="false">
                         <i class="bi bi-globe2"></i>
                         <span class="uc-lang-current">{{ request.LANGUAGE_CODE|upper }}</span>
-                        <i class="bi bi-chevron-down" style="font-size:0.65rem;"></i>
+                        <i class="bi bi-chevron-down d-none d-md-inline" style="font-size:0.65rem;"></i>
                     </button>
                     <div class="uc-lang-menu" id="ucLangMenu">
                         <a href="{% url 'set_language_direct' 'en' %}?next={{ request.get_full_path|urlencode }}" class="uc-lang-option {% if request.LANGUAGE_CODE == 'en' %}active{% endif %}">
@@ -557,11 +566,8 @@
                 <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="{% trans 'Toggle Theme (Dark/Light)' %}" aria-label="{% trans 'Toggle Theme' %}">
                     <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
                 </button>
-                <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="ucSidebar" aria-expanded="false">
-                    <span></span><span></span><span></span>
-                </button>
                 {% if user.is_authenticated %}
-                <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account d-none d-md-inline-flex" aria-label="{% trans 'Account' %}">
+                <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account d-inline-flex" aria-label="{% trans 'Account' %}">
                     {% if user.profile and user.profile.profile_picture %}
                     <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}">
                     {% else %}
@@ -569,40 +575,26 @@
                     {% endif %}
                 </a>
                 {% else %}
-                <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account d-none d-md-inline-flex" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
+                <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account d-inline-flex" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
                 {% endif %}
             </div>
         </div>
     </div>
 
+    <!-- 4-Tab Mobile Bottom Navigation (Matching Mockup) -->
     <nav class="uc-tabbar" aria-label="Primary">
-        <a href="{% url 'customer:home' %}" class="uc-tab {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' %}is-active{% endif %}">
+        <a href="{% url 'customer:home' %}" class="uc-tab {% if request.resolver_match.app_name == 'customer' and request.resolver_match.url_name == 'home' and not request.GET.view %}is-active{% endif %}">
             <i class="bi bi-house-door-fill"></i><span>{% trans "Home" %}</span>
         </a>
-        <a href="{% url 'customer:home' %}?view=shop" class="uc-tab">
-            <i class="bi bi-grid"></i><span>{% trans "Shop" %}</span>
+        <a href="{% url 'customer:home' %}?view=shop" class="uc-tab {% if request.GET.view == 'shop' or request.GET.category %}is-active{% endif %}">
+            <i class="bi bi-grid-fill"></i><span>{% trans "Categories" %}</span>
         </a>
-        {% if user.is_authenticated %}
-        <a href="{% url 'business:post_item' %}" class="uc-tab">
-            <i class="bi bi-plus-circle"></i><span>{% trans "Sell" %}</span>
-        </a>
-        <a href="{% url 'chat:inbox' %}" class="uc-tab {% if request.resolver_match.app_name == 'chat' %}is-active{% endif %}">
-            <i class="bi bi-chat-dots"></i><span>{% trans "Chat" %}</span>
-        </a>
-        {% else %}
-        <a href="{% url 'users:login' %}" class="uc-tab">
-            <i class="bi bi-plus-circle"></i><span>{% trans "Sell" %}</span>
-        </a>
-        <a href="{% url 'users:login' %}" class="uc-tab">
-            <i class="bi bi-chat-dots"></i><span>{% trans "Chat" %}</span>
-        </a>
-        {% endif %}
         <a href="{% url 'customer:view_cart' %}" class="uc-tab {% if request.resolver_match.url_name == 'view_cart' %}is-active{% endif %}">
             <i class="bi bi-cart3"></i><span>{% trans "Cart" %}</span>
-            {% if cart_item_count %}<em class="uc-tab-badge">{{ cart_item_count }}</em>{% endif %}
+            <em class="uc-tab-badge js-cart-badge" {% if not cart_item_count %}style="display:none;"{% endif %}>{{ cart_item_count|default:"0" }}</em>
         </a>
         <a href="{% if user.is_authenticated %}{% url 'users:home' %}{% else %}{% url 'users:login' %}{% endif %}" class="uc-tab {% if request.resolver_match.app_name == 'users' %}is-active{% endif %}">
-            <i class="bi bi-person"></i><span>{% trans "Account" %}</span>
+            <i class="bi bi-person"></i><span>{% trans "Profile" %}</span>
         </a>
     </nav>
 
@@ -774,6 +766,151 @@
                 menu.classList.remove('show');
                 const btn = document.getElementById('ucLangToggleBtn');
                 if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Global Toast Notification Helper
+        function showGlobalToast(message, type, actionText, actionUrl) {
+            let container = document.getElementById('uc-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'uc-toast-container';
+                container.className = 'uc-toast-container';
+                container.setAttribute('aria-live', 'assertive');
+                document.body.appendChild(container);
+            }
+            type = type || 'success';
+            const iconClass = type === 'success' ? 'bi-check-circle-fill' : (type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill');
+            const badgeLabel = type === 'success' ? '{% trans "Success" %}' : (type === 'error' ? '{% trans "Alert" %}' : '{% trans "Notice" %}');
+            
+            const popup = document.createElement('div');
+            popup.className = `uc-toast-popup uc-toast-${type}`;
+            popup.setAttribute('role', 'alert');
+            popup.innerHTML = `
+                <div class="uc-toast-icon"><i class="bi ${iconClass}"></i></div>
+                <div class="uc-toast-body">
+                    <div class="uc-toast-badge">${badgeLabel}</div>
+                    <div class="uc-toast-msg">${message}</div>
+                    ${actionText && actionUrl ? `<a href="${actionUrl}" class="uc-toast-action-btn" style="color:var(--uc-crimson, #ff2d55);font-size:0.75rem;font-weight:700;margin-top:4px;display:inline-block;text-decoration:none;">${actionText} &rarr;</a>` : ''}
+                </div>
+                <button type="button" class="uc-toast-close" onclick="closeToast(this.closest('.uc-toast-popup'))" aria-label="Close">&times;</button>
+            `;
+            container.appendChild(popup);
+            setTimeout(function() {
+                closeToast(popup);
+            }, 4000);
+        }
+
+        // Global Helper: Get CSRF Token
+        function getCsrfToken() {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta && meta.content) return meta.content;
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === ('csrftoken=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue || '';
+        }
+
+        // Global Interactive Add-To-Cart Functionality
+        window.addToCart = function(itemId, btn, quantity) {
+            quantity = quantity || 1;
+            const url = `/customer/cart/add/${itemId}/`;
+            const csrfToken = getCsrfToken();
+
+            let originalContent = null;
+            if (btn) {
+                originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" style="width:13px;height:13px;border-width:2px;"></span>`;
+            }
+
+            const formData = new FormData();
+            formData.append('quantity', quantity);
+            formData.append('ajax', '1');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const count = data.total_qty || data.cart_count || 1;
+                    document.querySelectorAll('.js-cart-badge').forEach(badge => {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-flex';
+                        badge.classList.remove('uc-badge-pop');
+                        void badge.offsetWidth;
+                        badge.classList.add('uc-badge-pop');
+                    });
+
+                    if (btn) {
+                        btn.classList.add('uc-btn-success-state');
+                        btn.innerHTML = `<i class="bi bi-check-lg" style="font-size:1.05rem;font-weight:bold;"></i>`;
+                        setTimeout(() => {
+                            btn.classList.remove('uc-btn-success-state');
+                            btn.innerHTML = originalContent;
+                            btn.disabled = false;
+                        }, 1300);
+                    }
+
+                    showGlobalToast(data.message || '{% trans "Item added to cart!" %}', 'success', '{% trans "View Cart" %}', '{% url "customer:view_cart" %}');
+                } else {
+                    if (btn) {
+                        btn.innerHTML = originalContent;
+                        btn.disabled = false;
+                    }
+                    showGlobalToast(data.error || '{% trans "Could not add item to cart." %}', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Add to cart failed:', err);
+                if (btn) {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }
+                showGlobalToast('{% trans "Could not add to cart. Please try again." %}', 'error');
+            });
+        };
+
+        // Delegated Click Handlers for Add To Cart & Wishlist
+        document.addEventListener('click', function(e) {
+            const addBtn = e.target.closest('.js-add-to-cart');
+            if (addBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const itemId = addBtn.getAttribute('data-item-id') || addBtn.dataset.itemId;
+                const qty = addBtn.getAttribute('data-qty') || 1;
+                if (itemId) {
+                    window.addToCart(itemId, addBtn, qty);
+                }
+                return;
+            }
+
+            const wishBtn = e.target.closest('.js-wishlist-btn');
+            if (wishBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                wishBtn.classList.toggle('is-active');
+                const icon = wishBtn.querySelector('i');
+                const isActive = wishBtn.classList.contains('is-active');
+                if (icon) {
+                    icon.className = isActive ? 'bi bi-heart-fill text-danger' : 'bi bi-heart';
+                }
+                showGlobalToast(isActive ? '{% trans "Saved to wishlist!" %}' : '{% trans "Removed from wishlist." %}', 'info');
             }
         });
     </script>

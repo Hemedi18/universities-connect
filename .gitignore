@@ -20,3 +20,4 @@ venv/
 # Collected Static & Distribution
 staticfiles/
 .dist/
+tmp/

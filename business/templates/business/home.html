@@ -1,89 +1,342 @@
 {% extends 'business/base.html' %}
 {% load static %}
-{% load tancoin_tags %}
+{% load money_tags %}
 {% load i18n %}
 
-{% block title %}{% trans "Shop" %} · U-Connect{% endblock %}
-{% block body_class %}ae-home{% endblock %}
-{% block main_class %}shop-full{% endblock %}
+{% block title %}U-Connect · {% trans "Marketplace" %}{% endblock %}
+{% block body_class %}store-theme ae-home{% endblock %}
+{% block main_class %}p-0{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/ae.css' %}?v=12">
+<link rel="stylesheet" href="{% static 'css/theme-cyber-store.css' %}?v=14">
 {% endblock %}
 
 {% block content %}
-{% if is_landing %}
-{# —— Hot picks —— #}
-<section class="ae-section">
-    <div class="ae-section-head">
-        <h3>{% if recs_personalized %}{% trans "Hot picks for you" %}{% else %}{% trans "Hot picks" %}{% endif %}</h3>
-        <a href="{% url 'customer:home' %}?view=shop&sort=popular">{% trans "View more" %}</a>
-    </div>
-    {% if recs_personalized %}
-    <p class="ae-recs-note px-3 mb-2">{% trans "Based on your activity" %}</p>
+<div class="uc-home-container">
+
+    {# ================================================================= #}
+    {# 1. HOT PICKS CAROUSEL SECTION                                      #}
+    {# ================================================================= #}
+    {% if featured_items %}
+    <section class="uc-carousel-wrapper">
+        <div class="uc-section-head">
+            <div class="uc-section-title-wrap">
+                <span class="uc-flame-icon">🔥</span>
+                <div>
+                    <h2 class="uc-section-title">{% trans "Hot Picks" %}</h2>
+                    <p class="uc-section-sub">{% trans "Best selling & trending products just for you." %}</p>
+                </div>
+            </div>
+            <a href="{% url 'customer:home' %}?view=shop&sort=popular" class="uc-view-more-btn">
+                <span>{% trans "View more" %}</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <button type="button" class="uc-carousel-arrow uc-carousel-prev" id="hotPicksPrev" aria-label="{% trans 'Previous' %}">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <div class="uc-carousel-track" id="hotPicksTrack">
+            {% for item in featured_items %}
+            <article class="uc-pick-card" data-item-id="{{ item.id }}">
+                <div class="uc-pick-media">
+                    {% if forloop.counter == 1 %}
+                    <span class="uc-badge-tag uc-tag-hot">{% trans "Hot" %}</span>
+                    {% elif forloop.counter == 2 %}
+                    <span class="uc-badge-tag uc-tag-bestseller">{% trans "Best Seller" %}</span>
+                    {% elif forloop.counter == 3 %}
+                    <span class="uc-badge-tag uc-tag-trending">{% trans "Trending" %}</span>
+                    {% elif forloop.counter == 4 %}
+                    <span class="uc-badge-tag uc-tag-popular">{% trans "Popular" %}</span>
+                    {% elif item.compare_at_price and item.compare_at_price > item.price %}
+                    <span class="uc-badge-tag uc-tag-sale">{% trans "Sale" %}</span>
+                    {% else %}
+                    <span class="uc-badge-tag uc-tag-hot">{% trans "Hot" %}</span>
+                    {% endif %}
+
+                    <button type="button" class="uc-card-heart js-wishlist-btn" data-item-id="{{ item.id }}" title="{% trans 'Wishlist' %}" aria-label="{% trans 'Wishlist' %}">
+                        <i class="bi bi-heart"></i>
+                    </button>
+
+                    <a href="{% url 'customer:item_detail' item.id %}" style="display:block;width:100%;height:100%;">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="220" height="150">
+                        {% else %}
+                        <div class="uc-img-empty"><i class="bi bi-image"></i></div>
+                        {% endif %}
+                    </a>
+                </div>
+
+                <h4 class="uc-pick-title" title="{{ item.title }}">
+                    <a href="{% url 'customer:item_detail' item.id %}">{{ item.title }}</a>
+                </h4>
+
+                <div class="uc-rating-row">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <span class="uc-rating-val">{{ item.avg_rating|default:"4.8"|floatformat:1 }}</span>
+                    <span class="uc-rating-count">({{ item.review_count|default:"85" }})</span>
+                </div>
+
+                <div class="uc-tags-row">
+                    <span class="uc-mini-pill uc-pill-cat">
+                        {% if item.category_obj %}{{ item.category_obj.name|truncatechars:10 }}{% else %}{% trans "Product" %}{% endif %}
+                    </span>
+                    {% if item.stock_quantity > 0 %}
+                    <span class="uc-mini-pill uc-pill-stock">{% trans "In Stock" %}</span>
+                    {% endif %}
+                </div>
+
+                <div class="uc-price-row">
+                    <span class="uc-pick-price">{{ item.price|tsh }}</span>
+                    <button type="button" class="uc-mini-cart-btn js-add-to-cart" data-item-id="{{ item.id }}" title="{% trans 'Add to Cart' %}" aria-label="{% trans 'Add to Cart' %}">
+                        <i class="bi bi-cart3"></i>
+                    </button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <button type="button" class="uc-carousel-arrow uc-carousel-next" id="hotPicksNext" aria-label="{% trans 'Next' %}">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </section>
     {% endif %}
-    <div class="ae-hscroll">
-        {% for item in featured_items %}
-        {% include 'business/partials/_item_card.html' with item=item compact=True %}
+
+
+    {# ================================================================= #}
+    {# 2. CATEGORY FILTER ROW (Desktop Horizontal Pills + Mobile Squircles) #}
+    {# ================================================================= #}
+    <div class="uc-cat-filter-wrapper">
+        {# Desktop View: Rounded Pills #}
+        <nav class="uc-desktop-cats" aria-label="{% trans 'Categories Navigation' %}">
+            <a class="uc-cat-pill {% if not current_category and current_sort != 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}">
+                <i class="bi bi-star-fill"></i>
+                <span>{% trans "Recommended" %}</span>
+            </a>
+            <a class="uc-cat-pill {% if current_sort == 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}?view=shop&sort=popular">
+                <i class="bi bi-fire"></i>
+                <span>{% trans "Best Sellers" %}</span>
+            </a>
+            {% for cat in categories %}
+            <a class="uc-cat-pill {% if current_category == cat.slug %}is-active{% endif %}" href="{% url 'customer:home' %}?category={{ cat.slug }}&view=shop">
+                <i class="bi bi-{% if 'book' in cat.slug %}book{% elif 'elect' in cat.slug or 'tech' in cat.slug %}cpu{% elif 'fash' in cat.slug or 'cloth' in cat.slug %}bag{% elif 'food' in cat.slug %}cup-hot{% elif 'health' in cat.slug or 'beauty' in cat.slug %}heart-pulse{% elif 'home' in cat.slug or 'kitchen' in cat.slug %}house-door{% else %}grid-3x3-gap{% endif %}"></i>
+                <span>{{ cat.name }}</span>
+            </a>
+            {% endfor %}
+        </nav>
+
+        {# Mobile View: Squircles Row (Matching iPhone Mockup) #}
+        <nav class="uc-mobile-cats" aria-label="{% trans 'Categories Mobile' %}">
+            <a href="{% url 'customer:home' %}" class="uc-mobile-cat-item {% if not current_category and current_sort != 'popular' %}is-active{% endif %}">
+                <div class="uc-mobile-squircle">
+                    <i class="bi bi-grid-fill"></i>
+                </div>
+                <span class="uc-mobile-cat-name">{% trans "All" %}</span>
+            </a>
+            <a href="{% url 'customer:home' %}?view=shop&sort=popular" class="uc-mobile-cat-item {% if current_sort == 'popular' %}is-active{% endif %}">
+                <div class="uc-mobile-squircle">
+                    <i class="bi bi-star"></i>
+                </div>
+                <span class="uc-mobile-cat-name">{% trans "Best Sellers" %}</span>
+            </a>
+            {% for cat in categories|slice:":8" %}
+            <a href="{% url 'customer:home' %}?category={{ cat.slug }}&view=shop" class="uc-mobile-cat-item {% if current_category == cat.slug %}is-active{% endif %}">
+                <div class="uc-mobile-squircle">
+                    <i class="bi bi-{% if 'book' in cat.slug %}book{% elif 'elect' in cat.slug or 'tech' in cat.slug %}cpu{% elif 'fash' in cat.slug or 'cloth' in cat.slug %}bag{% elif 'food' in cat.slug %}cup-hot{% elif 'health' in cat.slug or 'beauty' in cat.slug %}heart-pulse{% elif 'home' in cat.slug or 'kitchen' in cat.slug %}house-door{% else %}grid{% endif %}"></i>
+                </div>
+                <span class="uc-mobile-cat-name">{{ cat.name|truncatechars:12 }}</span>
+            </a>
+            {% endfor %}
+        </nav>
+    </div>
+
+    {% if query and not is_landing %}
+    <div class="mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2 py-2 px-3 rounded-3" style="background:var(--uc-card-bg);border:1px solid var(--uc-card-border);">
+        <div style="font-size:0.88rem;color:#cbd5e1;">
+            {% trans "Results for" %} <strong>“{{ query }}”</strong> · {{ result_count }} {% trans "items" %}
+            {% if current_category_name %}<span class="text-danger ms-1">in {{ current_category_name }}</span>{% endif %}
+        </div>
+        <a href="{% url 'customer:home' %}" class="btn btn-sm btn-outline-danger rounded-pill px-3" style="font-size:0.78rem;">
+            {% trans "Clear search" %}
+        </a>
+    </div>
+    {% endif %}
+
+
+    {# ================================================================= #}
+    {# 3. FEATURED PRODUCTS GRID + TRUST CARD                           #}
+    {# ================================================================= #}
+    <div class="uc-section-head mb-3">
+        <div class="uc-section-title-wrap">
+            <h3 class="uc-section-title uc-accent-bar">{% trans "Featured Products" %}</h3>
+        </div>
+    </div>
+    <p class="uc-section-sub mb-3" style="margin-top:-0.5rem;font-size:0.85rem;">
+        {% trans "Top quality products from trusted sellers." %}
+    </p>
+
+    <div class="uc-featured-grid">
+        {% for item in items %}
+        {# Render product card #}
+        <article class="uc-grid-card" data-item-id="{{ item.id }}">
+            <div class="uc-grid-media">
+                <button type="button" class="uc-card-heart js-wishlist-btn" data-item-id="{{ item.id }}" title="{% trans 'Wishlist' %}" aria-label="{% trans 'Wishlist' %}">
+                    <i class="bi bi-heart"></i>
+                </button>
+                <a href="{% url 'customer:item_detail' item.id %}" style="display:block;width:100%;height:100%;">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy" width="400" height="280">
+                    {% else %}
+                    <div class="uc-img-empty"><i class="bi bi-image"></i></div>
+                    {% endif %}
+                </a>
+            </div>
+
+            <h4 class="uc-grid-title" title="{{ item.title }}">
+                <a href="{% url 'customer:item_detail' item.id %}">{{ item.title }}</a>
+            </h4>
+
+            <p class="uc-grid-desc">
+                {{ item.description|striptags|truncatechars:50 }}
+            </p>
+
+            <div class="uc-rating-row">
+                <i class="bi bi-star-fill text-warning"></i>
+                <span class="uc-rating-val">{{ item.avg_rating|default:"4.6"|floatformat:1 }}</span>
+                <span class="uc-rating-count">({{ item.review_count|default:"42" }})</span>
+                <span class="uc-badge-tag uc-tag-new ms-2" style="position:static;display:inline-block;padding:1px 6px;">New</span>
+            </div>
+
+            <div class="uc-price-row align-items-end">
+                <div class="uc-price-group">
+                    <span class="uc-grid-price">{{ item.price|tsh }}</span>
+                    {% if item.compare_at_price and item.compare_at_price > item.price %}
+                    <div class="uc-strike-row">
+                        <span class="uc-strike-price">{{ item.compare_at_price|tsh }}</span>
+                        <span class="uc-badge-tag uc-tag-sale" style="position:static;display:inline-block;padding:1px 5px;">Sale</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <button type="button" class="uc-grid-cart-btn js-add-to-cart" data-item-id="{{ item.id }}" title="{% trans 'Add to Cart' %}" aria-label="{% trans 'Add to Cart' %}">
+                    <i class="bi bi-cart3"></i>
+                </button>
+            </div>
+        </article>
+
+        {# Desktop 5th Slot: Trust Marketplace Card #}
+        {% if forloop.counter == 4 %}
+        <div class="uc-trust-card d-none d-lg-flex">
+            <div class="uc-trust-head">
+                <span class="uc-trust-sub">U-Connect</span>
+                <h3 class="uc-trust-title">{% trans "Your Trusted Marketplace" %}</h3>
+                <i class="bi bi-bag-heart-fill uc-trust-bag-icon"></i>
+                <p class="uc-trust-desc">{% trans "Quality products. Better prices. All in one place." %}</p>
+            </div>
+            <div class="uc-trust-perks">
+                <div class="uc-trust-item">
+                    <div class="uc-trust-icon"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <h6>{% trans "Secure Payments" %}</h6>
+                        <p>{% trans "Safe & reliable transactions" %}</p>
+                    </div>
+                </div>
+                <div class="uc-trust-item">
+                    <div class="uc-trust-icon"><i class="bi bi-truck"></i></div>
+                    <div>
+                        <h6>{% trans "Fast Delivery" %}</h6>
+                        <p>{% trans "Get your orders on time" %}</p>
+                    </div>
+                </div>
+                <div class="uc-trust-item">
+                    <div class="uc-trust-icon"><i class="bi bi-headset"></i></div>
+                    <div>
+                        <h6>{% trans "24/7 Support" %}</h6>
+                        <p>{% trans "We're here to help" %}</p>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'customer:home' %}?view=shop" class="uc-trust-cta">
+                {% trans "Start Shopping" %} &rarr;
+            </a>
+        </div>
+        {% endif %}
+
         {% empty %}
-        <p class="text-muted px-3">{% trans "No picks yet." %}</p>
+        <div style="grid-column:1/-1;padding:3rem 1rem;text-align:center;color:#64748b;">
+            <i class="bi bi-box-seam" style="font-size:2.5rem;display:block;margin-bottom:0.75rem;color:#475569;"></i>
+            <h5>{% trans "No products found" %}</h5>
+            <p style="font-size:0.88rem;">{% trans "Try selecting another category or clear search filters." %}</p>
+        </div>
         {% endfor %}
-    </div>
-</section>
-<div class="ae-gap"></div>
-{% endif %}
 
-{# —— Category tabs —— #}
-<nav class="ae-tabs">
-    <a class="ae-tab {% if not current_category and current_sort != 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}?view=shop{% if query %}&q={{ query|urlencode }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' and current_sort != 'popular' %}&sort={{ current_sort }}{% endif %}">
-        <i class="bi bi-stars"></i> {% trans "Recommended" %}
-    </a>
-    <a class="ae-tab {% if current_sort == 'popular' %}is-active{% endif %}" href="{% url 'customer:home' %}?view=shop&sort=popular{% if query %}&q={{ query|urlencode }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}">
-        <i class="bi bi-fire"></i> {% trans "Best sellers" %}
-    </a>
-    {% for cat in categories %}
-    <a class="ae-tab {% if current_category == cat.slug %}is-active{% endif %}" href="{% url 'customer:home' %}?category={{ cat.slug }}&view=shop{% if query %}&q={{ query|urlencode }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">
-        <i class="bi bi-grid"></i> {{ cat.name }}
-    </a>
-    {% endfor %}
-</nav>
-
-{% if query and not is_landing %}
-<div class="ae-search-bar">
-    <div class="ae-search-bar-text">
-        Results for “{{ query }}” · {{ result_count }} item{{ result_count|pluralize }}
-        {% if current_category_name %}<span class="ae-search-bar-scope">in {{ current_category_name }}</span>{% endif %}
-    </div>
-    <div class="ae-search-bar-chips">
-        <a class="ae-chip" href="{% url 'customer:home' %}?view=shop{% if current_category %}&category={{ current_category }}{% endif %}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">{% trans "Clear search" %}</a>
-        {% if current_category %}
-        <a class="ae-chip" href="{% url 'customer:home' %}?view=shop&q={{ query|urlencode }}{% if filter_status %}&filter={{ filter_status }}{% endif %}{% if current_sort and current_sort != 'newest' %}&sort={{ current_sort }}{% endif %}">Clear {{ current_category_name }}</a>
+        {# Fallback if fewer than 4 items on desktop: show Trust Card at the end #}
+        {% if items|length < 4 and items|length > 0 %}
+        <div class="uc-trust-card d-none d-lg-flex">
+            <div class="uc-trust-head">
+                <span class="uc-trust-sub">U-Connect</span>
+                <h3 class="uc-trust-title">{% trans "Your Trusted Marketplace" %}</h3>
+                <i class="bi bi-bag-heart-fill uc-trust-bag-icon"></i>
+                <p class="uc-trust-desc">{% trans "Quality products. Better prices. All in one place." %}</p>
+            </div>
+            <div class="uc-trust-perks">
+                <div class="uc-trust-item">
+                    <div class="uc-trust-icon"><i class="bi bi-shield-check"></i></div>
+                    <div>
+                        <h6>{% trans "Secure Payments" %}</h6>
+                        <p>{% trans "Safe & reliable transactions" %}</p>
+                    </div>
+                </div>
+                <div class="uc-trust-item">
+                    <div class="uc-trust-icon"><i class="bi bi-truck"></i></div>
+                    <div>
+                        <h6>{% trans "Fast Delivery" %}</h6>
+                        <p>{% trans "Get your orders on time" %}</p>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'customer:home' %}?view=shop" class="uc-trust-cta">
+                {% trans "Start Shopping" %} &rarr;
+            </a>
+        </div>
         {% endif %}
     </div>
-</div>
-{% endif %}
 
-{# —— Waterfall grid —— #}
-<div class="ae-waterfall">
-    {% for item in items %}
-    {% include 'business/partials/_item_card.html' with item=item %}
-    {% empty %}
-    {% if total_active %}
-    <p class="text-muted" style="grid-column:1/-1;padding:2rem;text-align:center;">{% if query %}No matches for “{{ query }}”. Try another search or category.{% else %}No matches for this filter. Try another category.{% endif %}</p>
-    {% else %}
-    <p class="text-muted" style="grid-column:1/-1;padding:2rem;text-align:center;">No products found.</p>
+    {# Pagination #}
+    {% if items.paginator and items.has_other_pages %}
+    <nav class="d-flex justify-content-center align-items-center gap-2 pb-5 mt-2" aria-label="{% trans 'Page navigation' %}">
+        {% if items.has_previous %}
+        <a class="btn btn-sm btn-outline-secondary rounded-pill px-3" href="?page={{ items.previous_page_number }}&{{ filter_querystring }}">
+            &larr; {% trans "Prev" %}
+        </a>
+        {% endif %}
+        <span class="small text-muted px-2">{{ items.number }} / {{ items.paginator.num_pages }}</span>
+        {% if items.has_next %}
+        <a class="btn btn-sm btn-outline-secondary rounded-pill px-3" href="?page={{ items.next_page_number }}&{{ filter_querystring }}">
+            {% trans "Next" %} &rarr;
+        </a>
+        {% endif %}
+    </nav>
     {% endif %}
-    {% endfor %}
+
 </div>
 
-{% if items.paginator and items.has_other_pages %}
-<nav class="d-flex justify-content-center gap-2 pb-4">
-    {% if items.has_previous %}
-    <a class="btn btn-sm btn-outline-secondary" href="?page={{ items.previous_page_number }}&{{ filter_querystring }}">Prev</a>
-    {% endif %}
-    <span class="align-self-center small text-muted">{{ items.number }}/{{ items.paginator.num_pages }}</span>
-    {% if items.has_next %}
-    <a class="btn btn-sm btn-outline-secondary" href="?page={{ items.next_page_number }}&{{ filter_querystring }}">Next</a>
-    {% endif %}
-</nav>
-{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hot Picks Carousel Arrow Controls
+        const track = document.getElementById('hotPicksTrack');
+        const prevBtn = document.getElementById('hotPicksPrev');
+        const nextBtn = document.getElementById('hotPicksNext');
+
+        if (track && prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', function () {
+                track.scrollBy({ left: -340, behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', function () {
+                track.scrollBy({ left: 340, behavior: 'smooth' });
+            });
+        }
+    });
+</script>
 {% endblock %}

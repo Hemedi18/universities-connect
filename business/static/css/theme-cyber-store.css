@@ -1,0 +1,964 @@
+/* ==========================================================================
+   U-CONNECT CYBERPUNK DARK CRIMSON THEME (Desktop & Mobile)
+   Matches official reference mockup: Hot Picks, Category Chips, Main Grid,
+   Trust Marketplace Card, and Interactive Add to Cart.
+   ========================================================================== */
+
+:root {
+    --uc-dark-bg: #070d17;
+    --uc-dark-surface: #09101d;
+    --uc-card-bg: #0d1624;
+    --uc-card-hover: #111c2e;
+    --uc-card-border: rgba(255, 255, 255, 0.08);
+    --uc-crimson: #ff2d55;
+    --uc-crimson-hover: #e11d48;
+    --uc-crimson-glow: rgba(255, 45, 85, 0.35);
+    --uc-text-light: #f8fafc;
+    --uc-text-muted: #8e9bb0;
+    --uc-gold: #f59e0b;
+}
+
+body.store-theme,
+body.ae-home {
+    background-color: var(--uc-dark-bg) !important;
+    color: var(--uc-text-light) !important;
+    font-family: 'Outfit', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   1. MASTHEAD NAVBAR (Header)
+   ========================================================================== */
+body.store-theme .uc-masthead,
+body.ae-home .uc-masthead {
+    background-color: var(--uc-dark-surface) !important;
+    border-bottom: 1px solid var(--uc-card-border) !important;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    backdrop-filter: blur(16px);
+}
+
+.uc-logo {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.65rem;
+    color: #ffffff !important;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.uc-logo span,
+.uc-sidebar-brand span.uc-brand-accent {
+    color: var(--uc-crimson) !important;
+}
+
+/* Center Pill Search Bar */
+.uc-mast-top .uc-search {
+    background: #0e182a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 9999px !important;
+    max-width: 580px !important;
+    padding: 3px 4px 3px 14px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s ease;
+}
+
+.uc-mast-top .uc-search:focus-within {
+    border-color: rgba(255, 45, 85, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.18), 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.uc-mast-top .uc-search input {
+    background: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.5rem;
+}
+
+.uc-mast-top .uc-search input::placeholder {
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.uc-mast-top .uc-search button[type="submit"] {
+    background: linear-gradient(135deg, var(--uc-crimson) 0%, var(--uc-crimson-hover) 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    width: 42px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255, 45, 85, 0.3);
+    transition: transform 0.15s ease;
+}
+
+.uc-mast-top .uc-search button[type="submit"]:hover {
+    transform: scale(1.05);
+}
+
+/* Right Header Action Icons */
+.uc-mast-actions a,
+.uc-mast-actions button {
+    color: #cbd5e1 !important;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+.uc-mast-actions a:hover,
+.uc-mast-actions button:hover {
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+/* Red Cart Badge */
+.uc-cart-badge,
+.uc-badge,
+.uc-tab-badge {
+    background: var(--uc-crimson) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.65rem !important;
+    min-width: 17px;
+    height: 17px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 6px rgba(255, 45, 85, 0.4);
+}
+
+@keyframes badgePop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.uc-badge-pop {
+    animation: badgePop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================================================
+   2. SECTION HEADERS
+   ========================================================================== */
+.uc-home-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 4rem 1.25rem;
+}
+
+.uc-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.uc-section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.uc-flame-icon {
+    font-size: 1.45rem;
+    display: inline-flex;
+    filter: drop-shadow(0 0 10px rgba(255, 85, 45, 0.6));
+}
+
+.uc-section-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin: 0;
+    color: #ffffff;
+}
+
+.uc-section-title.uc-accent-bar {
+    border-left: 3px solid var(--uc-crimson);
+    padding-left: 10px;
+}
+
+.uc-section-sub {
+    font-size: 0.85rem;
+    color: var(--uc-text-muted);
+    margin: 3px 0 0 0;
+}
+
+.uc-view-more-btn {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ffffff !important;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 9999px;
+    padding: 5px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.uc-view-more-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(2px);
+}
+
+/* ==========================================================================
+   3. SECTION 1: HOT PICKS CAROUSEL
+   ========================================================================== */
+.uc-carousel-wrapper {
+    position: relative;
+    margin-bottom: 2.25rem;
+}
+
+.uc-carousel-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 4px 2px 14px 2px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.uc-carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.uc-carousel-arrow {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(13, 22, 36, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+}
+
+.uc-carousel-arrow:hover {
+    background: var(--uc-crimson);
+    border-color: var(--uc-crimson);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.uc-carousel-prev {
+    left: -14px;
+}
+
+.uc-carousel-next {
+    right: -14px;
+}
+
+@media (max-width: 991px) {
+    .uc-carousel-arrow {
+        display: none !important;
+    }
+}
+
+/* Hot Picks Card */
+.uc-pick-card {
+    flex: 0 0 178px;
+    scroll-snap-align: start;
+    background: var(--uc-card-bg);
+    border: 1px solid var(--uc-card-border);
+    border-radius: 18px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+@media (max-width: 576px) {
+    .uc-pick-card {
+        flex: 0 0 152px;
+        padding: 8px;
+        border-radius: 16px;
+    }
+}
+
+.uc-pick-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 45, 85, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 45, 85, 0.12);
+}
+
+.uc-pick-media {
+    position: relative;
+    width: 100%;
+    height: 115px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #09101d;
+    margin-bottom: 9px;
+}
+
+@media (max-width: 576px) {
+    .uc-pick-media {
+        height: 95px;
+    }
+}
+
+.uc-pick-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.uc-pick-card:hover .uc-pick-media img {
+    transform: scale(1.05);
+}
+
+.uc-img-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    font-size: 1.5rem;
+}
+
+/* Top Left Badges */
+.uc-badge-tag {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: #ffffff;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.uc-tag-hot {
+    background: linear-gradient(135deg, #ff2d55 0%, #e11d48 100%);
+}
+
+.uc-tag-bestseller {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.uc-tag-trending {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+}
+
+.uc-tag-popular {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.uc-tag-sale {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+}
+
+.uc-tag-new {
+    background: rgba(59, 130, 246, 0.85);
+}
+
+/* Wishlist Heart Button */
+.uc-card-heart {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(13, 22, 36, 0.65);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.uc-card-heart:hover {
+    color: var(--uc-crimson);
+    background: rgba(13, 22, 36, 0.95);
+    transform: scale(1.15);
+}
+
+.uc-card-heart.is-active {
+    color: var(--uc-crimson);
+}
+
+/* Card Body */
+.uc-pick-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uc-pick-title a {
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+.uc-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.74rem;
+    margin-bottom: 5px;
+}
+
+.uc-rating-val {
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.uc-rating-count {
+    color: var(--uc-text-muted);
+}
+
+.uc-tags-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.uc-mini-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    line-height: 1.3;
+}
+
+.uc-pill-cat {
+    background: rgba(99, 102, 241, 0.18);
+    color: #818cf8;
+}
+
+.uc-pill-stock {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+}
+
+.uc-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.uc-pick-price {
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #ffffff;
+}
+
+/* Mini Cart Button in Hot Picks */
+.uc-mini-cart-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.uc-mini-cart-btn:hover {
+    background: var(--uc-crimson);
+    border-color: var(--uc-crimson);
+    box-shadow: 0 3px 10px rgba(255, 45, 85, 0.4);
+    transform: scale(1.1);
+}
+
+.uc-mini-cart-btn:active {
+    transform: scale(0.92);
+}
+
+/* ==========================================================================
+   4. SECTION 2: CATEGORY FILTER ROW
+   ========================================================================== */
+.uc-cat-filter-wrapper {
+    margin-bottom: 2rem;
+}
+
+/* Desktop Horizontal Pills */
+.uc-desktop-cats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+}
+
+.uc-desktop-cats::-webkit-scrollbar {
+    display: none;
+}
+
+.uc-cat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--uc-card-bg);
+    border: 1px solid var(--uc-card-border);
+    border-radius: 9999px;
+    padding: 7px 18px;
+    color: #94a3b8 !important;
+    text-decoration: none;
+    font-size: 0.83rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.uc-cat-pill:hover {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: var(--uc-card-hover);
+    transform: translateY(-1px);
+}
+
+.uc-cat-pill.is-active {
+    background: linear-gradient(135deg, var(--uc-crimson) 0%, #f43f5e 100%) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 15px var(--uc-crimson-glow);
+    font-weight: 700;
+}
+
+/* Mobile Squircles Row (Image 2) */
+.uc-mobile-cats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+}
+
+.uc-mobile-cats::-webkit-scrollbar {
+    display: none;
+}
+
+.uc-mobile-cat-item {
+    flex: 0 0 68px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    gap: 5px;
+}
+
+.uc-mobile-squircle {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: var(--uc-card-bg);
+    border: 1px solid var(--uc-card-border);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    transition: all 0.2s ease;
+}
+
+.uc-mobile-cat-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.uc-mobile-cat-item.is-active .uc-mobile-squircle {
+    background: linear-gradient(135deg, var(--uc-crimson) 0%, #f43f5e 100%);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 6px 18px var(--uc-crimson-glow);
+}
+
+.uc-mobile-cat-item.is-active .uc-mobile-cat-name {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+@media (min-width: 769px) {
+    .uc-mobile-cats {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .uc-desktop-cats {
+        display: none !important;
+    }
+    .uc-trust-card {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   5. SECTION 3: FEATURED PRODUCTS GRID
+   ========================================================================== */
+.uc-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 1200px) {
+    .uc-featured-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .uc-featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+/* Main Grid Product Card */
+.uc-grid-card {
+    background: var(--uc-card-bg);
+    border: 1px solid var(--uc-card-border);
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+@media (max-width: 576px) {
+    .uc-grid-card {
+        padding: 9px;
+        border-radius: 16px;
+    }
+}
+
+.uc-grid-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 45, 85, 0.35);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(255, 45, 85, 0.1);
+}
+
+.uc-grid-media {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #09101d;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 576px) {
+    .uc-grid-media {
+        height: 140px;
+    }
+}
+
+.uc-grid-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.uc-grid-card:hover .uc-grid-media img {
+    transform: scale(1.05);
+}
+
+.uc-grid-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uc-grid-title a {
+    color: #ffffff !important;
+    text-decoration: none;
+}
+
+.uc-grid-desc {
+    font-size: 0.78rem;
+    color: var(--uc-text-muted);
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.uc-price-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.uc-grid-price {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.uc-strike-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.uc-strike-price {
+    font-size: 0.78rem;
+    color: #64748b;
+    text-decoration: line-through;
+}
+
+/* Glowing Crimson Add to Cart Button */
+.uc-grid-cart-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--uc-crimson) 0%, var(--uc-crimson-hover) 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--uc-crimson-glow);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+}
+
+.uc-grid-cart-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 6px 20px rgba(255, 45, 85, 0.55);
+}
+
+.uc-grid-cart-btn:active {
+    transform: scale(0.92);
+}
+
+.uc-btn-success-state {
+    background: #10b981 !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* ==========================================================================
+   6. TRUST MARKETPLACE CARD (Desktop 5th slot)
+   ========================================================================== */
+.uc-trust-card {
+    background: linear-gradient(160deg, #180914 0%, #0d1522 100%);
+    border: 1px solid rgba(255, 45, 85, 0.25);
+    border-radius: 22px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.uc-trust-head {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.uc-trust-sub {
+    color: var(--uc-crimson);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.uc-trust-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin: 0 0 6px 0;
+}
+
+.uc-trust-desc {
+    font-size: 0.82rem;
+    color: var(--uc-text-muted);
+    margin: 0;
+    line-height: 1.35;
+}
+
+.uc-trust-bag-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 2.2rem;
+    color: var(--uc-crimson);
+    filter: drop-shadow(0 4px 10px rgba(255, 45, 85, 0.4));
+}
+
+.uc-trust-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+}
+
+.uc-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.uc-trust-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 45, 85, 0.14);
+    border: 1px solid rgba(255, 45, 85, 0.25);
+    color: var(--uc-crimson);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.uc-trust-item h6 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.uc-trust-item p {
+    font-size: 0.74rem;
+    color: var(--uc-text-muted);
+    margin: 0;
+}
+
+.uc-trust-cta {
+    background: linear-gradient(135deg, var(--uc-crimson) 0%, #f43f5e 100%);
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 6px 20px var(--uc-crimson-glow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: block;
+}
+
+.uc-trust-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 45, 85, 0.55);
+}
+
+/* ==========================================================================
+   7. FIXED MOBILE BOTTOM TABBAR (Image 2)
+   ========================================================================== */
+.uc-tabbar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 64px !important;
+    background: #080d16 !important;
+    border-top: 1px solid var(--uc-card-border) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    z-index: 1050 !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+@media (min-width: 992px) {
+    .uc-tabbar {
+        display: none !important;
+    }
+}
+
+.uc-tabbar a.uc-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #64748b !important;
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    position: relative;
+    transition: color 0.15s ease;
+    flex: 1;
+}
+
+.uc-tabbar a.uc-tab i {
+    font-size: 1.25rem;
+}
+
+.uc-tabbar a.uc-tab.is-active,
+.uc-tabbar a.uc-tab:hover {
+    color: var(--uc-crimson) !important;
+}
+
+.uc-tabbar a.uc-tab em.uc-tab-badge {
+    position: absolute;
+    top: -3px;
+    right: calc(50% - 16px);
+}

@@ -39,11 +39,16 @@
             {% endif %}
             {% if item.condition %}<span class="ae-cond">{{ item.condition|title }}</span>{% endif %}
         </div>
-        <div class="ae-card-price-row">
-            <span class="ae-card-price{% if compact %} ae-mini-price{% endif %}">{{ item.price|tsh }}</span>
-            {% if item.compare_at_price and item.compare_at_price > item.price %}
-            <span class="ae-discount">Sale</span>
-            {% endif %}
+        <div class="ae-card-price-row d-flex align-items-center justify-content-between">
+            <div>
+                <span class="ae-card-price{% if compact %} ae-mini-price{% endif %}">{{ item.price|tsh }}</span>
+                {% if item.compare_at_price and item.compare_at_price > item.price %}
+                <span class="ae-discount">Sale</span>
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-sm btn-danger rounded-circle js-add-to-cart p-0 d-inline-flex align-items-center justify-content-center" data-item-id="{{ item.id }}" style="width:30px;height:30px;background:#ff2d55;border-color:#ff2d55;" title="Add to cart" aria-label="Add to cart">
+                <i class="bi bi-cart3" style="font-size:0.85rem;color:#ffffff;"></i>
+            </button>
         </div>
         {% if item.compare_at_price and item.compare_at_price > item.price %}
         <div class="ae-strike">{{ item.compare_at_price|tsh }}</div>
