@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "company",
     "customer",
     "recommend",
+    "management",
     "pwa",
     "jazzmin",
     # Default Django apps
@@ -90,6 +91,7 @@ MIDDLEWARE.extend([
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "management.middleware.SystemErrorCaptureMiddleware",
 ])
 
 ROOT_URLCONF = "u_connect.urls"
@@ -223,11 +225,19 @@ JAZZMIN_SETTINGS = {
     "search_model": "auth.User",
     "show_sidebar": True,
     "navigation_expanded": False,
+    "topmenu_links": [
+        {"name": "Command Center", "url": "/management/", "icon": "fas fa-tachometer-alt", "permissions": ["auth.view_user"]},
+        {"name": "Support Chat", "url": "/support-chat/manage/", "icon": "fas fa-headset", "permissions": ["auth.view_user"]},
+        {"name": "View Site", "url": "/", "icon": "fas fa-globe", "new_window": True},
+    ],
     "icons": {
         "auth": "fas fa-users-cog",
         "users.user": "fas fa-user",
         "business.item": "fas fa-shopping-bag",
         "tancoin.exchangerate": "fas fa-coins",
+        "management.systemerrorlog": "fas fa-exclamation-triangle",
+        "management.adminemailtemplate": "fas fa-envelope-open-text",
+        "management.sentemaillog": "fas fa-paper-plane",
     },
     "show_ui_builder": True,
     "custom_links": {

@@ -50,6 +50,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("chat/", include("chat.urls")),
     path("company/", include("company.urls")),
+    path("management/", include("management.urls")),
     path("", include("pwa.urls")),
     path("password-reset/", request_password_reset, name="password_reset_request"),
     path("password-reset/verify/", verify_password_reset, name="password_reset_verify"),

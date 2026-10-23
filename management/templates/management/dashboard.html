@@ -1,0 +1,1345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Executive Command Center - U-Connect Admin</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/uconnect.ico' %}">
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Chart.js for Interactive Trend Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --brand-primary: #4f46e5;
+            --brand-primary-dark: #3730a3;
+            --brand-accent: #6366f1;
+            --bg-dark: #0f172a;
+            --surface-dark: #1e293b;
+            --border-dark: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        /* Navbar Header */
+        .admin-navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-dark);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            padding: 0.75rem 1.25rem;
+        }
+
+        /* Navigation Tabs */
+        .nav-pills-custom {
+            display: flex;
+            gap: 8px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid var(--border-dark);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        .nav-pills-custom .nav-link {
+            color: var(--text-muted);
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+        }
+        .nav-pills-custom .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .nav-pills-custom .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Metric Counters */
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 1.35rem;
+        }
+
+        /* Custom Table */
+        .table-custom {
+            color: #e2e8f0;
+            border-color: var(--border-dark);
+            margin-bottom: 0;
+        }
+        .table-custom th {
+            background: rgba(15, 23, 42, 0.85);
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+        .table-custom td {
+            padding: 14px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.88rem;
+        }
+        .table-custom tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Badges */
+        .badge-verified { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-unverified { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-staff { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        /* Mailbox Interface */
+        .mail-account-pill {
+            cursor: pointer;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-dark);
+            background: rgba(15, 23, 42, 0.6);
+            transition: all 0.2s;
+        }
+        .mail-account-pill:hover, .mail-account-pill.active {
+            background: rgba(79, 70, 229, 0.2);
+            border-color: #6366f1;
+        }
+
+        .mail-list-item {
+            cursor: pointer;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.15s;
+        }
+        .mail-list-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* Search Inputs */
+        .search-control-dark {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border: 1px solid var(--border-dark) !important;
+            color: #f8fafc !important;
+            border-radius: 10px !important;
+            padding: 9px 14px !important;
+            font-size: 0.9rem !important;
+        }
+        .search-control-dark:focus {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+        }
+
+        /* Mobile specific bottom bar */
+        @media (max-width: 768px) {
+            .mobile-hide { display: none !important; }
+            .nav-pills-custom {
+                position: sticky;
+                top: 60px;
+                z-index: 1010;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP EXECUTIVE NAVBAR -->
+    <header class="admin-navbar d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'management:dashboard' %}" class="text-decoration-none d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded-3 shadow-sm" style="width: 38px; height: 38px; font-weight: 900;">
+                    🎓
+                </div>
+                <div>
+                    <div class="brand-font fs-5 text-white lh-1">U-CONNECT</div>
+                    <div class="text-muted" style="font-size: 0.72rem; letter-spacing: 0.5px;">COMMAND CENTER &bull; {{ live_domain }}</div>
+                </div>
+            </a>
+            <span class="badge rounded-pill bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2 py-1 mobile-hide" style="font-size: 0.75rem;">
+                <i class="bi bi-circle-fill me-1" style="font-size: 6px;"></i>Live Server Healthy
+            </span>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="/admin/" class="btn btn-sm btn-outline-light d-flex align-items-center gap-1 py-1 px-3 rounded-3" style="font-size: 0.82rem;" title="Fungua Django Admin">
+                <i class="bi bi-speedometer2"></i>
+                <span class="mobile-hide">Django Admin</span>
+            </a>
+            <a href="{% url 'admin_support_dashboard' %}" class="btn btn-sm btn-primary d-flex align-items-center gap-1 py-1 px-3 rounded-3" style="font-size: 0.82rem;" title="Support Live Tickets">
+                <i class="bi bi-headset"></i>
+                <span class="mobile-hide">Live Support</span>
+                {% if open_tickets %}<span class="badge bg-danger rounded-pill">{{ open_tickets }}</span>{% endif %}
+            </a>
+            <a href="/" target="_blank" class="btn btn-sm btn-dark border-secondary d-flex align-items-center gap-1 py-1 px-2 rounded-3 text-muted" title="View Storefront">
+                <i class="bi bi-globe"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="container-fluid px-3 px-md-4 py-3">
+        
+        <!-- MAIN TABS SELECTOR -->
+        <div class="mb-4">
+            <ul class="nav nav-pills-custom" id="commandTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="tab-overview" data-bs-toggle="pill" data-bs-target="#content-overview" type="button" role="tab">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Overview &amp; Trends</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-users" data-bs-toggle="pill" data-bs-target="#content-users" type="button" role="tab">
+                        <i class="bi bi-people-fill"></i>
+                        <span>User Management</span>
+                        <span class="badge bg-secondary rounded-pill">{{ total_users }}</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-email" data-bs-toggle="pill" data-bs-target="#content-email" type="button" role="tab">
+                        <i class="bi bi-envelope-at-fill"></i>
+                        <span>Support &amp; Webmail CRM</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-logs" data-bs-toggle="pill" data-bs-target="#content-logs" type="button" role="tab">
+                        <i class="bi bi-shield-exclamation"></i>
+                        <span>System Logs &amp; Errors</span>
+                        {% if unresolved_errors %}<span class="badge bg-danger rounded-pill">{{ unresolved_errors }}</span>{% endif %}
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-guide" data-bs-toggle="pill" data-bs-target="#content-guide" type="button" role="tab">
+                        <i class="bi bi-book-half"></i>
+                        <span>Documentation &amp; User Guide</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="commandTabsContent">
+            
+            <!-- ========================================================== -->
+            <!-- TAB 1: OVERVIEW & TRENDS                                  -->
+            <!-- ========================================================== -->
+            <div class="tab-pane fade show active" id="content-overview" role="tabpanel">
+                
+                <!-- KPI Stat Cards Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-muted small fw-semibold">Watumiaji Wote</span>
+                                <div class="stat-badge bg-primary bg-opacity-25 text-primary"><i class="bi bi-person-check-fill"></i></div>
+                            </div>
+                            <h3 class="mb-1 text-white">{{ total_users }}</h3>
+                            <div class="text-success small fw-semibold">
+                                <i class="bi bi-patch-check-fill me-1"></i>{{ verified_users }} Email Verified
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-muted small fw-semibold">Bidhaa Sokoni</span>
+                                <div class="stat-badge bg-success bg-opacity-25 text-success"><i class="bi bi-bag-check-fill"></i></div>
+                            </div>
+                            <h3 class="mb-1 text-white">{{ total_items }}</h3>
+                            <div class="text-muted small">
+                                <span class="text-white fw-bold">{{ active_items }}</span> Active &bull; <span class="text-white fw-bold">{{ sold_items }}</span> Sold
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-muted small fw-semibold">Maagizo (Orders)</span>
+                                <div class="stat-badge bg-warning bg-opacity-25 text-warning"><i class="bi bi-cart-check-fill"></i></div>
+                            </div>
+                            <h3 class="mb-1 text-white">{{ total_orders }}</h3>
+                            <div class="text-muted small">
+                                Duka / Kampuni: <span class="text-white fw-bold">{{ total_companies }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="glass-card p-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-muted small fw-semibold">Tiketi za Msaada</span>
+                                <div class="stat-badge bg-info bg-opacity-25 text-info"><i class="bi bi-chat-quote-fill"></i></div>
+                            </div>
+                            <h3 class="mb-1 text-white">{{ open_tickets }} <span class="fs-6 text-muted font-monospace">Open</span></h3>
+                            <div class="text-muted small">
+                                <span class="text-success fw-bold">{{ resolved_tickets }}</span> zimetatuliwa
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row g-4 mb-4">
+                    <!-- Registrations & Listings Velocity -->
+                    <div class="col-12 col-lg-8">
+                        <div class="glass-card p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h4 class="fs-6 text-white mb-0">Mwenendo wa Usajili &amp; Bidhaa (Last 14 Days)</h4>
+                                    <p class="text-muted small mb-0">Mchanganuo wa kila siku wa watumiaji wapya na bidhaa zilizoongezwa</p>
+                                </div>
+                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50">Velocity Trend</span>
+                            </div>
+                            <div style="height: 280px;">
+                                <canvas id="chartActivityVelocity"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Popularity & Predictive AI Forecast -->
+                    <div class="col-12 col-lg-4">
+                        <div class="glass-card p-3 p-md-4 mb-3">
+                            <h4 class="fs-6 text-white mb-2">Category Demand</h4>
+                            <p class="text-muted small mb-3">Bidhaa nyingi zipo katika makundi gani sokoni</p>
+                            <div style="height: 170px;">
+                                <canvas id="chartCategoryShare"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Predictive Trend Card -->
+                        <div class="glass-card p-3 border-primary border-opacity-25" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(30, 41, 59, 0.7) 100%);">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-stars text-warning fs-5"></i>
+                                <span class="text-white fw-bold small">AI Growth Projection</span>
+                            </div>
+                            <p class="text-muted small mb-2">Kwa kasi ya sasa ya usajili (wastani wa <strong>+{{ growth_rate_daily }}</strong> watumiaji/siku):</p>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <h3 class="text-white mb-0">~{{ projected_next_30d }}</h3>
+                                <span class="text-success small fw-bold">Watumiaji wanaotarajiwa siku 30 zijazo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Activity Stream & System Health -->
+                <div class="row g-4">
+                    <!-- Recent Users -->
+                    <div class="col-12 col-lg-6">
+                        <div class="glass-card p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fs-6 text-white mb-0"><i class="bi bi-person-plus text-primary me-2"></i>Watumiaji Wapya Waliojiunga</h5>
+                                <button class="btn btn-sm btn-link text-primary text-decoration-none p-0" onclick="document.getElementById('tab-users').click()">Tazama Wote &rarr;</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Mtumiaji</th>
+                                            <th>Email / Phone</th>
+                                            <th>Hali</th>
+                                            <th>Tarehe</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for u in recent_users %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold text-white">{{ u.username }}</div>
+                                                {% if u.is_staff %}<span class="badge badge-staff">Staff</span>{% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="text-muted small">{{ u.email|default:"—" }}</div>
+                                                <div class="text-muted small">{{ u.profile.phone_number|default:"" }}</div>
+                                            </td>
+                                            <td>
+                                                {% if u.profile.is_email_verified %}
+                                                    <span class="badge badge-verified">Verified</span>
+                                                {% else %}
+                                                    <span class="badge badge-unverified">Pending</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-muted small">{{ u.date_joined|date:"M d, H:i" }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="4" class="text-center text-muted py-3">Hakuna watumiaji wapya bado.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Server Diagnostics Card -->
+                    <div class="col-12 col-lg-6">
+                        <div class="glass-card p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fs-6 text-white mb-0"><i class="bi bi-cpu text-info me-2"></i>Afya ya Server &amp; Host Connectivity</h5>
+                                <span class="badge bg-success bg-opacity-25 text-success border border-success">All Systems GO</span>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-dark);">
+                                        <div class="text-muted small">cPanel Mail Server</div>
+                                        <div class="fw-bold text-white small">brandy.hostns.io:465</div>
+                                        <div class="text-success small"><i class="bi bi-shield-check me-1"></i>SSL Connected</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-dark);">
+                                        <div class="text-muted small">Database SQLite</div>
+                                        <div class="fw-bold text-white small">{{ db_size_mb }} MB</div>
+                                        <div class="text-success small"><i class="bi bi-database-check me-1"></i>Optimized</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-dark);">
+                                        <div class="text-muted small">Phusion Passenger</div>
+                                        <div class="fw-bold text-white small">Python 3.11 LiteSpeed</div>
+                                        <div class="text-success small"><i class="bi bi-lightning-charge me-1"></i>Active</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 rounded-3" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-dark);">
+                                        <div class="text-muted small">SSL Certificate</div>
+                                        <div class="fw-bold text-white small">AutoSSL Active</div>
+                                        <div class="text-success small"><i class="bi bi-lock-fill me-1"></i>HTTP/2 HTTPS</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 2: USER MANAGEMENT                                    -->
+            <!-- ========================================================== -->
+            <div class="tab-pane fade" id="content-users" role="tabpanel">
+                <div class="glass-card p-3 p-md-4">
+                    
+                    <!-- Search & Filter Controls -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="userSearchInput" class="form-control search-control-dark" placeholder="Tafuta kwa Jina, Email, au Namba ya Simu..." onkeyup="debounceUserSearch()">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-7 d-flex flex-wrap gap-2 align-items-center justify-content-md-end">
+                            <button class="btn btn-sm btn-outline-light active filter-role-btn" data-role="all" onclick="setUserRoleFilter(this, 'all')">Wote</button>
+                            <button class="btn btn-sm btn-outline-light filter-role-btn" data-role="staff" onclick="setUserRoleFilter(this, 'staff')">Staff</button>
+                            <button class="btn btn-sm btn-outline-light filter-role-btn" data-role="sellers" onclick="setUserRoleFilter(this, 'sellers')">Wauzaji</button>
+                            <button class="btn btn-sm btn-outline-light filter-role-btn" data-role="unverified" onclick="setUserRoleFilter(this, 'unverified')">Pending OTP</button>
+                            <button class="btn btn-sm btn-outline-light filter-role-btn" data-role="inactive" onclick="setUserRoleFilter(this, 'inactive')">Waliyofungiwa</button>
+                            <button class="btn btn-sm btn-primary ms-auto" onclick="loadUsersTable()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+                        </div>
+                    </div>
+
+                    <!-- Users Table Container -->
+                    <div class="table-responsive">
+                        <table class="table table-custom" id="usersMainTable">
+                            <thead>
+                                <tr>
+                                    <th>ID / Mtumiaji</th>
+                                    <th>Mawasiliano (Email / Phone)</th>
+                                    <th>Vyeo &amp; Mamlaka</th>
+                                    <th>Hali ya Akaunti</th>
+                                    <th>Shughuli (Items / Orders)</th>
+                                    <th>Tarehe</th>
+                                    <th class="text-end">Vitendo (Actions)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <div class="spinner-border text-primary spinner-border-sm me-2"></div>Inapakia orodha ya watumiaji...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                        <div class="text-muted small" id="userPaginationInfo">Inaonyesha watumiaji</div>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-secondary" id="userPrevBtn" onclick="changeUserPage(-1)" disabled>&laquo; Iliyopita</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="userNextBtn" onclick="changeUserPage(1)">Ifuatayo &raquo;</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 3: SUPPORT & LIVE WEBMAIL CRM (cPanel Integration)    -->
+            <!-- ========================================================== -->
+            <div class="tab-pane fade" id="content-email" role="tabpanel">
+                <div class="glass-card p-3 p-md-4">
+                    
+                    <!-- Header with Account Switcher -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                        <div>
+                            <h4 class="fs-5 text-white mb-1"><i class="bi bi-envelope-paper-heart-fill text-primary me-2"></i>cPanel Webmail &amp; CRM Communications Hub</h4>
+                            <p class="text-muted small mb-0">Soma na jibu barua pepe zote za uconnect.edusphere.co.tz moja kwa moja kutoka cPanel IMAP &amp; SMTP</p>
+                        </div>
+                        <button class="btn btn-primary d-flex align-items-center gap-2" onclick="openComposeModal()">
+                            <i class="bi bi-pencil-square"></i>
+                            <span>Tunga Barua Pepe (Compose)</span>
+                        </button>
+                    </div>
+
+                    <!-- 4 Dedicated Mailboxes Switcher -->
+                    <div class="row g-2 mb-4">
+                        {% for key, acc in cpanel_accounts.items %}
+                        <div class="col-6 col-md-3">
+                            <div class="mail-account-pill {% if key == 'support' %}active{% endif %}" id="pill-acc-{{ key }}" onclick="switchMailAccount('{{ key }}')">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <span class="badge" style="background-color: {{ acc.badge_color }}; color: #fff;">{{ acc.name }}</span>
+                                    <i class="bi bi-envelope fs-6 text-muted"></i>
+                                </div>
+                                <div class="fw-bold text-white small text-truncate">{{ acc.email }}</div>
+                                <div class="text-muted" style="font-size: 0.74rem;">{{ acc.description }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Mailbox Toolbar & Search -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-white fw-bold small" id="currentMailboxLabel">Inbox: support@uconnect.edusphere.co.tz</span>
+                            <span class="badge bg-secondary rounded-pill" id="currentMailboxCount">0 ujumbe</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light" onclick="refreshCurrentInbox()"><i class="bi bi-arrow-clockwise me-1"></i>Angalia Mpya</button>
+                    </div>
+
+                    <!-- Email List Viewer -->
+                    <div class="rounded-3 border border-secondary border-opacity-25 overflow-hidden" style="background: rgba(15, 23, 42, 0.7); min-height: 350px;">
+                        <div id="emailListContainer">
+                            <div class="p-4 text-center text-muted">
+                                <div class="spinner-border text-primary spinner-border-sm me-2"></div>Inaunganisha na cPanel IMAP...
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 4: SYSTEM LOGS & ERROR TROUBLESHOOTING               -->
+            <!-- ========================================================== -->
+            <div class="tab-pane fade" id="content-logs" role="tabpanel">
+                <div class="glass-card p-3 p-md-4">
+                    
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                        <div>
+                            <h4 class="fs-5 text-white mb-1"><i class="bi bi-bug-fill text-danger me-2"></i>Website Error Logs &amp; Audit Trail</h4>
+                            <p class="text-muted small mb-0">Kumbukumbu za hitilafu (exceptions), alerts na majaribio yasiyo ya kawaida kwenye tovuti</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-warning" onclick="resolveAllLogs()"><i class="bi bi-check2-all me-1"></i>Weka Yote Resolved</button>
+                            <button class="btn btn-sm btn-primary" onclick="loadSystemLogs()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh Logs</button>
+                        </div>
+                    </div>
+
+                    <!-- Level Filter Pills -->
+                    <div class="d-flex gap-2 mb-3">
+                        <button class="btn btn-sm btn-outline-light active filter-log-btn" data-level="all" onclick="filterLogs(this, 'all')">Zote</button>
+                        <button class="btn btn-sm btn-outline-danger filter-log-btn" data-level="ERROR" onclick="filterLogs(this, 'ERROR')">Errors Pekee</button>
+                        <button class="btn btn-sm btn-outline-warning filter-log-btn" data-level="WARNING" onclick="filterLogs(this, 'WARNING')">Warnings</button>
+                        <button class="btn btn-sm btn-outline-info filter-log-btn" data-level="SECURITY" onclick="filterLogs(this, 'SECURITY')">Security</button>
+                    </div>
+
+                    <!-- Logs Table -->
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Hitilafu / Ujumbe</th>
+                                    <th>Endpoint</th>
+                                    <th>IP / Mtumiaji</th>
+                                    <th>Muda</th>
+                                    <th>Hali</th>
+                                    <th class="text-end">Traceback / Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="systemLogsBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        <div class="spinner-border text-primary spinner-border-sm me-2"></div>Inapakia kumbukumbu za mfumo...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TAB 5: DOCUMENTATION & USER GUIDE                         -->
+            <!-- ========================================================== -->
+            <div class="tab-pane fade" id="content-guide" role="tabpanel">
+                <div class="glass-card p-3 p-md-4">
+                    
+                    <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                        <h4 class="fs-5 text-white mb-1"><i class="bi bi-journal-bookmark-fill text-warning me-2"></i>Mwongozo wa Usimamizi wa U-Connect (Admin Master Guide)</h4>
+                        <p class="text-muted small mb-0">Nyaraka rasmi zinazoelekeza jinsi ya kuendesha jukwaa, kugawa mamlaka, kutatua migogoro na kurekebisha hitilafu za server.</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Left Navigation TOC -->
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="list-group list-group-flush rounded-3 border border-secondary border-opacity-25 bg-dark">
+                                <a href="#guide-users" class="list-group-item list-group-item-action bg-dark text-white active fw-semibold small py-3"><i class="bi bi-person-gear me-2"></i>1. Usimamizi wa Watumiaji</a>
+                                <a href="#guide-support" class="list-group-item list-group-item-action bg-dark text-white fw-semibold small py-3"><i class="bi bi-headset me-2"></i>2. Msaada &amp; Live Chat</a>
+                                <a href="#guide-email" class="list-group-item list-group-item-action bg-dark text-white fw-semibold small py-3"><i class="bi bi-envelope-at me-2"></i>3. Barua Pepe &amp; cPanel</a>
+                                <a href="#guide-troubleshoot" class="list-group-item list-group-item-action bg-dark text-white fw-semibold small py-3"><i class="bi bi-tools me-2"></i>4. Utatuzi wa Hitilafu (Troubleshoot)</a>
+                                <a href="#guide-security" class="list-group-item list-group-item-action bg-dark text-white fw-semibold small py-3"><i class="bi bi-shield-lock me-2"></i>5. Usalama &amp; Nenosiri</a>
+                            </div>
+                        </div>
+
+                        <!-- Right Guide Details -->
+                        <div class="col-12 col-md-8 col-lg-9">
+                            
+                            <!-- Section 1 -->
+                            <div class="p-4 rounded-3 border border-secondary border-opacity-25 mb-4" id="guide-users" style="background: rgba(15, 23, 42, 0.5);">
+                                <h5 class="text-primary fw-bold mb-3"><i class="bi bi-person-gear me-2"></i>1. Usimamizi wa Watumiaji &amp; Mamlaka</h5>
+                                <p class="text-light small">Admin ana mamlaka kamili juu ya akaunti za wanafunzi na wafanyabiashara kwenye U-Connect:</p>
+                                <ul class="text-muted small">
+                                    <li><strong>Kutafuta Mtumiaji:</strong> Unaweza kusearch kwa kuandika neno lolote—iwe jina lake, email, au namba yake ya WhatsApp iliyosajiliwa.</li>
+                                    <li><strong>Kumpa Mamlaka (Privilege):</strong> Kwenye orodha ya watumiaji, bofya kitufe cha <span class="badge bg-primary">Make Staff</span> au <span class="badge bg-warning text-dark">Make Superuser</span> ili kumpa uwezo wa kuingia kwenye dashboard au admin.</li>
+                                    <li><strong>Kuzuia Mtumiaji (Deactivate):</strong> Ikiwa mtumiaji anakiuka sheria za chuo, bofya <span class="badge bg-danger">Funga Akaunti</span>. Hatoweza kuingia tena mpaka utakapomfungulia.</li>
+                                    <li><strong>Uthibitishaji wa Manual (Verify Email):</strong> Ikiwa mwanafunzi hajapokea OTP au amekosea kidogo email yake, admin anaweza kubofya <span class="badge bg-success">Verify Email</span> kumwezesha kuanza kutumia huduma mara moja.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div class="p-4 rounded-3 border border-secondary border-opacity-25 mb-4" id="guide-support" style="background: rgba(15, 23, 42, 0.5);">
+                                <h5 class="text-success fw-bold mb-3"><i class="bi bi-headset me-2"></i>2. Tiketi za Msaada &amp; Live Chat Console</h5>
+                                <p class="text-light small">Wanafunzi wanaweza kufungua mazungumzo ya msaada moja kwa moja kabla hata ya kuingia kwenye akaunti:</p>
+                                <ul class="text-muted small">
+                                    <li>Tiketi zote zinaonekana kwenye kichupo cha <strong>Live Support</strong> au kupitia <a href="/support-chat/manage/" class="text-primary fw-bold">/support-chat/manage/</a>.</li>
+                                    <li>Admin anapojibu, mtumiaji anaona majibu kwa <strong>Real-Time</strong> bila kulazimika kufanya refresh ya ukurasa.</li>
+                                    <li>Baada ya kumsaidia mtumiaji, unaweza kubadili hali ya tiketi kuwa <strong>Resolved</strong> au <strong>Closed</strong>.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Section 3 -->
+                            <div class="p-4 rounded-3 border border-secondary border-opacity-25 mb-4" id="guide-email" style="background: rgba(15, 23, 42, 0.5);">
+                                <h5 class="text-info fw-bold mb-3"><i class="bi bi-envelope-at me-2"></i>3. cPanel Webmail &amp; Utumaji wa Barua Pepe (CRM)</h5>
+                                <p class="text-light small">Huna haja ya kwenda cPanel kufungua webmail. Dashboard hii inaunganisha akaunti zote 4:</p>
+                                <ul class="text-muted small">
+                                    <li><strong>support@uconnect.edusphere.co.tz</strong>: Inapokea maoni, malalamiko na maswali ya wanafunzi.</li>
+                                    <li><strong>otp@uconnect.edusphere.co.tz</strong>: Inatuma tarakimu 6 za uthibitisho wakati wa kujisajili na password reset.</li>
+                                    <li><strong>updates@uconnect.edusphere.co.tz</strong>: Inatuma taarifa za bidhaa mpya na maagizo.</li>
+                                    <li><strong>marketing@uconnect.edusphere.co.tz</strong>: Inatuma ofa za chuo, punguzo na matangazo ya msimu.</li>
+                                    <li>Unaweza kubadili akaunti kwa kubofya kadi husika, kusoma ujumbe, au kubofya <strong>Tunga Barua Pepe</strong> ukitumia templates zilizopo.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Section 4 -->
+                            <div class="p-4 rounded-3 border border-secondary border-opacity-25" id="guide-troubleshoot" style="background: rgba(15, 23, 42, 0.5);">
+                                <h5 class="text-warning fw-bold mb-3"><i class="bi bi-tools me-2"></i>4. Utatuzi wa Hitilafu &amp; Error Logs</h5>
+                                <p class="text-light small">Kama kuna jambo halifanyi kazi:</p>
+                                <ul class="text-muted small mb-0">
+                                    <li>Kagua tab ya <strong>System Logs &amp; Errors</strong> ili kuona traceback halisi ya hitilafu iliyotokea.</li>
+                                    <li>Ukiona log ya kosa, unaweza kubofya <strong>Tazama Traceback</strong> ili kuona faili na mstari uliofeli.</li>
+                                    <li>Baada ya kusuluhisha kosa, bofya <strong>Weka Resolved</strong> ili kuweka kumbukumbu safi.</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- COMPOSE EMAIL MODAL -->
+    <div class="modal fade" id="composeMailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content text-light" style="background: #1e293b; border: 1px solid var(--border-dark); border-radius: 16px;">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title fs-6 fw-bold"><i class="bi bi-send-fill text-primary me-2"></i>Tunga Barua Pepe Mpya (Compose Email)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="composeMailForm" onsubmit="submitComposeEmail(event)">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold text-muted">Akaunti ya Kutuma (From)</label>
+                                <select name="account" id="composeAccountSelect" class="form-select search-control-dark">
+                                    {% for key, acc in cpanel_accounts.items %}
+                                    <option value="{{ key }}">{{ acc.name }} &lt;{{ acc.email }}&gt;</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label small fw-semibold text-muted">Chagua Template (Hiari)</label>
+                                <select id="composeTemplateSelect" class="form-select search-control-dark" onchange="applyTemplateToComposer()">
+                                    <option value="">-- Chagua Kiolezo Tayari --</option>
+                                    {% for t in templates %}
+                                    <option value="{{ t.id }}" data-subject="{{ t.subject }}">{{ t.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Mpokeaji (To Email)</label>
+                            <input type="email" name="to_email" id="composeToEmail" class="form-control search-control-dark" placeholder="mfano: student@campus.ac.tz" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Mada ya Ujumbe (Subject)</label>
+                            <input type="text" name="subject" id="composeSubject" class="form-control search-control-dark" placeholder="Andika kichwa cha barua pepe..." required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Maudhui ya Barua Pepe (HTML Message)</label>
+                            <textarea name="body_html" id="composeBodyHtml" rows="7" class="form-control search-control-dark" placeholder="Andika ujumbe wako hapa..." required></textarea>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Maudhui yatafungwa kiotomatiki ndani ya kiolezo rasmi chenye nembo na rangi za U-Connect.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-2">
+                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Ghairi</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold" id="composeSubmitBtn">
+                                <i class="bi bi-paperplane-fill me-1"></i>Tuma Sasa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW EMAIL MODAL -->
+    <div class="modal fade" id="viewEmailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content text-light" style="background: #1e293b; border: 1px solid var(--border-dark); border-radius: 16px;">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title fs-6 fw-bold" id="viewMailSubject">Soma Barua Pepe</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                        <div>
+                            <div class="small text-muted">Kutoka: <span class="text-white fw-bold" id="viewMailFrom"></span></div>
+                            <div class="small text-muted">Kwenda: <span class="text-white" id="viewMailTo"></span></div>
+                        </div>
+                        <span class="text-muted small" id="viewMailDate"></span>
+                    </div>
+                    <div id="viewMailBody" class="p-3 rounded-3 bg-dark text-light overflow-auto" style="max-height: 400px; font-size: 0.9rem; line-height: 1.6;"></div>
+                </div>
+                <div class="modal-footer border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-primary" onclick="replyToCurrentEmail()"><i class="bi bi-reply-fill me-1"></i>Jibu (Reply)</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRACEBACK MODAL -->
+    <div class="modal fade" id="tracebackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content text-light" style="background: #1e293b; border: 1px solid var(--border-dark); border-radius: 16px;">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title fs-6 fw-bold text-danger"><i class="bi bi-bug me-2"></i>Python Stack Traceback</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <pre id="tracebackContent" class="p-3 rounded-3 bg-black text-danger font-monospace small overflow-auto" style="max-height: 450px;"></pre>
+                </div>
+                <div class="modal-footer border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Funga</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // -------------------------------------------------------------
+        // Global State & Config
+        // -------------------------------------------------------------
+        const CSRF_TOKEN = "{{ csrf_token }}";
+        let currentUserPage = 1;
+        let currentUserQuery = "";
+        let currentUserRole = "all";
+        let activeMailAccount = "support";
+        let activeEmailsCache = [];
+        let selectedMailForReply = null;
+        let emailTemplatesData = [];
+
+        // -------------------------------------------------------------
+        // Charts Initialization
+        // -------------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', function() {
+            initVelocityChart();
+            initCategoryChart();
+            loadUsersTable();
+            loadEmailTemplates();
+            loadSystemLogs();
+        });
+
+        function initVelocityChart() {
+            const ctx = document.getElementById('chartActivityVelocity');
+            if (!ctx) return;
+            const labels = {{ date_labels_json|safe }};
+            const regData = {{ reg_trend_json|safe }};
+            const itemData = {{ item_trend_json|safe }};
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Watumiaji Wapya',
+                            data: regData,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#6366f1',
+                        },
+                        {
+                            label: 'Bidhaa Zilizoongezwa',
+                            data: itemData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.35,
+                            pointBackgroundColor: '#10b981',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 12 } } },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#cbd5e1' }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', stepSize: 1 } }
+                    }
+                }
+            });
+        }
+
+        function initCategoryChart() {
+            const ctx = document.getElementById('chartCategoryShare');
+            if (!ctx) return;
+            const catLabels = {{ cat_labels_json|safe }};
+            const catCounts = {{ cat_counts_json|safe }};
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels.length ? catLabels : ['General'],
+                    datasets: [{
+                        data: catCounts.length ? catCounts : [1],
+                        backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 } } }
+                    },
+                    cutout: '68%'
+                }
+            });
+        }
+
+        // -------------------------------------------------------------
+        // User Management System
+        // -------------------------------------------------------------
+        let searchDebounceTimer = null;
+        function debounceUserSearch() {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                currentUserQuery = document.getElementById('userSearchInput').value.trim();
+                currentUserPage = 1;
+                loadUsersTable();
+            }, 300);
+        }
+
+        function setUserRoleFilter(btn, role) {
+            document.querySelectorAll('.filter-role-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentUserRole = role;
+            currentUserPage = 1;
+            loadUsersTable();
+        }
+
+        function changeUserPage(delta) {
+            currentUserPage += delta;
+            loadUsersTable();
+        }
+
+        function loadUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted"><div class="spinner-border text-primary spinner-border-sm me-2"></div>Inapakia...</td></tr>';
+
+            const url = `{% url 'management:api_users_list' %}?q=${encodeURIComponent(currentUserQuery)}&role=${currentUserRole}&page=${currentUserPage}`;
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status !== 'success') return;
+                    renderUsersTable(data);
+                })
+                .catch(err => {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Hitilafu ya kupakia: ${err}</td></tr>`;
+                });
+        }
+
+        function renderUsersTable(data) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (!data.users.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Hakuna watumiaji waliopatikana kwa vigezo hivi.</td></tr>';
+                document.getElementById('userPaginationInfo').innerText = '0 watumiaji';
+                document.getElementById('userPrevBtn').disabled = true;
+                document.getElementById('userNextBtn').disabled = true;
+                return;
+            }
+
+            data.users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="fw-bold text-white">${u.username}</div>
+                        <div class="text-muted small">${u.full_name}</div>
+                    </td>
+                    <td>
+                        <div class="text-light">${u.email}</div>
+                        <div class="text-muted small">${u.phone}</div>
+                    </td>
+                    <td>
+                        ${u.is_superuser ? '<span class="badge bg-warning text-dark me-1">Superuser</span>' : ''}
+                        ${u.is_staff ? '<span class="badge badge-staff me-1">Staff</span>' : '<span class="badge bg-dark text-muted">User</span>'}
+                    </td>
+                    <td>
+                        ${u.is_active ? '<span class="badge badge-verified">Active</span>' : '<span class="badge badge-inactive">Blocked</span>'}
+                        ${u.is_verified ? '<span class="badge badge-verified ms-1"><i class="bi bi-check"></i>Verified</span>' : '<span class="badge badge-unverified ms-1">Pending</span>'}
+                    </td>
+                    <td>
+                        <span class="text-white">${u.items_count}</span> <span class="text-muted small">bidhaa</span> &bull; 
+                        <span class="text-white">${u.orders_count}</span> <span class="text-muted small">orders</span>
+                    </td>
+                    <td class="text-muted small">${u.date_joined}</td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="quickComposeToUser('${u.email}')" title="Tuma Email"><i class="bi bi-envelope"></i></button>
+                            <button class="btn btn-outline-info" onclick="toggleUserStaff(${u.id})" title="Toggle Staff Privilege"><i class="bi bi-shield-check"></i></button>
+                            ${!u.is_verified ? `<button class="btn btn-outline-success" onclick="verifyUserEmailManually(${u.id})" title="Thibitisha Email"><i class="bi bi-patch-check"></i></button>` : ''}
+                            <button class="btn ${u.is_active ? 'btn-outline-warning' : 'btn-outline-success'}" onclick="toggleUserStatus(${u.id})" title="${u.is_active ? 'Funga Akaunti' : 'Fungulia Akaunti'}">
+                                <i class="bi ${u.is_active ? 'bi-lock' : 'bi-unlock'}"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="deleteUserSafely(${u.id}, '${u.username}')" title="Futa Mtumiaji"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('userPaginationInfo').innerText = `Ukurasa wa ${data.current_page} kati ya ${data.total_pages} (${data.total_count} watumiaji)`;
+            document.getElementById('userPrevBtn').disabled = !data.has_previous;
+            document.getElementById('userNextBtn').disabled = !data.has_next;
+        }
+
+        function toggleUserStatus(userId) {
+            fetch(`/management/api/users/${userId}/toggle-status/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message);
+                loadUsersTable();
+            });
+        }
+
+        function toggleUserStaff(userId) {
+            const formData = new FormData();
+            formData.append('role_type', 'staff');
+            fetch(`/management/api/users/${userId}/toggle-role/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message);
+                loadUsersTable();
+            });
+        }
+
+        function verifyUserEmailManually(userId) {
+            fetch(`/management/api/users/${userId}/verify-email/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message);
+                loadUsersTable();
+            });
+        }
+
+        function deleteUserSafely(userId, username) {
+            if (!confirm(`Una uhakika unataka kufuta kabisa akaunti ya '${username}'? Hatua hii haiwezi kurudishwa!`)) return;
+            fetch(`/management/api/users/${userId}/delete/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message);
+                loadUsersTable();
+            });
+        }
+
+        function quickComposeToUser(email) {
+            if (!email || email === '—') {
+                alert('Mtumiaji huyu hana email iliyosajiliwa.');
+                return;
+            }
+            document.getElementById('composeToEmail').value = email;
+            document.getElementById('tab-email').click();
+            openComposeModal();
+        }
+
+        // -------------------------------------------------------------
+        // Webmail & CRM System (Live cPanel IMAP/SMTP)
+        // -------------------------------------------------------------
+        function switchMailAccount(accKey) {
+            activeMailAccount = accKey;
+            document.querySelectorAll('.mail-account-pill').forEach(p => p.classList.remove('active'));
+            const activePill = document.getElementById(`pill-acc-${accKey}`);
+            if (activePill) activePill.classList.add('active');
+
+            const accNames = {
+                'support': 'support@uconnect.edusphere.co.tz',
+                'otp': 'otp@uconnect.edusphere.co.tz',
+                'updates': 'updates@uconnect.edusphere.co.tz',
+                'marketing': 'marketing@uconnect.edusphere.co.tz'
+            };
+            document.getElementById('currentMailboxLabel').innerText = `Inbox: ${accNames[accKey] || accKey}`;
+            refreshCurrentInbox();
+        }
+
+        function refreshCurrentInbox() {
+            const container = document.getElementById('emailListContainer');
+            container.innerHTML = '<div class="p-4 text-center text-muted"><div class="spinner-border text-primary spinner-border-sm me-2"></div>Inapakia barua pepe moja kwa moja kutoka cPanel...</div>';
+
+            fetch(`/management/api/email/inbox/?account=${activeMailAccount}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status !== 'success') {
+                        container.innerHTML = `<div class="p-4 text-center text-danger">Imeshindwa kuunganisha: ${data.message}</div>`;
+                        return;
+                    }
+                    activeEmailsCache = data.emails || [];
+                    document.getElementById('currentMailboxCount').innerText = `${data.total_count} ujumbe`;
+                    renderEmailsList(activeEmailsCache);
+                })
+                .catch(err => {
+                    container.innerHTML = `<div class="p-4 text-center text-danger">Hitilafu ya mtandao: ${err}</div>`;
+                });
+        }
+
+        function renderEmailsList(emails) {
+            const container = document.getElementById('emailListContainer');
+            container.innerHTML = '';
+
+            if (!emails.length) {
+                container.innerHTML = `
+                    <div class="p-5 text-center text-muted">
+                        <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                        Inbox hii bado haina barua pepe zilizoingia.
+                    </div>`;
+                return;
+            }
+
+            emails.forEach((m, idx) => {
+                const item = document.createElement('div');
+                item.className = 'mail-list-item';
+                item.onclick = () => openEmailViewer(idx);
+                item.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-white fw-bold small text-truncate" style="max-width: 60%;">${escapeHtml(m.from)}</span>
+                        <span class="text-muted small" style="font-size: 0.75rem;">${escapeHtml(m.date)}</span>
+                    </div>
+                    <div class="fw-semibold text-light small mb-1">${escapeHtml(m.subject)}</div>
+                    <div class="text-muted small text-truncate" style="font-size: 0.8rem;">${escapeHtml(m.snippet)}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function openEmailViewer(idx) {
+            const email = activeEmailsCache[idx];
+            if (!email) return;
+            selectedMailForReply = email;
+
+            document.getElementById('viewMailSubject').innerText = email.subject;
+            document.getElementById('viewMailFrom').innerText = email.from;
+            document.getElementById('viewMailTo').innerText = email.to;
+            document.getElementById('viewMailDate').innerText = email.date;
+
+            const bodyContainer = document.getElementById('viewMailBody');
+            if (email.has_html && email.body_html) {
+                bodyContainer.innerHTML = email.body_html;
+            } else {
+                bodyContainer.innerText = email.body_text || email.snippet;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('viewEmailModal'));
+            modal.show();
+        }
+
+        function replyToCurrentEmail() {
+            if (!selectedMailForReply) return;
+            bootstrap.Modal.getInstance(document.getElementById('viewEmailModal')).hide();
+            
+            // Extract pure email address from "Name <email@domain>"
+            let toAddr = selectedMailForReply.from;
+            const match = toAddr.match(/<([^>]+)>/);
+            if (match) toAddr = match[1];
+
+            document.getElementById('composeToEmail').value = toAddr;
+            document.getElementById('composeSubject').value = `Re: ${selectedMailForReply.subject.replace(/^Re:\s*/i, '')}`;
+            document.getElementById('composeAccountSelect').value = activeMailAccount;
+            openComposeModal();
+        }
+
+        function openComposeModal() {
+            const modal = new bootstrap.Modal(document.getElementById('composeMailModal'));
+            modal.show();
+        }
+
+        function loadEmailTemplates() {
+            fetch('/management/api/email/templates/')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        emailTemplatesData = data.templates || [];
+                    }
+                });
+        }
+
+        function applyTemplateToComposer() {
+            const tmplId = document.getElementById('composeTemplateSelect').value;
+            if (!tmplId) return;
+            const tmpl = emailTemplatesData.find(t => t.id == tmplId);
+            if (tmpl) {
+                document.getElementById('composeSubject').value = tmpl.subject;
+                document.getElementById('composeBodyHtml').value = tmpl.html_body;
+            }
+        }
+
+        function submitComposeEmail(e) {
+            e.preventDefault();
+            const btn = document.getElementById('composeSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Inatuma...';
+
+            const form = document.getElementById('composeMailForm');
+            const formData = new FormData(form);
+
+            fetch('/management/api/email/send/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN },
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-paperplane-fill me-1"></i>Tuma Sasa';
+                alert(data.message);
+                if (data.status === 'success') {
+                    bootstrap.Modal.getInstance(document.getElementById('composeMailModal')).hide();
+                    form.reset();
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-paperplane-fill me-1"></i>Tuma Sasa';
+                alert(`Hitilafu ya kutuma: ${err}`);
+            });
+        }
+
+        // -------------------------------------------------------------
+        // System Logs & Troubleshooting System
+        // -------------------------------------------------------------
+        let currentLogLevel = 'all';
+
+        function filterLogs(btn, level) {
+            document.querySelectorAll('.filter-log-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentLogLevel = level;
+            loadSystemLogs();
+        }
+
+        function loadSystemLogs() {
+            const tbody = document.getElementById('systemLogsBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted"><div class="spinner-border text-primary spinner-border-sm me-2"></div>Inapakia...</td></tr>';
+
+            fetch(`/management/api/logs/?level=${currentLogLevel}`)
+                .then(r => r.json())
+                .then(data => {
+                    renderSystemLogs(data.logs || []);
+                })
+                .catch(err => {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Hitilafu: ${err}</td></tr>`;
+                });
+        }
+
+        function renderSystemLogs(logs) {
+            const tbody = document.getElementById('systemLogsBody');
+            tbody.innerHTML = '';
+
+            if (!logs.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-success"><i class="bi bi-check-circle me-1"></i>Hakuna hitilafu iliyoripotiwa! Mfumo unafanya kazi kikamilifu.</td></tr>';
+                return;
+            }
+
+            logs.forEach(l => {
+                const tr = document.createElement('tr');
+                const badgeClass = l.level === 'ERROR' ? 'bg-danger' : l.level === 'WARNING' ? 'bg-warning text-dark' : 'bg-info text-dark';
+                tr.innerHTML = `
+                    <td><span class="badge ${badgeClass}">${l.level}</span></td>
+                    <td class="text-light" style="max-width: 280px;">
+                        <div class="text-truncate fw-semibold">${escapeHtml(l.message)}</div>
+                    </td>
+                    <td><code class="text-info">${escapeHtml(l.endpoint)}</code></td>
+                    <td class="text-muted small">${escapeHtml(l.user)} &bull; ${escapeHtml(l.ip_address)}</td>
+                    <td class="text-muted small">${escapeHtml(l.created_at)}</td>
+                    <td>
+                        ${l.is_resolved ? '<span class="badge bg-success bg-opacity-25 text-success">Resolved</span>' : '<span class="badge bg-danger bg-opacity-25 text-danger">Unresolved</span>'}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            ${l.traceback ? `<button class="btn btn-outline-info" onclick="viewLogTraceback('${encodeURIComponent(l.traceback)}')"><i class="bi bi-code-slash"></i></button>` : ''}
+                            ${!l.is_resolved ? `<button class="btn btn-outline-success" onclick="resolveSingleLog(${l.id})"><i class="bi bi-check-lg"></i></button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function viewLogTraceback(encodedTb) {
+            document.getElementById('tracebackContent').innerText = decodeURIComponent(encodedTb);
+            const modal = new bootstrap.Modal(document.getElementById('tracebackModal'));
+            modal.show();
+        }
+
+        function resolveSingleLog(logId) {
+            fetch(`/management/api/logs/${logId}/resolve/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(res => {
+                loadSystemLogs();
+            });
+        }
+
+        function resolveAllLogs() {
+            if (!confirm('Una uhakika unataka kuweka kumbukumbu zote kama Resolved?')) return;
+            fetch('/management/api/logs/resolve-all/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': CSRF_TOKEN }
+            })
+            .then(r => r.json())
+            .then(res => {
+                alert(res.message);
+                loadSystemLogs();
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
