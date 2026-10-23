@@ -115,6 +115,7 @@ urlpatterns = [
     path("serviceworker.js", service_worker, name="serviceworker"),
     path("", include("recommend.urls")),
     path("", include("customer.urls")),
+    path("customer/", include("customer.urls", namespace="customer_alt")),
     path("business/", include("business.urls")),
     path("users/", include("users.urls")),
     path("chat/", include("chat.urls")),

@@ -821,8 +821,12 @@
 
         // Global Interactive Add-To-Cart Functionality
         window.addToCart = function(itemId, btn, quantity) {
+            const qtyInput = document.getElementById('pdxQtyInput');
+            if (!quantity && qtyInput) {
+                quantity = parseInt(qtyInput.value) || 1;
+            }
             quantity = quantity || 1;
-            const url = `/customer/cart/add/${itemId}/`;
+            const url = `/cart/add/${itemId}/`;
             const csrfToken = getCsrfToken();
 
             let originalContent = null;

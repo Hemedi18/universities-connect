@@ -566,12 +566,22 @@ def item_detail(request, item_id):
     from business.contacts import contact_bundle
 
     contact = contact_bundle(request, item)
+    categories = list(Category.objects.filter(parent=None).order_by("name"))
+
+    discount_pct = 0
+    if item.compare_at_price and item.compare_at_price > item.price:
+        try:
+            discount_pct = int(round((float(item.compare_at_price) - float(item.price)) / float(item.compare_at_price) * 100))
+        except (ZeroDivisionError, ValueError, TypeError):
+            discount_pct = 0
 
     return render(
         request,
         "business/item_detail.html",
         {
             "item": item,
+            "categories": categories,
+            "discount_pct": discount_pct,
             "gallery_images": gallery_images,
             "gallery_video": gallery_video,
             "related_items": related_items,
