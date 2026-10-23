@@ -213,7 +213,7 @@ def api_users_list(request):
     role_filter = request.GET.get("role", "all")
     page_num = int(request.GET.get("page", 1))
 
-    qs = User.objects.select_related("profile").prefetch_related("items", "buyer_orders").order_by("-date_joined")
+    qs = User.objects.select_related("profile").prefetch_related("item_set", "orders").order_by("-date_joined")
 
     if q:
         qs = qs.filter(
@@ -229,9 +229,9 @@ def api_users_list(request):
     elif role_filter == "superuser":
         qs = qs.filter(is_superuser=True)
     elif role_filter == "sellers":
-        qs = qs.filter(items__isnull=False).distinct()
+        qs = qs.filter(item_set__isnull=False).distinct()
     elif role_filter == "buyers":
-        qs = qs.filter(buyer_orders__isnull=False).distinct()
+        qs = qs.filter(orders__isnull=False).distinct()
     elif role_filter == "unverified":
         qs = qs.filter(Q(profile__is_email_verified=False) | Q(profile__isnull=True))
     elif role_filter == "inactive":
@@ -254,8 +254,8 @@ def api_users_list(request):
             "is_staff": u.is_staff,
             "is_superuser": u.is_superuser,
             "is_verified": verified,
-            "items_count": u.items.count(),
-            "orders_count": u.buyer_orders.count(),
+            "items_count": u.item_set.count(),
+            "orders_count": u.orders.count(),
             "date_joined": u.date_joined.strftime("%Y-%m-%d %H:%M"),
         })
 
