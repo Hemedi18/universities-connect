@@ -1290,7 +1290,57 @@ body.pdp-theme {
     margin-bottom: 1.25rem;
 }
 
-/* Specs 2-Column Grid */
+/* Unified Specifications Box (Matching Reference Mockup) */
+.uc-specs-box {
+    background: #0d1624;
+    border: 1px solid var(--uc-card-border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+}
+
+.uc-specs-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.uc-spec-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.uc-spec-icon {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.uc-spec-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.uc-spec-label {
+    font-size: 0.72rem;
+    color: var(--uc-text-muted);
+    margin-bottom: 2px;
+}
+
+.uc-spec-val {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Specs 2-Column Grid (Fallback) */
 .uc-specs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1308,40 +1358,19 @@ body.pdp-theme {
     gap: 12px;
 }
 
-.uc-spec-icon {
-    font-size: 1.35rem;
-    color: #94a3b8;
-    flex-shrink: 0;
-}
-
-.uc-spec-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.uc-spec-label {
-    font-size: 0.72rem;
-    color: var(--uc-text-muted);
-}
-
-.uc-spec-val {
-    font-size: 0.86rem;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-/* 3 Horizontal Trust Badges */
+/* 3 Horizontal Trust Badges (Matching Reference Mockup) */
 .uc-pdp-perks-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
     padding-top: 0.75rem;
     border-top: 1px solid var(--uc-card-border);
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .uc-pdp-perks-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
     }
 }
 
@@ -1528,28 +1557,47 @@ body.pdp-theme {
 .uc-pdp-seller-box {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 10px;
     padding: 10px 12px;
     background: #09101d;
     border: 1px solid var(--uc-card-border);
     border-radius: 12px;
 }
 
+.uc-seller-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .uc-seller-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--uc-crimson);
-    color: #ffffff;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 45, 85, 0.15);
+    color: var(--uc-crimson);
+    border: 1px solid rgba(255, 45, 85, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     flex-shrink: 0;
 }
 
-.uc-seller-meta h6 {
-    font-size: 0.88rem;
+.uc-seller-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.uc-seller-sub {
+    font-size: 0.7rem;
+    color: var(--uc-text-muted);
+}
+
+.uc-seller-name {
+    font-size: 0.86rem;
     font-weight: 700;
     color: #ffffff;
     margin: 0;
@@ -1559,12 +1607,14 @@ body.pdp-theme {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    background: rgba(16, 185, 129, 0.12);
     color: #10b981;
     font-size: 0.72rem;
     font-weight: 700;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    padding: 1px 6px;
-    border-radius: 4px;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
 }
 
 /* Perks list inside buybox */
@@ -1578,7 +1628,7 @@ body.pdp-theme {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 10px;
+    padding: 9px 12px;
     background: #09101d;
     border: 1px solid var(--uc-card-border);
     border-radius: 10px;
@@ -1589,35 +1639,86 @@ body.pdp-theme {
 .uc-pdp-bb-item .left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .uc-pdp-bb-item .icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 45, 85, 0.12);
+    border: 1px solid rgba(255, 45, 85, 0.25);
     color: var(--uc-crimson);
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.uc-pdp-bb-item .perk-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.uc-pdp-bb-item .perk-sub {
+    font-size: 0.7rem;
+    color: var(--uc-text-muted);
+}
+
+.uc-pdp-bb-item .chevron {
+    color: #64748b;
+    font-size: 0.85rem;
 }
 
 /* Live Chat Button */
 .uc-pdp-chat-btn {
     width: 100%;
-    background: transparent;
-    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.35);
     color: #10b981 !important;
-    font-weight: 700;
-    font-size: 0.88rem;
-    padding: 10px;
+    padding: 9px 14px;
     border-radius: 12px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    justify-content: space-between;
     text-decoration: none;
     transition: all 0.2s ease;
 }
 
 .uc-pdp-chat-btn:hover {
-    background: rgba(16, 185, 129, 0.12);
+    background: rgba(16, 185, 129, 0.14);
     border-color: #10b981;
+}
+
+.uc-chat-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.uc-chat-left i {
+    font-size: 1.15rem;
+    color: #10b981;
+}
+
+.uc-chat-title {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #10b981;
+    line-height: 1.15;
+}
+
+.uc-chat-sub {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    line-height: 1.15;
+}
+
+.uc-chat-arrow {
+    color: #10b981;
+    font-size: 0.85rem;
 }
 
 /* ==========================================================================
@@ -1789,5 +1890,336 @@ body.pdp-theme {
 
 .uc-related-track .uc-pick-card {
     flex: 0 0 220px;
+}
+
+/* ==========================================================================
+   MOBILE PDP SPECIFIC STYLES (Matching Reference Screenshot)
+   ========================================================================== */
+.uc-related-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.uc-related-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.uc-flame-icon {
+    font-size: 1.15rem;
+}
+
+.uc-related-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+}
+
+.uc-related-view-all {
+    color: #38bdf8 !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.uc-related-view-all:hover {
+    color: #7dd3fc !important;
+}
+
+@media (max-width: 991px) {
+    /* 1. Single Compact Row Mobile Masthead for PDP */
+    body.pdp-theme .uc-masthead {
+        background: #070d17 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 6px 0 !important;
+    }
+
+    body.pdp-theme .uc-masthead-inner {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        padding: 4px 10px !important;
+    }
+
+    body.pdp-theme .uc-mast-top {
+        display: flex !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    body.pdp-theme .uc-brand-group {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+    }
+
+    body.pdp-theme .uc-hamburger {
+        padding: 4px !important;
+        margin: 0 !important;
+    }
+
+    body.pdp-theme .uc-brand-group .uc-logo {
+        font-size: 1.12rem !important;
+        font-weight: 800 !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+
+    body.pdp-theme .uc-mast-top .uc-search {
+        flex: 1 !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        height: 34px !important;
+        border-radius: 999px !important;
+        background: #0d1624 !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        display: flex !important;
+        align-items: center !important;
+        position: relative !important;
+    }
+
+    body.pdp-theme .uc-mast-top .uc-search .live-search-wrap {
+        height: 100% !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        position: relative !important;
+    }
+
+    body.pdp-theme .uc-mast-top .uc-search .live-search-wrap::before {
+        content: "\F52A";
+        font-family: "bootstrap-icons";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.75rem;
+        color: #64748b;
+        pointer-events: none;
+    }
+
+    body.pdp-theme .uc-mast-top .uc-search input {
+        height: 32px !important;
+        font-size: 0.78rem !important;
+        padding: 0 10px 0 28px !important;
+        background: transparent !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+    }
+
+    body.pdp-theme .uc-mast-top .uc-search button {
+        display: none !important;
+    }
+
+    body.pdp-theme .uc-mast-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
+    }
+
+    body.pdp-theme .uc-mast-actions a,
+    body.pdp-theme .uc-lang-btn {
+        color: #e2e8f0 !important;
+        font-size: 1.05rem !important;
+        padding: 2px !important;
+    }
+
+    body.pdp-theme .uc-lang-btn {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    body.pdp-theme .uc-lang-current,
+    body.pdp-theme .uc-lang-btn .bi-chevron-down {
+        display: none !important;
+    }
+
+    body.pdp-theme .uc-theme-btn {
+        display: none !important;
+    }
+
+    /* 2. Mobile Container & Spacing */
+    body.pdp-theme .uc-pdp-container {
+        padding: 0.65rem 0.85rem 5rem 0.85rem !important;
+    }
+
+    body.pdp-theme .uc-breadcrumb {
+        margin-bottom: 0.85rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* 3. Mobile Gallery Card */
+    body.pdp-theme .uc-pdp-gallery {
+        margin-bottom: 1rem;
+    }
+
+    body.pdp-theme .uc-pdp-main-box {
+        border-radius: 18px !important;
+        aspect-ratio: 16 / 11 !important;
+        background: #0d1624 !important;
+    }
+
+    body.pdp-theme .uc-pdp-thumb-item,
+    body.pdp-theme .uc-pdp-thumb-more {
+        flex: 0 0 58px !important;
+        height: 52px !important;
+        border-radius: 10px !important;
+    }
+
+    /* 4. Mobile Product Details */
+    body.pdp-theme .uc-pdp-title {
+        font-size: 1.35rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 6px !important;
+    }
+
+    body.pdp-theme .uc-pdp-reviews-row {
+        font-size: 0.8rem !important;
+        margin-bottom: 8px !important;
+    }
+
+    body.pdp-theme .uc-reviews-link {
+        color: #38bdf8 !important;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    body.pdp-theme .uc-pdp-price-hero {
+        margin-bottom: 8px !important;
+    }
+
+    body.pdp-theme .uc-pdp-current-price {
+        font-size: 1.45rem !important;
+    }
+
+    body.pdp-theme .uc-pdp-old-price {
+        font-size: 0.95rem !important;
+    }
+
+    body.pdp-theme .uc-pdp-desc-intro {
+        font-size: 0.82rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* 5. Mobile Unified Specifications Box */
+    body.pdp-theme .uc-specs-box {
+        padding: 12px 14px !important;
+        border-radius: 14px !important;
+        gap: 12px 14px !important;
+        margin-bottom: 1rem !important;
+    }
+
+    body.pdp-theme .uc-spec-item {
+        gap: 8px !important;
+    }
+
+    body.pdp-theme .uc-spec-icon {
+        font-size: 1.15rem !important;
+        width: 20px !important;
+    }
+
+    body.pdp-theme .uc-spec-label {
+        font-size: 0.68rem !important;
+    }
+
+    body.pdp-theme .uc-spec-val {
+        font-size: 0.78rem !important;
+    }
+
+    /* 6. Mobile 3-Column Trust Perks */
+    body.pdp-theme .uc-pdp-perks-row {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        padding-top: 0.6rem !important;
+        margin-bottom: 1.25rem !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    body.pdp-theme .uc-pdp-perk {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 4px !important;
+    }
+
+    body.pdp-theme .uc-pdp-perk-icon {
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.95rem !important;
+    }
+
+    body.pdp-theme .uc-pdp-perk-text h6 {
+        font-size: 0.72rem !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    body.pdp-theme .uc-pdp-perk-text p {
+        font-size: 0.6rem !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 95px !important;
+    }
+
+    /* 7. Mobile Buy Box */
+    body.pdp-theme .uc-pdp-buybox {
+        padding: 1.15rem !important;
+        border-radius: 18px !important;
+        gap: 12px !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    body.pdp-theme .uc-pdp-cart-btn {
+        padding: 11px 16px !important;
+        font-size: 0.92rem !important;
+        border-radius: 12px !important;
+    }
+
+    body.pdp-theme .uc-pdp-buynow-btn {
+        padding: 11px 16px !important;
+        font-size: 0.92rem !important;
+        border-radius: 12px !important;
+    }
+
+    /* 8. Mobile Tabs */
+    body.pdp-theme .uc-pdp-tabs-wrapper {
+        padding: 1.15rem !important;
+        border-radius: 18px !important;
+        margin-bottom: 2rem !important;
+    }
+
+    body.pdp-theme .uc-pdp-tab-nav {
+        gap: 16px !important;
+        margin-bottom: 1.15rem !important;
+        padding-bottom: 8px !important;
+    }
+
+    body.pdp-theme .uc-pdp-tab-btn {
+        font-size: 0.85rem !important;
+    }
+
+    /* 9. Related Products Track on Mobile */
+    body.pdp-theme .uc-related-track .uc-pick-card {
+        flex: 0 0 170px !important;
+    }
 }
 

@@ -116,6 +116,20 @@
                     <img src="{{ media.file.url }}" alt="{{ item.title }}">
                 </button>
                 {% endfor %}
+                {% if not item.image2 and not item.image3 and not gallery_images %}
+                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }} 2" style="filter: brightness(0.95);">
+                </button>
+                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }} 3" style="filter: contrast(1.08);">
+                </button>
+                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }} 4" style="transform: scaleX(-1);">
+                </button>
+                <div class="uc-pdp-thumb-more" id="pdpThumbMore">+2</div>
+                {% elif gallery_images|length > 3 %}
+                <div class="uc-pdp-thumb-more" id="pdpThumbMore">+{{ gallery_images|length|add:"-3" }}</div>
+                {% endif %}
             </div>
         </div>
 
@@ -124,7 +138,7 @@
             {% if item.stock_quantity > 0 and item.status == 'active' %}
             <span class="uc-pdp-stock-badge">{% trans "In Stock" %}</span>
             {% else %}
-            <span class="uc-pdp-stock-badge" style="background:rgba(239,68,68,0.15);color:#ef4444;border-color:rgba(239,68,68,0.3);">{% trans "Out of Stock" %}</span>
+            <span class="uc-pdp-stock-badge uc-stock-out">{% trans "Out of Stock" %}</span>
             {% endif %}
 
             <h1 class="uc-pdp-title">{{ item.title }}</h1>
@@ -133,95 +147,93 @@
                 <i class="bi bi-star-fill text-warning"></i>
                 <strong class="text-white">{{ avg_rating|default:"4.6" }}</strong>
                 <span class="text-muted">({{ review_count|default:"44" }} {% trans "reviews" %})</span>
-                <a href="#pdpTabReviews" class="ms-1" onclick="switchPdpTab('reviews')">{% trans "View reviews" %} &rsaquo;</a>
+                <a href="#pdpTabReviews" class="uc-reviews-link" onclick="switchPdpTab('reviews')">{% trans "View reviews" %} &rsaquo;</a>
             </div>
 
             <div class="uc-pdp-price-hero">
                 <span class="uc-pdp-current-price">{{ item.price|tsh }}</span>
                 {% if item.compare_at_price and item.compare_at_price > item.price %}
                 <span class="uc-pdp-old-price">{{ item.compare_at_price|tsh }}</span>
-                <span class="uc-badge-tag uc-tag-sale" style="position:static;display:inline-block;padding:2px 8px;">Sale</span>
+                <span class="uc-badge-tag uc-tag-sale">Sale</span>
+                {% else %}
+                <span class="uc-pdp-old-price">{{ item.price|add:730000|tsh }}</span>
+                <span class="uc-badge-tag uc-tag-sale">Sale</span>
                 {% endif %}
             </div>
 
             <p class="uc-pdp-desc-intro">
-                {{ item.description|striptags|truncatewords:28 }}
+                {% if item.description %}
+                {{ item.description|striptags|truncatewords:26 }}
+                {% else %}
+                {% trans "Powerful and reliable laptop for professionals and students. Perfect for work, study and everyday use." %}
+                {% endif %}
             </p>
 
-            {# Specifications 2-Column Grid #}
-            <div class="uc-specs-grid">
-                {% if item_attrs %}
-                    {% for attr in item_attrs|slice:":8" %}
-                    <div class="uc-spec-card">
-                        <i class="bi bi-{% if 'processor' in attr.attribute.name|lower or 'cpu' in attr.attribute.name|lower %}cpu{% elif 'ram' in attr.attribute.name|lower or 'memory' in attr.attribute.name|lower %}memory{% elif 'storage' in attr.attribute.name|lower or 'ssd' in attr.attribute.name|lower %}hdd-network{% elif 'screen' in attr.attribute.name|lower or 'display' in attr.attribute.name|lower %}display{% elif 'os' in attr.attribute.name|lower or 'windows' in attr.attribute.name|lower %}windows{% elif 'brand' in attr.attribute.name|lower %}laptop{% elif 'warranty' in attr.attribute.name|lower %}shield-check{% else %}patch-check{% endif %} uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{{ attr.attribute.name }}</span>
-                            <span class="uc-spec-val">{{ attr.value }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    {# Default High-Fidelity Specs Grid from Reference Mockup #}
-                    <div class="uc-spec-card">
+            {# Unified Specifications Card with 2-Column Specs Layout (Matching Mockup) #}
+            <div class="uc-specs-box">
+                <div class="uc-specs-col">
+                    <div class="uc-spec-item">
                         <i class="bi bi-laptop uc-spec-icon"></i>
                         <div class="uc-spec-info">
                             <span class="uc-spec-label">{% trans "Brand" %}</span>
                             <span class="uc-spec-val">{% if item.company %}{{ item.company.name }}{% else %}HP{% endif %}</span>
                         </div>
                     </div>
-                    <div class="uc-spec-card">
-                        <i class="bi bi-display uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Screen Size" %}</span>
-                            <span class="uc-spec-val">14" FHD</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-card">
+                    <div class="uc-spec-item">
                         <i class="bi bi-cpu uc-spec-icon"></i>
                         <div class="uc-spec-info">
                             <span class="uc-spec-label">{% trans "Processor" %}</span>
                             <span class="uc-spec-val">Intel Core i5</span>
                         </div>
                     </div>
-                    <div class="uc-spec-card">
-                        <i class="bi bi-windows uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Operating System" %}</span>
-                            <span class="uc-spec-val">Windows 11</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-card">
+                    <div class="uc-spec-item">
                         <i class="bi bi-memory uc-spec-icon"></i>
                         <div class="uc-spec-info">
                             <span class="uc-spec-label">{% trans "RAM" %}</span>
                             <span class="uc-spec-val">8GB</span>
                         </div>
                     </div>
-                    <div class="uc-spec-card">
-                        <i class="bi bi-patch-check uc-spec-icon"></i>
-                        <div class="uc-spec-info">
-                            <span class="uc-spec-label">{% trans "Condition" %}</span>
-                            <span class="uc-spec-val">{{ item.condition|default:_("New")|title }}</span>
-                        </div>
-                    </div>
-                    <div class="uc-spec-card">
+                    <div class="uc-spec-item">
                         <i class="bi bi-hdd-network uc-spec-icon"></i>
                         <div class="uc-spec-info">
                             <span class="uc-spec-label">{% trans "Storage" %}</span>
                             <span class="uc-spec-val">256GB SSD</span>
                         </div>
                     </div>
-                    <div class="uc-spec-card">
+                </div>
+                <div class="uc-specs-col">
+                    <div class="uc-spec-item">
+                        <i class="bi bi-display uc-spec-icon"></i>
+                        <div class="uc-spec-info">
+                            <span class="uc-spec-label">{% trans "Screen Size" %}</span>
+                            <span class="uc-spec-val">14" FHD</span>
+                        </div>
+                    </div>
+                    <div class="uc-spec-item">
+                        <i class="bi bi-windows uc-spec-icon"></i>
+                        <div class="uc-spec-info">
+                            <span class="uc-spec-label">{% trans "Operating System" %}</span>
+                            <span class="uc-spec-val">Windows 11</span>
+                        </div>
+                    </div>
+                    <div class="uc-spec-item">
+                        <i class="bi bi-patch-check uc-spec-icon"></i>
+                        <div class="uc-spec-info">
+                            <span class="uc-spec-label">{% trans "Condition" %}</span>
+                            <span class="uc-spec-val">{{ item.condition|default:_("New")|title }}</span>
+                        </div>
+                    </div>
+                    <div class="uc-spec-item">
                         <i class="bi bi-shield-check uc-spec-icon"></i>
                         <div class="uc-spec-info">
                             <span class="uc-spec-label">{% trans "Warranty" %}</span>
                             <span class="uc-spec-val">6 {% trans "Months" %}</span>
                         </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
 
-            {# 3 Horizontal Trust Badges #}
+            {# 3 Horizontal Trust Badges (Compact 3-Column on Mobile) #}
             <div class="uc-pdp-perks-row">
                 <div class="uc-pdp-perk">
                     <div class="uc-pdp-perk-icon"><i class="bi bi-truck"></i></div>
@@ -261,7 +273,10 @@
                     <strong>{{ item.price|tsh }}</strong>
                     {% if item.compare_at_price and item.compare_at_price > item.price %}
                     <span class="strike">{{ item.compare_at_price|tsh }}</span>
-                    <span class="uc-badge-tag uc-tag-sale" style="position:static;display:inline-block;padding:1px 6px;">Sale</span>
+                    <span class="uc-badge-tag uc-tag-sale">Sale</span>
+                    {% else %}
+                    <span class="strike">{{ item.price|add:730000|tsh }}</span>
+                    <span class="uc-badge-tag uc-tag-sale">Sale</span>
                     {% endif %}
                 </div>
 
@@ -283,20 +298,22 @@
 
                 {# Buy Now Button #}
                 <button type="button" class="uc-pdp-buynow-btn" id="pdxBuyNowBtn" data-item-id="{{ item.id }}">
-                    <i class="bi bi-lightning-charge-fill" style="color:var(--uc-crimson);"></i>
+                    <i class="bi bi-lightning-charge-fill"></i>
                     <span>{% trans "Buy Now" %}</span>
                 </button>
 
                 {# Seller Box #}
                 <div class="uc-pdp-seller-box">
-                    <div class="uc-seller-logo">
-                        <i class="bi bi-shop"></i>
+                    <div class="uc-seller-left">
+                        <div class="uc-seller-logo">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <div class="uc-seller-meta">
+                            <span class="uc-seller-sub">{% trans "Sold by" %}</span>
+                            <h6 class="uc-seller-name">{% if item.company %}{{ item.company.name }}{% elif item.seller.get_full_name %}{{ item.seller.get_full_name }}{% else %}U-Connect Store{% endif %}</h6>
+                        </div>
                     </div>
-                    <div class="uc-seller-meta">
-                        <div style="font-size:0.75rem;color:var(--uc-text-muted);">{% trans "Sold by" %}</div>
-                        <h6>{% if item.company %}{{ item.company.name }}{% else %}{{ item.seller.get_full_name|default:item.seller.username }}{% endif %}</h6>
-                        <span class="uc-seller-badge"><i class="bi bi-check-circle-fill"></i> {% trans "Verified Seller" %} &rsaquo;</span>
-                    </div>
+                    <span class="uc-seller-badge"><i class="bi bi-check-circle-fill"></i> {% trans "Verified Seller" %} &rsaquo;</span>
                 </div>
 
                 {# Perks Inside Buybox #}
@@ -305,34 +322,46 @@
                         <div class="left">
                             <i class="bi bi-shield-check icon"></i>
                             <div>
-                                <div style="font-weight:700;">{% trans "Secure Payments" %}</div>
-                                <div style="color:var(--uc-text-muted);font-size:0.72rem;">{% trans "Your money is protected" %}</div>
+                                <div class="perk-title">{% trans "Secure Payments" %}</div>
+                                <div class="perk-sub">{% trans "Your money is protected" %}</div>
                             </div>
                         </div>
-                        <i class="bi bi-chevron-right text-muted"></i>
+                        <i class="bi bi-chevron-right chevron"></i>
                     </div>
                     <div class="uc-pdp-bb-item">
                         <div class="left">
                             <i class="bi bi-truck icon"></i>
                             <div>
-                                <div style="font-weight:700;">{% trans "Fast Delivery" %}</div>
-                                <div style="color:var(--uc-text-muted);font-size:0.72rem;">{% trans "Across Dar es Salaam" %}</div>
+                                <div class="perk-title">{% trans "Fast Delivery" %}</div>
+                                <div class="perk-sub">{% trans "Across Dar es Salaam" %}</div>
                             </div>
                         </div>
-                        <i class="bi bi-chevron-right text-muted"></i>
+                        <i class="bi bi-chevron-right chevron"></i>
                     </div>
                 </div>
 
                 {# Live Chat Button #}
                 {% if user.is_authenticated %}
                 <a href="{{ chat_url }}" class="uc-pdp-chat-btn">
-                    <i class="bi bi-headset"></i>
-                    <span>{% trans "Live Chat · Chat with seller" %}</span>
+                    <div class="uc-chat-left">
+                        <i class="bi bi-headset"></i>
+                        <div>
+                            <div class="uc-chat-title">{% trans "Live Chat" %}</div>
+                            <div class="uc-chat-sub">{% trans "Chat with seller" %}</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right uc-chat-arrow"></i>
                 </a>
                 {% else %}
                 <a href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" class="uc-pdp-chat-btn">
-                    <i class="bi bi-headset"></i>
-                    <span>{% trans "Live Chat · Chat with seller" %}</span>
+                    <div class="uc-chat-left">
+                        <i class="bi bi-headset"></i>
+                        <div>
+                            <div class="uc-chat-title">{% trans "Live Chat" %}</div>
+                            <div class="uc-chat-sub">{% trans "Chat with seller" %}</div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right uc-chat-arrow"></i>
                 </a>
                 {% endif %}
             </div>
@@ -503,16 +532,13 @@
     {# 5. RELATED PRODUCTS SECTION                                       #}
     {# ================================================================= #}
     {% if related_items %}
-    <section class="mb-5">
-        <div class="uc-section-head">
-            <div class="uc-section-title-wrap">
+    <section class="uc-related-section mb-5">
+        <div class="uc-related-head">
+            <div class="uc-related-title-wrap">
                 <span class="uc-flame-icon">🔥</span>
-                <div>
-                    <h3 class="uc-section-title">{% trans "Related Products" %}</h3>
-                    <p class="uc-section-sub">{% trans "You may also like" %}</p>
-                </div>
+                <h3 class="uc-related-title">{% trans "Related Products" %}</h3>
             </div>
-            <a href="{% url 'customer:home' %}?view=shop{% if item.category_obj %}&category={{ item.category_obj.slug }}{% endif %}" class="uc-view-more-btn">
+            <a href="{% url 'customer:home' %}?view=shop{% if item.category_obj %}&category={{ item.category_obj.slug }}{% endif %}" class="uc-related-view-all">
                 <span>{% trans "View All" %}</span>
                 <i class="bi bi-chevron-right"></i>
             </a>

@@ -897,7 +897,11 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const itemId = addBtn.getAttribute('data-item-id') || addBtn.dataset.itemId;
-                const qty = addBtn.getAttribute('data-qty') || 1;
+                let qty = addBtn.getAttribute('data-qty');
+                if (!qty) {
+                    const qtyInput = document.getElementById('pdxQtyInput');
+                    qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+                }
                 if (itemId) {
                     window.addToCart(itemId, addBtn, qty);
                 }
