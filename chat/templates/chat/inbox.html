@@ -4,10 +4,12 @@
 
 {% block title %}{% trans "Messages" %} · U-Connect{% endblock %}
 {% block body_class %} page-chat page-inbox{% endblock %}
+{% block main_class %}container-fluid p-0 w-100{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/chat-cyber-theme.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/chat-cyber-theme.css' %}?v=2">
 {% endblock %}
+
 
 {% block content %}
 <div class="uc-inbox-wrapper">

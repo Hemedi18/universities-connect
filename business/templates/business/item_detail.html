@@ -144,10 +144,14 @@
             <h1 class="uc-pdp-title">{{ item.title }}</h1>
 
             <div class="uc-pdp-reviews-row">
+                {% if review_count %}
                 <i class="bi bi-star-fill text-warning"></i>
-                <strong class="text-white">{{ avg_rating|default:"4.6" }}</strong>
-                <span class="text-muted">({{ review_count|default:"44" }} {% trans "reviews" %})</span>
+                <strong class="text-white">{{ avg_rating }}</strong>
+                <span class="text-muted">({{ review_count }} {% trans "reviews" %})</span>
                 <a href="#pdpTabReviews" class="uc-reviews-link" onclick="switchPdpTab('reviews')">{% trans "View reviews" %} &rsaquo;</a>
+                {% else %}
+                <span class="text-muted" style="font-size:0.82rem;"><i class="bi bi-star text-muted"></i> {% trans "No reviews yet" %}</span>
+                {% endif %}
             </div>
 
             <div class="uc-pdp-price-hero">
@@ -155,101 +159,131 @@
                 {% if item.compare_at_price and item.compare_at_price > item.price %}
                 <span class="uc-pdp-old-price">{{ item.compare_at_price|tsh }}</span>
                 <span class="uc-badge-tag uc-tag-sale">Sale</span>
-                {% else %}
-                <span class="uc-pdp-old-price">{{ item.price|add:730000|tsh }}</span>
-                <span class="uc-badge-tag uc-tag-sale">Sale</span>
                 {% endif %}
             </div>
 
+            {% if item.description %}
             <p class="uc-pdp-desc-intro">
-                {% if item.description %}
-                {{ item.description|striptags|truncatewords:26 }}
-                {% else %}
-                {% trans "Powerful and reliable laptop for professionals and students. Perfect for work, study and everyday use." %}
-                {% endif %}
+                {{ item.description|striptags|truncatewords:28 }}
             </p>
+            {% endif %}
 
-            {# Unified Specifications Card with 2-Column Direct Grid Layout (Matching Mockup) #}
+            {# Unified Specifications Card with 2-Column Direct Grid Layout (Authentic Database Data Only) #}
+            {% if item_attrs or item.condition or item.category_obj or item.company or item.sku or item.shipping_weight or item.get_full_location %}
             <div class="uc-specs-box" style="display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px 16px !important; width: 100% !important;">
-                <div class="uc-spec-item">
-                    <i class="bi bi-laptop uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Brand" %}</span>
-                        <span class="uc-spec-val">{% if item.company %}{{ item.company.name }}{% elif item.brand %}{{ item.brand }}{% else %}HP{% endif %}</span>
-                    </div>
-                </div>
-                <div class="uc-spec-item">
-                    <i class="bi bi-display uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Screen Size" %}</span>
-                        <span class="uc-spec-val">14" FHD</span>
-                    </div>
-                </div>
-                <div class="uc-spec-item">
-                    <i class="bi bi-cpu uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Processor" %}</span>
-                        <span class="uc-spec-val">Intel Core i5</span>
-                    </div>
-                </div>
-                <div class="uc-spec-item">
-                    <i class="bi bi-windows uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Operating System" %}</span>
-                        <span class="uc-spec-val">Windows 11</span>
-                    </div>
-                </div>
-                <div class="uc-spec-item">
-                    <i class="bi bi-memory uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "RAM" %}</span>
-                        <span class="uc-spec-val">8GB</span>
-                    </div>
-                </div>
+                {% if item.condition %}
                 <div class="uc-spec-item">
                     <i class="bi bi-patch-check uc-spec-icon"></i>
                     <div class="uc-spec-info">
                         <span class="uc-spec-label">{% trans "Condition" %}</span>
-                        <span class="uc-spec-val">{{ item.condition|default:_("New")|title }}</span>
+                        <span class="uc-spec-val">{{ item.get_condition_display|default:item.condition|title }}</span>
                     </div>
                 </div>
+                {% endif %}
+
+                {% if item.category_obj %}
                 <div class="uc-spec-item">
-                    <i class="bi bi-hdd-network uc-spec-icon"></i>
+                    <i class="bi bi-folder2 uc-spec-icon"></i>
                     <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Storage" %}</span>
-                        <span class="uc-spec-val">256GB SSD</span>
+                        <span class="uc-spec-label">{% trans "Category" %}</span>
+                        <span class="uc-spec-val">{{ item.category_obj.name }}</span>
                     </div>
                 </div>
+                {% endif %}
+
+                {% if item.company %}
                 <div class="uc-spec-item">
-                    <i class="bi bi-shield-check uc-spec-icon"></i>
+                    <i class="bi bi-building uc-spec-icon"></i>
                     <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Warranty" %}</span>
-                        <span class="uc-spec-val">6 {% trans "Months" %}</span>
+                        <span class="uc-spec-label">{% trans "Brand / Store" %}</span>
+                        <span class="uc-spec-val">{{ item.company.name }}</span>
                     </div>
                 </div>
+                {% endif %}
+
+                {% if item.stock_quantity is not None %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-box-seam uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Stock" %}</span>
+                        <span class="uc-spec-val">{{ item.stock_quantity }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% for attr in item_attrs %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-tag uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{{ attr.attribute.name }}</span>
+                        <span class="uc-spec-val">{{ attr.value }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if item.sku %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-upc-scan uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "SKU" %}</span>
+                        <span class="uc-spec-val">{{ item.sku }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if item.shipping_weight %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-speedometer2 uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Weight" %}</span>
+                        <span class="uc-spec-val">{{ item.shipping_weight }} kg</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if item.shipping_dimensions %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-aspect-ratio uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Dimensions" %}</span>
+                        <span class="uc-spec-val">{{ item.shipping_dimensions }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if item.get_full_location %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-geo-alt uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Location" %}</span>
+                        <span class="uc-spec-val">{{ item.get_full_location|truncatechars:26 }}</span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
+            {% endif %}
 
             {# 3 Horizontal Trust Badges (Compact 3-Column on Mobile) #}
             <div class="uc-pdp-perks-row">
                 <div class="uc-pdp-perk">
                     <div class="uc-pdp-perk-icon"><i class="bi bi-truck"></i></div>
                     <div class="uc-pdp-perk-text">
-                        <h6>{% trans "Free Delivery" %}</h6>
-                        <p>{% if item.campus_location %}{{ item.campus_location }}{% else %}Within Dar es Salaam{% endif %}</p>
+                        <h6>{% trans "Delivery / Meetup" %}</h6>
+                        <p>{% if item.get_full_location %}{{ item.get_full_location|truncatechars:24 }}{% else %}{% trans "In Person Meetup" %}{% endif %}</p>
                     </div>
                 </div>
                 <div class="uc-pdp-perk">
                     <div class="uc-pdp-perk-icon"><i class="bi bi-shield-lock-fill"></i></div>
                     <div class="uc-pdp-perk-text">
                         <h6>{% trans "Secure Payment" %}</h6>
-                        <p>{% trans "Escrow Protection" %}</p>
+                        <p>{% trans "Cash on Delivery" %}</p>
                     </div>
                 </div>
                 <div class="uc-pdp-perk">
-                    <div class="uc-pdp-perk-icon"><i class="bi bi-arrow-repeat"></i></div>
+                    <div class="uc-pdp-perk-icon"><i class="bi bi-chat-dots-fill"></i></div>
                     <div class="uc-pdp-perk-text">
-                        <h6>{% trans "7 Days Return" %}</h6>
-                        <p>{% trans "Hassle Free" %}</p>
+                        <h6>{% trans "Direct Chat" %}</h6>
+                        <p>{% trans "Instant seller chat" %}</p>
                     </div>
                 </div>
             </div>
@@ -373,7 +407,7 @@
         <nav class="uc-pdp-tab-nav" aria-label="{% trans 'Product Details' %}">
             <button type="button" class="uc-pdp-tab-btn active" data-tab="desc">{% trans "Description" %}</button>
             <button type="button" class="uc-pdp-tab-btn" data-tab="specs">{% trans "Specifications" %}</button>
-            <button type="button" class="uc-pdp-tab-btn" data-tab="reviews">{% trans "Reviews" %} ({{ review_count|default:"44" }})</button>
+            <button type="button" class="uc-pdp-tab-btn" data-tab="reviews">{% trans "Reviews" %} ({{ review_count|default:0 }})</button>
             <button type="button" class="uc-pdp-tab-btn" data-tab="shipping">{% trans "Shipping & Returns" %}</button>
         </nav>
 
@@ -382,48 +416,56 @@
             <div class="uc-pdp-desc-grid">
                 <div>
                     <h3 class="uc-desc-title">{% trans "Product Description" %}</h3>
-                    <p class="uc-desc-text">
+                    <div class="uc-desc-text">
+                        {% if item.description %}
                         {{ item.description|linebreaks }}
-                    </p>
+                        {% else %}
+                        <p class="text-muted fst-italic">{% trans "No detailed description provided by the seller." %}</p>
+                        {% endif %}
+                    </div>
 
-                    <h4 class="uc-desc-title" style="font-size:1rem;margin-top:1.5rem;">{% trans "Key Features" %}</h4>
+                    {% if item_attrs %}
+                    <h4 class="uc-desc-title" style="font-size:1rem;margin-top:1.5rem;">{% trans "Product Attributes" %}</h4>
                     <ul class="uc-checklist">
-                        <li><i class="bi bi-check-circle-fill"></i> Fast Intel Core i5 processor</li>
-                        <li><i class="bi bi-check-circle-fill"></i> 8GB RAM for smooth multitasking performance</li>
-                        <li><i class="bi bi-check-circle-fill"></i> 256GB SSD for rapid data access & quick booting</li>
-                        <li><i class="bi bi-check-circle-fill"></i> Windows 11 pre-installed and ready to use</li>
-                        <li><i class="bi bi-check-circle-fill"></i> 14-inch Full HD display for crisp visuals</li>
+                        {% for attr in item_attrs %}
+                        <li><i class="bi bi-check-circle-fill text-success"></i> <strong>{{ attr.attribute.name }}:</strong> {{ attr.value }}</li>
+                        {% endfor %}
                     </ul>
+                    {% endif %}
                 </div>
 
-                {# Right Side Feature Highlight Cards #}
+                {# Right Side Authentic Information Cards #}
                 <div class="uc-feature-cards">
                     <div class="uc-feature-box">
-                        <div class="uc-feat-icon"><i class="bi bi-laptop"></i></div>
+                        <div class="uc-feat-icon"><i class="bi bi-shield-check text-success"></i></div>
                         <div class="uc-feat-text">
-                            <h6>{% trans "Modern Design" %}</h6>
-                            <p>{% trans "Sleek, lightweight and portable chassis" %}</p>
+                            <h6>{% trans "Product Condition" %}</h6>
+                            <p>{{ item.get_condition_display|default:item.condition|title }}</p>
                         </div>
                     </div>
+                    {% if item.get_full_location %}
                     <div class="uc-feature-box">
-                        <div class="uc-feat-icon"><i class="bi bi-battery-charging"></i></div>
+                        <div class="uc-feat-icon"><i class="bi bi-geo-alt text-primary"></i></div>
                         <div class="uc-feat-text">
-                            <h6>{% trans "Long Battery Life" %}</h6>
-                            <p>{% trans "Work longer, charge less throughout the day" %}</p>
+                            <h6>{% trans "Location / Meetup" %}</h6>
+                            <p>{{ item.get_full_location }}</p>
                         </div>
                     </div>
+                    {% endif %}
+                    {% if item.company %}
                     <div class="uc-feature-box">
-                        <div class="uc-feat-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+                        <div class="uc-feat-icon"><i class="bi bi-building text-info"></i></div>
                         <div class="uc-feat-text">
-                            <h6>{% trans "High Performance" %}</h6>
-                            <p>{% trans "Engineered for work, study and multimedia" %}</p>
+                            <h6>{% trans "Company / Brand" %}</h6>
+                            <p>{{ item.company.name }}</p>
                         </div>
                     </div>
+                    {% endif %}
                     <div class="uc-feature-box">
-                        <div class="uc-feat-icon"><i class="bi bi-shield-check"></i></div>
+                        <div class="uc-feat-icon"><i class="bi bi-box-seam text-warning"></i></div>
                         <div class="uc-feat-text">
-                            <h6>{% trans "Trusted Brand" %}</h6>
-                            <p>{% trans "Tested build quality and certified reliability" %}</p>
+                            <h6>{% trans "Availability" %}</h6>
+                            <p>{{ item.stock_quantity }} {% trans "units available" %}</p>
                         </div>
                     </div>
                 </div>
@@ -440,18 +482,52 @@
                             <th style="width:30%;color:#94a3b8;">{% trans "Product Name" %}</th>
                             <td>{{ item.title }}</td>
                         </tr>
+                        {% if item.category_obj or item.category %}
                         <tr>
                             <th style="color:#94a3b8;">{% trans "Category" %}</th>
-                            <td>{{ item.category_obj.name|default:"General" }}</td>
+                            <td>{{ item.category_obj.name|default:item.category }}</td>
                         </tr>
+                        {% endif %}
+                        {% if item.condition %}
                         <tr>
                             <th style="color:#94a3b8;">{% trans "Condition" %}</th>
-                            <td>{{ item.condition|default:_("New")|title }}</td>
+                            <td>{{ item.get_condition_display|default:item.condition|title }}</td>
                         </tr>
+                        {% endif %}
+                        {% if item.company %}
+                        <tr>
+                            <th style="color:#94a3b8;">{% trans "Brand / Store" %}</th>
+                            <td>{{ item.company.name }}</td>
+                        </tr>
+                        {% endif %}
                         {% if item.sku %}
                         <tr>
                             <th style="color:#94a3b8;">SKU / Product ID</th>
                             <td>{{ item.sku }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if item.stock_quantity is not None %}
+                        <tr>
+                            <th style="color:#94a3b8;">{% trans "Stock Quantity" %}</th>
+                            <td>{{ item.stock_quantity }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if item.shipping_weight %}
+                        <tr>
+                            <th style="color:#94a3b8;">{% trans "Weight" %}</th>
+                            <td>{{ item.shipping_weight }} kg</td>
+                        </tr>
+                        {% endif %}
+                        {% if item.shipping_dimensions %}
+                        <tr>
+                            <th style="color:#94a3b8;">{% trans "Dimensions" %}</th>
+                            <td>{{ item.shipping_dimensions }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if item.get_full_location %}
+                        <tr>
+                            <th style="color:#94a3b8;">{% trans "Location" %}</th>
+                            <td>{{ item.get_full_location }}</td>
                         </tr>
                         {% endif %}
                         {% for attr in item_attrs %}
@@ -468,9 +544,10 @@
         {# TAB 3: REVIEWS #}
         <div class="uc-pdp-tab-content" id="tabContent-reviews">
             <h3 class="uc-desc-title">{% trans "Customer Reviews" %}</h3>
+            {% if review_count %}
             <div class="row g-4 mb-4">
                 <div class="col-md-4 text-center p-3 rounded-3" style="background:#09101d;border:1px solid var(--uc-card-border);">
-                    <div style="font-size:3.5rem;font-weight:900;color:#ffffff;line-height:1;">{{ avg_rating|default:"4.6" }}</div>
+                    <div style="font-size:3.5rem;font-weight:900;color:#ffffff;line-height:1;">{{ avg_rating }}</div>
                     <div class="text-warning my-2" style="font-size:1.25rem;">
                         <i class="bi bi-star-fill"></i>
                         <i class="bi bi-star-fill"></i>
@@ -478,7 +555,7 @@
                         <i class="bi bi-star-fill"></i>
                         <i class="bi bi-star-half"></i>
                     </div>
-                    <div class="text-muted small">{% trans "Based on" %} {{ review_count|default:"44" }} {% trans "verified reviews" %}</div>
+                    <div class="text-muted small">{% trans "Based on" %} {{ review_count }} {% trans "verified reviews" %}</div>
                 </div>
                 <div class="col-md-8">
                     {% for bar in rating_bars %}
@@ -489,11 +566,15 @@
                         </div>
                         <span style="width:40px;color:#94a3b8;text-align:right;">{{ bar.count }}</span>
                     </div>
-                    {% empty %}
-                    <p class="text-muted">{% trans "Be the first to share your experience with this seller!" %}</p>
                     {% endfor %}
                 </div>
             </div>
+            {% else %}
+            <div class="text-center py-4 mb-4" style="background:#09101d;border:1px solid var(--uc-card-border);border-radius:12px;color:#94a3b8;">
+                <i class="bi bi-chat-square-quote" style="font-size:2.5rem;opacity:0.4;display:inline-block;margin-bottom:8px;"></i>
+                <p class="mb-0">{% trans "No reviews yet. Be the first to share your experience with this seller!" %}</p>
+            </div>
+            {% endif %}
 
             {% if user.is_authenticated %}
             <form method="post" class="mt-4 p-3 rounded-3" style="background:#09101d;border:1px solid var(--uc-card-border);">

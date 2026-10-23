@@ -46,25 +46,28 @@ body.page-chat-room .uc-footer-bottom {
 }
 
 /* ==========================================================================
-   DESKTOP 3-COLUMN WRAPPER & CONTAINER
+   DESKTOP 3-COLUMN WRAPPER & CONTAINER (100% Full Width on PC)
    ========================================================================== */
 .uc-chat-page-wrapper {
-    max-width: 1440px;
-    margin: 1.25rem auto 2.5rem auto;
-    padding: 0 1rem;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px 14px 20px 14px !important;
+    box-sizing: border-box !important;
 }
 
 .uc-chat-card {
     display: grid;
-    grid-template-columns: 290px 1fr 270px;
+    grid-template-columns: 310px 1fr 290px;
     background: #0c1322;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 22px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    height: calc(100vh - 150px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.55);
+    height: calc(100vh - 110px);
     min-height: 640px;
-    max-height: 840px;
+    max-height: calc(100vh - 90px);
+    width: 100% !important;
 }
 
 /* ==========================================================================
