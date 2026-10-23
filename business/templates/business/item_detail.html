@@ -1,5 +1,6 @@
 {% extends 'business/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ item.title }} · U-Connect{% endblock %}
 {% block extra_head %}
@@ -88,47 +89,47 @@
             <a class="pdx-stars" href="#nav-review"><i class="bi bi-star-fill"></i> {{ avg_rating }}</a>
             <a href="#nav-review">{{ review_count }} review{{ review_count|pluralize }}</a>
             {% else %}
-            <span class="pdx-stars pdx-stars-muted"><i class="bi bi-star"></i> No ratings yet</span>
+            <span class="pdx-stars pdx-stars-muted"><i class="bi bi-star"></i> {% trans "No ratings yet" %}</span>
             {% endif %}
             {% if item.condition %}<span class="pdx-chip">{{ item.condition|title }}</span>{% endif %}
             {% if item.views %}<span>{{ item.views }} view{{ item.views|pluralize }}</span>{% endif %}
         </div>
 
         <div class="pdx-deal">
-            <div class="pdx-deal-label">Bei</div>
+            <div class="pdx-deal-label">{% trans "Price" %}</div>
             <div class="pdx-deal-price">
                 <strong>{{ price_label }}</strong>
                 {% if compare_label %}<span class="was">{{ compare_label }}</span>{% endif %}
             </div>
         </div>
 
-        <section class="pdx-specs" aria-label="Product details">
-            <h2 class="pdx-h">Maelezo ya bidhaa</h2>
+        <section class="pdx-specs" aria-label="{% trans 'Product details' %}">
+            <h2 class="pdx-h">{% trans "Product details" %}</h2>
             <dl class="pdx-spec-list">
                 {% if item.category_obj %}
-                <div><dt>Category</dt><dd>{{ item.category_obj.name }}</dd></div>
+                <div><dt>{% trans "Category" %}</dt><dd>{{ item.category_obj.name }}</dd></div>
                 {% endif %}
                 {% if item.condition %}
-                <div><dt>Condition</dt><dd>{{ item.condition|title }}</dd></div>
+                <div><dt>{% trans "Condition" %}</dt><dd>{{ item.condition|title }}</dd></div>
                 {% endif %}
                 {% if item.sku %}
                 <div><dt>SKU</dt><dd>{{ item.sku }}</dd></div>
                 {% endif %}
-                <div><dt>Stock</dt><dd>{{ item.stock_quantity }} available</dd></div>
+                <div><dt>{% trans "Stock" %}</dt><dd>{{ item.stock_quantity }} {% trans "available" %}</dd></div>
                 {% if item.minimum_order_quantity and item.minimum_order_quantity > 1 %}
-                <div><dt>Min. order</dt><dd>{{ item.minimum_order_quantity }}</dd></div>
+                <div><dt>{% trans "Min. order" %}</dt><dd>{{ item.minimum_order_quantity }}</dd></div>
                 {% endif %}
                 {% if item.campus_location %}
-                <div><dt>Location</dt><dd>{{ item.campus_location }}</dd></div>
+                <div><dt>{% trans "Location" %}</dt><dd>{{ item.campus_location }}</dd></div>
                 {% endif %}
                 {% if item.shipping_weight %}
-                <div><dt>Weight</dt><dd>{{ item.shipping_weight }} kg</dd></div>
+                <div><dt>{% trans "Weight" %}</dt><dd>{{ item.shipping_weight }} kg</dd></div>
                 {% endif %}
                 {% if item.shipping_dimensions %}
-                <div><dt>Dimensions</dt><dd>{{ item.shipping_dimensions }}</dd></div>
+                <div><dt>{% trans "Dimensions" %}</dt><dd>{{ item.shipping_dimensions }}</dd></div>
                 {% endif %}
                 {% if item.contact_method %}
-                <div><dt>Contact via</dt><dd>{{ item.get_contact_method_display }}</dd></div>
+                <div><dt>{% trans "Contact via" %}</dt><dd>{{ item.get_contact_method_display }}</dd></div>
                 {% endif %}
                 {% for attr_val in item_attrs %}
                 <div>
@@ -141,8 +142,8 @@
 
         {% if qty_choices %}
         <div class="pdx-opt-head">
-            <strong>Quantity</strong>
-            <span>{{ item.stock_quantity }} left</span>
+            <strong>{% trans "Quantity" %}</strong>
+            <span>{{ item.stock_quantity }} {% trans "left" %}</span>
         </div>
         <div class="pdx-opts pdx-opts-mobile" id="pdxQtyOpts">
             {% for n in qty_choices %}
@@ -154,25 +155,25 @@
         <div class="pdx-contact pdx-contact-mobile">
             <div class="pdx-cod-warn">
                 <i class="bi bi-exclamation-triangle-fill"></i>
-                <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa tu baada ya kuona bidhaa (Cash on Delivery).</p>
+                <p>{% trans "Never pay shipping or transport fees before receiving package. Pay only upon inspection (Cash on Delivery)." %}</p>
             </div>
             {% if item.stock_quantity > 0 and item.status == 'active' %}
-            <div class="pdx-contact-label">Wasiliana na muuzaji</div>
+            <div class="pdx-contact-label">{% trans "Contact Seller" %}</div>
             {% if contact_phone %}
             <div class="pdx-phone">{{ contact_phone }}</div>
             {% else %}
-            <div class="pdx-phone pdx-phone-muted">Namba haipo — tumia chat</div>
+            <div class="pdx-phone pdx-phone-muted">{% trans "No phone provided — use chat" %}</div>
             {% endif %}
             <div class="pdx-contact-icons">
                 {% if user.is_authenticated %}
-                <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat with seller' %}"><i class="bi bi-chat-dots-fill"></i></a>
                 {% else %}
-                <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat with seller' %}"><i class="bi bi-chat-dots-fill"></i></a>
                 {% endif %}
                 {% if tel_url %}
-                <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call seller"><i class="bi bi-telephone-fill"></i></a>
+                <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="{% trans 'Call' %}" aria-label="{% trans 'Call seller' %}"><i class="bi bi-telephone-fill"></i></a>
                 {% else %}
-                <span class="pdx-ci pdx-ci-disabled" title="No phone" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
+                <span class="pdx-ci pdx-ci-disabled" title="{% trans 'No phone' %}" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
                 {% endif %}
                 <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp seller"><i class="bi bi-whatsapp"></i></a>
             </div>
@@ -180,13 +181,13 @@
         </div>
 
         <section class="pdx-desc-block">
-            <h2 class="pdx-h">Description</h2>
+            <h2 class="pdx-h">{% trans "Description" %}</h2>
             <p class="pdx-about" id="pdxAbout">{{ item.description|linebreaksbr }}</p>
         </section>
 
         <div class="pdx-divider"></div>
         <section class="pdx-reviews" id="nav-review">
-            <h2 class="pdx-h">Customer Reviews{% if review_count %} ({{ review_count }}){% endif %}</h2>
+            <h2 class="pdx-h">{% trans "Customer Reviews" %}{% if review_count %} ({{ review_count }}){% endif %}</h2>
             {% if avg_rating %}
             <div class="pdx-review-head">
                 <div class="pdx-review-score">
@@ -207,7 +208,7 @@
                 {% endif %}
             </div>
             {% else %}
-            <p class="pdx-about">Hakuna ratings bado — kuwa wa kwanza kutoa maoni.</p>
+            <p class="pdx-about">{% trans "No ratings yet — be the first to review." %}</p>
             {% endif %}
             {% for comment in comments|slice:":8" %}
             <div class="pdx-cmt">
@@ -218,20 +219,20 @@
                 <p>{{ comment.content }}</p>
             </div>
             {% empty %}
-            {% if not review_count %}<p class="pdx-about">No comments yet.</p>{% endif %}
+            {% if not review_count %}<p class="pdx-about">{% trans "No comments yet." %}</p>{% endif %}
             {% endfor %}
             {% if user.is_authenticated %}
             <form method="post" class="pdx-cmt-form">
                 {% csrf_token %}
                 {{ comment_form.content }}
-                <button type="submit" class="pdx-post">Post comment</button>
+                <button type="submit" class="pdx-post">{% trans "Post comment" %}</button>
             </form>
             {% endif %}
         </section>
 
         {% if related_items %}
         <div class="pdx-divider"></div>
-        <h2 class="pdx-h">You may also like</h2>
+        <h2 class="pdx-h">{% trans "You may also like" %}</h2>
         <div class="pdx-hscroll">
             {% for r in related_items|slice:":6" %}
             <a class="pdx-rel" href="{% url 'customer:item_detail' r.id %}">
@@ -272,41 +273,41 @@
             </div>
 
             <ul class="pdx-ship">
-                <li><i class="bi bi-truck"></i> Campus meetup / delivery</li>
-                <li><i class="bi bi-geo-alt"></i> {{ item.campus_location|default:"Campus pickup" }}</li>
-                <li><i class="bi bi-cash-stack"></i> Cash on Delivery</li>
-                <li><i class="bi bi-shield-check"></i> Buyer protection</li>
+                <li><i class="bi bi-truck"></i> {% trans "Campus meetup / delivery" %}</li>
+                <li><i class="bi bi-geo-alt"></i> {{ item.campus_location|default:_("Campus pickup") }}</li>
+                <li><i class="bi bi-cash-stack"></i> {% trans "Cash on Delivery" %}</li>
+                <li><i class="bi bi-shield-check"></i> {% trans "Buyer protection" %}</li>
             </ul>
 
             <div class="pdx-cod-warn">
                 <i class="bi bi-exclamation-triangle-fill"></i>
-                <p>Usilipe hata hela ya usafiri kabla ya kupokea mzigo. Lipa tu baada ya kuona bidhaa (Cash on Delivery).</p>
+                <p>{% trans "Never pay shipping or transport fees before receiving package. Pay only upon inspection (Cash on Delivery)." %}</p>
             </div>
 
             {% if item.stock_quantity > 0 and item.status == 'active' %}
             <div class="pdx-contact">
-                <div class="pdx-contact-label">Wasiliana na muuzaji</div>
+                <div class="pdx-contact-label">{% trans "Contact Seller" %}</div>
                 {% if contact_phone %}
                 <div class="pdx-phone">{{ contact_phone }}</div>
                 {% else %}
-                <div class="pdx-phone pdx-phone-muted">Namba haipo — tumia chat</div>
+                <div class="pdx-phone pdx-phone-muted">{% trans "No phone provided — use chat" %}</div>
                 {% endif %}
                 <div class="pdx-contact-icons">
                     {% if user.is_authenticated %}
-                    <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                    <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat with seller' %}"><i class="bi bi-chat-dots-fill"></i></a>
                     {% else %}
-                    <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat with seller"><i class="bi bi-chat-dots-fill"></i></a>
+                    <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat with seller' %}"><i class="bi bi-chat-dots-fill"></i></a>
                     {% endif %}
                     {% if tel_url %}
-                    <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call seller"><i class="bi bi-telephone-fill"></i></a>
+                    <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="{% trans 'Call' %}" aria-label="{% trans 'Call seller' %}"><i class="bi bi-telephone-fill"></i></a>
                     {% else %}
-                    <span class="pdx-ci pdx-ci-disabled" title="No phone" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
+                    <span class="pdx-ci pdx-ci-disabled" title="{% trans 'No phone' %}" aria-disabled="true"><i class="bi bi-telephone-fill"></i></span>
                     {% endif %}
                     <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp seller"><i class="bi bi-whatsapp"></i></a>
                 </div>
             </div>
             {% else %}
-            <button type="button" class="pdx-cart pdx-cart-desk" disabled>Out of stock</button>
+            <button type="button" class="pdx-cart pdx-cart-desk" disabled>{% trans "Out of stock" %}</button>
             {% endif %}
         </div>
     </aside>
@@ -316,16 +317,16 @@
         <div class="pdx-bar-inner pdx-bar-contact">
             {% if item.stock_quantity > 0 and item.status == 'active' %}
             {% if user.is_authenticated %}
-            <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots-fill"></i></a>
+            <a class="pdx-ci pdx-ci-chat" href="{{ chat_url }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots-fill"></i></a>
             {% else %}
-            <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="Chat" aria-label="Chat"><i class="bi bi-chat-dots-fill"></i></a>
+            <a class="pdx-ci pdx-ci-chat" href="{% url 'users:login' %}?next={{ chat_url|urlencode }}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots-fill"></i></a>
             {% endif %}
             {% if tel_url %}
-            <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="Call" aria-label="Call"><i class="bi bi-telephone-fill"></i></a>
+            <a class="pdx-ci pdx-ci-call" href="{{ tel_url }}" title="{% trans 'Call' %}" aria-label="{% trans 'Call' %}"><i class="bi bi-telephone-fill"></i></a>
             {% endif %}
             <a class="pdx-ci pdx-ci-wa" href="{{ whatsapp_url }}" title="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
             {% else %}
-            <button type="button" class="pdx-cart" disabled>Out of stock</button>
+            <button type="button" class="pdx-cart" disabled>{% trans "Out of stock" %}</button>
             {% endif %}
         </div>
     </div>

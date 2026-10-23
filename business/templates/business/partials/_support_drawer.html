@@ -1,10 +1,11 @@
 {% load static %}
+{% load i18n %}
 <!-- U-Connect Floating AI / Live Support Launcher -->
-<div id="uc-ai-help-bubble" class="uc-ai-help-bubble" role="button" aria-label="Msaada na Malalamiko (Need Help / Feedback?)" title="Msaada na Malalamiko / AI Assistant">
+<div id="uc-ai-help-bubble" class="uc-ai-help-bubble" role="button" aria-label="{% trans 'Help & Support / AI Assistant' %}" title="{% trans 'Help & Support / AI Assistant' %}">
     <div class="uc-ai-bubble-inner">
         <i class="bi bi-stars uc-sparkle-glow"></i>
         <i class="bi bi-chat-heart-fill uc-chat-icon"></i>
-        <span class="uc-bubble-text d-none d-md-inline">Msaada & AI</span>
+        <span class="uc-bubble-text d-none d-md-inline">{% trans "Support & AI" %}</span>
         <span id="uc-help-unread-badge" class="uc-unread-dot d-none"></span>
     </div>
 </div>
@@ -22,27 +23,27 @@
                 <span class="uc-agent-pulse"></span>
             </div>
             <div>
-                <h6 class="mb-0 fw-bold text-white" id="ucDrawerTitle">U-Connect Msaada & AI</h6>
+                <h6 class="mb-0 fw-bold text-white" id="ucDrawerTitle">{% trans "U-Connect Support & AI" %}</h6>
                 <div class="uc-drawer-sub">
                     <span class="uc-online-indicator"></span>
-                    <span class="small text-white-50">Wasimamizi wako tayari (Active)</span>
+                    <span class="small text-white-50">{% trans "Support agents are online (Active)" %}</span>
                 </div>
             </div>
         </div>
         <div class="d-flex align-items-center gap-1">
-            <a href="{% url 'guest_chat' %}" class="btn btn-sm btn-outline-light py-0 px-2 small" title="Fungua ukurasa mzima (Full Page Chat)" style="font-size: 0.72rem;">
+            <a href="{% url 'guest_chat' %}" class="btn btn-sm btn-outline-light py-0 px-2 small" title="{% trans 'Open Full Page Chat' %}" style="font-size: 0.72rem;">
                 <i class="bi bi-arrows-fullscreen"></i> Full
             </a>
-            <button type="button" class="uc-drawer-close" id="ucDrawerClose" aria-label="Close Support Drawer">&times;</button>
+            <button type="button" class="uc-drawer-close" id="ucDrawerClose" aria-label="{% trans 'Close Support Drawer' %}">&times;</button>
         </div>
     </div>
 
     <!-- Quick Question Chips -->
     <div class="uc-drawer-chips">
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('💡 Jinsi ya kununua bidhaa chuoni?')">💡 Jinsi ya kununua</button>
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('📦 Jinsi ya kuuza bidhaa au kuanzisha duka?')">📦 Kuuza bidhaa</button>
-        <button type="button" class="uc-chip" onclick="applyHelpPrompt('⚠️ Kuna hitilafu ninakutana nayo kwenye ukurasa huu.')">⚠️ Ripoti hitilafu</button>
-        <button type="button" class="uc-chip uc-chip-camera" onclick="triggerPageCapture()"><i class="bi bi-camera-fill me-1"></i>Piga picha (Screenshot)</button>
+        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "💡 How do I buy products on campus?" %}{% endfilter %}')">{% trans "💡 How to buy" %}</button>
+        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "📦 How do I post an item or start selling?" %}{% endfilter %}')">{% trans "📦 How to sell" %}</button>
+        <button type="button" class="uc-chip" onclick="applyHelpPrompt('{% filter escapejs %}{% trans "⚠️ I encountered an error or problem on this page." %}{% endfilter %}')">{% trans "⚠️ Report issue" %}</button>
+        <button type="button" class="uc-chip uc-chip-camera" onclick="triggerPageCapture()"><i class="bi bi-camera-fill me-1"></i>{% trans "Take Screenshot" %}</button>
     </div>
 
     <!-- Chat & Feedback Feed -->
@@ -51,9 +52,9 @@
             <div class="uc-welcome-icon">
                 <i class="bi bi-chat-quote-fill"></i>
             </div>
-            <h6 class="fw-bold mb-1">Karibu kwenye U-Connect Support!</h6>
+            <h6 class="fw-bold mb-1">{% trans "Welcome to U-Connect Support!" %}</h6>
             <p class="small text-muted mb-0">
-                Una swali, unahitaji msaada au umekutana na changamoto? Unaweza kuandika hapa au <strong>kupiga picha ya ukurasa huu (Screenshot)</strong> ili wasimamizi warekebishe haraka!
+                {% trans "Have a question, need assistance or noticed an issue? Write here or take a screenshot so our team can resolve it quickly!" %}
             </p>
         </div>
 
@@ -63,7 +64,7 @@
         <!-- Live Typing Indicator -->
         <div id="ucDrawerTyping" class="uc-drawer-typing d-none">
             <span class="spinner-grow spinner-grow-sm text-primary me-1" role="status"></span>
-            <small class="text-muted">Msimamizi anaandika...</small>
+            <small class="text-muted">{% trans "Support agent is typing..." %}</small>
         </div>
     </div>
 
@@ -72,11 +73,11 @@
         <div class="d-flex align-items-center gap-2 overflow-hidden">
             <img id="ucScreenshotThumb" src="" alt="Thumbnail" class="uc-screenshot-thumb" />
             <div class="overflow-hidden">
-                <div class="small fw-bold text-success text-truncate"><i class="bi bi-check-circle-fill me-1"></i>Picha ya Skrini Imenaswa!</div>
+                <div class="small fw-bold text-success text-truncate"><i class="bi bi-check-circle-fill me-1"></i>{% trans "Screenshot Captured!" %}</div>
                 <div class="uc-screenshot-url text-truncate" id="ucScreenshotUrl"></div>
             </div>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="ucRemoveScreenshotBtn" title="Ondoa picha">
+        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" id="ucRemoveScreenshotBtn" title="{% trans 'Remove screenshot' %}">
             <i class="bi bi-x-lg"></i>
         </button>
     </div>
@@ -84,15 +85,15 @@
     <!-- Composer Footer -->
     <div class="uc-drawer-footer">
         <div class="d-flex align-items-center justify-content-between mb-2">
-            <button type="button" class="btn btn-sm btn-outline-primary uc-camera-btn" id="ucCapturePageBtn" title="Piga picha ya ukurasa huu ili kutuma kwa wasimamizi">
+            <button type="button" class="btn btn-sm btn-outline-primary uc-camera-btn" id="ucCapturePageBtn" title="{% trans 'Capture page screenshot for support team' %}">
                 <i class="bi bi-camera-fill me-1"></i>
-                <span id="ucCaptureBtnText">Piga Picha ya Ukurasa (Screenshot)</span>
+                <span id="ucCaptureBtnText">{% trans "Capture Page Screenshot" %}</span>
             </button>
-            <span class="small text-muted" style="font-size: 0.72rem;"><i class="bi bi-shield-check text-success me-1"></i>Salama 100%</span>
+            <span class="small text-muted" style="font-size: 0.72rem;"><i class="bi bi-shield-check text-success me-1"></i>{% trans "100% Secure" %}</span>
         </div>
         <div class="uc-drawer-input-row">
-            <textarea id="ucDrawerInput" rows="2" class="uc-drawer-textarea" placeholder="Eleza tatizo lako au uliza chochote hapa..." maxlength="2500"></textarea>
-            <button type="button" class="uc-drawer-send-btn" id="ucDrawerSendBtn" aria-label="Send message">
+            <textarea id="ucDrawerInput" rows="2" class="uc-drawer-textarea" placeholder="{% trans 'Describe your issue or ask anything here...' %}" maxlength="2500"></textarea>
+            <button type="button" class="uc-drawer-send-btn" id="ucDrawerSendBtn" aria-label="{% trans 'Send message' %}">
                 <i class="bi bi-send-fill"></i>
             </button>
         </div>
@@ -689,18 +690,18 @@ body.dark-mode .uc-drawer-textarea {
 
             // Prompt in input if empty
             if (input && !input.value.trim()) {
-                input.value = 'Kuna tatizo / malalamiko kwenye ukurasa huu: ';
+                input.value = "{% filter escapejs %}{% trans 'I noticed an issue / feedback on this page: ' %}{% endfilter %}";
             }
         } catch (err) {
             console.error('Screenshot capture failed:', err);
-            alert('Haikuweza kupiga picha ya ukurasa huu moja kwa moja. Unaweza kuandika ujumbe wako kwa maneno.');
+            alert("{% filter escapejs %}{% trans 'Could not capture screenshot directly. Please describe your issue in the message box.' %}{% endfilter %}");
         } finally {
             // Restore visibility
             sidebar.style.display = prevSidebarDisplay;
             backdrop.style.display = prevBackdropDisplay;
             bubble.style.display = prevBubbleDisplay;
 
-            if (captureBtnText) captureBtnText.textContent = 'Piga Picha ya Ukurasa (Screenshot)';
+            if (captureBtnText) captureBtnText.textContent = "{% filter escapejs %}{% trans 'Capture Page Screenshot' %}{% endfilter %}";
             if (captureBtn) captureBtn.disabled = false;
             if (input) input.focus();
         }

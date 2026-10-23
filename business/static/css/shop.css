@@ -1448,61 +1448,172 @@ body.dark-mode .uc-hamburger span {
 /* —— Responsive: mobile —— */
 @media (max-width: 768px) {
     .uc-topbar-left { display: none; }
+    
+    .uc-admin-topbar {
+        padding: 4px 0;
+        font-size: 0.74rem;
+    }
+    .uc-admin-topbar-inner {
+        padding: 0 0.65rem;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+    .uc-admin-status {
+        gap: 4px;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .uc-admin-mode-name {
+        font-size: 0.72rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .uc-admin-toggle-actions .btn {
+        padding: 0.2rem 0.45rem;
+        font-size: 0.72rem;
+    }
+    
+    /* Sleek, structured 2-row mobile masthead */
     .uc-masthead-inner {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.45rem;
-        padding: 0.55rem 0;
-    }
-    .uc-mast-top {
-        width: 100%;
-        gap: 0.5rem;
-        display: flex;
+        display: grid !important;
+        grid-template-areas:
+            "logo actions"
+            "search search"
+            "menu menu";
+        grid-template-columns: auto 1fr;
+        row-gap: 0.5rem;
+        column-gap: 0.5rem;
         align-items: center;
+        padding: 0.55rem 0.65rem;
     }
+    
+    .uc-mast-top {
+        display: contents !important;
+    }
+    
     .uc-mast-top .uc-logo {
-        font-size: 1.3rem;
-        flex-shrink: 0;
+        grid-area: logo;
+        font-size: 1.35rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        text-decoration: none;
     }
+    
     .uc-mast-top .uc-search {
-        max-width: none;
+        grid-area: search;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        display: flex !important;
+        border-radius: 999px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        background: var(--uc-input-bg);
+        border: 1px solid var(--uc-line);
+        overflow: visible;
+    }
+    
+    .uc-mast-top .uc-search .live-search-wrap {
         flex: 1;
         min-width: 0;
+        position: relative;
     }
+    
+    .uc-mast-top .uc-search input {
+        border-radius: 999px 0 0 999px;
+        padding: 0.52rem 0.9rem;
+        font-size: 0.88rem;
+    }
+    
+    .uc-mast-top .uc-search button {
+        border-radius: 0 999px 999px 0;
+        padding: 0 1rem;
+        font-size: 0.95rem;
+    }
+
+    html[dir="rtl"] .uc-mast-top .uc-search input {
+        border-radius: 0 999px 999px 0;
+    }
+    html[dir="rtl"] .uc-mast-top .uc-search button {
+        border-radius: 999px 0 0 999px;
+    }
+
     /* Mobile Header Actions */
     .uc-mast-actions {
+        grid-area: actions;
         display: flex !important;
         align-items: center;
-        gap: 0.4rem;
         justify-content: flex-end;
+        gap: 0.4rem;
         flex-shrink: 0;
     }
-    .uc-mast-actions > a[title="Home"],
-    .uc-mast-actions > a[title="Chat"] {
-        display: none !important;
+    
+    .uc-mast-actions .uc-lang-btn {
+        padding: 3px 8px;
+        font-size: 0.72rem;
     }
+
+    .uc-mast-actions .uc-theme-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+
     .uc-hamburger {
         display: flex !important;
         align-items: center;
         justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0.35rem;
+        border-radius: 8px;
+        border: 1px solid var(--uc-line);
+        background: var(--uc-soft);
     }
+    
     .uc-menu-links {
+        grid-area: menu;
         display: none;
         flex-direction: column;
         width: 100%;
         background: var(--uc-surface);
         border: 1px solid var(--uc-line);
-        border-radius: 10px;
-        padding: 0.6rem;
+        border-radius: 12px;
+        padding: 0.65rem;
         margin-top: 0.25rem;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-        max-height: 70vh;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        max-height: 72vh;
         overflow-y: auto;
     }
+    
     .uc-menu-links.is-open {
         display: flex !important;
         animation: ucSlideDown 0.22s ease forwards;
     }
+    
+    .uc-menu-links li {
+        width: 100%;
+        list-style: none;
+    }
+    
+    .uc-menu-links a {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.86rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: normal;
+    }
+    
     @keyframes ucSlideDown {
         from { opacity: 0; transform: translateY(-8px); }
         to { opacity: 1; transform: translateY(0); }

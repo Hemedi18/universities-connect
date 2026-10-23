@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: U-Connect 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 16:30+0300\n"
+"POT-Creation-Date: 2026-10-23 14:06+0000\n"
 "PO-Revision-Date: 2026-10-23 16:30+0300\n"
 "Last-Translator: Antigravity\n"
 "Language-Team: English\n"
@@ -14,176 +14,571 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "English"
-msgstr "English"
-
-msgid "Swahili"
-msgstr "Swahili"
-
-msgid "Arabic"
-msgstr "Arabic"
-
-msgid "Language"
-msgstr "Language"
-
-msgid "Select Language"
-msgstr "Select Language"
-
-msgid "Home"
-msgstr "Home"
-
-msgid "Shop"
-msgstr "Shop"
-
-msgid "New"
-msgstr "New"
-
-msgid "Featured"
-msgstr "Featured"
-
-msgid "About"
-msgstr "About"
-
-msgid "About Us"
-msgstr "About Us"
-
-msgid "Contact"
-msgstr "Contact"
-
-msgid "Help / Docs"
-msgstr "Help / Docs"
-
-msgid "Sell"
-msgstr "Sell"
-
-msgid "Chat"
-msgstr "Chat"
-
-msgid "Alerts"
-msgstr "Alerts"
-
-msgid "Cart"
-msgstr "Cart"
-
-msgid "Account"
-msgstr "Account"
-
-msgid "My Account"
-msgstr "My Account"
-
-msgid "Search products..."
-msgstr "Search products..."
-
-msgid "Search"
-msgstr "Search"
-
-msgid "Company"
-msgstr "Company"
-
-msgid "Documentation"
-msgstr "Documentation"
-
-msgid "Useful Links"
-msgstr "Useful Links"
-
-msgid "New Arrivals"
-msgstr "New Arrivals"
-
-msgid "Best Sellers"
-msgstr "Best Sellers"
-
-msgid "On Sale"
-msgstr "On Sale"
-
-msgid "Customer Care"
-msgstr "Customer Care"
-
-msgid "My Orders"
-msgstr "My Orders"
-
-msgid "Saved items"
-msgstr "Saved items"
-
-msgid "Newsletter"
-msgstr "Newsletter"
-
-msgid "Get campus deals and new listings in your inbox."
-msgstr "Get campus deals and new listings in your inbox."
-
-msgid "Your email"
-msgstr "Your email"
-
-msgid "Subscribe"
-msgstr "Subscribe"
-
-msgid "Campus marketplace"
-msgstr "Campus marketplace"
-
-msgid "All rights reserved."
-msgstr "All rights reserved."
-
-msgid "Staff Mode"
-msgstr "Staff Mode"
-
-msgid "Managed Mode"
-msgstr "Managed Mode"
-
-msgid "Normal Mode"
-msgstr "Normal Mode"
-
-msgid "Open Admin"
-msgstr "Open Admin"
-
-msgid "Dashboard"
-msgstr "Dashboard"
-
-msgid "Recommended"
-msgstr "Recommended"
-
-msgid "Best sellers"
-msgstr "Best sellers"
-
-msgid "Hot picks"
-msgstr "Hot picks"
-
-msgid "Hot picks for you"
-msgstr "Hot picks for you"
-
-msgid "Based on your activity"
-msgstr "Based on your activity"
-
-msgid "View more"
-msgstr "View more"
-
-msgid "No picks yet."
-msgstr "No picks yet."
-
-msgid "Clear search"
-msgstr "Clear search"
-
-msgid "Add to Cart"
-msgstr "Add to Cart"
-
-msgid "Buy Now"
-msgstr "Buy Now"
-
-msgid "Price"
-msgstr "Price"
-
-msgid "Category"
-msgstr "Category"
-
-msgid "Description"
-msgstr "Description"
-
+#: business/templates/business/base.html:265
 msgid "Hitilafu (Error)"
 msgstr "Error"
 
+#: business/templates/business/base.html:267
 msgid "Tahadhari (Warning)"
 msgstr "Warning"
 
+#: business/templates/business/base.html:269
 msgid "Imekamilika (Success)"
 msgstr "Success"
 
+#: business/templates/business/base.html:271
 msgid "Taarifa (Notice)"
 msgstr "Notice"
+
+#: business/templates/business/base.html:300
+msgid "Staff Mode"
+msgstr "Staff Mode"
+
+#: business/templates/business/base.html:301
+msgid "Current mode:"
+msgstr ""
+
+#: business/templates/business/base.html:304
+#: business/templates/business/base.html:449
+msgid "Normal Mode"
+msgstr "Normal Mode"
+
+#: business/templates/business/base.html:304
+msgid "Classic Admin"
+msgstr ""
+
+#: business/templates/business/base.html:306
+#: business/templates/business/base.html:449
+msgid "Managed Mode"
+msgstr "Managed Mode"
+
+#: business/templates/business/base.html:306
+msgid "Executive Hub"
+msgstr ""
+
+#: business/templates/business/base.html:311
+msgid "Admin Mode Toggle"
+msgstr ""
+
+#: business/templates/business/base.html:314
+msgid "Switch to Executive Command Center"
+msgstr ""
+
+#: business/templates/business/base.html:315
+#: business/templates/business/base.html:355
+#, fuzzy
+#| msgid "Managed Mode"
+msgid "Managed"
+msgstr "Managed Mode"
+
+#: business/templates/business/base.html:319
+msgid "Switch to Classic Django Admin"
+msgstr ""
+
+#: business/templates/business/base.html:320
+#: business/templates/business/base.html:355
+#, fuzzy
+#| msgid "Normal Mode"
+msgid "Normal"
+msgstr "Normal Mode"
+
+#: business/templates/business/base.html:325
+#, fuzzy
+#| msgid "Open Admin"
+msgid "Open Admin Panel"
+msgstr "Open Admin"
+
+#: business/templates/business/base.html:326
+msgid "Open Admin"
+msgstr "Open Admin"
+
+#: business/templates/business/base.html:339
+msgid "Search products..."
+msgstr "Search products..."
+
+#: business/templates/business/base.html:346
+msgid "Search"
+msgstr "Search"
+
+#: business/templates/business/base.html:353
+msgid "Switch Admin Mode"
+msgstr ""
+
+#: business/templates/business/base.html:358
+#: business/templates/business/base.html:429
+#: business/templates/business/base.html:431
+#: business/templates/business/base.html:459
+msgid "Home"
+msgstr "Home"
+
+#: business/templates/business/base.html:360
+#: business/templates/business/base.html:469
+#: business/templates/business/base.html:476
+#: business/templates/business/item_detail.html:169
+#: business/templates/business/item_detail.html:171
+#: business/templates/business/item_detail.html:297
+#: business/templates/business/item_detail.html:299
+#: business/templates/business/item_detail.html:320
+#: business/templates/business/item_detail.html:322
+msgid "Chat"
+msgstr "Chat"
+
+#: business/templates/business/base.html:361
+msgid "Alerts"
+msgstr "Alerts"
+
+#: business/templates/business/base.html:366
+#: business/templates/business/base.html:480
+msgid "Cart"
+msgstr "Cart"
+
+#: business/templates/business/base.html:372
+msgid "Select Language"
+msgstr "Select Language"
+
+#: business/templates/business/base.html:392
+#: business/templates/business/base.html:424
+msgid "Toggle Theme (Dark/Light)"
+msgstr ""
+
+#: business/templates/business/base.html:392
+msgid "Toggle Theme"
+msgstr ""
+
+#: business/templates/business/base.html:399
+#: business/templates/business/base.html:407
+#: business/templates/business/base.html:484
+msgid "Account"
+msgstr "Account"
+
+#: business/templates/business/base.html:413
+msgid "Language"
+msgstr "Language"
+
+#: business/templates/business/base.html:434
+msgid "New"
+msgstr "New"
+
+#: business/templates/business/base.html:435
+msgid "Featured"
+msgstr "Featured"
+
+#: business/templates/business/base.html:436
+#: business/templates/business/base.html:462
+#: business/templates/business/base.html:515
+#: business/templates/business/home.html:6
+msgid "Shop"
+msgstr "Shop"
+
+#: business/templates/business/base.html:437
+msgid "About"
+msgstr "About"
+
+#: business/templates/business/base.html:438
+#: business/templates/business/base.html:508
+msgid "Contact"
+msgstr "Contact"
+
+#: business/templates/business/base.html:439
+msgid "Help / Docs"
+msgstr "Help / Docs"
+
+#: business/templates/business/base.html:441
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: business/templates/business/base.html:443
+#: business/templates/business/base.html:466
+#: business/templates/business/base.html:473
+msgid "Sell"
+msgstr "Sell"
+
+#: business/templates/business/base.html:449
+#, fuzzy
+#| msgid "Staff Mode"
+msgid "Switch Mode:"
+msgstr "Staff Mode"
+
+#: business/templates/business/base.html:505
+msgid "Company"
+msgstr "Company"
+
+#: business/templates/business/base.html:507
+msgid "About Us"
+msgstr "About Us"
+
+#: business/templates/business/base.html:509
+msgid "Documentation"
+msgstr "Documentation"
+
+#: business/templates/business/base.html:513
+msgid "Useful Links"
+msgstr "Useful Links"
+
+#: business/templates/business/base.html:516
+msgid "New Arrivals"
+msgstr "New Arrivals"
+
+#: business/templates/business/base.html:517
+msgid "Best Sellers"
+msgstr "Best Sellers"
+
+#: business/templates/business/base.html:518
+msgid "On Sale"
+msgstr "On Sale"
+
+#: business/templates/business/base.html:522
+msgid "Customer Care"
+msgstr "Customer Care"
+
+#: business/templates/business/base.html:524
+msgid "My Orders"
+msgstr "My Orders"
+
+#: business/templates/business/base.html:525
+msgid "Saved items"
+msgstr "Saved items"
+
+#: business/templates/business/base.html:526
+msgid "My Account"
+msgstr "My Account"
+
+#: business/templates/business/base.html:530
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: business/templates/business/base.html:531
+msgid "Get campus deals and new listings in your inbox."
+msgstr "Get campus deals and new listings in your inbox."
+
+#: business/templates/business/base.html:533
+msgid "Your email"
+msgstr "Your email"
+
+#: business/templates/business/base.html:534
+msgid "Subscribe"
+msgstr "Subscribe"
+
+#: business/templates/business/base.html:545
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+#: business/templates/business/base.html:546
+msgid "Campus marketplace"
+msgstr "Campus marketplace"
+
+#: business/templates/business/home.html:18
+msgid "Hot picks for you"
+msgstr "Hot picks for you"
+
+#: business/templates/business/home.html:18
+msgid "Hot picks"
+msgstr "Hot picks"
+
+#: business/templates/business/home.html:19
+msgid "View more"
+msgstr "View more"
+
+#: business/templates/business/home.html:22
+msgid "Based on your activity"
+msgstr "Based on your activity"
+
+#: business/templates/business/home.html:28
+msgid "No picks yet."
+msgstr "No picks yet."
+
+#: business/templates/business/home.html:38
+msgid "Recommended"
+msgstr "Recommended"
+
+#: business/templates/business/home.html:41
+msgid "Best sellers"
+msgstr "Best sellers"
+
+#: business/templates/business/home.html:57
+msgid "Clear search"
+msgstr "Clear search"
+
+#: business/templates/business/item_detail.html:92
+#, fuzzy
+#| msgid "No picks yet."
+msgid "No ratings yet"
+msgstr "No picks yet."
+
+#: business/templates/business/item_detail.html:99
+msgid "Price"
+msgstr "Price"
+
+#: business/templates/business/item_detail.html:106
+#: business/templates/business/item_detail.html:107
+msgid "Product details"
+msgstr ""
+
+#: business/templates/business/item_detail.html:110
+msgid "Category"
+msgstr "Category"
+
+#: business/templates/business/item_detail.html:113
+msgid "Condition"
+msgstr ""
+
+#: business/templates/business/item_detail.html:118
+msgid "Stock"
+msgstr ""
+
+#: business/templates/business/item_detail.html:118
+msgid "available"
+msgstr ""
+
+#: business/templates/business/item_detail.html:120
+#, fuzzy
+#| msgid "My Orders"
+msgid "Min. order"
+msgstr "My Orders"
+
+#: business/templates/business/item_detail.html:123
+#, fuzzy
+#| msgid "Documentation"
+msgid "Location"
+msgstr "Documentation"
+
+#: business/templates/business/item_detail.html:126
+msgid "Weight"
+msgstr ""
+
+#: business/templates/business/item_detail.html:129
+msgid "Dimensions"
+msgstr ""
+
+#: business/templates/business/item_detail.html:132
+#, fuzzy
+#| msgid "Contact"
+msgid "Contact via"
+msgstr "Contact"
+
+#: business/templates/business/item_detail.html:145
+msgid "Quantity"
+msgstr ""
+
+#: business/templates/business/item_detail.html:146
+msgid "left"
+msgstr ""
+
+#: business/templates/business/item_detail.html:158
+#: business/templates/business/item_detail.html:284
+msgid ""
+"Never pay shipping or transport fees before receiving package. Pay only upon "
+"inspection (Cash on Delivery)."
+msgstr ""
+
+#: business/templates/business/item_detail.html:161
+#: business/templates/business/item_detail.html:289
+#, fuzzy
+#| msgid "Contact"
+msgid "Contact Seller"
+msgstr "Contact"
+
+#: business/templates/business/item_detail.html:165
+#: business/templates/business/item_detail.html:293
+msgid "No phone provided — use chat"
+msgstr ""
+
+#: business/templates/business/item_detail.html:169
+#: business/templates/business/item_detail.html:171
+#: business/templates/business/item_detail.html:297
+#: business/templates/business/item_detail.html:299
+msgid "Chat with seller"
+msgstr ""
+
+#: business/templates/business/item_detail.html:174
+#: business/templates/business/item_detail.html:302
+#: business/templates/business/item_detail.html:325
+msgid "Call"
+msgstr ""
+
+#: business/templates/business/item_detail.html:174
+#: business/templates/business/item_detail.html:302
+#, fuzzy
+#| msgid "Best sellers"
+msgid "Call seller"
+msgstr "Best sellers"
+
+#: business/templates/business/item_detail.html:176
+#: business/templates/business/item_detail.html:304
+msgid "No phone"
+msgstr ""
+
+#: business/templates/business/item_detail.html:184
+msgid "Description"
+msgstr "Description"
+
+#: business/templates/business/item_detail.html:190
+#, fuzzy
+#| msgid "Customer Care"
+msgid "Customer Reviews"
+msgstr "Customer Care"
+
+#: business/templates/business/item_detail.html:211
+msgid "No ratings yet — be the first to review."
+msgstr ""
+
+#: business/templates/business/item_detail.html:222
+#, fuzzy
+#| msgid "No picks yet."
+msgid "No comments yet."
+msgstr "No picks yet."
+
+#: business/templates/business/item_detail.html:228
+msgid "Post comment"
+msgstr ""
+
+#: business/templates/business/item_detail.html:235
+msgid "You may also like"
+msgstr ""
+
+#: business/templates/business/item_detail.html:276
+#, fuzzy
+#| msgid "Campus marketplace"
+msgid "Campus meetup / delivery"
+msgstr "Campus marketplace"
+
+#: business/templates/business/item_detail.html:277
+msgid "Campus pickup"
+msgstr ""
+
+#: business/templates/business/item_detail.html:278
+msgid "Cash on Delivery"
+msgstr ""
+
+#: business/templates/business/item_detail.html:279
+msgid "Buyer protection"
+msgstr ""
+
+#: business/templates/business/item_detail.html:310
+#: business/templates/business/item_detail.html:329
+msgid "Out of stock"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:4
+msgid "Help & Support / AI Assistant"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:8
+msgid "Support & AI"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:26
+msgid "U-Connect Support & AI"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:29
+msgid "Support agents are online (Active)"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:34
+msgid "Open Full Page Chat"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:37
+msgid "Close Support Drawer"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:43
+msgid "💡 How do I buy products on campus?"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:43
+msgid "💡 How to buy"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:44
+msgid "📦 How do I post an item or start selling?"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:44
+msgid "📦 How to sell"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:45
+msgid "⚠️ I encountered an error or problem on this page."
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:45
+msgid "⚠️ Report issue"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:46
+msgid "Take Screenshot"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:55
+msgid "Welcome to U-Connect Support!"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:57
+msgid ""
+"Have a question, need assistance or noticed an issue? Write here or take a "
+"screenshot so our team can resolve it quickly!"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:67
+msgid "Support agent is typing..."
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:76
+msgid "Screenshot Captured!"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:80
+msgid "Remove screenshot"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:88
+msgid "Capture page screenshot for support team"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:90
+#: business/templates/business/partials/_support_drawer.html:704
+msgid "Capture Page Screenshot"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:92
+#, python-format
+msgid "100%% Secure"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:95
+msgid "Describe your issue or ask anything here..."
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:96
+msgid "Send message"
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:693
+msgid "I noticed an issue / feedback on this page: "
+msgstr ""
+
+#: business/templates/business/partials/_support_drawer.html:697
+msgid ""
+"Could not capture screenshot directly. Please describe your issue in the "
+"message box."
+msgstr ""
+
+#: u_connect/settings.py:158
+msgid "English"
+msgstr "English"
+
+#: u_connect/settings.py:159
+msgid "Swahili"
+msgstr "Swahili"
+
+#: u_connect/settings.py:160
+msgid "Arabic"
+msgstr "Arabic"
+
+#~ msgid "Add to Cart"
+#~ msgstr "Add to Cart"
+
+#~ msgid "Buy Now"
+#~ msgstr "Buy Now"

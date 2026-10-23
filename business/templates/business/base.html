@@ -297,33 +297,33 @@
     <div class="uc-admin-topbar">
         <div class="uc-wrap uc-admin-topbar-inner">
             <div class="uc-admin-status">
-                <span class="uc-admin-badge"><i class="bi bi-shield-lock-fill me-1"></i>Staff Mode</span>
-                <span class="uc-admin-mode-label small d-none d-sm-inline">Uko kwenye:</span>
+                <span class="uc-admin-badge"><i class="bi bi-shield-lock-fill me-1"></i>{% trans "Staff Mode" %}</span>
+                <span class="uc-admin-mode-label small d-none d-sm-inline">{% trans "Current mode:" %}</span>
                 <strong class="uc-admin-mode-name small">
                     {% if request.COOKIES.admin_mode == 'normal' %}
-                    <span class="text-warning">Normal Mode</span> (Classic Admin)
+                    <span class="text-warning">{% trans "Normal Mode" %}</span> ({% trans "Classic Admin" %})
                     {% else %}
-                    <span class="text-success">Managed Mode</span> (Executive Hub)
+                    <span class="text-success">{% trans "Managed Mode" %}</span> ({% trans "Executive Hub" %})
                     {% endif %}
                 </strong>
             </div>
             <div class="uc-admin-toggle-actions">
-                <div class="btn-group btn-group-sm" role="group" aria-label="Admin Mode Toggle">
+                <div class="btn-group btn-group-sm" role="group" aria-label="{% trans 'Admin Mode Toggle' %}">
                     <a href="{% url 'management:switch_mode' %}?mode=managed" 
                        class="btn btn-sm {% if request.COOKIES.admin_mode != 'normal' %}btn-primary active fw-bold{% else %}btn-outline-light{% endif %}"
-                       title="Badili kwenda Executive Command Center">
-                        <i class="bi bi-speedometer2 me-1"></i>Managed
+                       title="{% trans 'Switch to Executive Command Center' %}">
+                        <i class="bi bi-speedometer2 me-1"></i>{% trans "Managed" %}
                     </a>
                     <a href="{% url 'management:switch_mode' %}?mode=normal" 
                        class="btn btn-sm {% if request.COOKIES.admin_mode == 'normal' %}btn-light active fw-bold text-dark{% else %}btn-outline-light{% endif %}"
-                       title="Badili kwenda Classic Django Admin">
-                        <i class="bi bi-tools me-1"></i>Normal
+                       title="{% trans 'Switch to Classic Django Admin' %}">
+                        <i class="bi bi-tools me-1"></i>{% trans "Normal" %}
                     </a>
                 </div>
                 <a href="{% if request.COOKIES.admin_mode == 'normal' %}/admin/?mode=normal{% else %}{% url 'management:dashboard' %}{% endif %}" 
                    class="btn btn-sm btn-warning fw-bold text-dark ms-1 d-none d-md-inline-flex align-items-center"
-                   title="Fungua Admin Panel">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Open Admin
+                   title="{% trans 'Open Admin Panel' %}">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> {% trans "Open Admin" %}
                 </a>
             </div>
         </div>
@@ -350,20 +350,20 @@
                 {% if user.is_authenticated and user.is_staff %}
                 <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" 
                    class="uc-admin-pill-link" 
-                   title="Badili Admin Mode: Bonyeza kubadili kwenda {% if request.COOKIES.admin_mode == 'normal' %}Managed Mode{% else %}Normal Mode{% endif %}">
+                   title="{% trans 'Switch Admin Mode' %}">
                     <i class="bi bi-gear-wide-connected"></i>
-                    <span class="d-none d-md-inline">{% if request.COOKIES.admin_mode == 'normal' %}Normal{% else %}Managed{% endif %}</span>
+                    <span class="d-none d-md-inline">{% if request.COOKIES.admin_mode == 'normal' %}{% trans "Normal" %}{% else %}{% trans "Managed" %}{% endif %}</span>
                 </a>
                 {% endif %}
-                <a href="{% url 'customer:home' %}" title="{% trans 'Home' %}" aria-label="{% trans 'Home' %}"><i class="bi bi-house-door-fill"></i></a>
+                <a href="{% url 'customer:home' %}" class="d-none d-md-inline-flex" title="{% trans 'Home' %}" aria-label="{% trans 'Home' %}"><i class="bi bi-house-door-fill"></i></a>
                 {% if user.is_authenticated %}
-                <a href="{% url 'chat:inbox' %}" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots"></i></a>
+                <a href="{% url 'chat:inbox' %}" class="d-none d-md-inline-flex" title="{% trans 'Chat' %}" aria-label="{% trans 'Chat' %}"><i class="bi bi-chat-dots"></i></a>
                 <a href="{% url 'business:user_notifications' %}" title="{% trans 'Alerts' %}" aria-label="{% trans 'Alerts' %}">
                     <i class="bi bi-bell"></i>
                     {% if unread_notifications_count %}<span class="uc-badge">{{ unread_notifications_count }}</span>{% endif %}
                 </a>
                 {% endif %}
-                <a href="{% url 'customer:view_cart' %}" title="{% trans 'Cart' %}" aria-label="{% trans 'Cart' %}">
+                <a href="{% url 'customer:view_cart' %}" class="d-none d-md-inline-flex" title="{% trans 'Cart' %}" aria-label="{% trans 'Cart' %}">
                     <i class="bi bi-cart3"></i>
                     {% if cart_item_count %}<span class="uc-badge">{{ cart_item_count }}</span>{% endif %}
                 </a>
@@ -389,14 +389,14 @@
                         </a>
                     </div>
                 </div>
-                <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="Badili Theme (Dark/Light)" aria-label="Toggle Theme">
+                <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="{% trans 'Toggle Theme (Dark/Light)' %}" aria-label="{% trans 'Toggle Theme' %}">
                     <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
                 </button>
                 <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="uc-menu-links" aria-expanded="false">
                     <span></span><span></span><span></span>
                 </button>
                 {% if user.is_authenticated %}
-                <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account" aria-label="{% trans 'Account' %}">
+                <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account d-none d-md-inline-flex" aria-label="{% trans 'Account' %}">
                     {% if user.profile and user.profile.profile_picture %}
                     <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}">
                     {% else %}
@@ -404,7 +404,7 @@
                     {% endif %}
                 </a>
                 {% else %}
-                <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
+                <a href="{% url 'users:login' %}" title="{% trans 'Account' %}" class="uc-mast-account d-none d-md-inline-flex" aria-label="{% trans 'Account' %}"><i class="bi bi-person"></i></a>
                 {% endif %}
             </div>
             <ul class="uc-menu-links" id="uc-menu-links">
@@ -421,7 +421,7 @@
                 </li>
                 <li class="d-md-none border-bottom pb-2 mb-2">
                     <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning">
-                        <span><i class="bi bi-circle-half me-2"></i>Badili Theme (Dark/Light)</span>
+                        <span><i class="bi bi-circle-half me-2"></i>{% trans "Toggle Theme (Dark/Light)" %}</span>
                         <span class="badge bg-secondary" id="ucThemeMobileBadge">Theme</span>
                     </a>
                 </li>
@@ -446,7 +446,7 @@
                 <li class="uc-menu-admin-item">
                     <a href="{% if request.COOKIES.admin_mode == 'normal' %}{% url 'management:switch_mode' %}?mode=managed{% else %}{% url 'management:switch_mode' %}?mode=normal{% endif %}" class="text-warning fw-bold">
                         <i class="bi bi-shuffle"></i>
-                        <span>Badili Mode: <strong>{% if request.COOKIES.admin_mode == 'normal' %}Managed Mode{% else %}Normal Mode{% endif %}</strong></span>
+                        <span>{% trans "Switch Mode:" %} <strong>{% if request.COOKIES.admin_mode == 'normal' %}{% trans "Managed Mode" %}{% else %}{% trans "Normal Mode" %}{% endif %}</strong></span>
                     </a>
                 </li>
                 {% endif %}
