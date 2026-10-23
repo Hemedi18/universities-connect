@@ -133,9 +133,30 @@ def dashboard_view(request):
         "recent_logs": recent_logs,
         "recent_tickets": recent_tickets,
         "live_domain": "uconnect.edusphere.co.tz",
+        "current_admin_mode": "managed",
     }
 
-    return render(request, "management/dashboard.html", context)
+    response = render(request, "management/dashboard.html", context)
+    response.set_cookie("admin_mode", "managed", max_age=86400 * 30, path="/")
+    return response
+
+
+@staff_member_required(login_url="/users/login/")
+def switch_admin_mode(request):
+    """
+    Seamless toggle between 'managed' (Executive Command Center)
+    and 'normal' (Classic Django Admin) mode.
+    """
+    from django.shortcuts import redirect
+    target_mode = request.GET.get("mode", "managed")
+    if target_mode == "normal":
+        resp = redirect("/admin/?mode=normal")
+        resp.set_cookie("admin_mode", "normal", max_age=86400 * 30, path="/")
+        return resp
+    else:
+        resp = redirect("management:dashboard")
+        resp.set_cookie("admin_mode", "managed", max_age=86400 * 30, path="/")
+        return resp
 
 
 def _create_default_templates(user):

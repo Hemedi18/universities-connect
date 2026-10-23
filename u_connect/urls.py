@@ -35,9 +35,33 @@ def service_worker(request):
         content_type="application/javascript",
     )
 
+from django.shortcuts import redirect
 from django.views.generic import RedirectView
 
+def admin_mode_router(request):
+    """
+    Route admin landing:
+    By default, opens Management Mode (/management/).
+    If ?mode=normal or cookie admin_mode=normal, opens Classic Django Admin (Normal Mode).
+    """
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return admin.site.login(request)
+
+    mode = request.GET.get("mode")
+    cookie_mode = request.COOKIES.get("admin_mode")
+
+    if mode == "normal" or (not mode and cookie_mode == "normal"):
+        resp = admin.site.index(request)
+        resp.set_cookie("admin_mode", "normal", max_age=86400 * 30, path="/")
+        return resp
+
+    # Default to Management Mode
+    resp = redirect("management:dashboard")
+    resp.set_cookie("admin_mode", "managed", max_age=86400 * 30, path="/")
+    return resp
+
 urlpatterns = [
+    path("admin/", admin_mode_router, name="admin_mode_router"),
     path("admin/", admin.site.urls),
     path(
         "favicon.ico",

@@ -5,6 +5,17 @@
 {% get_daily_stats as daily_stats %}
 {% get_category_stats as category_stats %}
 
+<!-- Normal Admin Mode Banner with Toggle to Management Mode -->
+<div class="alert alert-info d-flex justify-content-between align-items-center shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; color: #fff; border-radius: 12px; margin-bottom: 20px; padding: 14px 20px;">
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge badge-secondary px-3 py-1 text-uppercase" style="background: #475569; font-size: 11px; letter-spacing: 0.5px;">Normal Admin Mode</span>
+        <span style="font-size: 13px; color: #cbd5e1;">Upo kwenye ukurasa wa <strong>Classic Django Admin (Normal Mode)</strong>.</span>
+    </div>
+    <a href="/management/switch-mode/?mode=managed" class="btn btn-sm btn-primary font-weight-bold" style="border-radius: 8px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4); text-decoration: none;">
+        <i class="fas fa-tachometer-alt mr-1"></i> Switch to Management Mode (Command Center) &rarr;
+    </a>
+</div>
+
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-6 col-sm-12">
         <div class="card card-primary">

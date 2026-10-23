@@ -1,61 +1,732 @@
 {% extends 'business/base.html' %}
 {% load static %}
 
-{% block title %}{% if title %}{{ title }}{% else %}Sell Item{% endif %} - U-Connect{% endblock %}
+{% block title %}{% if title %}{{ title }}{% else %}Sell on U-Connect - Upload Product{% endif %} - U-Connect{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/file-uploader.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/file-uploader.css' %}?v=2">
+<style>
+    :root {
+        --sell-primary: #4f46e5;
+        --sell-primary-dark: #3730a3;
+        --sell-card-bg: #ffffff;
+        --sell-border: #e2e8f0;
+        --sell-text-dark: #0f172a;
+        --sell-text-muted: #64748b;
+    }
+
+    html.theme-dark {
+        --sell-card-bg: #1e293b;
+        --sell-border: #334155;
+        --sell-text-dark: #f8fafc;
+        --sell-text-muted: #94a3b8;
+    }
+
+    .sell-page-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 4rem 1rem;
+    }
+
+    /* Top Breadcrumb Navigation */
+    .sell-breadcrumb-bar {
+        background: var(--sell-card-bg);
+        border: 1px solid var(--sell-border);
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Section Cards */
+    .sell-section-card {
+        background: var(--sell-card-bg);
+        border: 1px solid var(--sell-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 18px -4px rgba(0, 0, 0, 0.05);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sell-section-card:hover {
+        border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .sell-section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--sell-border);
+    }
+    .sell-section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--sell-primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    .sell-section-title {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: var(--sell-text-dark);
+        margin: 0;
+    }
+    .sell-section-subtitle {
+        font-size: 0.8rem;
+        color: var(--sell-text-muted);
+        margin: 0;
+    }
+
+    /* Form Inputs & Input Addons */
+    .sell-form-label {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--sell-text-dark);
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .sell-unit-badge {
+        background: rgba(99, 102, 241, 0.12);
+        color: var(--sell-primary);
+        font-weight: 700;
+        font-size: 0.78rem;
+        padding: 2px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .input-group-text-unit {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-color: var(--sell-border);
+    }
+    html.theme-dark .input-group-text-unit {
+        background: #0f172a;
+        color: #94a3b8;
+        border-color: #334155;
+    }
+
+    /* Sticky Live Preview Card (Alibaba style) */
+    .preview-sidebar-sticky {
+        position: sticky;
+        top: 85px;
+    }
+    .mock-product-card {
+        background: var(--sell-card-bg);
+        border: 1px solid var(--sell-border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .mock-card-media {
+        width: 100%;
+        height: 220px;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    html.theme-dark .mock-card-media {
+        background: #0f172a;
+    }
+    .mock-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .mock-card-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+    }
+    .mock-card-body {
+        padding: 1.15rem;
+    }
+
+    /* Tip Card */
+    .seller-tip-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.84rem;
+        color: var(--sell-text-muted);
+        margin-bottom: 0.65rem;
+    }
+    .seller-tip-icon {
+        color: #10b981;
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    /* Sticky Bottom Action Bar */
+    .sell-action-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--sell-card-bg);
+        border-top: 1px solid var(--sell-border);
+        padding: 1rem 1.5rem;
+        z-index: 1000;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 14px;
+        margin-top: 1.5rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="form-container sell-container">
-    <h2>{% if title %}{{ title }}{% else %}Sell Item{% endif %} {% if category %}<small class="text-muted" style="font-size: 0.6em;">in {{ category.name }}</small>{% endif %}</h2>
-    
+<div class="sell-page-wrapper">
+
+    <!-- BREADCRUMB & CATEGORY SELECTOR -->
+    <div class="sell-breadcrumb-bar d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <div class="text-muted small mb-1">
+                <i class="bi bi-shop me-1 text-primary"></i>U-Connect Marketplace &bull; Weka Bidhaa Sokoni
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <h4 class="mb-0 fw-bold fs-5 text-dark" style="color: var(--sell-text-dark);">
+                    {% if title %}{{ title }}{% else %}Uza Bidhaa Mpya (Post Product){% endif %}
+                </h4>
+                {% if category %}
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
+                    <i class="bi bi-tag-fill me-1"></i>{{ category.name }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'business:post_item' %}" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 rounded-pill px-3">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Badili Kategoria (Change Category)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN FORM & LIVE PREVIEW CONTAINER -->
     <form method="post" enctype="multipart/form-data" {% if category %}action="?category={{ category.id }}"{% endif %} id="sell-item-form">
         {% csrf_token %}
-        
+
         {% if form.non_field_errors %}
-            <div class="errorlist">
-                {{ form.non_field_errors }}
-            </div>
+        <div class="alert alert-danger shadow-sm border-0 rounded-3 mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ form.non_field_errors }}
+        </div>
         {% endif %}
 
-        <div class="form-grid">
-        {% for field in form %}
-            <div class="form-group {% if field.name == 'description' or field.name == 'title' %}full-width{% endif %}" {% if field.is_hidden %}style="display:none;"{% endif %}>
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <!-- Hidden inputs -->
+        {{ form.category_obj }}
+
+        <div class="row g-4">
+            
+            <!-- LEFT COLUMN: INPUT SECTIONS (Alibaba Style) -->
+            <div class="col-12 col-lg-8">
                 
-                <div class="custom-datalist-container">
-                    {{ field }}
-                    
-                    {% if field.field.datalist_options %}
-                    <ul class="custom-datalist">
-                        {% for option in field.field.datalist_options %}
-                            <li class="custom-option" data-value="{{ option }}">{{ option }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
+                <!-- SECTION 1: PRODUCT PHOTOS & VIDEO -->
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">1</span>
+                        <div>
+                            <h5 class="sell-section-title">Picha &amp; Video za Bidhaa (Product Media)</h5>
+                            <p class="sell-section-subtitle">Picha nzuri huongeza nafasi ya mwanafunzi kununua kwa 70%. Picha ya kwanza ndiyo 'Main Cover Photo'.</p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info border-0 rounded-3 py-2 px-3 mb-3 d-flex align-items-center gap-2 small">
+                        <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
+                        <span>Weka picha angalau <strong>1</strong> iliyo wazi (unaweza kuweka hadi picha 6 na video 1 fupi ya sekunde 30).</span>
+                    </div>
+
+                    <!-- Uploader partial -->
+                    {% include 'business/partials/_file_uploader.html' with existing_media=existing_media max_files=max_media input_name='media_files' input_id='id_media_files' %}
+                    {% if form.image.errors %}<div class="text-danger small mt-1">{{ form.image.errors }}</div>{% endif %}
                 </div>
 
-                {% if field.help_text %}<p class="help-text-custom">{{ field.help_text }}</p>{% endif %}
-                {% if field.errors %}<div class="error-text-custom">{{ field.errors }}</div>{% endif %}
-            </div>
-        {% endfor %}
+                <!-- SECTION 2: BASIC PRODUCT INFORMATION -->
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">2</span>
+                        <div>
+                            <h5 class="sell-section-title">Taarifa Kuu za Bidhaa (Basic Information)</h5>
+                            <p class="sell-section-subtitle">Andika kichwa kinachovutia na taja hali halisi ya bidhaa yako.</p>
+                        </div>
+                    </div>
 
-            <div class="sell-media-block full-width">
-                <label class="sell-media-label">Photos &amp; videos <small class="text-muted">(max {{ max_media|default:6 }}, at least 1 photo)</small></label>
-                {% include 'business/partials/_file_uploader.html' with existing_media=existing_media max_files=max_media input_name='media_files' input_id='id_media_files' %}
+                    <div class="mb-3">
+                        <label class="sell-form-label" for="id_product_title">
+                            <span>Jina / Kichwa cha Bidhaa (Title) <span class="text-danger">*</span></span>
+                            <span class="text-muted small fw-normal" id="titleCharCount">0/100</span>
+                        </label>
+                        {{ form.title }}
+                        <small class="text-muted d-block mt-1" style="font-size: 0.76rem;">
+                            Ushauri: Taja Brand, Model, na sifa kuu (mfano: <em>Samsung Galaxy S22 Ultra 256GB Phantom Black</em>).
+                        </small>
+                        {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_product_condition">
+                                <span>Hali ya Bidhaa (Condition) <span class="text-danger">*</span></span>
+                            </label>
+                            {{ form.condition }}
+                            {% if form.condition.errors %}<div class="text-danger small mt-1">{{ form.condition.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_sku">
+                                <span>Product SKU / Barcode <span class="text-muted fw-normal small">(Hiari)</span></span>
+                            </label>
+                            {{ form.sku }}
+                            <small class="text-muted d-block mt-1" style="font-size: 0.74rem;">Ikiachwa wazi, mfumo utatengeneza nambari kiotomatiki.</small>
+                            {% if form.sku.errors %}<div class="text-danger small mt-1">{{ form.sku.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: TECHNICAL SPECIFICATIONS & DYNAMIC ATTRIBUTES (WITH CLEAR UNITS) -->
+                {% with attr_fields=form.get_attribute_fields %}
+                {% if attr_fields %}
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">3</span>
+                        <div>
+                            <h5 class="sell-section-title">Sifa &amp; Vipimo vya {{ category.name }} (Specifications)</h5>
+                            <p class="sell-section-subtitle">Vipimo vina vitengo halisi (units kama vile <strong>mAh, GB, MP, Inches, km</strong>) ili kuepusha mkanganyiko kwa mnunuzi.</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        {% for field in attr_fields %}
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 rounded-3" style="background: rgba(0, 0, 0, 0.02); border: 1px solid var(--sell-border);">
+                                <label class="sell-form-label mb-2" for="{{ field.id_for_label }}">
+                                    <span>
+                                        {% if field.field.icon %}<i class="bi {{ field.field.icon }} text-primary me-1"></i>{% endif %}
+                                        {{ field.label }}
+                                    </span>
+                                    {% if field.field.unit %}
+                                    <span class="sell-unit-badge">{{ field.field.unit }}</span>
+                                    {% endif %}
+                                </label>
+
+                                {% if field.field.options_list %}
+                                    <!-- Select dropdown with structured unit options -->
+                                    <div class="input-group">
+                                        {{ field }}
+                                        {% if field.field.unit %}
+                                        <span class="input-group-text input-group-text-unit">{{ field.field.unit }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <!-- Text or Number input with Unit Suffix Addon -->
+                                    <div class="input-group">
+                                        {{ field }}
+                                        {% if field.field.unit %}
+                                        <span class="input-group-text input-group-text-unit">{{ field.field.unit }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if field.help_text %}
+                                <div class="text-muted mt-1" style="font-size: 0.74rem;">
+                                    <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
+                                </div>
+                                {% endif %}
+                                {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <!-- SECTION 4: PRICING & INVENTORY -->
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">{% if form.get_attribute_fields %}4{% else %}3{% endif %}</span>
+                        <div>
+                            <h5 class="sell-section-title">Bei &amp; Idadi ya Bidhaa (Pricing &amp; Stock)</h5>
+                            <p class="sell-section-subtitle">Weka bei halisi ya sarafu ya Tanzania (TZS). Bei nafuu huvutia wanachuo haraka zaidi.</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_product_price">
+                                <span>Bei ya Kuuza (Selling Price) <span class="text-danger">*</span></span>
+                                <span class="sell-unit-badge">TZS</span>
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text fw-bold input-group-text-unit">TSh</span>
+                                {{ form.price }}
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Kiasi kamili ambacho mnunuzi atalipia.</small>
+                            {% if form.price.errors %}<div class="text-danger small mt-1">{{ form.price.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="sell-form-label" for="id_product_compare_price">
+                                <span>Bei ya Awali (Compare-at Price) <span class="text-muted fw-normal small">(Hiari)</span></span>
+                                <span class="badge bg-success bg-opacity-10 text-success d-none" id="discountBadge">Discount</span>
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text input-group-text-unit">TSh</span>
+                                {{ form.compare_at_price }}
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ikiwa ipo juu ya bei ya sasa, itaonyeshwa ikiwa imekatwa mstari kuonyesha ofa.</small>
+                            {% if form.compare_at_price.errors %}<div class="text-danger small mt-1">{{ form.compare_at_price.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_stock_quantity">
+                                <span>Idadi Iliyopo (Stock Quantity)</span>
+                            </label>
+                            {{ form.stock_quantity }}
+                            {% if form.stock_quantity.errors %}<div class="text-danger small mt-1">{{ form.stock_quantity.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_shipping_weight">
+                                <span>Uzito wa Mzigo (Shipping Weight)</span>
+                                <span class="sell-unit-badge">kg</span>
+                            </label>
+                            <div class="input-group">
+                                {{ form.shipping_weight }}
+                                <span class="input-group-text input-group-text-unit">kg</span>
+                            </div>
+                            {% if form.shipping_weight.errors %}<div class="text-danger small mt-1">{{ form.shipping_weight.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_shipping_dimensions">
+                                <span>Vipimo vya Boksi (L x W x H)</span>
+                            </label>
+                            {{ form.shipping_dimensions }}
+                            {% if form.shipping_dimensions.errors %}<div class="text-danger small mt-1">{{ form.shipping_dimensions.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 5: CAMPUS PICKUP & SELLER CONTACT -->
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">{% if form.get_attribute_fields %}5{% else %}4{% endif %}</span>
+                        <div>
+                            <h5 class="sell-section-title">Eneo la Kukutana Chuoni &amp; Mawasiliano (Campus Location)</h5>
+                            <p class="sell-section-subtitle">Wanachuo hupendelea kukutana kwenye maeneo salama ya chuo (Campus Meetup).</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="sell-form-label" for="id_product_location">
+                            <span><i class="bi bi-geo-alt-fill text-danger me-1"></i>Eneo la Kukutana Chuoni (Meetup Location)</span>
+                        </label>
+                        {{ form.campus_location }}
+                        <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Mfano: <em>UDSM Main Campus - Hall 5, Library, au CoICT Cafeteria</em>.</small>
+                        {% if form.campus_location.errors %}<div class="text-danger small mt-1">{{ form.campus_location.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_contact_method">
+                                <span>Njia ya Mawasiliano</span>
+                            </label>
+                            {{ form.contact_method }}
+                            {% if form.contact_method.errors %}<div class="text-danger small mt-1">{{ form.contact_method.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_contact_phone">
+                                <span><i class="bi bi-whatsapp text-success me-1"></i>Simu / WhatsApp</span>
+                            </label>
+                            {{ form.contact_phone }}
+                            {% if form.contact_phone.errors %}<div class="text-danger small mt-1">{{ form.contact_phone.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label class="sell-form-label" for="id_contact_email">
+                                <span><i class="bi bi-envelope text-primary me-1"></i>Email ya Mawasiliano</span>
+                            </label>
+                            {{ form.contact_email }}
+                            {% if form.contact_email.errors %}<div class="text-danger small mt-1">{{ form.contact_email.errors }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 6: PRODUCT DESCRIPTION -->
+                <div class="sell-section-card">
+                    <div class="sell-section-header">
+                        <span class="sell-section-number">{% if form.get_attribute_fields %}6{% else %}5{% endif %}</span>
+                        <div>
+                            <h5 class="sell-section-title">Maelezo Kamili ya Bidhaa (Detailed Description)</h5>
+                            <p class="sell-section-subtitle">Eleza vifaa vilivyopo (accessories, chaja, boksi, risiti), muda uliotumika, na sababu ya kuuza.</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        {{ form.description }}
+                        {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors }}</div>{% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: ALIBABA-STYLE LIVE BUYER PREVIEW & SELLER TIPS -->
+            <div class="col-12 col-lg-4">
+                <div class="preview-sidebar-sticky">
+                    
+                    <!-- LIVE MOCK PRODUCT CARD -->
+                    <div class="mock-product-card mb-4">
+                        <div class="p-3 border-bottom d-flex align-items-center justify-content-between" style="border-color: var(--sell-border);">
+                            <span class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;">
+                                <i class="bi bi-eye-fill text-primary me-1"></i>Live Buyer Preview
+                            </span>
+                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50" style="font-size: 0.7rem;">
+                                On Sale
+                            </span>
+                        </div>
+
+                        <!-- Card Media -->
+                        <div class="mock-card-media" id="previewMediaBox">
+                            <span class="mock-card-badge bg-dark bg-opacity-75 text-white" id="previewConditionBadge">Used</span>
+                            <img src="{% static 'images/default-item.png' %}" id="previewImg" class="mock-card-img" alt="Preview Image" onerror="this.src='https://placehold.co/400x300/1e293b/ffffff?text=Product+Photo'">
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="mock-card-body">
+                            <div class="text-muted small mb-1" id="previewCategoryLabel">
+                                {{ category.name|default:"General" }}
+                            </div>
+                            
+                            <h6 class="fw-bold mb-2 text-truncate" id="previewTitle" style="color: var(--sell-text-dark);">
+                                Jina la Bidhaa litaonekana hapa...
+                            </h6>
+
+                            <div class="d-flex align-items-baseline gap-2 mb-2">
+                                <span class="fs-5 fw-bold text-primary" id="previewPrice">TSh 0</span>
+                                <span class="text-muted text-decoration-line-through small d-none" id="previewComparePrice"></span>
+                            </div>
+
+                            <div class="text-muted small d-flex align-items-center gap-1" id="previewLocation">
+                                <i class="bi bi-geo-alt text-danger"></i>
+                                <span class="text-truncate">Campus Location...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SELLER CHECKLIST CARD -->
+                    <div class="sell-section-card p-3">
+                        <h6 class="fw-bold mb-3 d-flex align-items-center gap-2" style="color: var(--sell-text-dark);">
+                            <i class="bi bi-check2-circle text-success fs-5"></i>
+                            <span>Vidokezo vya Kuuza Haraka (Checklist)</span>
+                        </h6>
+
+                        <div class="seller-tip-item" id="tipPhoto">
+                            <i class="bi bi-circle seller-tip-icon" id="tipPhotoIcon"></i>
+                            <span>Weka picha angalau 1 iliyo wazi na yenye mwanga mzuri.</span>
+                        </div>
+
+                        <div class="seller-tip-item" id="tipTitle">
+                            <i class="bi bi-circle seller-tip-icon" id="tipTitleIcon"></i>
+                            <span>Kichwa cha bidhaa kimetaja Brand na Model kwa usahihi.</span>
+                        </div>
+
+                        <div class="seller-tip-item" id="tipPrice">
+                            <i class="bi bi-circle seller-tip-icon" id="tipPriceIcon"></i>
+                            <span>Umebainisha bei ya mwanafunzi (TZS).</span>
+                        </div>
+
+                        <div class="seller-tip-item" id="tipLocation">
+                            <i class="bi bi-circle seller-tip-icon" id="tipLocationIcon"></i>
+                            <span>Umebainisha eneo maalum la kukutana chuoni.</span>
+                        </div>
+
+                        <hr class="my-3" style="border-color: var(--sell-border);">
+
+                        <div class="d-flex align-items-center gap-2 text-muted small">
+                            <i class="bi bi-shield-check text-primary fs-5"></i>
+                            <span>Tangazo lako litalindwa chini ya mfumo rasmi wa wanafunzi wa U-Connect.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- STICKY ACTION BAR AT BOTTOM -->
+        <div class="sell-action-footer">
+            <a href="{% url 'business:manage_items' %}" class="btn btn-outline-secondary px-3 rounded-3">
+                <i class="bi bi-arrow-left me-1"></i>Ghairi (Cancel)
+            </a>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-lg px-4 fw-bold shadow d-flex align-items-center gap-2 rounded-3" id="submitSellBtn">
+                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                    <span>{% if title %}{{ title }}{% else %}Weka Bidhaa Sokoni Sasa (Publish Now){% endif %}</span>
+                </button>
             </div>
         </div>
 
-        <button type="submit" class="btn-submit">{% if button_text %}{{ button_text }}{% else %}Post Item{% endif %}</button>
     </form>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  document.querySelector('.fu-uploader')?.setAttribute('data-require-image', '1');
+    document.querySelector('.fu-uploader')?.setAttribute('data-require-image', '1');
+
+    // Live preview binding
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('id_product_title');
+        const priceInput = document.getElementById('id_product_price');
+        const compareInput = document.getElementById('id_product_compare_price');
+        const conditionSelect = document.getElementById('id_product_condition');
+        const locationInput = document.getElementById('id_product_location');
+        const fileInput = document.getElementById('id_media_files');
+
+        const prevTitle = document.getElementById('previewTitle');
+        const prevPrice = document.getElementById('previewPrice');
+        const prevCompare = document.getElementById('previewComparePrice');
+        const prevCondition = document.getElementById('previewConditionBadge');
+        const prevLocation = document.getElementById('previewLocation');
+        const prevImg = document.getElementById('previewImg');
+        const discountBadge = document.getElementById('discountBadge');
+
+        // Title update
+        if (titleInput) {
+            titleInput.addEventListener('input', function() {
+                const val = this.value.trim();
+                prevTitle.innerText = val || 'Jina la Bidhaa litaonekana hapa...';
+                document.getElementById('titleCharCount').innerText = `${this.value.length}/100`;
+                updateChecklist();
+            });
+            if (titleInput.value) prevTitle.innerText = titleInput.value;
+        }
+
+        // Price update
+        function formatTZS(val) {
+            const num = parseFloat(val);
+            if (isNaN(num)) return 'TSh 0';
+            return 'TSh ' + num.toLocaleString('en-US');
+        }
+
+        function updatePrice() {
+            const priceVal = parseFloat(priceInput ? priceInput.value : 0) || 0;
+            const compVal = parseFloat(compareInput ? compareInput.value : 0) || 0;
+
+            if (prevPrice) prevPrice.innerText = formatTZS(priceVal);
+
+            if (compVal > priceVal && priceVal > 0) {
+                const discount = Math.round(((compVal - priceVal) / compVal) * 100);
+                if (prevCompare) {
+                    prevCompare.innerText = formatTZS(compVal);
+                    prevCompare.classList.remove('d-none');
+                }
+                if (discountBadge) {
+                    discountBadge.innerText = `-${discount}% OFF`;
+                    discountBadge.classList.remove('d-none');
+                }
+            } else {
+                if (prevCompare) prevCompare.classList.add('d-none');
+                if (discountBadge) discountBadge.classList.add('d-none');
+            }
+            updateChecklist();
+        }
+
+        if (priceInput) priceInput.addEventListener('input', updatePrice);
+        if (compareInput) compareInput.addEventListener('input', updatePrice);
+        updatePrice();
+
+        // Condition update
+        if (conditionSelect) {
+            conditionSelect.addEventListener('change', function() {
+                const text = this.options[this.selectedIndex] ? this.options[this.selectedIndex].text : 'Used';
+                prevCondition.innerText = text;
+            });
+            if (conditionSelect.selectedIndex >= 0) {
+                prevCondition.innerText = conditionSelect.options[conditionSelect.selectedIndex].text;
+            }
+        }
+
+        // Location update
+        if (locationInput) {
+            locationInput.addEventListener('input', function() {
+                const val = this.value.trim();
+                prevLocation.querySelector('span').innerText = val || 'Campus Location...';
+                updateChecklist();
+            });
+            if (locationInput.value) prevLocation.querySelector('span').innerText = locationInput.value;
+        }
+
+        // Live image preview from file input
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        prevImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+                updateChecklist();
+            });
+        }
+
+        function updateChecklist() {
+            const hasPhoto = (fileInput && fileInput.files && fileInput.files.length > 0) || document.querySelectorAll('.fu-recent-item').length > 0;
+            const hasTitle = titleInput && titleInput.value.trim().length >= 5;
+            const hasPrice = priceInput && parseFloat(priceInput.value) > 0;
+            const hasLoc = locationInput && locationInput.value.trim().length >= 3;
+
+            toggleCheck('tipPhotoIcon', hasPhoto);
+            toggleCheck('tipTitleIcon', hasTitle);
+            toggleCheck('tipPriceIcon', hasPrice);
+            toggleCheck('tipLocationIcon', hasLoc);
+        }
+
+        function toggleCheck(iconId, pass) {
+            const el = document.getElementById(iconId);
+            if (!el) return;
+            if (pass) {
+                el.className = 'bi bi-check-circle-fill text-success seller-tip-icon';
+            } else {
+                el.className = 'bi bi-circle text-muted seller-tip-icon';
+            }
+        }
+
+        updateChecklist();
+
+        // Form submit spinner
+        const formEl = document.getElementById('sell-item-form');
+        const submitBtn = document.getElementById('submitSellBtn');
+        if (formEl && submitBtn) {
+            formEl.addEventListener('submit', function() {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Inapakia bidhaa sokoni...';
+            });
+        }
+    });
 </script>
-<script src="{% static 'js/file-uploader.js' %}?v=1"></script>
+<script src="{% static 'js/file-uploader.js' %}?v=2"></script>
 {% endblock %}

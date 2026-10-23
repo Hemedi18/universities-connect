@@ -1,34 +1,139 @@
 {% extends 'business/base.html' %}
+{% load static %}
 
-{% block title %}Select Category - U-Connect{% endblock %}
+{% block title %}Chagua Kategoria ya Bidhaa - U-Connect{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cat-select-wrapper {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2rem 1rem 4rem 1rem;
+    }
+    .cat-hero-card {
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(99, 102, 241, 0.02) 100%);
+        border: 1px solid rgba(79, 70, 229, 0.2);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .cat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+    }
+    .cat-tile {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none !important;
+        color: #0f172a !important;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    html.theme-dark .cat-tile {
+        background: #1e293b;
+        border-color: #334155;
+        color: #f8fafc !important;
+    }
+    .cat-tile:hover {
+        border-color: #6366f1;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.15);
+    }
+    .cat-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+    .cat-search-box {
+        max-width: 460px;
+        margin: 1.25rem auto 0 auto;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="form-container sell-container">
-    <h2>What are you selling?</h2>
-    {% if parent_category %}
-        <p class="text-muted" style="text-align: center; margin-bottom: 2rem;">Select a sub-category for <strong>{{ parent_category.name }}</strong></p>
-        <a href="javascript:history.back()" class="back-link" style="display:block; text-align:center; margin-bottom:1rem;"><i class="bi bi-arrow-left"></i> Back</a>
-    {% else %}
-        <p class="text-muted" style="text-align: center; margin-bottom: 2rem;">Choose a category to get started</p>
-    {% endif %}
-    
-    <div class="category-selection-list">
-        {% for category in categories %}
-            <div class="category-item-select">
-                <a href="{% url 'business:post_item' %}?category={{ category.id }}" class="category-link">
-                    <div class="category-info">
-                        <div class="category-icon-wrapper"><i class="bi {{ category.icon }}"></i></div>
-                        <div class="category-text-wrapper">
-                            <span class="category-name">{{ category.name }}</span>
-                            {% if category.children.exists %}
-                                <span class="category-sub-label">View Subcategories</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <i class="bi bi-chevron-right"></i>
-                </a>
+<div class="cat-select-wrapper">
+
+    <!-- HERO HEADER -->
+    <div class="cat-hero-card">
+        <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50 px-3 py-1 rounded-pill mb-2">
+            <i class="bi bi-tag-fill me-1"></i>Hatua ya 1 ya Uuzaji
+        </span>
+        <h2 class="fw-bold mb-2">Unauza nini leo? (What are you selling?)</h2>
+        {% if parent_category %}
+            <p class="text-muted mb-3">Chagua kundi dogo (Subcategory) ndani ya <strong>{{ parent_category.name }}</strong></p>
+            <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i>Rudi Nyuma (Back)
+            </a>
+        {% else %}
+            <p class="text-muted mb-3">Chagua kategoria ya bidhaa yako ili mfumo ukupe sifa, vipimo (units), na fomu sahihi.</p>
+        {% endif %}
+
+        <!-- Quick Search -->
+        <div class="cat-search-box">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: 12px 0 0 12px;"><i class="bi bi-search"></i></span>
+                <input type="text" id="catFilterInput" class="form-control border-start-0 py-2" placeholder="Tafuta kategoria (mfano: Simu, Laptop, Nguo, Vyakula...)" onkeyup="filterCategories()" style="border-radius: 0 12px 12px 0;">
             </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY TILES GRID -->
+    <div class="cat-grid" id="categoryGrid">
+        {% for cat in categories %}
+        <a href="{% url 'business:post_item' %}?category={{ cat.id }}" class="cat-tile cat-item" data-name="{{ cat.name|lower }}">
+            <div class="d-flex align-items-center gap-3">
+                <div class="cat-icon-box">
+                    <i class="bi {{ cat.icon|default:'bi-tag-fill' }}"></i>
+                </div>
+                <div>
+                    <div class="fw-bold fs-6">{{ cat.name }}</div>
+                    {% if cat.children.exists %}
+                    <small class="text-primary fw-semibold" style="font-size: 0.74rem;">
+                        Tazama Makundi <i class="bi bi-arrow-right"></i>
+                    </small>
+                    {% else %}
+                    <small class="text-muted" style="font-size: 0.74rem;">Weka Tangazo Moja kwa Moja</small>
+                    {% endif %}
+                </div>
+            </div>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </a>
+        {% empty %}
+        <div class="text-center py-5 text-muted col-12">
+            Hakuna kategoria zilizopatikana.
+        </div>
         {% endfor %}
     </div>
+
 </div>
+
+<script>
+    function filterCategories() {
+        const query = document.getElementById('catFilterInput').value.toLowerCase().trim();
+        const items = document.querySelectorAll('.cat-item');
+        items.forEach(el => {
+            const name = el.getAttribute('data-name') || '';
+            if (name.includes(query)) {
+                el.style.display = 'flex';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    }
+</script>
 {% endblock %}

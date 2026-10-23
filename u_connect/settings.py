@@ -226,7 +226,7 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": False,
     "topmenu_links": [
-        {"name": "Command Center", "url": "/management/", "icon": "fas fa-tachometer-alt", "permissions": ["auth.view_user"]},
+        {"name": "🚀 Switch to Management Mode", "url": "/management/switch-mode/?mode=managed", "icon": "fas fa-tachometer-alt", "permissions": ["auth.view_user"]},
         {"name": "Support Chat", "url": "/support-chat/manage/", "icon": "fas fa-headset", "permissions": ["auth.view_user"]},
         {"name": "View Site", "url": "/", "icon": "fas fa-globe", "new_window": True},
     ],

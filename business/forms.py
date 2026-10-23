@@ -121,6 +121,102 @@ def save_item_media_files(item, files, start_order=0):
     return added
 
 
+def get_attribute_metadata(attr_name):
+    """Return dict with unit, icon, placeholder, and guidance for product attributes."""
+    name_l = (attr_name or "").lower()
+    meta = {
+        "unit": "",
+        "icon": "bi-sliders",
+        "placeholder": f"Enter {attr_name}...",
+        "help": "",
+    }
+
+    if "battery" in name_l:
+        meta["unit"] = "mAh"
+        meta["icon"] = "bi-battery-charging"
+        meta["placeholder"] = "e.g. 5000"
+        meta["help"] = "Capacity in milliampere-hours (mAh)"
+    elif "ram" in name_l:
+        meta["unit"] = "GB"
+        meta["icon"] = "bi-memory"
+        meta["placeholder"] = "e.g. 8"
+        meta["help"] = "Random Access Memory in Gigabytes"
+    elif "storage" in name_l or "ssd" in name_l or "hdd" in name_l:
+        meta["unit"] = "GB/TB"
+        meta["icon"] = "bi-hdd"
+        meta["placeholder"] = "e.g. 128 GB or 512 GB SSD"
+        meta["help"] = "Internal memory or storage drive"
+    elif "screen" in name_l or "display" in name_l:
+        meta["unit"] = 'Inches (")'
+        meta["icon"] = "bi-aspect-ratio"
+        meta["placeholder"] = 'e.g. 6.1" or 15.6"'
+        meta["help"] = "Diagonal screen dimension in inches"
+    elif "back camera" in name_l or "rear camera" in name_l or "main camera" in name_l:
+        meta["unit"] = "MP"
+        meta["icon"] = "bi-camera"
+        meta["placeholder"] = "e.g. 48"
+        meta["help"] = "Megapixels for rear / main lenses"
+    elif "front camera" in name_l or "selfie" in name_l:
+        meta["unit"] = "MP"
+        meta["icon"] = "bi-camera-video"
+        meta["placeholder"] = "e.g. 16"
+        meta["help"] = "Megapixels for front / selfie camera"
+    elif "camera" in name_l:
+        meta["unit"] = "MP"
+        meta["icon"] = "bi-camera"
+        meta["placeholder"] = "e.g. 48 MP Rear, 16 MP Front"
+        meta["help"] = "Camera resolution in Megapixels"
+    elif "mileage" in name_l:
+        meta["unit"] = "km"
+        meta["icon"] = "bi-speedometer"
+        meta["placeholder"] = "e.g. 45000"
+        meta["help"] = "Distance driven in kilometers"
+    elif "engine" in name_l or "cc" in name_l:
+        meta["unit"] = "cc"
+        meta["icon"] = "bi-gear-wide-connected"
+        meta["placeholder"] = "e.g. 1500"
+        meta["help"] = "Displacement in cubic centimeters (cc)"
+    elif "weight" in name_l:
+        meta["unit"] = "kg"
+        meta["icon"] = "bi-box-seam"
+        meta["placeholder"] = "e.g. 1.5"
+        meta["help"] = "Weight in kilograms"
+    elif "volume" in name_l:
+        meta["unit"] = "ml / L"
+        meta["icon"] = "bi-droplet"
+        meta["placeholder"] = "e.g. 500 ml or 1 Liter"
+    elif "alcohol" in name_l:
+        meta["unit"] = "% ABV"
+        meta["icon"] = "bi-percent"
+        meta["placeholder"] = "e.g. 5%"
+    elif "voltage" in name_l:
+        meta["unit"] = "V"
+        meta["icon"] = "bi-lightning-charge"
+        meta["placeholder"] = "e.g. 220V"
+    elif "company" in name_l or "brand" in name_l or "make" in name_l:
+        meta["unit"] = ""
+        meta["icon"] = "bi-building"
+        meta["placeholder"] = "Select or enter brand..."
+    elif "model" in name_l:
+        meta["unit"] = ""
+        meta["icon"] = "bi-phone"
+        meta["placeholder"] = "e.g. Galaxy S22 Ultra, iPhone 13, ThinkPad T14"
+    elif "os" in name_l or "operating system" in name_l:
+        meta["unit"] = ""
+        meta["icon"] = "bi-cpu"
+        meta["placeholder"] = "Select OS..."
+    elif "year" in name_l:
+        meta["unit"] = "Year"
+        meta["icon"] = "bi-calendar-event"
+        meta["placeholder"] = "e.g. 2023"
+    elif "size" in name_l:
+        meta["unit"] = ""
+        meta["icon"] = "bi-rulers"
+        meta["placeholder"] = "Select size..."
+
+    return meta
+
+
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
@@ -141,58 +237,88 @@ class ItemForm(forms.ModelForm):
             "contact_phone",
         ]
         widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control"}),
-            "sku": forms.TextInput(attrs={"class": "form-control"}),
-            "condition": forms.Select(attrs={"class": "form-select"}),
-            "price": forms.NumberInput(attrs={"step": "0.01", "class": "form-control"}),
-            "compare_at_price": forms.NumberInput(
-                attrs={"step": "0.01", "class": "form-control"}
-            ),
-            "stock_quantity": forms.NumberInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"rows": 4, "class": "form-control"}),
-            "campus_location": forms.TextInput(
-                attrs={
-                    "placeholder": "e.g. Hall 5, Library, Main Gate",
-                    "class": "form-control",
-                }
-            ),
-            "shipping_weight": forms.NumberInput(
-                attrs={"step": "0.01", "class": "form-control"}
-            ),
-            "shipping_dimensions": forms.TextInput(attrs={"class": "form-control"}),
+            "title": forms.TextInput(attrs={
+                "class": "form-control form-control-lg",
+                "placeholder": "e.g. iPhone 13 Pro 128GB Sierra Blue (Clean Condition)",
+                "id": "id_product_title",
+            }),
+            "sku": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Auto-generated if left blank (e.g. UC-7A39B1)",
+            }),
+            "condition": forms.Select(attrs={"class": "form-select", "id": "id_product_condition"}),
+            "price": forms.NumberInput(attrs={
+                "step": "1",
+                "class": "form-control form-control-lg fw-bold",
+                "placeholder": "0",
+                "id": "id_product_price",
+            }),
+            "compare_at_price": forms.NumberInput(attrs={
+                "step": "1",
+                "class": "form-control",
+                "placeholder": "Original Price (Optional)",
+                "id": "id_product_compare_price",
+            }),
+            "stock_quantity": forms.NumberInput(attrs={"class": "form-control", "min": "1"}),
+            "description": forms.Textarea(attrs={
+                "rows": 5,
+                "class": "form-control",
+                "placeholder": "Describe what is included, cosmetic state, battery health, receipt/warranty, or reason for selling...",
+                "id": "id_product_description",
+            }),
+            "campus_location": forms.TextInput(attrs={
+                "placeholder": "e.g. UDSM Main Campus (Hall 5 / Library / CoICT Cafeteria)",
+                "class": "form-control",
+                "id": "id_product_location",
+            }),
+            "shipping_weight": forms.NumberInput(attrs={"step": "0.01", "class": "form-control", "placeholder": "Weight in kg"}),
+            "shipping_dimensions": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. 15 x 8 x 2 cm"}),
             "contact_method": forms.Select(attrs={"class": "form-select"}),
             "contact_email": forms.EmailInput(attrs={"class": "form-control"}),
-            "contact_phone": forms.TextInput(attrs={"class": "form-control"}),
+            "contact_phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. 0712345678"}),
         }
 
     def __init__(self, *args, **kwargs):
         self.category = kwargs.pop("category", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["price"].label = "Price"
-        self.fields["compare_at_price"].label = "Compare at price"
-        self.fields["price"].help_text = "Enter the selling price."
-        self.fields["compare_at_price"].help_text = "Optional higher reference price (shown struck through)."
+        # Detect category in edit mode if not explicitly passed
+        if not self.category and self.instance and self.instance.pk and self.instance.category_obj:
+            self.category = self.instance.category_obj
+
+        self.fields["sku"].required = False
+        self.fields["price"].label = "Selling Price (TZS)"
+        self.fields["compare_at_price"].label = "Compare-at Price (TZS)"
+        self.fields["price"].help_text = "Actual amount the buyer will pay in Tanzanian Shillings."
+        self.fields["compare_at_price"].help_text = "Higher reference price to show a discount badge to buyers."
 
         if self.category:
             self.fields["category_obj"].initial = self.category
             self.fields["category_obj"].widget = forms.HiddenInput()
             self.fields["category_obj"].required = False
 
+            # Existing attribute values lookup for edit mode
+            existing_attr_values = {}
+            if self.instance and self.instance.pk:
+                existing_attr_values = {
+                    pav.attribute_id: pav.value
+                    for pav in self.instance.attribute_values.all()
+                }
+
             for attr in self.category.attributes.all():
                 field_name = f"attr_{attr.id}"
+                meta = get_attribute_metadata(attr.name)
 
                 if attr.options:
-                    options = [opt.strip() for opt in attr.options.split(",")]
-                    choices = [("", f"Select {attr.name}")] + [
-                        (opt, opt) for opt in options
-                    ]
-                    self.fields[field_name] = forms.ChoiceField(
+                    options = [opt.strip() for opt in attr.options.split(",") if opt.strip()]
+                    choices = [("", f"Select {attr.name}")] + [(opt, opt) for opt in options]
+                    field = forms.ChoiceField(
                         label=attr.name,
                         choices=choices,
                         required=False,
                         widget=forms.Select(attrs={"class": "form-select"}),
                     )
+                    field.options_list = options
                 elif attr.name.lower() in ["os", "operating system", "platform"]:
                     os_choices = [
                         ("", f"Select {attr.name}"),
@@ -203,36 +329,57 @@ class ItemForm(forms.ModelForm):
                         ("Linux", "Linux"),
                         ("Other", "Other"),
                     ]
-                    self.fields[field_name] = forms.ChoiceField(
+                    field = forms.ChoiceField(
                         label=attr.name,
                         choices=os_choices,
                         required=False,
                         widget=forms.Select(attrs={"class": "form-select"}),
                     )
+                    field.options_list = ["Android", "iOS", "Windows", "macOS", "Linux", "Other"]
                 else:
                     attr_lower = attr.name.lower()
-                    widget = forms.TextInput(attrs={"class": "form-control"})
+                    widget_attrs = {
+                        "class": "form-control",
+                        "placeholder": meta["placeholder"],
+                    }
 
                     if "date" in attr_lower or "year" in attr_lower:
-                        widget = forms.DateInput(
-                            attrs={"class": "form-control", "type": "date"}
-                        )
+                        widget = forms.DateInput(attrs={**widget_attrs, "type": "date"})
                     elif "color" in attr_lower or "colour" in attr_lower:
-                        widget = forms.TextInput(
-                            attrs={
-                                "class": "form-control",
-                                "type": "color",
-                                "style": "height: 38px; padding: 4px;",
-                            }
-                        )
+                        widget = forms.TextInput(attrs={
+                            **widget_attrs,
+                            "type": "color",
+                            "style": "height: 42px; padding: 4px;",
+                        })
+                    else:
+                        widget = forms.TextInput(attrs=widget_attrs)
 
-                    self.fields[field_name] = forms.CharField(
-                        label=attr.name, required=False, widget=widget
-                    )
+                    field = forms.CharField(label=attr.name, required=False, widget=widget)
+                    field.options_list = []
 
-                self.fields[field_name].widget.attrs["data-wizard-step"] = "2"
-                if attr.name in ["Brand", "Make", "Provider", "Publisher", "Company"]:
-                    self.fields[field_name].widget.attrs["data-wizard-step"] = "1"
+                # Attach rich metadata for template rendering
+                field.unit = meta["unit"]
+                field.icon = meta["icon"]
+                field.placeholder = meta["placeholder"]
+                if meta["help"]:
+                    field.help_text = meta["help"]
+
+                # Populate initial value in edit mode
+                if attr.id in existing_attr_values:
+                    field.initial = existing_attr_values[attr.id]
+
+                self.fields[field_name] = field
+
+    def clean_sku(self):
+        sku = self.cleaned_data.get("sku")
+        if not (sku or "").strip():
+            import uuid
+            return f"UC-{uuid.uuid4().hex[:8].upper()}"
+        return sku.strip()
+
+    def get_attribute_fields(self):
+        """Return all category dynamic attribute bound fields with metadata."""
+        return [self[f] for f in self.fields if f.startswith("attr_")]
 
     def save(self, commit=True):
         if self.category:
@@ -246,7 +393,7 @@ class ItemForm(forms.ModelForm):
                     ProductAttributeValue.objects.update_or_create(
                         product=item,
                         attribute_id=attr_id,
-                        defaults={"value": value},
+                        defaults={"value": str(value)},
                     )
         return item
 

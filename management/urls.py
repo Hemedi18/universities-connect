@@ -5,6 +5,7 @@ app_name = "management"
 
 urlpatterns = [
     path("", views.dashboard_view, name="dashboard"),
+    path("switch-mode/", views.switch_admin_mode, name="switch_mode"),
     # User Management APIs
     path("api/users/", views.api_users_list, name="api_users_list"),
     path("api/users/<int:user_id>/toggle-status/", views.api_user_toggle_status, name="api_user_toggle_status"),
