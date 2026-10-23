@@ -1,206 +1,388 @@
 /**
- * Screenshot-style multi-file uploader (max N files).
- * Uses DataTransfer to keep a staged FileList on the real input.
+ * Modern Collapsible Media Uploader with Trailing + Card & From Device / From URL Options
  */
 (function () {
-  function formatBytes(n) {
-    if (!n && n !== 0) return "";
-    if (n < 1024) return n + " B";
-    if (n < 1024 * 1024) return (n / 1024).toFixed(0) + " KB";
-    return (n / (1024 * 1024)).toFixed(1) + " MB";
-  }
+    let stagedFiles = [];
+    let stagedUrls = [];
 
-  function initUploader(root) {
-    const input = root.querySelector(".fu-input");
-    const dropzone = root.querySelector(".fu-dropzone");
-    const browse = root.querySelector(".fu-browse");
-    const pending = root.querySelector(".fu-pending");
-    const pendingThumbs = root.querySelector(".fu-pending-thumbs");
-    const pendingTitle = root.querySelector(".fu-pending-title");
-    const pendingCount = root.querySelector(".fu-pending-count");
-    const progress = root.querySelector(".fu-progress span");
-    const errorEl = root.querySelector(".fu-error");
-    const recentCount = root.querySelector(".fu-recent-count");
-    const max = parseInt(root.getAttribute("data-max") || "6", 10);
-    const multiple = root.getAttribute("data-multiple") !== "0";
-    let existing = parseInt(root.getAttribute("data-existing") || "0", 10);
-    let staged = [];
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("fuUploaderContainer");
+        if (!container) return;
 
-    if (!input || !dropzone) return;
+        const maxFiles = parseInt(container.getAttribute("data-max") || "6", 10);
+        const fileInput = document.getElementById("id_media_files");
+        const initialZone = document.getElementById("fuInitialZone");
+        const galleryZone = document.getElementById("fuGalleryZone");
+        const cardsGrid = document.getElementById("fuCardsGrid");
+        const cardAddMore = document.getElementById("fuCardAddMore");
+        const countDisplay = document.getElementById("fuCountDisplay");
+        const slotRemaining = document.getElementById("fuSlotRemaining");
+        const errorMsg = document.getElementById("fuErrorMsg");
+        const urlInputsContainer = document.getElementById("fuUrlInputsContainer");
 
-    function showError(msg) {
-      if (!errorEl) return;
-      if (!msg) {
-        errorEl.hidden = true;
-        errorEl.textContent = "";
-        return;
-      }
-      errorEl.hidden = false;
-      errorEl.textContent = msg;
-    }
+        // Modals
+        const choiceModal = document.getElementById("fuChoiceModal");
+        const urlModal = document.getElementById("fuUrlModal");
+        const closeChoiceModal = document.getElementById("fuCloseChoiceModal");
+        const closeUrlModal = document.getElementById("fuCloseUrlModal");
+        const cancelUrlBtn = document.getElementById("fuCancelUrlBtn");
 
-    function markedRemovals() {
-      return root.querySelectorAll(".fu-remove-check:checked").length;
-    }
+        // Buttons
+        const pickDeviceBtn = document.getElementById("fuPickDeviceBtn");
+        const pickUrlBtn = document.getElementById("fuPickUrlBtn");
+        const choiceDeviceBtn = document.getElementById("fuChoiceDeviceBtn");
+        const choiceUrlBtn = document.getElementById("fuChoiceUrlBtn");
+        const submitUrlBtn = document.getElementById("fuSubmitUrlBtn");
+        const urlInput = document.getElementById("fuUrlInput");
+        const urlPreviewBox = document.getElementById("fuUrlPreviewBox");
+        const urlImgPreview = document.getElementById("fuUrlImgPreview");
+        const urlError = document.getElementById("fuUrlError");
 
-    function slotsLeft() {
-      return Math.max(0, max - (existing - markedRemovals()) - staged.length);
-    }
-
-    function syncInput() {
-      const dt = new DataTransfer();
-      staged.forEach((f) => dt.items.add(f));
-      input.files = dt.files;
-    }
-
-    function renderPending() {
-      if (!pending) return;
-      if (!staged.length) {
-        pending.hidden = true;
-        pendingThumbs.innerHTML = "";
-        if (progress) progress.style.width = "0%";
-        return;
-      }
-      pending.hidden = false;
-      if (pendingTitle) pendingTitle.textContent = "Uploading " + staged.length + " file" + (staged.length > 1 ? "s" : "");
-      if (pendingCount) pendingCount.textContent = staged.length + " selected";
-      pendingThumbs.innerHTML = "";
-      staged.forEach((file, idx) => {
-        const mini = document.createElement("div");
-        mini.className = "fu-mini";
-        const url = URL.createObjectURL(file);
-        if (file.type.startsWith("video/")) {
-          const v = document.createElement("video");
-          v.src = url;
-          v.muted = true;
-          v.playsInline = true;
-          mini.appendChild(v);
-        } else {
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "";
-          mini.appendChild(img);
+        function showError(msg) {
+            if (!errorMsg) return;
+            if (msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.remove("d-none");
+            } else {
+                errorMsg.textContent = "";
+                errorMsg.classList.add("d-none");
+            }
         }
-        mini.title = file.name + " (" + formatBytes(file.size) + ") — click to remove";
-        mini.addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          staged.splice(idx, 1);
-          syncInput();
-          renderPending();
-          showError("");
+
+        function getExistingCount() {
+            return cardsGrid ? cardsGrid.querySelectorAll(".fu-existing-card").length : 0;
+        }
+
+        function getTotalCount() {
+            return getExistingCount() + stagedFiles.length + stagedUrls.length;
+        }
+
+        function syncInputFiles() {
+            if (!fileInput) return;
+            const dt = new DataTransfer();
+            stagedFiles.forEach(f => dt.items.add(f));
+            fileInput.files = dt.files;
+            
+            // Trigger change on fileInput so live product preview card updates
+            const ev = new Event("change", { bubbles: true });
+            fileInput.dispatchEvent(ev);
+        }
+
+        function syncUrlInputs() {
+            if (!urlInputsContainer) return;
+            urlInputsContainer.innerHTML = "";
+            stagedUrls.forEach(url => {
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = "media_urls";
+                hidden.value = url;
+                urlInputsContainer.appendChild(hidden);
+            });
+        }
+
+        function updateBuyerPreview() {
+            const previewImg = document.getElementById("previewImg");
+            if (!previewImg) return;
+
+            // Find first image from DOM cards
+            const firstImg = cardsGrid ? cardsGrid.querySelector(".fu-media-thumb img") : null;
+            if (firstImg && firstImg.src) {
+                previewImg.src = firstImg.src;
+            }
+        }
+
+        function renderState() {
+            const total = getTotalCount();
+            if (countDisplay) countDisplay.textContent = total;
+            const remaining = Math.max(0, maxFiles - total);
+            if (slotRemaining) slotRemaining.textContent = `(${remaining} zimebaki)`;
+
+            if (total === 0) {
+                if (initialZone) initialZone.style.display = "block";
+                if (galleryZone) galleryZone.style.display = "none";
+            } else {
+                if (initialZone) initialZone.style.display = "none";
+                if (galleryZone) galleryZone.style.display = "block";
+
+                // Position trailing + button at the very end
+                if (cardAddMore) {
+                    if (total >= maxFiles) {
+                        cardAddMore.style.display = "none";
+                    } else {
+                        cardAddMore.style.display = "flex";
+                        // Ensure cardAddMore is last child in grid
+                        cardsGrid.appendChild(cardAddMore);
+                    }
+                }
+            }
+            updateBuyerPreview();
+        }
+
+        function addFiles(files) {
+            showError("");
+            const remaining = maxFiles - getTotalCount();
+            if (remaining <= 0) {
+                showError(`Umeshajaza idadi ya juu kabisa (Picha/Video ${maxFiles}).`);
+                return;
+            }
+
+            const incoming = Array.from(files || []);
+            let countAdded = 0;
+
+            for (const file of incoming) {
+                if (getTotalCount() >= maxFiles) break;
+                const isImg = file.type.startsWith("image/");
+                const isVid = file.type.startsWith("video/");
+                if (!isImg && !isVid) continue;
+
+                stagedFiles.push(file);
+                countAdded++;
+
+                // Create DOM card
+                const card = document.createElement("div");
+                card.className = "fu-media-card fu-staged-file-card";
+                card.dataset.index = stagedFiles.length - 1;
+
+                const thumb = document.createElement("div");
+                thumb.className = "fu-media-thumb";
+                const objUrl = URL.createObjectURL(file);
+
+                if (isVid) {
+                    const video = document.createElement("video");
+                    video.src = objUrl;
+                    video.muted = true;
+                    video.playsInline = true;
+                    thumb.appendChild(video);
+                    const badge = document.createElement("span");
+                    badge.className = "fu-play-badge";
+                    badge.innerHTML = '<i class="bi bi-play-fill"></i>';
+                    thumb.appendChild(badge);
+                } else {
+                    const img = document.createElement("img");
+                    img.src = objUrl;
+                    img.alt = file.name;
+                    thumb.appendChild(img);
+                }
+
+                const coverBadge = document.createElement("div");
+                coverBadge.className = "fu-card-badge-cover";
+                coverBadge.textContent = "⭐ Cover";
+
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "fu-card-remove-btn";
+                removeBtn.title = "Futa picha hii";
+                removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+
+                removeBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const idx = stagedFiles.indexOf(file);
+                    if (idx > -1) {
+                        stagedFiles.splice(idx, 1);
+                    }
+                    card.remove();
+                    syncInputFiles();
+                    renderState();
+                });
+
+                card.appendChild(thumb);
+                card.appendChild(coverBadge);
+                card.appendChild(removeBtn);
+
+                // Insert before the + card
+                cardsGrid.insertBefore(card, cardAddMore);
+            }
+
+            syncInputFiles();
+            renderState();
+
+            if (incoming.length > countAdded && countAdded < incoming.length) {
+                showError(`Picha ${countAdded} zimeongezwa (Hadi faili ${maxFiles} tu zinaruhusiwa).`);
+            }
+        }
+
+        function addUrlMedia(url) {
+            showError("");
+            if (getTotalCount() >= maxFiles) {
+                showError(`Umeshajaza idadi ya juu kabisa (Picha/Video ${maxFiles}).`);
+                return;
+            }
+
+            stagedUrls.push(url);
+
+            const card = document.createElement("div");
+            card.className = "fu-media-card fu-staged-url-card";
+
+            const thumb = document.createElement("div");
+            thumb.className = "fu-media-thumb";
+
+            const isVid = url.match(/\.(mp4|webm|mov)(\?.*)?$/i);
+            if (isVid) {
+                const video = document.createElement("video");
+                video.src = url;
+                video.muted = true;
+                video.playsInline = true;
+                thumb.appendChild(video);
+                const badge = document.createElement("span");
+                badge.className = "fu-play-badge";
+                badge.innerHTML = '<i class="bi bi-play-fill"></i>';
+                thumb.appendChild(badge);
+            } else {
+                const img = document.createElement("img");
+                img.src = url;
+                img.alt = "URL Image";
+                thumb.appendChild(img);
+            }
+
+            const coverBadge = document.createElement("div");
+            coverBadge.className = "fu-card-badge-cover";
+            coverBadge.textContent = "⭐ Cover";
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "fu-card-remove-btn";
+            removeBtn.title = "Futa picha hii";
+            removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+
+            removeBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const idx = stagedUrls.indexOf(url);
+                if (idx > -1) {
+                    stagedUrls.splice(idx, 1);
+                }
+                card.remove();
+                syncUrlInputs();
+                renderState();
+            });
+
+            card.appendChild(thumb);
+            card.appendChild(coverBadge);
+            card.appendChild(removeBtn);
+
+            cardsGrid.insertBefore(card, cardAddMore);
+
+            syncUrlInputs();
+            renderState();
+        }
+
+        // Global function for existing media deletion
+        window.removeExistingMedia = function (mediaId, btn) {
+            const card = btn.closest(".fu-existing-card");
+            if (card) {
+                card.remove();
+            }
+            const removeContainer = document.getElementById("fuRemoveInputsContainer");
+            if (removeContainer) {
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = "remove_media_ids";
+                hidden.value = mediaId;
+                removeContainer.appendChild(hidden);
+            }
+            renderState();
+        };
+
+        // File picker listener
+        if (fileInput) {
+            fileInput.addEventListener("change", function () {
+                if (this.files && this.files.length) {
+                    addFiles(this.files);
+                }
+            });
+        }
+
+        // Buttons trigger
+        pickDeviceBtn && pickDeviceBtn.addEventListener("click", () => fileInput && fileInput.click());
+        choiceDeviceBtn && choiceDeviceBtn.addEventListener("click", () => {
+            choiceModal.classList.add("d-none");
+            fileInput && fileInput.click();
         });
-        pendingThumbs.appendChild(mini);
-      });
-      if (progress) {
-        const pct = Math.min(100, Math.round(((existing - markedRemovals() + staged.length) / max) * 100));
-        progress.style.width = pct + "%";
-      }
-    }
 
-    function addFiles(fileList) {
-      showError("");
-      const incoming = Array.from(fileList || []);
-      if (!incoming.length) return;
-      if (!multiple) {
-        staged = incoming.slice(0, 1);
-        syncInput();
-        renderPending();
-        return;
-      }
-      let left = slotsLeft();
-      if (left <= 0) {
-        showError("Maximum " + max + " files. Remove one to add more.");
-        return;
-      }
-      const accepted = [];
-      for (const file of incoming) {
-        if (left <= 0) break;
-        const isImg = file.type.startsWith("image/");
-        const isVid = file.type.startsWith("video/");
-        if (!isImg && !isVid) continue;
-        accepted.push(file);
-        left -= 1;
-      }
-      if (!accepted.length) {
-        showError("Use image or video files only.");
-        return;
-      }
-      if (accepted.length < incoming.length) {
-        showError("Only " + accepted.length + " file(s) added (max " + max + ").");
-      }
-      staged = staged.concat(accepted);
-      syncInput();
-      renderPending();
-    }
-
-    browse && browse.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      input.click();
-    });
-
-    dropzone.addEventListener("click", function (e) {
-      if (e.target === browse || e.target.closest(".fu-browse")) return;
-      // input covers zone; keep for keyboard
-    });
-
-    input.addEventListener("change", function () {
-      // Replace staged with new selection when user picks via OS dialog
-      // (OS always returns a fresh FileList). Merge with capacity.
-      const picked = Array.from(input.files || []);
-      staged = [];
-      syncInput();
-      addFiles(picked);
-    });
-
-    ["dragenter", "dragover"].forEach((ev) => {
-      dropzone.addEventListener(ev, function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.add("is-drag");
-      });
-    });
-    ["dragleave", "drop"].forEach((ev) => {
-      dropzone.addEventListener(ev, function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.remove("is-drag");
-      });
-    });
-    dropzone.addEventListener("drop", function (e) {
-      addFiles(e.dataTransfer && e.dataTransfer.files);
-    });
-
-    root.querySelectorAll(".fu-remove-check").forEach((cb) => {
-      cb.addEventListener("change", function () {
-        const row = cb.closest(".fu-recent-item");
-        if (row) row.classList.toggle("is-marked", cb.checked);
-        if (recentCount) {
-          const left = existing - markedRemovals();
-          recentCount.textContent = left + " item" + (left === 1 ? "" : "s");
+        // Open URL modal
+        function openUrlModal() {
+            choiceModal.classList.add("d-none");
+            urlModal.classList.remove("d-none");
+            if (urlInput) {
+                urlInput.value = "";
+                urlInput.focus();
+            }
+            if (urlPreviewBox) urlPreviewBox.classList.add("d-none");
+            if (urlError) urlError.classList.add("d-none");
         }
-        renderPending();
-        showError("");
-      });
-    });
 
-    // Form guard: need at least one image for product sell forms
-    const form = root.closest("form");
-    if (form && root.getAttribute("data-require-image") === "1") {
-      form.addEventListener("submit", function (e) {
-        const keptExisting = existing - markedRemovals();
-        const hasNewImage = staged.some((f) => f.type.startsWith("image/"));
-        const hasExistingImage = Array.from(root.querySelectorAll(".fu-recent-item:not(.is-marked) img")).length > 0;
-        if (!hasNewImage && !hasExistingImage && keptExisting === 0) {
-          e.preventDefault();
-          showError("Add at least one product photo.");
+        pickUrlBtn && pickUrlBtn.addEventListener("click", openUrlModal);
+        choiceUrlBtn && choiceUrlBtn.addEventListener("click", openUrlModal);
+
+        // Open Choice modal on + card click
+        cardAddMore && cardAddMore.addEventListener("click", function () {
+            choiceModal.classList.remove("d-none");
+        });
+
+        // Close Modals
+        closeChoiceModal && closeChoiceModal.addEventListener("click", () => choiceModal.classList.add("d-none"));
+        closeUrlModal && closeUrlModal.addEventListener("click", () => urlModal.classList.add("d-none"));
+        cancelUrlBtn && cancelUrlBtn.addEventListener("click", () => urlModal.classList.add("d-none"));
+
+        choiceModal && choiceModal.addEventListener("click", function (e) {
+            if (e.target === choiceModal) choiceModal.classList.add("d-none");
+        });
+        urlModal && urlModal.addEventListener("click", function (e) {
+            if (e.target === urlModal) urlModal.classList.add("d-none");
+        });
+
+        // URL Live input preview
+        if (urlInput) {
+            urlInput.addEventListener("input", function () {
+                const val = this.value.trim();
+                if (val.startsWith("http://") || val.startsWith("https://")) {
+                    if (urlImgPreview) urlImgPreview.src = val;
+                    if (urlPreviewBox) urlPreviewBox.classList.remove("d-none");
+                    if (urlError) urlError.classList.add("d-none");
+                } else {
+                    if (urlPreviewBox) urlPreviewBox.classList.add("d-none");
+                }
+            });
         }
-      });
-    }
-  }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".fu-uploader").forEach(initUploader);
-  });
+        // Submit URL button
+        submitUrlBtn && submitUrlBtn.addEventListener("click", function () {
+            const val = urlInput ? urlInput.value.trim() : "";
+            if (!val || !(val.startsWith("http://") || val.startsWith("https://"))) {
+                if (urlError) urlError.classList.remove("d-none");
+                return;
+            }
+            addUrlMedia(val);
+            urlModal.classList.add("d-none");
+        });
+
+        // Drag and Drop support
+        const dropCard = document.getElementById("fuDropCard");
+        if (dropCard) {
+            ["dragenter", "dragover"].forEach(ev => {
+                dropCard.addEventListener(ev, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropCard.classList.add("is-drag");
+                });
+            });
+            ["dragleave", "drop"].forEach(ev => {
+                dropCard.addEventListener(ev, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropCard.classList.remove("is-drag");
+                });
+            });
+            dropCard.addEventListener("drop", e => {
+                const files = e.dataTransfer.files;
+                if (files && files.length) {
+                    addFiles(files);
+                }
+            });
+        }
+
+        // Initial setup
+        renderState();
+    });
 })();

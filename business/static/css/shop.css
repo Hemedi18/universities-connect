@@ -36,7 +36,7 @@
 }
 
 /* Dark mode: everything dark */
-body.dark-mode {
+body.dark-mode, html.theme-dark body {
     --uc-ink: #f2f2f2;
     --uc-dark: #0f0f0f;
     --uc-muted: #a0a0a0;
@@ -60,7 +60,47 @@ body.dark-mode {
     --uc-input-bg: #1a1a1a;
     --uc-hero-band: #0a0a0a;
     --uc-hero-band-text: #f2f2f2;
+
+    /* Bootstrap 5 Theme Variables Overrides */
+    --bs-body-bg: #0f0f0f;
+    --bs-body-color: #f2f2f2;
+    --bs-emphasis-color: #ffffff;
+    --bs-secondary-color: #a0a0a0;
+    --bs-tertiary-color: #777777;
+    --bs-border-color: #333333;
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.12);
+    --bs-card-bg: #1e1e1e;
+    --bs-card-color: #f2f2f2;
+    --bs-card-border-color: #333333;
+    --bs-table-bg: transparent;
+    --bs-table-color: #f2f2f2;
+    --bs-table-border-color: #333333;
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+    --bs-table-hover-color: #ffffff;
+
     color-scheme: dark;
+}
+
+body.dark-mode table,
+html.theme-dark table,
+body.dark-mode .table,
+html.theme-dark .table {
+    --bs-table-bg: transparent !important;
+    --bs-table-color: #f2f2f2 !important;
+    color: #f2f2f2 !important;
+}
+
+body.dark-mode .table td,
+html.theme-dark .table td,
+body.dark-mode .table th,
+html.theme-dark .table th {
+    color: #f2f2f2 !important;
+    border-color: #333333 !important;
+}
+
+body.dark-mode .text-muted,
+html.theme-dark .text-muted {
+    color: #a0a0a0 !important;
 }
 
 * { box-sizing: border-box; }

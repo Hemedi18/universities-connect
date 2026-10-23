@@ -1,4 +1,4 @@
-{# Shared multi-file / single-file uploader (screenshot style) #}
+{# Shared multi-file / URL uploader with collapsible initial dropzone & trailing + add card #}
 {% comment %}
 Expected context:
   input_name (default media_files)
@@ -7,66 +7,142 @@ Expected context:
   multiple (default True)
   accept (default image/*,video/*)
   existing_media (list of ItemMedia, optional)
-  title / help (optional)
 {% endcomment %}
 <div class="fu-uploader"
+     id="fuUploaderContainer"
      data-max="{{ max_files|default:6 }}"
      data-multiple="{{ multiple|yesno:'1,0' }}"
      data-existing="{{ existing_media|length|default:0 }}">
-    <div class="fu-dropzone" tabindex="0" role="button" aria-label="Upload files">
-        <div class="fu-drop-inner">
-            <i class="bi bi-cloud-arrow-up fu-icon"></i>
-            <p class="fu-drop-text">Upload your files here</p>
-            <button type="button" class="fu-browse">Browse</button>
-        </div>
-        <input type="file"
-               name="{{ input_name|default:'media_files' }}"
-               id="{{ input_id|default:'id_media_files' }}"
-               class="fu-input"
-               accept="{{ accept|default:'image/*,video/*' }}"
-               {% if multiple|default:True %}multiple{% endif %}
-               {% if not multiple|default:True %}{% endif %}>
+
+    <!-- Hidden native file input -->
+    <input type="file"
+           name="{{ input_name|default:'media_files' }}"
+           id="{{ input_id|default:'id_media_files' }}"
+           class="fu-hidden-input"
+           accept="{{ accept|default:'image/*,video/*' }}"
+           {% if multiple|default:True %}multiple{% endif %}>
+
+    <!-- Hidden container for submitted media URLs -->
+    <div id="fuUrlInputsContainer" class="d-none"></div>
+
+    <!-- Hidden container for removed existing media IDs -->
+    <div id="fuRemoveInputsContainer" class="d-none">
+        <!-- populated dynamically when existing media is deleted -->
     </div>
 
-    <div class="fu-pending" hidden>
-        <div class="fu-pending-head">
-            <strong class="fu-pending-title">Selected files</strong>
-            <span class="fu-pending-count"></span>
+    <!-- 1. INITIAL UPLOAD SELECTION (Visible ONLY when 0 files uploaded) -->
+    <div class="fu-initial-zone" id="fuInitialZone" {% if existing_media %}style="display: none;"{% endif %}>
+        <div class="fu-drop-card" id="fuDropCard">
+            <div class="fu-drop-icon-wrap">
+                <i class="bi bi-cloud-arrow-up-fill fu-cloud-icon"></i>
+            </div>
+            <h5 class="fu-drop-title">Pakia Picha au Video za Bidhaa</h5>
+            <p class="fu-drop-desc">Chagua picha iliyo wazi kutoka kwenye kifaa chako au ingiza link ya mtandaoni (URL). Unaweza kuweka hadi picha 6 na video 1 fupi.</p>
+            
+            <div class="fu-choice-btns">
+                <button type="button" class="btn btn-primary btn-sm px-3 py-2 rounded-pill fw-semibold shadow-sm fu-btn-action" id="fuPickDeviceBtn">
+                    <i class="bi bi-phone-fill me-1"></i> Kutoka Kwenye Kifaa (Device)
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill fw-semibold fu-btn-action" id="fuPickUrlBtn">
+                    <i class="bi bi-link-45deg me-1"></i> Kutoka Mtandaoni (From URL)
+                </button>
+            </div>
+            <div class="fu-drop-hint">
+                <span>au buruta (drag &amp; drop) picha hapa</span>
+            </div>
         </div>
-        <div class="fu-pending-thumbs"></div>
-        <div class="fu-progress"><span></span></div>
-        <p class="fu-pending-hint">Ready to upload · max {{ max_files|default:6 }} total</p>
     </div>
 
-    <div class="fu-recent">
-        <div class="fu-recent-head">
-            <strong>Recent uploaded</strong>
-            <span class="fu-recent-count">{% if existing_media %}{{ existing_media|length }} item{{ existing_media|length|pluralize }}{% else %}0 items{% endif %}</span>
+    <!-- 2. GALLERY GRID VIEW (Visible when at least 1 image/video exists) -->
+    <div class="fu-gallery-zone" id="fuGalleryZone" {% if not existing_media %}style="display: none;"{% endif %}>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="small fw-bold text-muted text-uppercase" style="letter-spacing: 0.5px;">
+                <i class="bi bi-images text-primary me-1"></i>Picha &amp; Video Zilizowekwa (<span id="fuCountDisplay">{% if existing_media %}{{ existing_media|length }}{% else %}0{% endif %}</span>/{{ max_files|default:6 }})
+            </span>
+            <small class="text-muted" style="font-size: 0.76rem;">Picha ya kwanza ndiyo 'Main Cover'</small>
         </div>
-        <ul class="fu-recent-list">
+
+        <div class="fu-cards-grid" id="fuCardsGrid">
+            <!-- Render existing media from database -->
             {% for media in existing_media %}
-            <li class="fu-recent-item" data-media-id="{{ media.id }}">
-                <div class="fu-thumb">
+            <div class="fu-media-card fu-existing-card" data-media-id="{{ media.id }}" data-type="{{ media.media_type }}">
+                <div class="fu-media-thumb">
                     {% if media.media_type == 'video' %}
                     <video src="{{ media.file.url }}" muted playsinline preload="metadata"></video>
-                    <span class="fu-badge-vid"><i class="bi bi-camera-video-fill"></i></span>
+                    <span class="fu-play-badge"><i class="bi bi-play-fill"></i></span>
                     {% else %}
-                    <img src="{{ media.file.url }}" alt="">
+                    <img src="{{ media.file.url }}" alt="Product Media" loading="lazy">
                     {% endif %}
                 </div>
-                <div class="fu-meta">
-                    <strong>{{ media.file.name|cut:"item_media/"|truncatechars:28 }}</strong>
-                    <span>{% if media.media_type == 'video' %}Video{% else %}Image{% endif %} · {{ media.created_at|date:"M d Y" }}</span>
-                </div>
-                <label class="fu-remove-existing" title="Remove">
-                    <input type="checkbox" name="remove_media_ids" value="{{ media.id }}" class="fu-remove-check">
-                    <i class="bi bi-trash3"></i>
-                </label>
-            </li>
-            {% empty %}
-            <li class="fu-recent-empty">No files yet — use Browse to add photos or videos.</li>
+                <div class="fu-card-badge-cover">⭐ Cover</div>
+                <button type="button" class="fu-card-remove-btn" title="Futa picha hii" onclick="removeExistingMedia('{{ media.id }}', this)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
             {% endfor %}
-        </ul>
+
+            <!-- Trailing + Add More Card button directly following the last item -->
+            <div class="fu-card-add" id="fuCardAddMore" role="button" tabindex="0" title="Ongeza picha au video nyingine">
+                <div class="fu-add-circle">
+                    <i class="bi bi-plus-lg"></i>
+                </div>
+                <span class="fu-add-text">Ongeza Picha</span>
+                <span class="fu-add-sub" id="fuSlotRemaining">({{ max_files|default:6 }} max)</span>
+            </div>
+        </div>
     </div>
-    <p class="fu-error" hidden></p>
+
+    <!-- Feedback / error bar -->
+    <div class="fu-feedback-msg text-danger small mt-2 d-none" id="fuErrorMsg"></div>
+
+    <!-- 3. URL INPUT MODAL / POPOVER -->
+    <div class="fu-modal-backdrop d-none" id="fuUrlModal">
+        <div class="fu-modal-dialog">
+            <div class="fu-modal-header">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-link-45deg text-primary me-1"></i>Weka Kiungo cha Picha au Video (URL)</h6>
+                <button type="button" class="btn-close" id="fuCloseUrlModal" aria-label="Close"></button>
+            </div>
+            <div class="fu-modal-body">
+                <p class="text-muted small mb-2">Ingiza URL ya picha (JPG, PNG, WebP) au video (MP4) kutoka mtandaoni:</p>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="bi bi-globe2"></i></span>
+                    <input type="url" class="form-control" id="fuUrlInput" placeholder="https://example.com/picha-yangu.jpg">
+                </div>
+                <div id="fuUrlPreviewBox" class="fu-url-preview d-none">
+                    <img id="fuUrlImgPreview" src="" alt="Preview">
+                </div>
+                <div id="fuUrlError" class="text-danger small mt-1 d-none">Tafadhali weka kiungo sahihi cha mtandao (http:// au https://).</div>
+            </div>
+            <div class="fu-modal-footer">
+                <button type="button" class="btn btn-sm btn-light border px-3 rounded-pill" id="fuCancelUrlBtn">Ghairi</button>
+                <button type="button" class="btn btn-sm btn-primary px-3 rounded-pill fw-semibold" id="fuSubmitUrlBtn">
+                    <i class="bi bi-check-lg me-1"></i> Weka Picha Hii
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. SOURCE CHOICE MODAL (When clicking + button) -->
+    <div class="fu-modal-backdrop d-none" id="fuChoiceModal">
+        <div class="fu-modal-dialog fu-modal-small">
+            <div class="fu-modal-header">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-plus-circle-fill text-primary me-1"></i>Ongeza Picha au Video</h6>
+                <button type="button" class="btn-close" id="fuCloseChoiceModal" aria-label="Close"></button>
+            </div>
+            <div class="fu-modal-body text-center py-3">
+                <p class="small text-muted mb-3">Chagua unapotaka kuchukua picha au video mpya:</p>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-3 shadow-sm" id="fuChoiceDeviceBtn">
+                        <i class="bi bi-phone-fill fs-5"></i>
+                        <span class="fw-semibold">Kutoka Kwenye Kifaa (Device)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 py-2 rounded-3" id="fuChoiceUrlBtn">
+                        <i class="bi bi-link-45deg fs-5"></i>
+                        <span class="fw-semibold">Kutoka Mtandaoni (From URL)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

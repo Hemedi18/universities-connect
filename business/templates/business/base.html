@@ -32,6 +32,25 @@
     <style>
         html.theme-dark body { background: #0f0f0f !important; color: #f2f2f2 !important; }
 
+        /* Masthead Theme Toggle Button */
+        .uc-theme-btn {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 1.15rem;
+            padding: 6px 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .uc-theme-btn:hover {
+            transform: rotate(20deg) scale(1.15);
+            color: #f59e0b !important;
+        }
+
         /* Global Floating Toast Popup */
         .uc-toast-container {
             position: fixed;
@@ -259,6 +278,9 @@
                     <i class="bi bi-cart3"></i>
                     {% if cart_item_count %}<span class="uc-badge">{{ cart_item_count }}</span>{% endif %}
                 </a>
+                <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="Badili Theme (Dark/Light)" aria-label="Toggle Theme">
+                    <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
+                </button>
                 <button type="button" class="uc-hamburger" id="uc-hamburger" aria-label="Menu" aria-controls="uc-menu-links" aria-expanded="false">
                     <span></span><span></span><span></span>
                 </button>
@@ -275,6 +297,12 @@
                 {% endif %}
             </div>
             <ul class="uc-menu-links" id="uc-menu-links">
+                <li class="d-md-none border-bottom pb-2 mb-2">
+                    <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning">
+                        <span><i class="bi bi-circle-half me-2"></i>Badili Theme (Dark/Light)</span>
+                        <span class="badge bg-secondary" id="ucThemeMobileBadge">Theme</span>
+                    </a>
+                </li>
                 <li>
                     <a href="{% url 'customer:home' %}" class="{% if request.resolver_match.url_name == 'home' and not request.GET.q and not request.GET.category and not request.GET.filter %}is-active{% endif %}" title="Home">
                         <i class="bi bi-house-door-fill" aria-hidden="true"></i>
@@ -421,14 +449,37 @@
             el.classList.add('uc-toast-closing');
             setTimeout(function() { el.remove(); }, 300);
         }
-        document.addEventListener('DOMContentLoaded', function() {
-            var toasts = document.querySelectorAll('.uc-toast-popup');
-            toasts.forEach(function(toast) {
-                setTimeout(function() {
-                    closeToast(toast);
-                }, 6500);
-            });
-        });
+        // Global Theme Toggle
+        function toggleGlobalTheme() {
+            const isDark = document.body.classList.contains('dark-mode') || document.documentElement.classList.contains('theme-dark');
+            if (isDark) {
+                document.body.classList.remove('dark-mode');
+                document.documentElement.classList.remove('theme-dark');
+                document.documentElement.removeAttribute('data-bs-theme');
+                localStorage.setItem('theme', 'light-mode');
+            } else {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.add('theme-dark');
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+                localStorage.setItem('theme', 'dark-mode');
+            }
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            const isDark = document.body.classList.contains('dark-mode') || document.documentElement.classList.contains('theme-dark');
+            const icon = document.getElementById('ucThemeIcon');
+            const badge = document.getElementById('ucThemeMobileBadge');
+            if (icon) {
+                icon.className = isDark ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill';
+            }
+            if (badge) {
+                badge.textContent = isDark ? 'Dark' : 'Light';
+                badge.className = isDark ? 'badge bg-warning text-dark' : 'badge bg-secondary';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateThemeIcons);
     </script>
     {% include 'business/partials/_support_drawer.html' %}
     {% block extra_js %}{% endblock %}

@@ -47,8 +47,72 @@ def view_company_profile_redirect(request, company_id):
     return redirect("company:profile", company_id=company_id)
 
 
+def save_item_media_urls(item, urls, start_order=0):
+    """Download and create ItemMedia rows from external image or video URLs."""
+    import os
+    import urllib.request
+    from urllib.parse import urlparse
+    from django.core.files.base import ContentFile
+    from .forms import resize_uploaded_image
+
+    added = 0
+    order = start_order
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; U-ConnectBot/1.0; +https://uconnect.edusphere.co.tz)"}
+
+    for url in urls:
+        url = (url or "").strip()
+        if not url or not (url.startswith("http://") or url.startswith("https://")):
+            continue
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                content_type = (resp.headers.get_content_type() or "").lower()
+                content = resp.read(25 * 1024 * 1024 + 10)
+                if len(content) > 25 * 1024 * 1024:
+                    continue
+
+                parsed = urlparse(url)
+                ext = os.path.splitext(parsed.path)[1].lower()
+                if not ext:
+                    if "video" in content_type:
+                        ext = ".mp4"
+                    elif "png" in content_type:
+                        ext = ".png"
+                    elif "webp" in content_type:
+                        ext = ".webp"
+                    else:
+                        ext = ".jpg"
+
+                filename = f"url_media_{item.id}_{order}{ext}"
+                cfile = ContentFile(content, name=filename)
+
+                if "video" in content_type or ext in (".mp4", ".webm", ".mov", ".m4v"):
+                    mtype = ItemMedia.MEDIA_VIDEO
+                else:
+                    mtype = ItemMedia.MEDIA_IMAGE
+                    try:
+                        resize_uploaded_image(cfile)
+                    except Exception:
+                        pass
+
+                ItemMedia.objects.create(
+                    item=item,
+                    file=cfile,
+                    media_type=mtype,
+                    sort_order=order,
+                )
+                order += 1
+                added += 1
+        except Exception:
+            continue
+
+    if added:
+        item.sync_legacy_media_fields()
+    return added
+
+
 def _process_item_media(request, item, *, require_image=False):
-    """Handle remove_media_ids + media_files uploads. Returns error message or None."""
+    """Handle remove_media_ids + media_files uploads + media_urls. Returns error message or None."""
     remove_ids = request.POST.getlist("remove_media_ids")
     if remove_ids:
         ItemMedia.objects.filter(item=item, id__in=remove_ids).delete()
@@ -59,8 +123,9 @@ def _process_item_media(request, item, *, require_image=False):
                 media.save(update_fields=["sort_order"])
 
     uploads = request.FILES.getlist("media_files")
+    media_urls = [u.strip() for u in request.POST.getlist("media_urls") if u.strip()]
     existing = item.media.count()
-    if existing + len(uploads) > MAX_ITEM_MEDIA:
+    if existing + len(uploads) + len(media_urls) > MAX_ITEM_MEDIA:
         return f"Maximum {MAX_ITEM_MEDIA} photos/videos per item."
 
     try:
@@ -68,7 +133,12 @@ def _process_item_media(request, item, *, require_image=False):
             validate_uploaded_media(uploaded)
         if uploads:
             save_item_media_files(item, uploads, start_order=existing)
-        else:
+            existing = item.media.count()
+
+        if media_urls:
+            save_item_media_urls(item, media_urls, start_order=existing)
+
+        if not uploads and not media_urls:
             item.sync_legacy_media_fields()
     except ValidationError as exc:
         return "; ".join(exc.messages) if hasattr(exc, "messages") else str(exc)
@@ -77,7 +147,7 @@ def _process_item_media(request, item, *, require_image=False):
         item.image
     )
     if require_image and not has_image:
-        return "Add at least one product photo."
+        return "Weka angalau picha 1 ya bidhaa (Add at least one product photo)."
     return None
 
 
@@ -92,6 +162,8 @@ def post_item(request):
             "Ongeza namba yako ya simu / WhatsApp kwenye profile kabla ya kuuza.",
         )
         return redirect("users:edit_profile")
+
+    email = (request.user.email or "").strip()
 
     # Step 1: Check if category is selected
     category_id = request.GET.get("category")
@@ -155,7 +227,15 @@ def post_item(request):
                     return redirect("company:dashboard")
                 return redirect("business:personal_dashboard")
     else:
-        form = ItemForm(category=category)
+        # Pre-fill registered phone and email by default for seller convenience
+        form = ItemForm(
+            category=category,
+            initial={
+                "contact_phone": phone,
+                "contact_email": email,
+                "contact_method": "phone",
+            },
+        )
     return render(
         request,
         "business/post_item.html",
@@ -164,6 +244,8 @@ def post_item(request):
             "category": category,
             "existing_media": [],
             "max_media": MAX_ITEM_MEDIA,
+            "registered_phone": phone,
+            "registered_email": email,
         },
     )
 
@@ -192,6 +274,9 @@ def edit_item(request, item_id):
                 return redirect("business:manage_items")
     else:
         form = ItemForm(instance=item)
+    profile = getattr(request.user, "profile", None)
+    phone = (getattr(profile, "phone_number", None) or "").strip()
+    email = (request.user.email or "").strip()
     return render(
         request,
         "business/post_item.html",
@@ -202,6 +287,8 @@ def edit_item(request, item_id):
             "existing_media": list(item.media.all()),
             "max_media": MAX_ITEM_MEDIA,
             "item": item,
+            "registered_phone": phone,
+            "registered_email": email,
         },
     )
 

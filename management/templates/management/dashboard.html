@@ -17,6 +17,21 @@
     <!-- Chart.js for Interactive Trend Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
+    <!-- Early Theme Bootstrap -->
+    <script>
+        (function() {
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'light-mode') {
+                    document.documentElement.classList.add('light-mode');
+                    document.documentElement.setAttribute('data-bs-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
     <style>
         :root {
             --brand-primary: #4f46e5;
@@ -40,6 +55,7 @@
             padding: 0;
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
         h1, h2, h3, h4, .brand-font {
@@ -55,7 +71,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .glass-card:hover {
             border-color: rgba(99, 102, 241, 0.3);
@@ -70,6 +86,7 @@
             top: 0;
             z-index: 1020;
             padding: 0.75rem 1.25rem;
+            transition: background 0.2s ease, border-color 0.2s ease;
         }
 
         /* Navigation Tabs */
@@ -118,29 +135,104 @@
             font-size: 1.35rem;
         }
 
-        /* Custom Table */
-        .table-custom {
-            color: #e2e8f0;
-            border-color: var(--border-dark);
+        /* Custom Table & Full Dark Mode Table Support */
+        .table,
+        .table-custom,
+        table.table {
+            --bs-table-bg: transparent !important;
+            --bs-table-color: var(--text-main, #f8fafc) !important;
+            --bs-table-border-color: var(--border-dark, #334155) !important;
+            background-color: transparent !important;
+            color: var(--text-main, #e2e8f0) !important;
+            border-color: var(--border-dark) !important;
             margin-bottom: 0;
         }
-        .table-custom th {
-            background: rgba(15, 23, 42, 0.85);
-            color: #94a3b8;
+        .table-custom tr,
+        .table tr {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
+        .table-custom th,
+        .table th {
+            background: rgba(15, 23, 42, 0.95) !important;
+            color: #94a3b8 !important;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.6px;
             padding: 12px 14px;
-            border-bottom: 1px solid var(--border-dark);
+            border-bottom: 1px solid var(--border-dark) !important;
         }
-        .table-custom td {
+        .table-custom td,
+        .table td {
             padding: 14px;
             vertical-align: middle;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            background-color: transparent !important;
+            color: #e2e8f0 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             font-size: 0.88rem;
         }
-        .table-custom tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
+        .table-custom tr:hover td,
+        .table tr:hover td {
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        /* Light Mode Styles for Command Center */
+        body.light-mode {
+            --bg-dark: #f8fafc;
+            --surface-dark: #ffffff;
+            --border-dark: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+        body.light-mode .admin-navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom-color: #e2e8f0 !important;
+        }
+        body.light-mode .brand-font {
+            color: #0f172a !important;
+        }
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+        }
+        body.light-mode .nav-pills-custom {
+            background: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode .nav-pills-custom .nav-link {
+            color: #475569 !important;
+        }
+        body.light-mode .nav-pills-custom .nav-link.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
+        }
+        body.light-mode .table,
+        body.light-mode .table-custom,
+        body.light-mode table.table {
+            --bs-table-bg: transparent !important;
+            --bs-table-color: #0f172a !important;
+            color: #0f172a !important;
+        }
+        body.light-mode .table-custom th,
+        body.light-mode .table th {
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        body.light-mode .table-custom td,
+        body.light-mode .table td {
+            color: #0f172a !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        body.light-mode .table-custom tr:hover td {
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
+        body.light-mode .bg-dark {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
         }
 
         /* Badges */
@@ -225,9 +317,13 @@
                     <i class="bi bi-speedometer2 me-1"></i>Management Mode
                 </span>
                 <a href="{% url 'management:switch_mode' %}?mode=normal" class="btn btn-sm btn-link text-muted text-decoration-none px-2 py-0" style="font-size: 0.78rem;" title="Badili kwenda Django Admin ya kawaida (Normal Mode)">
-                    <i class="bi bi-arrow-left-right me-1 text-warning"></i><span class="mobile-hide">Switch to Normal Mode</span>
-                </a>
             </div>
+
+            <!-- Theme Toggle Button -->
+            <button type="button" class="btn btn-sm btn-dark border-secondary d-flex align-items-center gap-1 py-1 px-2 rounded-3 text-warning shadow-sm" id="adminThemeToggle" title="Badili Theme (Dark/Light)">
+                <i class="bi bi-moon-stars-fill" id="adminThemeIcon"></i>
+                <span class="mobile-hide small" id="adminThemeLabel">Dark</span>
+            </button>
 
             <a href="{% url 'admin_support_dashboard' %}" class="btn btn-sm btn-primary d-flex align-items-center gap-1 py-1 px-3 rounded-3" style="font-size: 0.82rem;" title="Support Live Tickets">
                 <i class="bi bi-headset"></i>
@@ -1346,6 +1442,48 @@
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
+        }
+
+        // Theme toggle logic in Executive Dashboard
+        const themeBtn = document.getElementById('adminThemeToggle');
+        const themeIcon = document.getElementById('adminThemeIcon');
+        const themeLabel = document.getElementById('adminThemeLabel');
+
+        function updateAdminThemeUI(isLight) {
+            if (themeIcon) {
+                themeIcon.className = isLight ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill text-warning';
+            }
+            if (themeLabel) {
+                themeLabel.textContent = isLight ? 'Light' : 'Dark';
+            }
+            if (themeBtn) {
+                themeBtn.className = isLight 
+                    ? 'btn btn-sm btn-light border d-flex align-items-center gap-1 py-1 px-2 rounded-3 text-dark shadow-sm'
+                    : 'btn btn-sm btn-dark border-secondary d-flex align-items-center gap-1 py-1 px-2 rounded-3 text-warning shadow-sm';
+            }
+        }
+
+        const initialSavedTheme = localStorage.getItem('theme');
+        if (initialSavedTheme === 'light-mode') {
+            document.body.classList.add('light-mode');
+            updateAdminThemeUI(true);
+        } else {
+            document.body.classList.remove('light-mode');
+            updateAdminThemeUI(false);
+        }
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', function() {
+                const isLight = document.body.classList.toggle('light-mode');
+                if (isLight) {
+                    localStorage.setItem('theme', 'light-mode');
+                    document.documentElement.setAttribute('data-bs-theme', 'light');
+                } else {
+                    localStorage.setItem('theme', 'dark-mode');
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                }
+                updateAdminThemeUI(isLight);
+            });
         }
     </script>
 </body>

@@ -397,28 +397,132 @@
     section {
         scroll-margin-top: 90px;
     }
-    body.dark-mode .uc-doc-wrapper {
-        background-color: #0f172a;
+    /* Dark mode comprehensive high-contrast styling */
+    body.dark-mode .uc-doc-wrapper,
+    html.theme-dark .uc-doc-wrapper {
+        background-color: #0b0f19 !important;
+        color: #f1f5f9 !important;
     }
+
     body.dark-mode .card,
+    html.theme-dark .card,
     body.dark-mode .card-header,
+    html.theme-dark .card-header,
     body.dark-mode .list-group-item,
+    html.theme-dark .list-group-item,
     body.dark-mode .accordion-item,
-    body.dark-mode .accordion-button {
+    html.theme-dark .accordion-item,
+    body.dark-mode .accordion-button,
+    html.theme-dark .accordion-button {
         background-color: #1e293b !important;
         color: #f1f5f9 !important;
         border-color: #334155 !important;
     }
-    body.dark-mode .accordion-body {
+
+    body.dark-mode .card-header.bg-white,
+    html.theme-dark .card-header.bg-white {
         background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode h1, html.theme-dark h1,
+    body.dark-mode h2, html.theme-dark h2,
+    body.dark-mode h3, html.theme-dark h3,
+    body.dark-mode h4, html.theme-dark h4,
+    body.dark-mode h5, html.theme-dark h5,
+    body.dark-mode h6, html.theme-dark h6 {
+        color: #f8fafc !important;
+    }
+
+    body.dark-mode p, html.theme-dark p,
+    body.dark-mode li, html.theme-dark li,
+    body.dark-mode ol, html.theme-dark ol,
+    body.dark-mode ul, html.theme-dark ul {
+        color: #cbd5e1 !important;
+    }
+
+    body.dark-mode .text-muted,
+    html.theme-dark .text-muted {
         color: #94a3b8 !important;
     }
-    body.dark-mode .table-light {
-        background-color: #334155 !important;
+
+    body.dark-mode .text-dark,
+    html.theme-dark .text-dark {
         color: #f1f5f9 !important;
     }
-    body.dark-mode .bg-primary-subtle {
-        background-color: rgba(79, 70, 229, 0.2) !important;
+
+    body.dark-mode table,
+    html.theme-dark table,
+    body.dark-mode .table,
+    html.theme-dark .table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #f1f5f9 !important;
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode .table td,
+    html.theme-dark .table td,
+    body.dark-mode .table th,
+    html.theme-dark .table th {
+        background-color: transparent !important;
+        color: #f1f5f9 !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode .table-light,
+    html.theme-dark .table-light,
+    body.dark-mode thead.table-light,
+    html.theme-dark thead.table-light {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode thead.table-light th,
+    html.theme-dark thead.table-light th {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode .table-hover tbody tr:hover td,
+    html.theme-dark .table-hover tbody tr:hover td {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: #ffffff !important;
+    }
+
+    body.dark-mode .bg-light,
+    html.theme-dark .bg-light {
+        background-color: #0f172a !important;
+        color: #cbd5e1 !important;
+        border-color: #334155 !important;
+    }
+
+    body.dark-mode .bg-primary-subtle,
+    html.theme-dark .bg-primary-subtle {
+        background-color: rgba(79, 70, 229, 0.25) !important;
+        color: #818cf8 !important;
+    }
+
+    body.dark-mode .bg-success-subtle,
+    html.theme-dark .bg-success-subtle {
+        background-color: rgba(16, 185, 129, 0.25) !important;
+        color: #34d399 !important;
+    }
+
+    body.dark-mode .bg-danger-subtle,
+    html.theme-dark .bg-danger-subtle {
+        background-color: rgba(239, 68, 68, 0.25) !important;
+        color: #f87171 !important;
+    }
+
+    body.dark-mode .accordion-body,
+    html.theme-dark .accordion-body {
+        background-color: #1e293b !important;
+        color: #cbd5e1 !important;
     }
 </style>
 

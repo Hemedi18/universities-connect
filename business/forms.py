@@ -308,54 +308,67 @@ class ItemForm(forms.ModelForm):
             for attr in self.category.attributes.all():
                 field_name = f"attr_{attr.id}"
                 meta = get_attribute_metadata(attr.name)
+                attr_lower = attr.name.lower()
 
+                # Build rich suggestions / dropdown list
+                raw_options = []
                 if attr.options:
-                    options = [opt.strip() for opt in attr.options.split(",") if opt.strip()]
-                    choices = [("", f"Select {attr.name}")] + [(opt, opt) for opt in options]
-                    field = forms.ChoiceField(
-                        label=attr.name,
-                        choices=choices,
-                        required=False,
-                        widget=forms.Select(attrs={"class": "form-select"}),
-                    )
-                    field.options_list = options
-                elif attr.name.lower() in ["os", "operating system", "platform"]:
-                    os_choices = [
-                        ("", f"Select {attr.name}"),
-                        ("Android", "Android"),
-                        ("iOS", "iOS"),
-                        ("Windows", "Windows"),
-                        ("macOS", "macOS"),
-                        ("Linux", "Linux"),
-                        ("Other", "Other"),
+                    raw_options = [opt.strip() for opt in attr.options.split(",") if opt.strip()]
+
+                # Expand storage to include HDD and lower capacities (<128GB)
+                if "storage" in attr_lower or "ssd" in attr_lower or "hdd" in attr_lower:
+                    storage_defaults = [
+                        "16 GB", "32 GB", "64 GB", "128 GB SSD", "256 GB SSD", 
+                        "512 GB SSD", "1 TB SSD", "2 TB SSD", "160 GB HDD", 
+                        "250 GB HDD", "320 GB HDD", "500 GB HDD", "1 TB HDD", 
+                        "2 TB HDD", "128 GB SSD + 500 GB HDD", "256 GB SSD + 1 TB HDD",
+                        "64 GB eMMC"
                     ]
-                    field = forms.ChoiceField(
-                        label=attr.name,
-                        choices=os_choices,
-                        required=False,
-                        widget=forms.Select(attrs={"class": "form-select"}),
-                    )
-                    field.options_list = ["Android", "iOS", "Windows", "macOS", "Linux", "Other"]
+                    seen = set()
+                    merged_options = []
+                    for opt in raw_options + storage_defaults:
+                        if opt.lower() not in seen:
+                            seen.add(opt.lower())
+                            merged_options.append(opt)
+                    options_list = merged_options
+                elif "os" in attr_lower or "operating system" in attr_lower:
+                    options_list = ["Android", "iOS", "Windows", "macOS", "Linux", "ChromeOS", "Other"]
+                elif "camera" in attr_lower:
+                    camera_defaults = ["8 MP", "12 MP", "13 MP", "16 MP", "48 MP", "50 MP", "64 MP", "108 MP", "200 MP"]
+                    seen = set()
+                    merged = []
+                    for opt in raw_options + camera_defaults:
+                        if opt.lower() not in seen:
+                            seen.add(opt.lower())
+                            merged.append(opt)
+                    options_list = merged
                 else:
-                    attr_lower = attr.name.lower()
-                    widget_attrs = {
-                        "class": "form-control",
-                        "placeholder": meta["placeholder"],
-                    }
+                    options_list = raw_options
 
-                    if "date" in attr_lower or "year" in attr_lower:
-                        widget = forms.DateInput(attrs={**widget_attrs, "type": "date"})
-                    elif "color" in attr_lower or "colour" in attr_lower:
-                        widget = forms.TextInput(attrs={
-                            **widget_attrs,
-                            "type": "color",
-                            "style": "height: 42px; padding: 4px;",
-                        })
-                    else:
-                        widget = forms.TextInput(attrs=widget_attrs)
+                datalist_id = f"datalist_{field_name}"
+                widget_attrs = {
+                    "class": "form-control",
+                    "placeholder": meta["placeholder"],
+                    "autocomplete": "off",
+                }
+                if options_list:
+                    widget_attrs["list"] = datalist_id
 
-                    field = forms.CharField(label=attr.name, required=False, widget=widget)
-                    field.options_list = []
+                if "date" in attr_lower or "year" in attr_lower:
+                    widget = forms.DateInput(attrs={**widget_attrs, "type": "date"})
+                elif "color" in attr_lower or "colour" in attr_lower:
+                    widget = forms.TextInput(attrs={
+                        **widget_attrs,
+                        "type": "color",
+                        "style": "height: 42px; padding: 4px;",
+                    })
+                else:
+                    widget = forms.TextInput(attrs=widget_attrs)
+
+                # Never limit users to rigid choices: use CharField so custom specs & extensions are accepted
+                field = forms.CharField(label=attr.name, required=False, widget=widget)
+                field.options_list = options_list
+                field.datalist_id = datalist_id
 
                 # Attach rich metadata for template rendering
                 field.unit = meta["unit"]
