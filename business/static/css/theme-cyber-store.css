@@ -4,26 +4,171 @@
    Trust Marketplace Card, and Interactive Add to Cart.
    ========================================================================== */
 
-:root {
+/* ==========================================================================
+   MULTI-THEME COLOR TOKENS & PALETTES
+   Supports:
+   - 'dark'    : Cyber Dark Crimson (Default)
+   - 'light'   : Pure White / Clean Light
+   - 'pink'    : Rose / Magenta / Pink Radiant Gradient
+   - 'gold'    : Luxury Gold / Amber Royal Gradient
+   - 'emerald' : Neon Emerald / Teal Cyber Gradient
+   ========================================================================== */
+
+/* 1. Default: Cyber Dark */
+:root,
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.theme-dark,
+body.dark-mode {
     --uc-dark-bg: #070d17;
     --uc-dark-surface: #09101d;
     --uc-card-bg: #0d1624;
     --uc-card-hover: #111c2e;
     --uc-card-border: rgba(255, 255, 255, 0.08);
+    --uc-search-bg: #0e182a;
+    --uc-search-color: #ffffff;
+    --uc-search-placeholder: #64748b;
     --uc-crimson: #ff2d55;
     --uc-crimson-hover: #e11d48;
     --uc-crimson-glow: rgba(255, 45, 85, 0.35);
     --uc-text-light: #f8fafc;
     --uc-text-muted: #8e9bb0;
     --uc-gold: #f59e0b;
+    --uc-bg-image: none;
+    --uc-logo-text: #ffffff;
+    --uc-action-icon: #cbd5e1;
+    --uc-action-icon-hover: #ffffff;
+    --uc-sidebar-bg: #080f1c;
+    --uc-pill-bg: #101c2e;
+    --uc-pill-border: rgba(255, 255, 255, 0.08);
+    --uc-pill-color: #cbd5e1;
+}
+
+/* 2. Pure White / Clean Light Mode */
+html[data-theme="light"],
+body[data-theme="light"],
+html.theme-light,
+body.theme-light {
+    --uc-dark-bg: #ffffff;
+    --uc-dark-surface: #ffffff;
+    --uc-card-bg: #ffffff;
+    --uc-card-hover: #f8fafc;
+    --uc-card-border: rgba(0, 0, 0, 0.09);
+    --uc-search-bg: #f1f5f9;
+    --uc-search-color: #0f172a;
+    --uc-search-placeholder: #94a3b8;
+    --uc-crimson: #e11d48;
+    --uc-crimson-hover: #be123c;
+    --uc-crimson-glow: rgba(225, 29, 72, 0.22);
+    --uc-text-light: #0f172a;
+    --uc-text-muted: #64748b;
+    --uc-gold: #d97706;
+    --uc-bg-image: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    --uc-logo-text: #0f172a;
+    --uc-action-icon: #475569;
+    --uc-action-icon-hover: #0f172a;
+    --uc-sidebar-bg: #ffffff;
+    --uc-pill-bg: #f1f5f9;
+    --uc-pill-border: rgba(0, 0, 0, 0.08);
+    --uc-pill-color: #334155;
+}
+
+/* 3. Rose Pink Radiant Gradient Mode */
+html[data-theme="pink"],
+body[data-theme="pink"],
+html.theme-pink,
+body.theme-pink {
+    --uc-dark-bg: #180514;
+    --uc-dark-surface: rgba(36, 8, 28, 0.96);
+    --uc-card-bg: rgba(54, 12, 42, 0.65);
+    --uc-card-hover: rgba(78, 18, 62, 0.8);
+    --uc-card-border: rgba(244, 63, 94, 0.28);
+    --uc-search-bg: rgba(44, 10, 34, 0.85);
+    --uc-search-color: #fff1f2;
+    --uc-search-placeholder: #f472b6;
+    --uc-crimson: #f43f5e;
+    --uc-crimson-hover: #fb7185;
+    --uc-crimson-glow: rgba(244, 63, 94, 0.45);
+    --uc-text-light: #fff1f2;
+    --uc-text-muted: #fda4af;
+    --uc-gold: #fbbf24;
+    --uc-bg-image: radial-gradient(circle at 80% 20%, rgba(244, 63, 94, 0.18) 0%, transparent 60%), linear-gradient(135deg, #180514 0%, #2b0822 45%, #460d38 100%);
+    --uc-logo-text: #ffffff;
+    --uc-action-icon: #fecdd3;
+    --uc-action-icon-hover: #ffffff;
+    --uc-sidebar-bg: #1f071a;
+    --uc-pill-bg: rgba(68, 15, 53, 0.7);
+    --uc-pill-border: rgba(244, 63, 94, 0.25);
+    --uc-pill-color: #ffe4e6;
+}
+
+/* 4. Luxury Gold Royal Gradient Mode */
+html[data-theme="gold"],
+body[data-theme="gold"],
+html.theme-gold,
+body.theme-gold {
+    --uc-dark-bg: #130d03;
+    --uc-dark-surface: rgba(33, 23, 6, 0.96);
+    --uc-card-bg: rgba(48, 34, 9, 0.65);
+    --uc-card-hover: rgba(69, 50, 13, 0.8);
+    --uc-card-border: rgba(245, 158, 11, 0.3);
+    --uc-search-bg: rgba(38, 27, 7, 0.85);
+    --uc-search-color: #fefce8;
+    --uc-search-placeholder: #fbbf24;
+    --uc-crimson: #f59e0b;
+    --uc-crimson-hover: #fbbf24;
+    --uc-crimson-glow: rgba(245, 158, 11, 0.45);
+    --uc-text-light: #fefce8;
+    --uc-text-muted: #fde68a;
+    --uc-gold: #fbbf24;
+    --uc-bg-image: radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.16) 0%, transparent 60%), linear-gradient(135deg, #130d03 0%, #231805 45%, #3a2809 100%);
+    --uc-logo-text: #ffffff;
+    --uc-action-icon: #fef08a;
+    --uc-action-icon-hover: #ffffff;
+    --uc-sidebar-bg: #1b1204;
+    --uc-pill-bg: rgba(58, 41, 10, 0.7);
+    --uc-pill-border: rgba(245, 158, 11, 0.25);
+    --uc-pill-color: #fef9c3;
+}
+
+/* 5. Neon Emerald / Teal Cyber Gradient Mode */
+html[data-theme="emerald"],
+body[data-theme="emerald"],
+html.theme-emerald,
+body.theme-emerald {
+    --uc-dark-bg: #03120e;
+    --uc-dark-surface: rgba(6, 28, 22, 0.96);
+    --uc-card-bg: rgba(9, 44, 35, 0.65);
+    --uc-card-hover: rgba(14, 64, 51, 0.8);
+    --uc-card-border: rgba(0, 195, 123, 0.3);
+    --uc-search-bg: rgba(7, 34, 27, 0.85);
+    --uc-search-color: #f0fdf4;
+    --uc-search-placeholder: #34d399;
+    --uc-crimson: #00c37b;
+    --uc-crimson-hover: #34d399;
+    --uc-crimson-glow: rgba(0, 195, 123, 0.45);
+    --uc-text-light: #f0fdf4;
+    --uc-text-muted: #86efac;
+    --uc-gold: #fbbf24;
+    --uc-bg-image: radial-gradient(circle at 80% 20%, rgba(0, 195, 123, 0.16) 0%, transparent 60%), linear-gradient(135deg, #03120e 0%, #06241d 45%, #0b3d30 100%);
+    --uc-logo-text: #ffffff;
+    --uc-action-icon: #bbf7d0;
+    --uc-action-icon-hover: #ffffff;
+    --uc-sidebar-bg: #061914;
+    --uc-pill-bg: rgba(12, 54, 43, 0.7);
+    --uc-pill-border: rgba(0, 195, 123, 0.25);
+    --uc-pill-color: #dcfce7;
 }
 
 body.store-theme,
 body.ae-home {
     background-color: var(--uc-dark-bg) !important;
+    background-image: var(--uc-bg-image, none) !important;
+    background-attachment: fixed !important;
     color: var(--uc-text-light) !important;
     font-family: 'Outfit', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ==========================================================================
@@ -37,13 +182,14 @@ body.ae-home .uc-masthead {
     top: 0;
     z-index: 1020;
     backdrop-filter: blur(16px);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .uc-logo {
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
     font-size: 1.65rem;
-    color: #ffffff !important;
+    color: var(--uc-logo-text, #ffffff) !important;
     text-decoration: none;
     letter-spacing: -0.5px;
 }
@@ -55,33 +201,49 @@ body.ae-home .uc-masthead {
 
 /* Center Pill Search Bar */
 .uc-mast-top .uc-search {
-    background: #0e182a !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: var(--uc-search-bg, #0e182a) !important;
+    border: 1px solid var(--uc-card-border, rgba(255, 255, 255, 0.1)) !important;
     border-radius: 9999px !important;
     max-width: 580px !important;
     padding: 3px 4px 3px 14px;
     display: flex;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease;
 }
 
 .uc-mast-top .uc-search:focus-within {
-    border-color: rgba(255, 45, 85, 0.5) !important;
-    box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.18), 0 6px 20px rgba(0, 0, 0, 0.35);
+    border-color: var(--uc-crimson) !important;
+    box-shadow: 0 0 0 3px var(--uc-crimson-glow), 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .uc-mast-top .uc-search input {
     background: transparent !important;
-    color: #ffffff !important;
+    color: var(--uc-search-color, #ffffff) !important;
     border: none !important;
     font-size: 0.9rem;
     padding: 0.5rem 0.5rem;
 }
 
 .uc-mast-top .uc-search input::placeholder {
-    color: #64748b;
+    color: var(--uc-search-placeholder, #64748b);
     font-size: 0.88rem;
+}
+
+.uc-mast-actions a,
+.uc-mast-actions button {
+    color: var(--uc-action-icon, #cbd5e1) !important;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+}
+
+.uc-mast-actions a:hover,
+.uc-mast-actions button:hover {
+    color: var(--uc-action-icon-hover, #ffffff) !important;
+    transform: translateY(-1px);
 }
 
 .uc-mast-top .uc-search button[type="submit"] {
@@ -106,7 +268,7 @@ body.ae-home .uc-masthead {
 /* Right Header Action Icons */
 .uc-mast-actions a,
 .uc-mast-actions button {
-    color: #cbd5e1 !important;
+    color: var(--uc-action-icon, #cbd5e1) !important;
     transition: color 0.2s ease, transform 0.2s ease;
     display: inline-flex;
     align-items: center;
@@ -116,8 +278,203 @@ body.ae-home .uc-masthead {
 
 .uc-mast-actions a:hover,
 .uc-mast-actions button:hover {
-    color: #ffffff !important;
+    color: var(--uc-action-icon-hover, #ffffff) !important;
     transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   THEME SWITCHER DROPDOWN & PALETTE MENU
+   ========================================================================== */
+.uc-theme-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.uc-theme-btn {
+    background: transparent;
+    border: none;
+    color: var(--uc-action-icon, #cbd5e1) !important;
+    font-size: 1.18rem;
+    padding: 6px 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.uc-theme-btn:hover {
+    transform: rotate(20deg) scale(1.15);
+    color: var(--uc-crimson, #ff2d55) !important;
+}
+
+.uc-theme-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 230px;
+    background: var(--uc-dark-surface, #0d1624);
+    border: 1px solid var(--uc-card-border, rgba(255, 255, 255, 0.12));
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+    padding: 8px;
+    z-index: 10050;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    backdrop-filter: blur(16px);
+    animation: ucThemeMenuFade 0.18s ease-out;
+}
+
+.uc-theme-menu.show {
+    display: flex !important;
+}
+
+@keyframes ucThemeMenuFade {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.uc-theme-menu-header {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 8px 8px 8px;
+    border-bottom: 1px solid var(--uc-card-border, rgba(255, 255, 255, 0.08));
+    margin-bottom: 4px;
+}
+
+.uc-theme-menu-header span {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--uc-text-light, #ffffff);
+}
+
+.uc-theme-menu-header small {
+    font-size: 0.72rem;
+    color: var(--uc-text-muted, #94a3b8);
+}
+
+.uc-theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--uc-text-light, #ffffff) !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.uc-theme-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] .uc-theme-option:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.uc-theme-option.active {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--uc-crimson, #ff2d55);
+    font-weight: 700;
+}
+
+html[data-theme="light"] .uc-theme-option.active {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.uc-theme-option .theme-color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.theme-color-dot.dot-light {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.theme-color-dot.dot-dark {
+    background: #070d17;
+    border-color: #334155;
+}
+
+.theme-color-dot.dot-pink {
+    background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+    border-color: #f43f5e;
+}
+
+.theme-color-dot.dot-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    border-color: #f59e0b;
+}
+
+.theme-color-dot.dot-emerald {
+    background: linear-gradient(135deg, #00c37b 0%, #10b981 100%);
+    border-color: #00c37b;
+}
+
+.uc-theme-option .theme-name {
+    flex: 1;
+}
+
+.uc-theme-option .theme-check {
+    margin-left: auto;
+    color: var(--uc-crimson, #ff2d55);
+    font-size: 1.05rem;
+    display: none;
+}
+
+.uc-theme-option.active .theme-check {
+    display: inline-block;
+}
+
+/* Mobile Drawer Theme Chips */
+.uc-mobile-theme-chips {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 6px 0 8px 0;
+    scrollbar-width: none;
+}
+
+.uc-mobile-theme-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.uc-theme-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: rgba(120, 120, 120, 0.12);
+    border: 1px solid var(--uc-card-border, rgba(120, 120, 120, 0.2));
+    color: var(--uc-text-light, inherit);
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.uc-theme-chip.active {
+    border-color: var(--uc-crimson, #ff2d55) !important;
+    background: rgba(255, 45, 85, 0.16) !important;
+    color: var(--uc-crimson, #ff2d55) !important;
+    font-weight: 700;
 }
 
 /* Red Cart Badge */
@@ -1290,17 +1647,18 @@ body.pdp-theme {
     margin-bottom: 1.25rem;
 }
 
-/* Unified Specifications Box (Matching Reference Mockup) */
+/* Unified Specifications Box - Premium 2-Column Grid matching reference mockup */
 .uc-specs-box,
 body.pdp-theme .uc-specs-box {
-    background: #0d1624 !important;
-    border: 1px solid var(--uc-card-border) !important;
+    background: #0c1524 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 14px !important;
-    padding: 14px 18px !important;
+    padding: 16px 20px !important;
     margin-bottom: 1.25rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 12px 16px !important;
+    column-gap: 24px !important;
+    row-gap: 14px !important;
     width: 100% !important;
     box-sizing: border-box !important;
 }
@@ -1308,41 +1666,54 @@ body.pdp-theme .uc-specs-box {
 .uc-spec-item,
 body.pdp-theme .uc-spec-item {
     display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
     min-width: 0 !important;
+    transition: transform 0.15s ease;
 }
 
 .uc-spec-icon {
-    font-size: 1.25rem;
-    color: #94a3b8;
-    flex-shrink: 0;
-    width: 24px;
-    text-align: center;
+    font-size: 1.25rem !important;
+    color: #94a3b8 !important;
+    flex-shrink: 0 !important;
+    margin-top: 2px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .uc-spec-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-    min-width: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    line-height: 1.2 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
 }
 
 .uc-spec-label {
-    font-size: 0.72rem;
-    color: var(--uc-text-muted);
-    margin-bottom: 2px;
-    white-space: nowrap;
+    font-size: 0.74rem !important;
+    font-weight: 500 !important;
+    color: #8e9bb0 !important;
+    text-transform: capitalize !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .uc-spec-val {
-    font-size: 0.84rem;
-    font-weight: 700;
-    color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
+
 
 /* Consistent Dark Theme Footer on PDP, Auth and Chat */
 body.pdp-theme .uc-footer,

@@ -12,7 +12,7 @@ class MessageForm(forms.ModelForm):
         widgets = {
             "content": forms.TextInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control uc-chat-text-input",
                     "placeholder": "Type a message...",
                     "autocomplete": "off",
                     "autofocus": "autofocus",

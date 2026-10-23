@@ -72,5 +72,21 @@
             {% endif %}
         </div>
     </div>
+
+    {# Minimal 1-Line Bottom Bar matching mockup (media_1792783658002.jpg) #}
+    <div class="uc-chat-bottom-bar">
+        <div>&copy; 2026 U-Connect. {% trans "All rights reserved." %}</div>
+        <div class="uc-chat-bottom-trust">
+            <span><i class="bi bi-shield-check text-success"></i> {% trans "Secure & Trusted" %}</span>
+            <span class="uc-chat-bottom-sep">&bull;</span>
+            <span class="uc-chat-bottom-social">
+                {% trans "Follow Us" %}
+                <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+            </span>
+        </div>
+    </div>
 </div>
 {% endblock %}

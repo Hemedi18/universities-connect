@@ -26,17 +26,26 @@
     <script>
         (function () {
             try {
-                var saved = localStorage.getItem('theme');
-                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (saved === 'dark-mode' || (!saved && prefersDark)) {
+                var validThemes = ['light', 'dark', 'pink', 'gold', 'emerald'];
+                var savedTheme = localStorage.getItem('uc_theme');
+                if (!savedTheme) {
+                    var oldTheme = localStorage.getItem('theme');
+                    savedTheme = oldTheme === 'light-mode' ? 'light' : 'dark';
+                }
+                if (!validThemes.includes(savedTheme)) savedTheme = 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                document.documentElement.classList.add('theme-' + savedTheme);
+                if (savedTheme === 'light') {
+                    document.documentElement.setAttribute('data-bs-theme', 'light');
+                    document.documentElement.classList.remove('theme-dark');
+                } else {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
                     document.documentElement.classList.add('theme-dark');
                 }
             } catch (e) {}
         })();
     </script>
     <style>
-        html.theme-dark body { background: #0f0f0f !important; color: #f2f2f2 !important; }
-
         /* Masthead Theme Toggle Button */
         .uc-theme-btn {
             background: transparent;
@@ -285,13 +294,19 @@
     <script>
         (function () {
             try {
-                var saved = localStorage.getItem('theme');
-                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (saved === 'dark-mode' || (!saved && prefersDark)) {
-                    document.body.classList.add('dark-mode');
-                } else {
+                var validThemes = ['light', 'dark', 'pink', 'gold', 'emerald'];
+                var savedTheme = localStorage.getItem('uc_theme');
+                if (!savedTheme) {
+                    var oldTheme = localStorage.getItem('theme');
+                    savedTheme = oldTheme === 'light-mode' ? 'light' : 'dark';
+                }
+                if (!validThemes.includes(savedTheme)) savedTheme = 'dark';
+                document.body.setAttribute('data-theme', savedTheme);
+                document.body.classList.add('theme-' + savedTheme);
+                if (savedTheme === 'light') {
                     document.body.classList.remove('dark-mode');
-                    document.documentElement.classList.remove('theme-dark');
+                } else {
+                    document.body.classList.add('dark-mode');
                 }
                 if (document.body.classList.contains('has-pc-sidebar') && localStorage.getItem('uc_sidebar_collapsed') === 'true') {
                     document.body.classList.add('uc-sidebar-collapsed');
@@ -330,10 +345,27 @@
                     <a href="{% url 'set_language_direct' 'sw' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'sw' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">SW</a>
                     <a href="{% url 'set_language_direct' 'ar' %}?next={{ request.get_full_path|urlencode }}" class="btn {% if request.LANGUAGE_CODE == 'ar' %}btn-primary active fw-bold{% else %}btn-outline-secondary{% endif %}">AR</a>
                 </div>
-                <a href="javascript:void(0)" onclick="toggleGlobalTheme()" class="d-flex align-items-center justify-content-between text-warning text-decoration-none small py-1">
-                    <span><i class="bi bi-circle-half me-2"></i>{% trans "Toggle Theme" %}</span>
-                    <span class="badge bg-secondary" id="ucThemeMobileDrawerBadge">Theme</span>
-                </a>
+                <div class="d-flex align-items-center justify-content-between mb-1 mt-2">
+                    <span class="small fw-bold"><i class="bi bi-palette-fill me-2"></i>{% trans "Appearance" %}</span>
+                    <span class="badge bg-secondary text-uppercase" id="ucThemeMobileBadge">Dark</span>
+                </div>
+                <div class="uc-mobile-theme-chips">
+                    <button type="button" class="uc-theme-chip" data-theme-val="light" onclick="selectGlobalTheme('light')">
+                        <span class="theme-color-dot dot-light"></span> <span>White</span>
+                    </button>
+                    <button type="button" class="uc-theme-chip" data-theme-val="dark" onclick="selectGlobalTheme('dark')">
+                        <span class="theme-color-dot dot-dark"></span> <span>Dark</span>
+                    </button>
+                    <button type="button" class="uc-theme-chip" data-theme-val="pink" onclick="selectGlobalTheme('pink')">
+                        <span class="theme-color-dot dot-pink"></span> <span>Pink</span>
+                    </button>
+                    <button type="button" class="uc-theme-chip" data-theme-val="gold" onclick="selectGlobalTheme('gold')">
+                        <span class="theme-color-dot dot-gold"></span> <span>Gold</span>
+                    </button>
+                    <button type="button" class="uc-theme-chip" data-theme-val="emerald" onclick="selectGlobalTheme('emerald')">
+                        <span class="theme-color-dot dot-emerald"></span> <span>Emerald</span>
+                    </button>
+                </div>
             </div>
 
             <ul class="uc-sidebar-menu">
@@ -563,9 +595,43 @@
                         </a>
                     </div>
                 </div>
-                <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleGlobalTheme()" title="{% trans 'Toggle Theme (Dark/Light)' %}" aria-label="{% trans 'Toggle Theme' %}">
-                    <i class="bi bi-moon-stars-fill" id="ucThemeIcon"></i>
-                </button>
+                <!-- Theme Selector Dropdown -->
+                <div class="uc-theme-dropdown" id="ucThemeDropdown">
+                    <button type="button" class="uc-theme-btn" id="ucThemeToggle" onclick="toggleThemeMenu(event)" title="{% trans 'Color Themes (Light, Dark, Pink, Gold, Emerald)' %}" aria-label="{% trans 'Theme Menu' %}" aria-expanded="false">
+                        <i class="bi bi-palette-fill" id="ucThemeIcon"></i>
+                    </button>
+                    <div class="uc-theme-menu" id="ucThemeMenu">
+                        <div class="uc-theme-menu-header">
+                            <span>{% trans "Color Themes" %}</span>
+                            <small>{% trans "Click to select or cycle" %}</small>
+                        </div>
+                        <button type="button" class="uc-theme-option" data-theme-val="light" onclick="selectGlobalTheme('light')">
+                            <span class="theme-color-dot dot-light"></span>
+                            <span class="theme-name">{% trans "Pure Light (White)" %}</span>
+                            <i class="bi bi-check2 theme-check"></i>
+                        </button>
+                        <button type="button" class="uc-theme-option" data-theme-val="dark" onclick="selectGlobalTheme('dark')">
+                            <span class="theme-color-dot dot-dark"></span>
+                            <span class="theme-name">{% trans "Cyber Dark" %}</span>
+                            <i class="bi bi-check2 theme-check"></i>
+                        </button>
+                        <button type="button" class="uc-theme-option" data-theme-val="pink" onclick="selectGlobalTheme('pink')">
+                            <span class="theme-color-dot dot-pink"></span>
+                            <span class="theme-name">{% trans "Rose Pink Gradient" %}</span>
+                            <i class="bi bi-check2 theme-check"></i>
+                        </button>
+                        <button type="button" class="uc-theme-option" data-theme-val="gold" onclick="selectGlobalTheme('gold')">
+                            <span class="theme-color-dot dot-gold"></span>
+                            <span class="theme-name">{% trans "Luxury Gold Gradient" %}</span>
+                            <i class="bi bi-check2 theme-check"></i>
+                        </button>
+                        <button type="button" class="uc-theme-option" data-theme-val="emerald" onclick="selectGlobalTheme('emerald')">
+                            <span class="theme-color-dot dot-emerald"></span>
+                            <span class="theme-name">{% trans "Neon Emerald Gradient" %}</span>
+                            <i class="bi bi-check2 theme-check"></i>
+                        </button>
+                    </div>
+                </div>
                 {% if user.is_authenticated %}
                 <a href="{% url 'users:home' %}" title="{% trans 'Account' %}" class="uc-mast-avatar uc-mast-account d-inline-flex" aria-label="{% trans 'Account' %}">
                     {% if user.profile and user.profile.profile_picture %}
@@ -721,37 +787,117 @@
             el.classList.add('uc-toast-closing');
             setTimeout(function() { el.remove(); }, 300);
         }
-        // Global Theme Toggle
-        function toggleGlobalTheme() {
-            const isDark = document.body.classList.contains('dark-mode') || document.documentElement.classList.contains('theme-dark');
-            if (isDark) {
+        // =========================================================================
+        // Unified Multi-Theme System (Light/White, Dark, Pink, Gold, Emerald)
+        // =========================================================================
+        function selectGlobalTheme(themeKey) {
+            const validThemes = ['light', 'dark', 'pink', 'gold', 'emerald'];
+            if (!validThemes.includes(themeKey)) themeKey = 'dark';
+
+            validThemes.forEach(function(t) {
+                document.documentElement.classList.remove('theme-' + t);
+                document.body.classList.remove('theme-' + t);
+            });
+
+            document.documentElement.setAttribute('data-theme', themeKey);
+            document.body.setAttribute('data-theme', themeKey);
+            document.documentElement.classList.add('theme-' + themeKey);
+            document.body.classList.add('theme-' + themeKey);
+
+            if (themeKey === 'light') {
+                document.documentElement.setAttribute('data-bs-theme', 'light');
                 document.body.classList.remove('dark-mode');
                 document.documentElement.classList.remove('theme-dark');
-                document.documentElement.removeAttribute('data-bs-theme');
                 localStorage.setItem('theme', 'light-mode');
             } else {
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
                 document.body.classList.add('dark-mode');
                 document.documentElement.classList.add('theme-dark');
-                document.documentElement.setAttribute('data-bs-theme', 'dark');
                 localStorage.setItem('theme', 'dark-mode');
             }
-            updateThemeIcons();
+
+            localStorage.setItem('uc_theme', themeKey);
+            updateThemeIcons(themeKey);
+
+            // Close theme menu if open
+            var menu = document.getElementById('ucThemeMenu');
+            var btn = document.getElementById('ucThemeToggle');
+            if (menu) menu.classList.remove('show');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
         }
 
-        function updateThemeIcons() {
-            const isDark = document.body.classList.contains('dark-mode') || document.documentElement.classList.contains('theme-dark');
-            const icon = document.getElementById('ucThemeIcon');
-            const badge = document.getElementById('ucThemeMobileBadge');
+        function cycleGlobalTheme() {
+            const validThemes = ['dark', 'light', 'pink', 'gold', 'emerald'];
+            var current = document.documentElement.getAttribute('data-theme') || localStorage.getItem('uc_theme') || 'dark';
+            var idx = validThemes.indexOf(current);
+            var nextIdx = (idx + 1) % validThemes.length;
+            selectGlobalTheme(validThemes[nextIdx]);
+        }
+
+        function toggleGlobalTheme() {
+            cycleGlobalTheme();
+        }
+
+        function toggleThemeMenu(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var menu = document.getElementById('ucThemeMenu');
+            var btn = document.getElementById('ucThemeToggle');
+            if (menu) {
+                var isOpen = menu.classList.toggle('show');
+                if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+        }
+
+        function updateThemeIcons(themeKey) {
+            if (!themeKey) {
+                themeKey = document.documentElement.getAttribute('data-theme') || localStorage.getItem('uc_theme') || 'dark';
+            }
+            var icon = document.getElementById('ucThemeIcon');
+            var badge = document.getElementById('ucThemeMobileBadge');
             if (icon) {
-                icon.className = isDark ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars-fill';
+                if (themeKey === 'light') {
+                    icon.className = 'bi bi-sun-fill text-warning';
+                } else if (themeKey === 'pink') {
+                    icon.className = 'bi bi-heart-fill text-danger';
+                } else if (themeKey === 'gold') {
+                    icon.className = 'bi bi-gem text-warning';
+                } else if (themeKey === 'emerald') {
+                    icon.className = 'bi bi-shield-fill-check text-success';
+                } else {
+                    icon.className = 'bi bi-moon-stars-fill text-info';
+                }
             }
             if (badge) {
-                badge.textContent = isDark ? 'Dark' : 'Light';
-                badge.className = isDark ? 'badge bg-warning text-dark' : 'badge bg-secondary';
+                badge.textContent = themeKey.charAt(0).toUpperCase() + themeKey.slice(1);
             }
+
+            // Sync active marks in menu options & mobile chips
+            document.querySelectorAll('.uc-theme-option').forEach(function(opt) {
+                opt.classList.toggle('active', opt.getAttribute('data-theme-val') === themeKey);
+            });
+            document.querySelectorAll('.uc-theme-chip').forEach(function(chip) {
+                chip.classList.toggle('active', chip.getAttribute('data-theme-val') === themeKey);
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', updateThemeIcons);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateThemeIcons();
+        });
+
+        // Close theme & lang menu on outside click
+        document.addEventListener('click', function(e) {
+            var themeMenu = document.getElementById('ucThemeMenu');
+            var themeToggle = document.getElementById('ucThemeToggle');
+            if (themeMenu && themeMenu.classList.contains('show')) {
+                if (!themeMenu.contains(e.target) && !themeToggle.contains(e.target)) {
+                    themeMenu.classList.remove('show');
+                    if (themeToggle) themeToggle.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
 
         // Language Dropdown Toggle
         function toggleLangMenu(e) {

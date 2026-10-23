@@ -31,9 +31,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applyTheme(isDark) {
+        const themeKey = isDark ? 'dark' : 'light';
         body.classList.toggle('dark-mode', isDark);
+        body.classList.toggle('theme-dark', isDark);
+        body.classList.toggle('theme-light', !isDark);
+        body.setAttribute('data-theme', themeKey);
         document.documentElement.classList.toggle('theme-dark', isDark);
+        document.documentElement.classList.toggle('theme-light', !isDark);
+        document.documentElement.setAttribute('data-theme', themeKey);
+        document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
         localStorage.setItem('theme', isDark ? 'dark-mode' : 'light-mode');
+        localStorage.setItem('uc_theme', themeKey);
         syncThemeIcons(isDark);
     }
 
@@ -162,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Chat Room Logic ---
     const messagesContainer = document.getElementById('messagesContainer');
-    if (messagesContainer) {
+    if (messagesContainer && !messagesContainer.classList.contains('uc-messages-stream')) {
         // Scroll to bottom
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
 

@@ -80,12 +80,14 @@
                     <i class="bi bi-heart"></i>
                 </button>
 
+                {% if gallery_images|length > 1 or item.image2 or item.image3 %}
                 <button type="button" class="uc-pdp-arrow uc-pdp-arrow-prev" id="pdpGalleryPrev" aria-label="{% trans 'Previous image' %}">
                     <i class="bi bi-chevron-left"></i>
                 </button>
                 <button type="button" class="uc-pdp-arrow uc-pdp-arrow-next" id="pdpGalleryNext" aria-label="{% trans 'Next image' %}">
                     <i class="bi bi-chevron-right"></i>
                 </button>
+                {% endif %}
 
                 {% if item.image %}
                 <img id="pdpMainImg" src="{{ item.image.url }}" alt="{{ item.title }}" loading="eager">
@@ -94,7 +96,8 @@
                 {% endif %}
             </div>
 
-            {# Thumbnails Strip #}
+            {# Thumbnails Strip - Only rendered if multiple authentic images exist #}
+            {% if gallery_images|length > 1 or item.image2 or item.image3 %}
             <div class="uc-pdp-thumbs" id="pdpThumbs">
                 {% if item.image %}
                 <button type="button" class="uc-pdp-thumb-item active" data-src="{{ item.image.url }}">
@@ -112,25 +115,14 @@
                 </button>
                 {% endif %}
                 {% for media in gallery_images %}
+                {% if media.file.url != item.image.url and media.file.url != item.image2.url and media.file.url != item.image3.url %}
                 <button type="button" class="uc-pdp-thumb-item" data-src="{{ media.file.url }}">
                     <img src="{{ media.file.url }}" alt="{{ item.title }}">
                 </button>
-                {% endfor %}
-                {% if not item.image2 and not item.image3 and not gallery_images %}
-                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
-                    <img src="{{ item.image.url }}" alt="{{ item.title }} 2" style="filter: brightness(0.95);">
-                </button>
-                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
-                    <img src="{{ item.image.url }}" alt="{{ item.title }} 3" style="filter: contrast(1.08);">
-                </button>
-                <button type="button" class="uc-pdp-thumb-item" data-src="{{ item.image.url }}">
-                    <img src="{{ item.image.url }}" alt="{{ item.title }} 4" style="transform: scaleX(-1);">
-                </button>
-                <div class="uc-pdp-thumb-more" id="pdpThumbMore">+2</div>
-                {% elif gallery_images|length > 3 %}
-                <div class="uc-pdp-thumb-more" id="pdpThumbMore">+{{ gallery_images|length|add:"-3" }}</div>
                 {% endif %}
+                {% endfor %}
             </div>
+            {% endif %}
         </div>
 
         {# COLUMN 2: CENTER INFORMATION & SPECS #}
@@ -168,95 +160,53 @@
             </p>
             {% endif %}
 
-            {# Unified Specifications Card with 2-Column Direct Grid Layout (Authentic Database Data Only) #}
-            {% if item_attrs or item.condition or item.category_obj or item.company or item.sku or item.shipping_weight or item.get_full_location %}
-            <div class="uc-specs-box" style="display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px 16px !important; width: 100% !important;">
+            {# Unified Specifications Card matching mockup (media_1792780600478.jpg) with authentic database attributes only #}
+            {% if item_attrs or item.condition or item.company %}
+            <div class="uc-specs-box">
+                {% if item.company %}
+                <div class="uc-spec-item">
+                    <i class="bi bi-laptop uc-spec-icon"></i>
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{% trans "Brand" %}</span>
+                        <span class="uc-spec-val">{{ item.company.name }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% for attr in item_attrs %}
+                <div class="uc-spec-item" title="{{ attr.attribute.name }}: {{ attr.value }}">
+                    {% if 'processor' in attr.attribute.name|lower or 'cpu' in attr.attribute.name|lower %}
+                    <i class="bi bi-cpu uc-spec-icon"></i>
+                    {% elif 'ram' in attr.attribute.name|lower or 'memory' in attr.attribute.name|lower %}
+                    <i class="bi bi-memory uc-spec-icon"></i>
+                    {% elif 'screen' in attr.attribute.name|lower or 'display' in attr.attribute.name|lower %}
+                    <i class="bi bi-display uc-spec-icon"></i>
+                    {% elif 'storage' in attr.attribute.name|lower or 'ssd' in attr.attribute.name|lower or 'hdd' in attr.attribute.name|lower %}
+                    <i class="bi bi-hdd-network uc-spec-icon"></i>
+                    {% elif 'os' in attr.attribute.name|lower or 'system' in attr.attribute.name|lower %}
+                    <i class="bi bi-windows uc-spec-icon"></i>
+                    {% elif 'gpu' in attr.attribute.name|lower or 'graphic' in attr.attribute.name|lower %}
+                    <i class="bi bi-motherboard uc-spec-icon"></i>
+                    {% elif 'color' in attr.attribute.name|lower or 'colour' in attr.attribute.name|lower %}
+                    <i class="bi bi-palette uc-spec-icon"></i>
+                    {% elif 'model' in attr.attribute.name|lower %}
+                    <i class="bi bi-laptop uc-spec-icon"></i>
+                    {% else %}
+                    <i class="bi bi-tag uc-spec-icon"></i>
+                    {% endif %}
+                    <div class="uc-spec-info">
+                        <span class="uc-spec-label">{{ attr.attribute.name|cut:' (Inches ")'|cut:' (GB/TB)'|cut:' (GB)'|title }}</span>
+                        <span class="uc-spec-val">{{ attr.value|truncatechars:38 }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
                 {% if item.condition %}
                 <div class="uc-spec-item">
                     <i class="bi bi-patch-check uc-spec-icon"></i>
                     <div class="uc-spec-info">
                         <span class="uc-spec-label">{% trans "Condition" %}</span>
                         <span class="uc-spec-val">{{ item.get_condition_display|default:item.condition|title }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.category_obj %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-folder2 uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Category" %}</span>
-                        <span class="uc-spec-val">{{ item.category_obj.name }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.company %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-building uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Brand / Store" %}</span>
-                        <span class="uc-spec-val">{{ item.company.name }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.stock_quantity is not None %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-box-seam uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Stock" %}</span>
-                        <span class="uc-spec-val">{{ item.stock_quantity }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% for attr in item_attrs %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-tag uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{{ attr.attribute.name }}</span>
-                        <span class="uc-spec-val">{{ attr.value }}</span>
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% if item.sku %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-upc-scan uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "SKU" %}</span>
-                        <span class="uc-spec-val">{{ item.sku }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.shipping_weight %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-speedometer2 uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Weight" %}</span>
-                        <span class="uc-spec-val">{{ item.shipping_weight }} kg</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.shipping_dimensions %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-aspect-ratio uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Dimensions" %}</span>
-                        <span class="uc-spec-val">{{ item.shipping_dimensions }}</span>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if item.get_full_location %}
-                <div class="uc-spec-item">
-                    <i class="bi bi-geo-alt uc-spec-icon"></i>
-                    <div class="uc-spec-info">
-                        <span class="uc-spec-label">{% trans "Location" %}</span>
-                        <span class="uc-spec-val">{{ item.get_full_location|truncatechars:26 }}</span>
                     </div>
                 </div>
                 {% endif %}
@@ -303,9 +253,6 @@
                     <strong>{{ item.price|tsh }}</strong>
                     {% if item.compare_at_price and item.compare_at_price > item.price %}
                     <span class="strike">{{ item.compare_at_price|tsh }}</span>
-                    <span class="uc-badge-tag uc-tag-sale">Sale</span>
-                    {% else %}
-                    <span class="strike">{{ item.price|add:730000|tsh }}</span>
                     <span class="uc-badge-tag uc-tag-sale">Sale</span>
                     {% endif %}
                 </div>
@@ -423,15 +370,6 @@
                         <p class="text-muted fst-italic">{% trans "No detailed description provided by the seller." %}</p>
                         {% endif %}
                     </div>
-
-                    {% if item_attrs %}
-                    <h4 class="uc-desc-title" style="font-size:1rem;margin-top:1.5rem;">{% trans "Product Attributes" %}</h4>
-                    <ul class="uc-checklist">
-                        {% for attr in item_attrs %}
-                        <li><i class="bi bi-check-circle-fill text-success"></i> <strong>{{ attr.attribute.name }}:</strong> {{ attr.value }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
                 </div>
 
                 {# Right Side Authentic Information Cards #}

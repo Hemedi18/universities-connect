@@ -17,10 +17,23 @@
 <div class="uc-chat-page-wrapper">
     <div class="uc-chat-card" data-user-id="{{ user.id }}" data-conversation-id="{{ conversation.id }}">
 
+        <!-- Mobile View Switcher (Visible on mobile/tablet < 992px) -->
+        <div class="uc-mobile-tab-switcher" id="ucMobileTabSwitcher">
+            <button type="button" class="mobile-tab-btn" id="tab-btn-sidebar" onclick="switchMobileView('sidebar')">
+                <i class="bi bi-chat-dots me-1"></i> {% trans "Chats" %}
+            </button>
+            <button type="button" class="mobile-tab-btn active" id="tab-btn-chat" onclick="switchMobileView('chat')">
+                <i class="bi bi-chat-fill me-1"></i> {% trans "Active Chat" %}
+            </button>
+            <button type="button" class="mobile-tab-btn" id="tab-btn-support" onclick="switchMobileView('support')">
+                <i class="bi bi-headset me-1"></i> {% trans "Help Center" %}
+            </button>
+        </div>
+
         {# ================================================================= #}
         {# COLUMN 1: CONVERSATIONS / MESSAGES LIST (LEFT)                    #}
         {# ================================================================= #}
-        <aside class="uc-chat-sidebar" aria-label="{% trans 'Conversations' %}">
+        <aside class="uc-chat-sidebar" id="column-sidebar" aria-label="{% trans 'Conversations' %}">
             <div class="uc-chat-sidebar-header">
                 <h3 class="uc-chat-sidebar-title">
                     <i class="bi bi-chat-dots-fill text-primary"></i>
@@ -155,13 +168,13 @@
         {# ================================================================= #}
         {# COLUMN 2: ACTIVE CHAT ROOM STREAM (MIDDLE)                       #}
         {# ================================================================= #}
-        <section class="uc-chat-main">
+        <section class="uc-chat-main mobile-active" id="column-chat">
             <!-- Chat Header -->
             <div class="uc-chat-main-header">
                 <div class="uc-chat-header-user">
-                    <a href="{% url 'chat:inbox' %}" class="uc-chat-back-btn" title="{% trans 'Back to Inbox' %}">
+                    <button type="button" class="uc-chat-back-btn" onclick="handleMobileBack(event)" title="{% trans 'Back to Chats' %}">
                         <i class="bi bi-arrow-left"></i>
-                    </a>
+                    </button>
                     <div class="uc-chat-header-avatar {% if 'support' in other_user.username|lower %}uc-avatar-support{% endif %}">
                         {% if other_user.profile.profile_picture %}
                             <img src="{{ other_user.profile.profile_picture.url }}" alt="{{ other_user.username }}">
@@ -293,6 +306,11 @@
             <div class="uc-chat-input-wrapper">
                 <form method="post" class="chat-input-form" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <div id="chat-attachment-chip" class="uc-attachment-chip" style="display:none;">
+                        <i class="bi bi-image"></i>
+                        <span id="chat-attachment-name"></span>
+                        <button type="button" id="chat-attachment-clear" class="btn-remove" title="{% trans 'Remove photo' %}">&times;</button>
+                    </div>
                     <div class="uc-chat-input-pill">
                         <label for="chat-image-input" class="uc-chat-attach-btn" title="{% trans 'Attach image' %}">
                             <i class="bi bi-paperclip"></i>
@@ -311,7 +329,7 @@
         {# ================================================================= #}
         {# COLUMN 3: QUICK HELP & NEED HELP SIDEBAR (RIGHT)                  #}
         {# ================================================================= #}
-        <aside class="uc-chat-help-sidebar" aria-label="{% trans 'Help & Support' %}">
+        <aside class="uc-chat-help-sidebar" id="column-support" aria-label="{% trans 'Help & Support' %}">
             <!-- Card 1: Need Help? -->
             <div class="uc-help-card text-center">
                 <div class="uc-help-icon-circle mx-auto">
@@ -379,6 +397,22 @@
         </aside>
 
     </div>
+
+    {# Minimal 1-Line Bottom Bar matching mockup (media_1792783658002.jpg) #}
+    <div class="uc-chat-bottom-bar">
+        <div>&copy; 2026 U-Connect. {% trans "All rights reserved." %}</div>
+        <div class="uc-chat-bottom-trust">
+            <span><i class="bi bi-shield-check text-success"></i> {% trans "Secure & Trusted" %}</span>
+            <span class="uc-chat-bottom-sep">&bull;</span>
+            <span class="uc-chat-bottom-social">
+                {% trans "Follow Us" %}
+                <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
+                <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+            </span>
+        </div>
+    </div>
 </div>
 {% endwith %}
 
@@ -427,47 +461,286 @@
 document.addEventListener('DOMContentLoaded', function() {
     const messagesContainer = document.getElementById('messagesContainer');
     const scrollBtn = document.getElementById('scrollToBottomBtn');
-    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    const csrfTokenEl = document.querySelector('input[name="csrfmiddlewaretoken"]');
+    const csrfToken = csrfTokenEl ? csrfTokenEl.value : '';
     const conversationId = "{{ conversation.id }}";
+    const currentUserId = parseInt("{{ user.id }}", 10);
     const otherUserId = "{{ other_user.id }}";
 
+    function scrollToBottom(smooth = false) {
+        if (!messagesContainer) return;
+        if (smooth) {
+            messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
+        } else {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    function isNearBottom() {
+        if (!messagesContainer) return true;
+        return (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight) < 180;
+    }
+
     if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        scrollToBottom(false);
         messagesContainer.addEventListener('scroll', function() {
-            scrollBtn.style.display =
-                (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 300)
-                ? 'flex' : 'none';
+            if (scrollBtn) {
+                const distance = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
+                scrollBtn.style.display = distance > 220 ? 'flex' : 'none';
+            }
         });
     }
+
     if (scrollBtn) {
         scrollBtn.addEventListener('click', function() {
-            messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
+            scrollToBottom(true);
         });
     }
 
+    // Attachment chip preview
+    const imageInput = document.getElementById('chat-image-input');
+    const attachChip = document.getElementById('chat-attachment-chip');
+    const attachName = document.getElementById('chat-attachment-name');
+    const attachClear = document.getElementById('chat-attachment-clear');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            if (imageInput.files && imageInput.files[0]) {
+                if (attachName) attachName.textContent = imageInput.files[0].name;
+                if (attachChip) attachChip.style.display = 'inline-flex';
+            } else {
+                if (attachChip) attachChip.style.display = 'none';
+            }
+        });
+    }
+
+    if (attachClear) {
+        attachClear.addEventListener('click', function() {
+            if (imageInput) imageInput.value = '';
+            if (attachChip) attachChip.style.display = 'none';
+        });
+    }
+
+    // Typing indicators
     const chatInput = document.querySelector('input[name="content"]');
     const typingIndicator = document.getElementById('typing-indicator');
+    let typingTimer = null;
+
     if (chatInput) {
-        chatInput.classList.add('uc-chat-text-input');
-        chatInput.addEventListener('input', () => {
-            fetch(`/chat/room/${conversationId}/typing/`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
-                body: JSON.stringify({})
-            }).catch(() => {});
+        chatInput.addEventListener('input', function() {
+            if (typingTimer) clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                fetch(`/chat/room/${conversationId}/typing/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                }).catch(function() {});
+            }, 300);
         });
     }
 
-    if (otherUserId) {
-        setInterval(() => {
+    if (otherUserId && otherUserId !== "None") {
+        setInterval(function() {
             fetch(`/chat/room/${conversationId}/check_typing/?other_user_id=${otherUserId}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (typingIndicator) typingIndicator.style.display = data.is_typing ? 'inline' : 'none';
-                }).catch(() => {});
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (typingIndicator) {
+                        typingIndicator.style.display = data.is_typing ? 'inline' : 'none';
+                    }
+                }).catch(function() {});
         }, 2500);
     }
 
+    function escapeHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formatText(text) {
+        let html = escapeHtml(text);
+        html = html.replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
+        html = html.replace(/(https?:\/\/[^\s<]+)/g, function(url) {
+            const clean = url.replace(/[).,;\]>"']+$/g, '');
+            const lower = clean.toLowerCase();
+            let label = 'Open link';
+            if (lower.includes('/item/')) label = 'View product';
+            else if (lower.includes('wa.me') || lower.includes('whatsapp')) label = 'WhatsApp';
+            return `<a class="chat-link" href="${clean}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        });
+        return html.replace(/\n/g, '<br>');
+    }
+
+    function appendChatMessage(msg, isSentOverride) {
+        if (!messagesContainer || !msg || !msg.id) return;
+        if (document.querySelector(`.uc-msg-row[data-id="${msg.id}"]`)) return;
+
+        // Remove empty state if present
+        const emptyState = messagesContainer.querySelector('.text-center.my-auto');
+        if (emptyState) emptyState.remove();
+
+        const isSent = (typeof isSentOverride === 'boolean') ? isSentOverride : (msg.sender_id === currentUserId || msg.is_sent);
+        const row = document.createElement('div');
+        row.className = `uc-msg-row ${isSent ? 'sent' : 'received'}`;
+        row.setAttribute('data-id', msg.id);
+
+        let avatarHtml = '';
+        if (!isSent) {
+            const initial = "{{ other_user.username|first|upper|default:'?' }}";
+            avatarHtml = `<div class="uc-msg-avatar-mini">${initial}</div>`;
+        } else {
+            avatarHtml = `<div class="uc-msg-avatar-mini"><i class="bi bi-person-fill"></i></div>`;
+        }
+
+        let itemHtml = '';
+        if (msg.item) {
+            const imgHtml = msg.item.image ? `<img src="${msg.item.image}" alt="">` : '';
+            itemHtml = `
+                <a class="chat-item-card" href="${msg.item.url}">
+                    ${imgHtml}
+                    <div>
+                        <strong>${escapeHtml(msg.item.title || '')}</strong>
+                        <em>Tsh ${escapeHtml(msg.item.price || '')}</em>
+                    </div>
+                </a>
+            `;
+        }
+
+        let imgHtml = '';
+        if (msg.image_url) {
+            imgHtml = `
+                <a class="chat-image-link" href="${msg.image_url}" target="_blank" rel="noopener" style="display:block;margin-bottom:6px;">
+                    <img src="${msg.image_url}" alt="Image" style="max-width:240px;border-radius:8px;">
+                </a>
+            `;
+        }
+
+        let contentHtml = '';
+        if (msg.content) {
+            contentHtml = `<div class="uc-msg-text">${formatText(msg.content)}</div>`;
+        }
+
+        const checksHtml = isSent ? `<i class="bi bi-check2-all uc-msg-checks"></i>` : '';
+        const metaHtml = `
+            <div class="uc-msg-meta">
+                <span>${escapeHtml(msg.timestamp || '')}</span>
+                ${checksHtml}
+            </div>
+        `;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'uc-msg-bubble';
+        bubble.innerHTML = itemHtml + imgHtml + contentHtml + metaHtml;
+
+        row.innerHTML = avatarHtml;
+        row.appendChild(bubble);
+
+        messagesContainer.appendChild(row);
+
+        const idNum = parseInt(msg.id, 10);
+        if (!isNaN(idNum) && idNum > highestMessageId) {
+            highestMessageId = idNum;
+        }
+    }
+
+    function getMaxMessageId() {
+        let max = 0;
+        document.querySelectorAll('.uc-msg-row[data-id]').forEach(function(el) {
+            const id = parseInt(el.getAttribute('data-id'), 10);
+            if (!isNaN(id) && id > max) max = id;
+        });
+        return max;
+    }
+    let highestMessageId = getMaxMessageId();
+
+    // AJAX Chat Form Submission
+    const chatForm = document.querySelector('.chat-input-form');
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const textVal = (chatInput ? chatInput.value : '').trim();
+            const hasImg = imageInput && imageInput.files && imageInput.files.length > 0;
+            if (!textVal && !hasImg) return;
+
+            const formData = new FormData(chatForm);
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'success' && data.message) {
+                    appendChatMessage(data.message, true);
+                    if (chatInput) chatInput.value = '';
+                    if (imageInput) imageInput.value = '';
+                    if (attachChip) attachChip.style.display = 'none';
+                    scrollToBottom(true);
+                }
+            })
+            .catch(function() {
+                chatForm.submit();
+            });
+        });
+    }
+
+    // Real-time polling
+    function pollMessages() {
+        fetch(`/chat/room/${conversationId}/messages/?last_id=${highestMessageId}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.messages && data.messages.length > 0) {
+                const nearBottom = isNearBottom();
+                data.messages.forEach(function(msg) {
+                    appendChatMessage(msg);
+                });
+                if (nearBottom) scrollToBottom(true);
+            }
+            if (data.statuses && data.statuses.length > 0) {
+                data.statuses.forEach(function(st) {
+                    const row = document.querySelector(`.uc-msg-row[data-id="${st.id}"]`);
+                    if (row && row.classList.contains('sent')) {
+                        const checkIcon = row.querySelector('.uc-msg-checks');
+                        if (checkIcon) {
+                            if (st.status === 'read') {
+                                checkIcon.className = 'bi bi-check2-all uc-msg-checks text-info';
+                            } else if (st.status === 'delivered') {
+                                checkIcon.className = 'bi bi-check2-all uc-msg-checks';
+                            }
+                        }
+                    }
+                });
+            }
+            if (data.partner) {
+                const statusDot = document.querySelector('.uc-chat-header-status i');
+                const statusSpan = document.querySelector('.uc-chat-header-status span');
+                if (statusDot && statusSpan) {
+                    if (data.partner.is_online) {
+                        statusDot.style.color = '#10b981';
+                        statusSpan.textContent = '{% trans "Online" %}';
+                    } else {
+                        statusDot.style.color = '#64748b';
+                        statusSpan.textContent = '{% trans "Offline" %}';
+                    }
+                }
+            }
+            if (data.rating_deal && rateModal && rateModal.hidden) {
+                openRate(data.rating_deal);
+            }
+        })
+        .catch(function() {});
+    }
+
+    setInterval(pollMessages, 2500);
+
+    // Deals & Rating Handlers
     function postJSON(url, body) {
         return fetch(url, {
             method: 'POST',
@@ -477,26 +750,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify(body || {})
-        }).then(r => r.json());
+        }).then(function(r) { return r.json(); });
     }
 
     const headerBtn = document.getElementById('dealHeaderBtn');
     const headerMenu = document.getElementById('dealHeaderMenu');
     if (headerBtn && headerMenu) {
-        headerBtn.addEventListener('click', (e) => {
+        headerBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             headerMenu.hidden = !headerMenu.hidden;
         });
-        document.addEventListener('click', () => { headerMenu.hidden = true; });
-        headerMenu.addEventListener('click', (e) => e.stopPropagation());
+        document.addEventListener('click', function() { headerMenu.hidden = true; });
+        headerMenu.addEventListener('click', function(e) { e.stopPropagation(); });
     }
 
     let pendingSoldDealId = null;
     const soldModal = document.getElementById('soldQtyModal');
     const soldQtyInput = document.getElementById('soldQtyInput');
 
-    document.querySelectorAll('.js-deal-sold').forEach(btn => {
-        btn.addEventListener('click', () => {
+    document.querySelectorAll('.js-deal-sold').forEach(function(btn) {
+        btn.addEventListener('click', function() {
             pendingSoldDealId = btn.getAttribute('data-deal-id');
             const max = parseInt(btn.getAttribute('data-max') || '1', 10);
             soldQtyInput.max = Math.max(1, max);
@@ -505,25 +778,25 @@ document.addEventListener('DOMContentLoaded', function() {
             soldModal.hidden = false;
         });
     });
-    document.querySelectorAll('[data-close]').forEach(el => {
-        el.addEventListener('click', () => { soldModal.hidden = true; pendingSoldDealId = null; });
+    document.querySelectorAll('[data-close]').forEach(function(el) {
+        el.addEventListener('click', function() { soldModal.hidden = true; pendingSoldDealId = null; });
     });
     const soldQtyConfirm = document.getElementById('soldQtyConfirm');
     if (soldQtyConfirm) {
-        soldQtyConfirm.addEventListener('click', () => {
+        soldQtyConfirm.addEventListener('click', function() {
             if (!pendingSoldDealId) return;
             postJSON(`/chat/deal/${pendingSoldDealId}/sold/`, {
                 quantity: parseInt(soldQtyInput.value || '1', 10)
-            }).then(data => {
+            }).then(function(data) {
                 if (data.error) { alert(data.error); return; }
                 location.reload();
             });
         });
     }
 
-    document.querySelectorAll('.js-deal-not-sold').forEach(btn => {
-        btn.addEventListener('click', () => {
-            postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/not-sold/`, {}).then(data => {
+    document.querySelectorAll('.js-deal-not-sold').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            postJSON(`/chat/deal/${btn.getAttribute('data-deal-id')}/not-sold/`, {}).then(function(data) {
                 if (data.error) { alert(data.error); return; }
                 location.reload();
             });
@@ -536,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function paintStars(n) {
         selectedStars = n;
-        document.querySelectorAll('.rate-star').forEach(btn => {
+        document.querySelectorAll('.rate-star').forEach(function(btn) {
             const v = parseInt(btn.getAttribute('data-v'), 10);
             const on = v <= n;
             btn.classList.toggle('is-on', on);
@@ -544,12 +817,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (icon) icon.className = on ? 'bi bi-star-fill' : 'bi bi-star';
         });
     }
-    document.querySelectorAll('.rate-star').forEach(btn => {
-        btn.addEventListener('mouseenter', () => paintStars(parseInt(btn.getAttribute('data-v'), 10)));
-        btn.addEventListener('click', () => paintStars(parseInt(btn.getAttribute('data-v'), 10)));
+    document.querySelectorAll('.rate-star').forEach(function(btn) {
+        btn.addEventListener('mouseenter', function() { paintStars(parseInt(btn.getAttribute('data-v'), 10)); });
+        btn.addEventListener('click', function() { paintStars(parseInt(btn.getAttribute('data-v'), 10)); });
     });
     const starsWrap = document.getElementById('rateStars');
-    if (starsWrap) starsWrap.addEventListener('mouseleave', () => paintStars(selectedStars));
+    if (starsWrap) starsWrap.addEventListener('mouseleave', function() { paintStars(selectedStars); });
 
     function openRate(deal) {
         if (!rateModal || !deal) return;
@@ -563,16 +836,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function closeRate() { if (rateModal) rateModal.hidden = true; }
 
-    document.querySelectorAll('[data-close-rate]').forEach(el => el.addEventListener('click', closeRate));
+    document.querySelectorAll('[data-close-rate]').forEach(function(el) { el.addEventListener('click', closeRate); });
     const rateSubmit = document.getElementById('rateSubmit');
     if (rateSubmit) {
-        rateSubmit.addEventListener('click', () => {
+        rateSubmit.addEventListener('click', function() {
             if (!rateDealId) return;
             if (!selectedStars) { alert('Please select a star rating.'); return; }
             postJSON(`/chat/deal/${rateDealId}/rate/`, {
                 rating: selectedStars,
                 comment: document.getElementById('rateComment').value || ''
-            }).then(data => {
+            }).then(function(data) {
                 if (data.error) { alert(data.error); return; }
                 closeRate();
             });
@@ -582,14 +855,50 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rateModal && rateModal.getAttribute('data-open') === '1') {
         openRate({ id: rateModal.getAttribute('data-deal-id'), item_title: rateModal.getAttribute('data-title') });
     }
-
-    setInterval(() => {
-        fetch(`/chat/room/${conversationId}/messages/?last_id=999999999`)
-            .then(r => r.json())
-            .then(data => {
-                if (data.rating_deal && rateModal && rateModal.hidden) openRate(data.rating_deal);
-            }).catch(() => {});
-    }, 8000);
 });
+
+// Mobile View Switcher (Matching Stitch mobile layout: sidebar / chat / support)
+function switchMobileView(viewName) {
+    const colSidebar = document.getElementById('column-sidebar');
+    const colChat = document.getElementById('column-chat');
+    const colSupport = document.getElementById('column-support');
+
+    const btnSidebar = document.getElementById('tab-btn-sidebar');
+    const btnChat = document.getElementById('tab-btn-chat');
+    const btnSupport = document.getElementById('tab-btn-support');
+
+    [btnSidebar, btnChat, btnSupport].forEach(function(b) {
+        if (b) b.classList.remove('active');
+    });
+
+    [colSidebar, colChat, colSupport].forEach(function(c) {
+        if (c) c.classList.remove('mobile-active');
+    });
+
+    if (viewName === 'sidebar') {
+        if (colSidebar) colSidebar.classList.add('mobile-active');
+        if (btnSidebar) btnSidebar.classList.add('active');
+    } else if (viewName === 'support') {
+        if (colSupport) colSupport.classList.add('mobile-active');
+        if (btnSupport) btnSupport.classList.add('active');
+    } else {
+        if (colChat) colChat.classList.add('mobile-active');
+        if (btnChat) btnChat.classList.add('active');
+        const container = document.getElementById('messagesContainer');
+        if (container) container.scrollTop = container.scrollHeight;
+    }
+}
+
+function handleMobileBack(e) {
+    if (window.innerWidth < 992) {
+        const colSidebar = document.getElementById('column-sidebar');
+        if (colSidebar && !colSidebar.classList.contains('mobile-active')) {
+            if (e) e.preventDefault();
+            switchMobileView('sidebar');
+            return;
+        }
+    }
+    window.location.href = "{% url 'chat:inbox' %}";
+}
 </script>
 {% endblock %}
