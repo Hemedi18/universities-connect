@@ -11,6 +11,7 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from business.models import Category, Item
@@ -561,6 +562,7 @@ def api_git_status(request):
     return JsonResponse(status_data)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def api_git_sync(request):
     """
