@@ -1396,11 +1396,11 @@
 
                 if (!leafletMap) {
                     leafletMap = L.map('leafletMap').setView([currentLat, currentLng], 14);
-                    // CARTO Voyager tiles: Fast, reliable, no 403 tile usage block!
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    // CARTO Voyager tiles with official API key: clean, fast, no watermark!
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_4te9_1_204d0952a6071fdc4f994e0c', {
                         subdomains: 'abcd',
                         maxZoom: 20,
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>'
                     }).addTo(leafletMap);
 
                     mapMarker = L.marker([currentLat, currentLng], { draggable: true }).addTo(leafletMap);
