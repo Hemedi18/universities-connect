@@ -122,6 +122,8 @@ urlpatterns = [
     path("company/", include("company.urls")),
     path("management/", include("management.urls")),
     path("", include("pwa.urls")),
+    path("sell/", RedirectView.as_view(url="/business/sell/", permanent=False)),
+    path("post-item/", RedirectView.as_view(url="/business/sell/", permanent=False)),
     path("password-reset/", request_password_reset, name="password_reset_request"),
     path("password-reset/verify/", verify_password_reset, name="password_reset_verify"),
     path("password-reset/resend/", resend_password_reset_otp, name="password_reset_resend"),

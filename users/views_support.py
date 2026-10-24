@@ -117,7 +117,7 @@ def support_api_messages(request):
             session = SupportSession.objects.filter(session_key=session_key).first()
 
     if not session:
-        return JsonResponse({"status": "error", "message": "No session active"}, status=400)
+        return JsonResponse({"status": "success", "messages": [], "session_id": None})
 
     # Retrieve messages newer than after_id
     messages_qs = session.messages.filter(id__gt=after_id).order_by("timestamp")
